@@ -1,0 +1,43 @@
+/*
+ * Copyright 2017 Cloudopt.
+ *
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  and Apache License v2.0 which accompanies this distribution.
+ *
+ *  The Eclipse Public License is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  The Apache License v2.0 is available at
+ *  http://www.opensource.org/licenses/apache2.0.php
+ *
+ *  You may elect to redistribute this code under either of these licenses.
+ */
+package net.cloudopt.next.web.render
+
+import io.vertx.core.http.HttpHeaders
+import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.aop.Beaner
+import net.cloudopt.next.aop.Classer
+import net.cloudopt.next.web.config.WebConfigBean
+import net.cloudopt.next.web.json.JsonProvider
+import net.cloudopt.next.web.json.Jsoner
+import net.cloudopt.next.web.json.VertxJSONProvider
+
+/*
+ * @author: Cloudopt
+ * @Time: 2018/1/9
+ * @Description: JsonProvider Render
+ */
+class JsonRender : Render {
+
+    override fun render(response: HttpServerResponse, obj: Any) {
+
+        var json = Jsoner.toJsonString(obj)
+
+        response.putHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
+
+        response.end(json)
+
+    }
+}
