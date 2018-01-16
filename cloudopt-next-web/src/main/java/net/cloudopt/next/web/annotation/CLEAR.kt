@@ -13,28 +13,18 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.annotation;
+package net.cloudopt.next.web.annotation
 
-import net.cloudopt.next.web.Validator;
+import net.cloudopt.next.web.Interceptor
 
-import java.lang.annotation.*;
+import java.lang.annotation.*
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/10
- * @Description: Delete Annotation
+ * @Description: Clear Annotation
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
 @Documented
-public @interface DELETE{
-
-    String value() default "";
-
-    Class<? extends Validator>[] valid() default {};
-
-    boolean block() default false;
-
-    boolean cache() default false;
-
-}
+annotation class CLEAR

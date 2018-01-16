@@ -15,10 +15,7 @@
  */
 package net.cloudopt.next.web.handler
 
-import io.vertx.core.http.HttpMethod
-import io.vertx.ext.web.handler.CorsHandler
 import net.cloudopt.next.web.config.ConfigManager
-import java.util.HashSet
 
 /*
  * @author: Cloudopt

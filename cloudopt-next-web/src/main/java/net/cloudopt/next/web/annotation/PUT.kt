@@ -13,25 +13,19 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.annotation;
+package net.cloudopt.next.web.annotation
 
-import net.cloudopt.next.web.Validator;
+import net.cloudopt.next.web.Validator
 
-import java.lang.annotation.*;
+import java.lang.annotation.*
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/10
- * @Description: Post Annotation
+ * @Description: Put Annotation
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Documented
-public @interface POST {
-    String value() default "";
-
-    Class<? extends Validator>[] valid() default {};
-
-    boolean block() default false;
-
-}
+annotation class PUT(val value: String = "", val valid: Array<KClass<out Validator>> = arrayOf(), val block: Boolean = false, val cache: Boolean = false)
