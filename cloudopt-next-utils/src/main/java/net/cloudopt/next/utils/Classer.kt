@@ -114,7 +114,7 @@ object Classer {
      */
     fun scanPackage(packageName: String?, inJar: Boolean, classFilter: ClassFilter): Set<Class<*>> {
         var packageName = packageName
-        if (packageName != null) {
+        if (packageName == null) {
             packageName = ""
         }
         packageName = getWellFormedPackageName(packageName!!)
