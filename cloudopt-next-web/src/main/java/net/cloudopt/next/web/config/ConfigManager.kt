@@ -63,7 +63,7 @@ object ConfigManager {
 
         }
 
-        return Maper.toObject(map?.toMap(), clazz)!!
+        return Maper.toObject(map, clazz)!!
 
     }
 

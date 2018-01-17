@@ -24,6 +24,7 @@ import java.io.File
 
 import java.io.FileNotFoundException
 import java.io.FileReader
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
@@ -111,7 +112,8 @@ object Yamler {
      * @return Object
      */
     fun read(clazz: KClass<*>): Any? {
-        var annotation = clazz.findAnnotation<ConfigureBean>()
+        var annotation = clazz.java.getAnnotation<ConfigureBean>(ConfigureBean::class.java)
+
         if (annotation != null) {
             var map: Map<*, *>
             if (annotation?.prefix.isNotBlank()) {
@@ -124,7 +126,7 @@ object Yamler {
                 throw RuntimeException("Cloudopt Next Yaml: " + annotation!!.filePath + "is empty, cannot be converted to yaml!")
             }
 
-            return Maper.toObject(map as Map<String, Any>, clazz::class.java)
+            return Maper.toObject(map as Map<String, Any>, clazz.java)
 
 
         } else {

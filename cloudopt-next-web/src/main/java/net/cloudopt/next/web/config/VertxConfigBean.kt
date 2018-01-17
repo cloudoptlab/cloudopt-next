@@ -22,7 +22,7 @@ package net.cloudopt.next.web.config
  */
 data class VertxConfigBean(var cpuCoreNumber:Int = Runtime.getRuntime().availableProcessors(),
                            var maxWokerExecuteTime:Long = 60 * 1000 * 1000000,
-                           var disableFileCaching:Boolean = false,
+                           var fileCaching:Boolean = false,
                            var workerPoolSize:Int = 10 * cpuCoreNumber,
                            var eventLoopPoolSize:Int = 2 * cpuCoreNumber,
                            var internalBlockingPoolSize:Int = 20,
