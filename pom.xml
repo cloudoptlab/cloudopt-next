@@ -66,6 +66,7 @@
         <logback.version>1.2.3</logback.version>
         <jansi.version>1.13</jansi.version>
         <dokka.version>0.9.15</dokka.version>
+        <vertx.version>3.5.0</vertx.version>
         <netty.version>4.1.19.Final</netty.version>
     </properties>
 
