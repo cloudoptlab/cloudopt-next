@@ -29,7 +29,7 @@ import net.cloudopt.next.web.render.View
  */
 open class Resource {
 
-    var context:RoutingContext = null!!
+    var context: RoutingContext = null!!
 
     var request: HttpServerRequest
         get() = context.request()
@@ -51,7 +51,7 @@ open class Resource {
     }
 
     fun setHeader(key: String, value: String) {
-        response.putHeader(key,value)
+        response.putHeader(key, value)
     }
 
     /**
@@ -89,24 +89,6 @@ open class Resource {
     }
 
 
-    fun setCookie(key: String, value: String) {
-        val cookie = Cookie.cookie(key,value)
-        context.addCookie(cookie)
-    }
-
-    fun setCookie(key: String, value: String, domain: String) {
-        val cookie = Cookie.cookie(key, value)
-        cookie.domain = domain
-        context.addCookie(cookie)
-    }
-
-    fun setCookie(key: String, value: String, domain: String, age: Int) {
-        val cookie = Cookie.cookie(key, value)
-        cookie.domain = domain
-        cookie.setMaxAge(age.toLong())
-        context.addCookie(cookie)
-    }
-
     /**
      * Set Cookie
      * @param name cookie name
@@ -114,12 +96,23 @@ open class Resource {
      * @param domain website domain
      * @param age -1: clear cookie when close browser. 0: clear cookie immediately.  n>0 : max age in n seconds.
      * @param path http path
+     * @param httpOnly Only http or https
      */
-    fun setCookie(key: String, value: String, domain: String, age: Int, path: String) {
-        val cookie = Cookie.cookie(key, value)
-        cookie.domain = domain
-        cookie.setMaxAge(age.toLong())
-        cookie.path = path
+    @JvmOverloads
+    fun setCookie(key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
+                  , httpOnly: Boolean = true, cookieSecureFlag:Boolean = true) {
+        var cookie = Cookie.cookie(key, value)
+        if (domain.isNotBlank()) {
+            cookie.domain = domain
+        }
+        if (age > 0) {
+            cookie.setMaxAge(age)
+        }
+        if (path.isNotBlank()) {
+            cookie.path = path
+        }
+        cookie.setHttpOnly(httpOnly)
+        cookie.setSecure(true)
         context.addCookie(cookie)
     }
 
