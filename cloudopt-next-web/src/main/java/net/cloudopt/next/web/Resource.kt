@@ -19,6 +19,7 @@ import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.Cookie
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.handler.RedirectAuthHandler
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View
 
@@ -154,6 +155,15 @@ open class Resource {
 
     fun renderFree(view: View) {
         render(RenderFactory.FREE, view)
+    }
+
+    fun sendFile(fileName:String){
+        response.sendFile(fileName)
+    }
+
+    fun redirect(url:String){
+        response.statusCode = 302
+        response.putHeader("location",url)
     }
 
     fun end() {
