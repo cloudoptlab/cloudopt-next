@@ -21,7 +21,7 @@ package net.cloudopt.next.web.config
  * @Description: Vertx configuration file
  */
 data class VertxConfigBean(var cpuCoreNumber:Int = Runtime.getRuntime().availableProcessors(),
-                           var maxWokerExecuteTime:Long = 60 * 1000 * 1000000,
+                           var maxWokerExecuteTime:Long = 60L * 1000 * 1000000,
                            var fileCaching:Boolean = false,
                            var workerPoolSize:Int = 10 * cpuCoreNumber,
                            var eventLoopPoolSize:Int = 2 * cpuCoreNumber,
@@ -32,9 +32,9 @@ data class VertxConfigBean(var cpuCoreNumber:Int = Runtime.getRuntime().availabl
                            var clusterPingInterval:Long = 20000,
                            var clusterPingReplyInterval:Long = 20000,
                            var blockedThreadCheckInterval:Long = 1000,
-                           var maxEventLoopExecuteTime:Long = 2 * 1000 * 1000000,
+                           var maxEventLoopExecuteTime:Long = 2L * 1000 * 1000000,
                            var hAEnabled:Boolean = false,
                            var hAGroup:String = "DEFAULT",
                            var quorumSize:Int = 1,
-                           var warningExceptionTime:Long = 5 * 1000 * 1000000
+                           var warningExceptionTime:Long = 5L * 1000 * 1000000
                            )

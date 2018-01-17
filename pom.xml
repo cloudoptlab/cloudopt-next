@@ -66,7 +66,7 @@
         <logback.version>1.2.3</logback.version>
         <jansi.version>1.13</jansi.version>
         <dokka.version>0.9.15</dokka.version>
-        <vertx.version>3.5.0</vertx.version>
+        <netty.version>4.1.19.Final</netty.version>
     </properties>
 
     <dependencies>
@@ -111,8 +111,8 @@
                 <version>${kotlin.version}</version>
                 <configuration>
                     <jvmTarget>${java.version}</jvmTarget>
-                    <apiVersion>${kotlin.version}</apiVersion>
-                    <languageVersion>${kotlin.version}</languageVersion>
+                    <apiVersion>1.2</apiVersion>
+                    <languageVersion>1.2</languageVersion>
                     <compilerPlugins>
                         <!-- Or "spring" for the Spring support -->
                         <plugin>all-open</plugin>
