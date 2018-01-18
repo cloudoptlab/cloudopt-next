@@ -34,11 +34,11 @@ class ShowRouteHandler : Handler() {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             logger.info("Match route ----------------- " + df.format(Date())
                     + " ------------------------------")
-            logger.info("Method       : " + request.method())
-            logger.info("Path         : " + request.uri())
-            logger.info("User-Agent   : " + request.getHeader("User-Agent"))
-            logger.info("Params       : " + Jsoner.toJsonString(request.params().entries()))
-            logger.info("Cookie       : " + Jsoner.toJsonString(request.getHeader("Cookie")))
+            logger.info("Method       : " + request?.method())
+            logger.info("Path         : " + request?.uri())
+            logger.info("User-Agent   : " + request?.getHeader("User-Agent"))
+            logger.info("Params       : " + Jsoner.toJsonString(request?.params()?.entries()!!))
+            logger.info("Cookie       : " + Jsoner.toJsonString(request?.getHeader("Cookie")!!))
             logger.info(
                     "--------------------------------------------------------------------------------")
         }

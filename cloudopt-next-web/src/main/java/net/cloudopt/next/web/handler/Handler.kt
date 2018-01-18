@@ -27,8 +27,8 @@ abstract class Handler : Resource() {
 
     val errorStatusCode: Int
         get() {
-            this.response.statusCode = this.context.statusCode()
-            return this.context.statusCode()
+            this.response?.statusCode = this.context?.statusCode()!!
+            return this.context?.statusCode()!!
         }
 
     override fun init(context: RoutingContext) {
@@ -39,7 +39,7 @@ abstract class Handler : Resource() {
     abstract fun handle()
 
     operator fun next() {
-        context.next()
+        context?.next()
     }
 }
 

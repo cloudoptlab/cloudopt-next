@@ -30,13 +30,11 @@ import net.cloudopt.next.web.render.View
  */
 open class Resource {
 
-    var context: RoutingContext = null!!
+    var context: RoutingContext ?=null
 
-    var request: HttpServerRequest
-        get() = context.request()
+    var request: HttpServerRequest ?= null
 
-    var response: HttpServerResponse
-        get() = context.response()
+    var response: HttpServerResponse ?= null
 
     open fun init(context: RoutingContext) {
         this.context = context
@@ -47,12 +45,12 @@ open class Resource {
      * @param key a String specifying the name of the header
      * @return The single value of the parameter
      */
-    fun getHeader(key: String): String {
-        return request.getHeader(key)
+    fun getHeader(key: String): String? {
+        return request?.getHeader(key)
     }
 
     fun setHeader(key: String, value: String) {
-        response.putHeader(key, value)
+        response?.putHeader(key, value)
     }
 
     /**
@@ -60,14 +58,8 @@ open class Resource {
      * @param name a String specifying the name of the parameter
      * @return The single value of the parameter
      */
-    fun <T> getParam(name: String): T? {
-        val value = request.getParam(name)
-        return if (value.isNotBlank()) {
-            value as T
-        } else {
-            null
-        }
-
+    fun <T> getParam(name: String): String? {
+        return request?.getParam(name)
     }
 
     /**
@@ -75,8 +67,8 @@ open class Resource {
      * @param key a String specifying the name of the cookies
      * @return The single value of the cookie
      */
-    fun getCookieObj(key: String): Cookie {
-        val cookie = context.getCookie(key)
+    fun getCookieObj(key: String): Cookie? {
+        val cookie = context?.getCookie(key)
         return cookie
     }
 
@@ -85,8 +77,8 @@ open class Resource {
      * @param key a String specifying the name of the cookies
      * @return The single value of the cookie
      */
-    fun getCookie(key: String): String {
-        return context.getCookie(key).value
+    fun getCookie(key: String): String? {
+        return context?.getCookie(key)?.value
     }
 
 
@@ -114,11 +106,11 @@ open class Resource {
         }
         cookie.setHttpOnly(httpOnly)
         cookie.setSecure(true)
-        context.addCookie(cookie)
+        context?.addCookie(cookie)
     }
 
     fun setCookie(cookie: Cookie) {
-        context.addCookie(cookie)
+        context?.addCookie(cookie)
     }
 
     /**
@@ -126,15 +118,15 @@ open class Resource {
      * @param name cookie name
      */
     fun delCookie(key: String) {
-        context.removeCookie(key)
+        context?.removeCookie(key)
     }
 
     fun render(result: Object) {
-        RenderFactory.getDefaultRender().render(context.response(), result)
+        RenderFactory.getDefaultRender().render(context?.response()!!, result)
     }
 
     fun render(renderName: String, result: Any) {
-        RenderFactory.get(renderName).render(context.response(), result)
+        RenderFactory.get(renderName).render(context?.response()!!, result)
     }
 
     fun renderJson(result: Any) {
@@ -158,20 +150,20 @@ open class Resource {
     }
 
     fun sendFile(fileName:String){
-        response.sendFile(fileName)
+        response?.sendFile(fileName)
     }
 
     fun redirect(url:String){
-        response.statusCode = 302
-        response.putHeader("location",url)
+        response?.statusCode = 302
+        response?.putHeader("location",url)
     }
 
     fun end() {
-        response.end()
+        response?.end()
     }
 
     fun fail(code: Int) {
-        context.fail(code)
+        context?.fail(code)
     }
 
 }
