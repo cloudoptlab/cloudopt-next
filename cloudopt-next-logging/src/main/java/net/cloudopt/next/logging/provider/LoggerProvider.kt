@@ -24,6 +24,7 @@ import net.cloudopt.next.logging.Logger
  * @Description: Log interface
  */
 interface LoggerProvider {
+
     fun getLogger(clazz: Class<*>): Logger
 
     fun getLogger(clazzName: String): Logger

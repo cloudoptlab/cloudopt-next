@@ -20,6 +20,7 @@ import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.json.Jsoner
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Map
 
 /*
  * @author: Cloudopt
@@ -30,15 +31,15 @@ import java.util.Date
 class ShowRouteHandler : Handler() {
 
     override fun handle() {
-        if (ConfigManager.webConfig.showRoute){
+        if (ConfigManager.webConfig.showRoute) {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             logger.info("Match route ----------------- " + df.format(Date())
                     + " ------------------------------")
             logger.info("Method       : " + request?.method())
             logger.info("Path         : " + request?.uri())
             logger.info("User-Agent   : " + request?.getHeader("User-Agent"))
-            logger.info("Params       : " + Jsoner.toJsonString(request?.params()?.entries()!!))
-            logger.info("Cookie       : " + Jsoner.toJsonString(request?.getHeader("Cookie")!!))
+            logger.info("Params       : " + Jsoner.toJsonString(request?.params()?.entries() ?: listOf<Map.Entry<String, String>>()))
+            logger.info("Cookie       : " + Jsoner.toJsonString(request.getHeader("Cookie") ?: ""))
             logger.info(
                     "--------------------------------------------------------------------------------")
         }

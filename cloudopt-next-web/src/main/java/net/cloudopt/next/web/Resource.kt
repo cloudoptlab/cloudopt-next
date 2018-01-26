@@ -30,11 +30,13 @@ import net.cloudopt.next.web.render.View
  */
 open class Resource {
 
-    var context: RoutingContext ?=null
+    var context: RoutingContext? = null
 
-    var request: HttpServerRequest ?= null
+    open val request: HttpServerRequest
+        get() = context!!.request()
 
-    var response: HttpServerResponse ?= null
+    open val response: HttpServerResponse
+        get() = context!!.response()
 
     open fun init(context: RoutingContext) {
         this.context = context
@@ -93,7 +95,7 @@ open class Resource {
      */
     @JvmOverloads
     fun setCookie(key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
-                  , httpOnly: Boolean = true, cookieSecureFlag:Boolean = true) {
+                  , httpOnly: Boolean = true, cookieSecureFlag: Boolean = true) {
         var cookie = Cookie.cookie(key, value)
         if (domain.isNotBlank()) {
             cookie.domain = domain
@@ -119,6 +121,25 @@ open class Resource {
      */
     fun delCookie(key: String) {
         context?.removeCookie(key)
+    }
+
+    /**
+     * Get ip
+     */
+    fun getIp(): String {
+        var ip: String = request.getHeader("x-forwarded-for") ?: ""
+        if (ip.isBlank()) {
+            ip = request.getHeader("X-Real-IP")
+        } else {
+            ip = ip?.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+        }
+        if (ip.isBlank() || "unknown".equals(ip, ignoreCase = true)) {
+            ip = request.getHeader("Proxy-Client-IP") ?: ""
+        }
+        if (ip.isBlank() || "unknown".equals(ip, ignoreCase = true)) {
+            ip = request.getHeader("WL-Proxy-Client-IP") ?: ""
+        }
+        return ip
     }
 
     fun render(result: Object) {
@@ -149,13 +170,13 @@ open class Resource {
         render(RenderFactory.FREE, view)
     }
 
-    fun sendFile(fileName:String){
+    fun sendFile(fileName: String) {
         response?.sendFile(fileName)
     }
 
-    fun redirect(url:String){
+    fun redirect(url: String) {
         response?.statusCode = 302
-        response?.putHeader("location",url)
+        response?.putHeader("location", url)
     }
 
     fun end() {

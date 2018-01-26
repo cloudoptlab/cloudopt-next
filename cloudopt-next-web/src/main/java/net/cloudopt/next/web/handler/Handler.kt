@@ -31,11 +31,6 @@ abstract class Handler : Resource() {
             return this.context?.statusCode()!!
         }
 
-    override fun init(context: RoutingContext) {
-        this.context = context
-        handle()
-    }
-
     abstract fun handle()
 
     operator fun next() {

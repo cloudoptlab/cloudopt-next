@@ -28,4 +28,4 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Documented
-annotation class GET(val value: String = "", val valid: Array<KClass<out Validator>> = arrayOf(), val block: Boolean = false, val cache: Boolean = false)
+annotation class GET(val value: String = "", val valid: Array<KClass<Validator>> = arrayOf())

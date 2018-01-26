@@ -13,19 +13,17 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.annotation
-
-import net.cloudopt.next.web.Validator
-
-import java.lang.annotation.*
-import kotlin.reflect.KClass
+package net.cloudopt.next.web
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Patch Annotation
+ * @Time: 2018/1/17
+ * @Description: Test Case
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-@Documented
-annotation class PATCH(val value: String = "", val valid: Array<KClass<Validator>> = arrayOf())
+fun main(args: Array<String>) {
+    CloudoptServer.run()
+}
+
+class TestCase {
+
+}

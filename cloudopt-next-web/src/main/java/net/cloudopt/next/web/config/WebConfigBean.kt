@@ -32,5 +32,6 @@ data class WebConfigBean(var banner: Boolean = true,
                          var jsonProvider:String = "net.cloudopt.next.web.json.VertxJSONProvider",
                          var maxAgeSeconds:Int = 0,
                          var indexPage:String = "index.html",
-                         var cookieCors:Boolean = false
+                         var cookieCors:Boolean = false,
+                         var bodyLimit:Long = 50L * 1024 * 1024
                       )

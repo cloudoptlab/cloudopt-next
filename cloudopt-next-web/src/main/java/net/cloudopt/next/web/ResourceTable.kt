@@ -13,19 +13,15 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.annotation
+package net.cloudopt.next.web
 
-import net.cloudopt.next.web.Validator
-
-import java.lang.annotation.*
+import io.vertx.core.http.HttpMethod
 import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Patch Annotation
+ * @Time: 2018/1/18
+ * @Description: Resource Table
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-@Documented
-annotation class PATCH(val value: String = "", val valid: Array<KClass<Validator>> = arrayOf())
+
+data class ResourceTable(var url: String = "", var httpMethod: HttpMethod = HttpMethod.GET, var clazz: KClass<Resource> = Resource::class, var methodName: String = "")
