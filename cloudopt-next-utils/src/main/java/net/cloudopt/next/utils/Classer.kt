@@ -61,12 +61,12 @@ object Classer {
     val classLoader: ClassLoader
         get() {
             var classLoader: ClassLoader? = contextClassLoader
-            return classLoader?: Classer::class.java.classLoader
+            return classLoader ?: Classer::class.java.classLoader
         }
 
     //--------------------------------------------------------------------------------------------------- Private method start
     /**
-     * This is a file filter for filtering out unneeded files 
+     * This is a file filter for filtering out unneeded files
      * (leaving only Class files, directories, and Jars)
      */
     private val fileFilter = FileFilter { pathname -> isClass(pathname.name) || pathname.isDirectory || isJarFile(pathname) }
@@ -223,7 +223,7 @@ object Classer {
             //Jar file
             path = path.substring(0, index + JAR_FILE_EXT.length)    // Intercept the path to the jar
 
-            path = removePrefix(path, PATH_FILE_PRE) ?:""    // Used to remove the file prefix
+            path = removePrefix(path, PATH_FILE_PRE) ?: ""    // Used to remove the file prefix
 
             processJarFile(File(path), packageName, classFilter, classes)
         } else {
@@ -279,13 +279,13 @@ object Classer {
             classPath += File.separator
         }
         var path: String? = file.absolutePath
-        if (packageName?.isNotBlank()?:false) {
+        if (packageName?.isNotBlank() ?: false) {
             path = removePrefix(path, classPath)
         }
         val filePathWithDot = path!!.replace(File.separator, ".")
 
         var subIndex = -1
-        subIndex = filePathWithDot.indexOf(packageName?:"")
+        subIndex = filePathWithDot.indexOf(packageName ?: "")
         if (subIndex != -1) {
             val endIndex = filePathWithDot.lastIndexOf(CLASS_EXT)
 
@@ -332,8 +332,7 @@ object Classer {
                     classes.add(clazz)
                 }
             } catch (ex: Throwable) {
-                //				log.error(ex.getMessage(), ex);
-                //				Pass Load Error.
+                ex.printStackTrace()
             }
 
         }

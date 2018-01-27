@@ -13,18 +13,20 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.annotation
+package net.cloudopt.next.web.test
 
-import net.cloudopt.next.web.Interceptor
-
-import java.lang.annotation.*
+import net.cloudopt.next.web.CloudoptServer
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Clear Annotation
+ * @Time: 2018/1/17
+ * @Description: Test Case
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
-@Documented
-annotation class CLEAR
+fun main(args: Array<String>) {
+    CloudoptServer.run()
+}
+
+class TestCase {
+
+}

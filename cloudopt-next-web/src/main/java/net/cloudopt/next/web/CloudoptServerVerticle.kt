@@ -18,7 +18,6 @@ package net.cloudopt.next.web
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
-import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.CookieHandler
 import io.vertx.ext.web.handler.ResponseContentTypeHandler
@@ -26,11 +25,9 @@ import io.vertx.ext.web.handler.StaticHandler
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.web.annotation.*
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.handler.Handler
 import java.lang.reflect.InvocationTargetException
-import kotlin.reflect.KClass
 
 
 /*
@@ -63,7 +60,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         router.route().handler(BodyHandler.create().setBodyLimit(ConfigManager.webConfig.bodyLimit))
 
         //Register failure handler
-        logger.info("Registered failure handler：" + errorHandler::class.java.getName())
+        logger.info("[FAILURE HANDLER] Registered failure handler：" + errorHandler::class.java.getName())
 
         router.get().failureHandler { failureRoutingContext ->
             errorHandler.init(failureRoutingContext)
@@ -71,11 +68,12 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         //Register handlers
         CloudoptServer.handlers.forEach { handler ->
-            logger.info("Registered handler：" + handler::class.java.getName())
+            logger.info("[HANDLER] Registered handler：" + handler::class.java.getName())
             router.route("/*").blockingHandler { context ->
                 try {
                     handler.init(context)
                     handler.handle()
+                    handler.context?.next()
                 } catch (e: InstantiationException) {
                     e.printStackTrace()
                     context.response().end()
@@ -88,13 +86,13 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         //Register plugins
         CloudoptServer.plugins.forEach { plugin ->
-            logger.info("Registered plugin：" + plugin.javaClass.name)
+            logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
             plugin.start()
         }
 
         //Register exception routes
         ConfigManager.webConfig.exclusions.split(";").forEach { exclusion ->
-            logger.info("Registered exception routes：" + exclusion)
+            logger.info("[EXCEPTION ROUTES] Registered exception routes：" + exclusion)
             router.route(exclusion).blockingHandler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
                     .setIncludeHidden(false).setWebRoot(ConfigManager.webConfig.webroot))
         }
@@ -139,12 +137,12 @@ class CloudoptServerVerticle : AbstractVerticle() {
         //Register method
         CloudoptServer.controllers.forEach { resourceTable ->
 
-            var controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz::class.java)
+            var controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
 
             router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler({ context ->
                 try {
                     controllerObj.init(context)
-                    var m = resourceTable.clazz::class.java.getDeclaredMethod(resourceTable.methodName)
+                    var m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
                     m.invoke(controllerObj)
                 } catch (e: IllegalAccessException) {
                     e.printStackTrace()
@@ -158,7 +156,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 }
             })
 
-            logger.info("Registered Resource :" + resourceTable.methodName + " | "
+            logger.info("[RESOURCE] Registered Resource :" + resourceTable.methodName + " | "
                     + resourceTable.url)
         }
 

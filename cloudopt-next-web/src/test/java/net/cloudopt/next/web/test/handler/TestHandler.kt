@@ -13,19 +13,23 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.annotation
+package net.cloudopt.next.web.test.handler
 
-import net.cloudopt.next.web.Validator
+import net.cloudopt.next.web.handler.AutoHandler
+import net.cloudopt.next.web.handler.Handler
 
-import java.lang.annotation.*
-import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Patch Annotation
+ * @Time: 2018/1/26
+ * @Description: Test Handler
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-@Documented
-annotation class PATCH(val value: String = "", val valid: Array<KClass<Validator>> = arrayOf())
+@AutoHandler
+class TestHandler : Handler() {
+
+    override fun handle() {
+
+    }
+
+
+}

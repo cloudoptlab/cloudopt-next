@@ -25,17 +25,8 @@ import net.cloudopt.next.web.Resource
  */
 abstract class Handler : Resource() {
 
-    val errorStatusCode: Int
-        get() {
-            this.response?.statusCode = this.context?.statusCode()!!
-            return this.context?.statusCode()!!
-        }
-
     abstract fun handle()
 
-    operator fun next() {
-        context?.next()
-    }
 }
 
 

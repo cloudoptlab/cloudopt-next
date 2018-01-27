@@ -34,13 +34,16 @@ object ConfigManager {
 
     val YML = "application.yml"
 
+    @JvmStatic
     val vertxConfig:VertxConfigBean = init("vertx", VertxConfigBean::class.java) as VertxConfigBean
 
+    @JvmStatic
     val webConfig:WebConfigBean = init("web", WebConfigBean::class.java) as WebConfigBean
+
 
     val wafConfig:WafConfigBean = init("waf", WafConfigBean::class.java) as WafConfigBean
 
-    fun init(name: String, clazz: Class<*>): Any {
+    open fun init(name: String, clazz: Class<*>): Any {
 
         var map = Maper.toMap(Beaner.newInstance(clazz))
 

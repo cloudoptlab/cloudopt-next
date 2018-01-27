@@ -43,7 +43,6 @@ class ShowRouteHandler : Handler() {
             logger.info(
                     "--------------------------------------------------------------------------------")
         }
-        next()
     }
 
     companion object {

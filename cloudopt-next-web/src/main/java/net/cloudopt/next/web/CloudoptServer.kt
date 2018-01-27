@@ -24,7 +24,8 @@ import io.vertx.core.Verticle
 import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
-import net.cloudopt.next.web.annotation.*
+import net.cloudopt.next.logging.Colorer
+import net.cloudopt.next.web.route.*
 import net.cloudopt.next.web.handler.AutoHandler
 import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
@@ -93,6 +94,10 @@ object CloudoptServer {
         deploymentOptions.workerPoolSize = ConfigManager.vertxConfig.workerPoolSize
         deploymentOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
         deploymentOptions.setWorker(true)
+
+        //set log color
+        Colorer.enable = ConfigManager.webConfig.logColor
+
         //scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class.java)
                 .forEach { clazz ->
@@ -104,6 +109,7 @@ object CloudoptServer {
         } else {
             Yamler.getRootClassPath()
         }
+
         //scan custom handler
         Classer.scanPackageByAnnotation(packageName, true, AutoHandler::class.java)
                 .forEach { clazz ->
@@ -187,7 +193,7 @@ object CloudoptServer {
 
                 }
 
-                var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz as KClass<Resource>, method.name)
+                var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name)
 
                 controllers.add(resourceTable)
 
@@ -195,6 +201,21 @@ object CloudoptServer {
 
 
         }
+    }
+
+    fun run(clazz: Class<*>) {
+        ConfigManager.webConfig.packageName = clazz.`package`.name
+        run()
+    }
+
+    fun run(clazz: KClass<*>) {
+        ConfigManager.webConfig.packageName = clazz.java.`package`.name
+        run()
+    }
+
+    fun run(pageName: String) {
+        ConfigManager.webConfig.packageName = pageName
+        run()
     }
 
     fun run() {

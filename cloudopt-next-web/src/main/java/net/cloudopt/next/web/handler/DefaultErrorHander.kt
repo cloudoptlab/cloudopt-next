@@ -38,9 +38,16 @@ class DefaultErrorHander : Handler() {
     }
 
     fun restult(error: String, errorMessage: String): HashMap<String, String> {
-        var map = hashMapOf<String,String>()
+        var map = hashMapOf<String, String>()
         map.put("error", error)
         map.put("errorMessage", errorMessage)
         return map
     }
+
+
+    val errorStatusCode: Int
+        get() {
+            this.response?.statusCode = this.context?.statusCode()!!
+            return this.context?.statusCode()!!
+        }
 }

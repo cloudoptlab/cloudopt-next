@@ -31,6 +31,5 @@ class CorsHandler : Handler() {
             setHeader("Access-Control-Allow-Headers", "Content-Type")
             setHeader("Access-Control-Max-Age", "1800")
         }
-        next()
     }
 }

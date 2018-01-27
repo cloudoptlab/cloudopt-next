@@ -28,6 +28,5 @@ class CookieCorsHandler : Handler() {
         if(ConfigManager.webConfig.cookieCors){
             setHeader("Access-Control-Allow-Credentials", "true")
         }
-        next()
     }
 }

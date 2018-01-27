@@ -25,6 +25,8 @@ import org.fusesource.jansi.Ansi
 
 object Colorer {
 
+    @JvmStatic open var enable = true
+
     /**
      * Output black text
      * @param value Hope to output the text
@@ -104,7 +106,11 @@ object Colorer {
      * @return Handled text
      */
     private fun diy(color: String, value: String): String {
-        return Ansi.ansi().eraseScreen().render("@|$color $value|@").toString()
+        return if(enable){
+            Ansi.ansi().eraseScreen().render("@|$color $value|@").toString()
+        }else{
+            value
+        }
     }
 
 

@@ -33,5 +33,6 @@ data class WebConfigBean(var banner: Boolean = true,
                          var maxAgeSeconds:Int = 0,
                          var indexPage:String = "index.html",
                          var cookieCors:Boolean = false,
-                         var bodyLimit:Long = 50L * 1024 * 1024
+                         var bodyLimit:Long = 50L * 1024 * 1024,
+                         var logColor:Boolean = true
                       )

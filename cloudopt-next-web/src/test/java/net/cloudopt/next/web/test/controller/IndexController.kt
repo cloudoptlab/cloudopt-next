@@ -13,14 +13,24 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web
+package net.cloudopt.next.web.test.controller
 
-import io.vertx.core.http.HttpMethod
+import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.route.API
+import net.cloudopt.next.web.route.GET
+
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/18
- * @Description: Resource Table
+ * @Time: 2018/1/26
+ * @Description: Test Controller
  */
+@API("/")
+class IndexController: Resource() {
 
-data class ResourceTable(var url: String = "", var httpMethod: HttpMethod = HttpMethod.GET, var clazz: Class<Resource> = Resource::class.java, var methodName: String = "")
+    @GET
+    fun index(){
+        renderText(getParam<String>("name") as String)
+    }
+
+}

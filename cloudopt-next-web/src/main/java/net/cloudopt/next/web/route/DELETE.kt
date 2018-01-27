@@ -13,7 +13,7 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.annotation
+package net.cloudopt.next.web.route
 
 import net.cloudopt.next.web.Validator
 

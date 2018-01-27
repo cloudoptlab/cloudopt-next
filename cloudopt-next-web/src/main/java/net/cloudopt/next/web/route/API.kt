@@ -13,17 +13,19 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web
+package net.cloudopt.next.web.route
+
+import net.cloudopt.next.web.Interceptor
+
+import java.lang.annotation.*
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/17
- * @Description: Test Case
+ * @Time: 2018/1/10
+ * @Description: Api Annotation
  */
-fun main(args: Array<String>) {
-    CloudoptServer.run()
-}
-
-class TestCase {
-
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
+@Documented
+annotation class API(val value: String, val interceptor: Array<KClass<out Interceptor>> = arrayOf())
