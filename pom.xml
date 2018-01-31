@@ -68,6 +68,7 @@
         <dokka.version>0.9.15</dokka.version>
         <vertx.version>3.5.0</vertx.version>
         <netty.version>4.1.19.Final</netty.version>
+        <fastjson.version>1.2.45</fastjson.version>
     </properties>
 
     <dependencies>

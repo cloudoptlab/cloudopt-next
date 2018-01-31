@@ -13,23 +13,27 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.json
+package net.cloudopt.next.web.test.plugin
 
-import io.vertx.core.json.Json
+import net.cloudopt.next.web.Plugin
+
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: Vertx JsonProvider Provider
+ * @Time: 2018/1/17
+ * @Description: Test Case
  */
-class VertxJSONProvider: JsonProvider {
+class TestPlugin:Plugin{
 
-    override fun toJsonString(obj: Any):String {
-        return Json.encode(obj)
+    override fun start(): Boolean {
+        println("TestPlugin is starting!")
+        return true
     }
 
-    override fun toJsonObject(s: String, clazz: Class<Any>): Any {
-       return Json.decodeValue(s,clazz)
+    override fun stop(): Boolean {
+        println("TestPlugin is stopping!")
+        return true
     }
 
 }
+    

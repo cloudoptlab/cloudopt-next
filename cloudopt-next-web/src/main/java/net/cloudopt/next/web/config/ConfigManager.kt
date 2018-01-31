@@ -30,20 +30,17 @@ object ConfigManager {
 
     val DEVYML = "application-dev.yml"
 
-    val PROYML = "application-dev.yml"
+    val PROYML = "application-pro.yml"
 
     val YML = "application.yml"
 
-    @JvmStatic
-    val vertxConfig:VertxConfigBean = init("vertx", VertxConfigBean::class.java) as VertxConfigBean
+    @JvmStatic val vertxConfig:VertxConfigBean = init("vertx", VertxConfigBean::class.java) as VertxConfigBean
 
-    @JvmStatic
-    val webConfig:WebConfigBean = init("web", WebConfigBean::class.java) as WebConfigBean
+    @JvmStatic val webConfig:WebConfigBean = init("web", WebConfigBean::class.java) as WebConfigBean
 
+    @JvmStatic val wafConfig:WafConfigBean = init("waf", WafConfigBean::class.java) as WafConfigBean
 
-    val wafConfig:WafConfigBean = init("waf", WafConfigBean::class.java) as WafConfigBean
-
-    open fun init(name: String, clazz: Class<*>): Any {
+    @JvmStatic open fun init(name: String, clazz: Class<*>): Any {
 
         var map = Maper.toMap(Beaner.newInstance(clazz))
 

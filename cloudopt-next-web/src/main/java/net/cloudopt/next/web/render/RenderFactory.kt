@@ -29,6 +29,7 @@ object RenderFactory {
     val HBS = "hbs"
     val BEETL = "beetl"
     val FREE = "freemarker"
+    val HTML = "html"
 
     private var defaultRender = JSON
 
@@ -39,6 +40,7 @@ object RenderFactory {
             put(HBS, HbsRender())
             put(BEETL, BeetlRender())
             put(FREE,FreemarkerRender())
+            put(HTML,HtmlRender())
         }
     }
 

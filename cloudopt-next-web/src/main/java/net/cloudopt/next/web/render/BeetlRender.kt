@@ -17,6 +17,7 @@ package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.web.config.ConfigManager
 import org.beetl.core.Configuration
 import org.beetl.core.GroupTemplate
 import org.beetl.core.resource.ClasspathResourceLoader
@@ -28,15 +29,22 @@ import org.beetl.core.resource.ClasspathResourceLoader
  */
 class BeetlRender : Render {
 
+    companion object {
+        @JvmStatic open var config: Configuration = Configuration.defaultConfiguration()
+    }
+
+
     override fun render(response: HttpServerResponse, obj: Any) {
 
         var view:View = obj as View
 
-        var resourceLoader = ClasspathResourceLoader()
+        if(view.view.indexOf(".") < 0){
+            view.view = view.view + ".btl"
+        }
 
-        var cfg: Configuration = Configuration.defaultConfiguration()
+        var resourceLoader = ClasspathResourceLoader(ConfigManager.webConfig.webroot + "/")
 
-        var gt = GroupTemplate(resourceLoader, cfg)
+        var gt = GroupTemplate(resourceLoader, config)
 
         var t = gt.getTemplate(view.view)
 

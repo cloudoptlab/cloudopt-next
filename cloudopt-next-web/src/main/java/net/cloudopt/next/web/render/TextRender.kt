@@ -13,21 +13,27 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.render;
+package net.cloudopt.next.web.render
 
-import io.vertx.core.http.HttpHeaders;
-import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.http.HttpHeaders
+import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.yaml.Yamler
+
+import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.FileReader
+import java.io.IOException
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/9
  * @Description: Text Render
  */
-public class TextRender implements Render {
+class TextRender : Render {
 
-    @Override
-    public void render(HttpServerResponse response, Object result) {
-        response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8");
-        response.end(String.valueOf(result));
+    override fun render(response: HttpServerResponse, result: Any) {
+        response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+        response.end(result.toString())
     }
 }

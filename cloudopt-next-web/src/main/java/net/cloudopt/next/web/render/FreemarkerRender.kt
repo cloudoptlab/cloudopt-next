@@ -19,6 +19,8 @@ import freemarker.template.Configuration
 import io.vertx.core.http.HttpServerResponse
 import freemarker.template.TemplateExceptionHandler
 import io.vertx.core.http.HttpHeaders
+import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.yaml.Yamler
 import java.io.File
 import java.io.StringWriter
 
@@ -29,33 +31,57 @@ import java.io.StringWriter
  */
 class FreemarkerRender : Render {
 
-    val cfg:Configuration = Configuration(Configuration.VERSION_2_3_27)
+    companion object {
+
+        @JvmStatic open val config: Configuration = Configuration(Configuration.VERSION_2_3_27)
+
+        @JvmStatic open var contentType = "text/html;charset=utf-8"
+
+    }
 
     init {
 
-        cfg.setDirectoryForTemplateLoading(File("/"))
+        if (Class.forName("freemarker.template.Configuration") != null) {
 
-        cfg.setDefaultEncoding("UTF-8")
+            config.defaultEncoding = "UTF-8"
 
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER)
+            config.templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
 
-        cfg.setLogTemplateExceptions(false)
+            config.logTemplateExceptions = false
+
+            config.numberFormat = "#0.#####"
+
+            config.dateFormat = "yyyy-MM-dd"
+
+            config.timeFormat = "HH:mm:ss"
+
+            config.dateTimeFormat = "yyyy-MM-dd HH:mm:ss"
+
+            config.setDirectoryForTemplateLoading(File(Yamler.getRootClassPath() + "/" + ConfigManager.webConfig.webroot + "/"))
+
+        }
+
 
     }
 
     override fun render(response: HttpServerResponse, obj: Any) {
 
-        var view:View = obj as View
+        var view: View = obj as View
 
-        var temp = cfg.getTemplate(view.view)
+        if(view.view.indexOf(".") < 0){
+            view.view = view.view + ".ftl"
+        }
+
+        var temp = config.getTemplate(view.view)
 
         var writer = StringWriter()
 
         temp.process(view.parameters, writer);
 
-        response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+        response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
 
         response.end(writer.toString())
     }
 
 }
+

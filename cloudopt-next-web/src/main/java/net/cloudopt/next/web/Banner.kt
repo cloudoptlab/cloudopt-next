@@ -20,6 +20,8 @@ import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.yaml.Yamler
 import java.io.File
 import java.util.*
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 
 /*
@@ -50,7 +52,7 @@ object Banner {
             text = text.replace("\${java.version}", System.getProperty("java.version"))
             text = text.replace("\${java.vendor}", System.getProperty("java.vendor"))
             text = text.replace("\${os}", System.getProperty("os.name"))
-            text = text.replace("\${time}", Date().toString())
+            text = text.replace("\${time}", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
             logger.info(text)
         }
 

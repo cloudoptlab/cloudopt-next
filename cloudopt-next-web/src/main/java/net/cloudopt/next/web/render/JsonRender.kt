@@ -22,7 +22,6 @@ import net.cloudopt.next.aop.Classer
 import net.cloudopt.next.web.config.WebConfigBean
 import net.cloudopt.next.web.json.JsonProvider
 import net.cloudopt.next.web.json.Jsoner
-import net.cloudopt.next.web.json.VertxJSONProvider
 
 /*
  * @author: Cloudopt

@@ -16,6 +16,11 @@
 package net.cloudopt.next.web.test
 
 import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.web.render.FreemarkerRender
+import net.cloudopt.next.web.test.plugin.TestPlugin
+import net.cloudopt.next.yaml.Yamler
+import java.io.File
 import kotlin.reflect.KClass
 
 /*
@@ -24,7 +29,8 @@ import kotlin.reflect.KClass
  * @Description: Test Case
  */
 fun main(args: Array<String>) {
-    CloudoptServer.run()
+    CloudoptServer.addPlugin(TestPlugin())
+    CloudoptServer.run(TestCase::class.java)
 }
 
 class TestCase {

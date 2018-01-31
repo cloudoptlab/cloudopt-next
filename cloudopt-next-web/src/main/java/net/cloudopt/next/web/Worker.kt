@@ -31,7 +31,7 @@ object Worker {
      * Init Worker
      * @param v Vertx Object
      */
-    fun init(v: Vertx) {
+    @JvmStatic fun init(v: Vertx) {
         vertx = v
     }
 
@@ -43,7 +43,7 @@ object Worker {
      * @param handler Do something..
      * @param queueResult After the completion of the callback
      */
-    fun then(handler: Handler<Future<Any>>,
+    @JvmStatic fun then(handler: Handler<Future<Any>>,
              queueResult: Handler<AsyncResult<Any>>) {
         vertx!!.executeBlocking(handler, queueResult)
     }
@@ -56,7 +56,7 @@ object Worker {
      * the function.
      * @param queueResult After the completion of the callback
      */
-    fun worker(handler: Handler<Future<Any>>,
+    @JvmStatic fun worker(handler: Handler<Future<Any>>,
                queueResult: Handler<AsyncResult<Any>>) {
         vertx!!.executeBlocking(handler,false, queueResult)
     }

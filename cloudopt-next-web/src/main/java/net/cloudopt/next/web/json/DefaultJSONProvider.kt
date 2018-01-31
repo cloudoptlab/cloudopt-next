@@ -15,40 +15,33 @@
  */
 package net.cloudopt.next.web.json
 
-import io.vertx.core.json.Json
-import net.cloudopt.next.aop.Beaner
-import net.cloudopt.next.aop.Classer
-import net.cloudopt.next.web.config.ConfigManager
-
+import com.alibaba.fastjson.JSON
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/9
- * @Description: JsonProvider Interface
+ * @Description: Default JsonProvider
  */
-
-object Jsoner:JsonProvider{
-
-    @JvmStatic private val jsonProvider:JsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.webConfig.jsonProvider))
+class DefaultJSONProvider: JsonProvider {
 
     override fun toJsonString(obj: Any):String {
-        return jsonProvider.toJsonString(obj)
-    }
-
-    override fun toJsonObject(s: String, clazz: Class<*>): Any {
-        return jsonProvider.toJsonObject(s,clazz)
+        return JSON.toJSONString(obj)
     }
 
     override fun toJsonObject(s: String): Any {
-        return jsonProvider.toJsonObject(s)
+        return JSON.parseObject(s)
+    }
+
+    override fun toJsonObject(s: String, clazz: Class<*>): Any {
+       return JSON.parseObject(s,clazz)
     }
 
     override fun toJsonArray(s: String): Any {
-        return jsonProvider.toJsonArray(s)
+        return JSON.parseArray(s)
     }
 
     override fun toJsonArray(s: String, clazz: Class<*>): Any {
-        return jsonProvider.toJsonArray(s,clazz)
+        return JSON.parseArray(s,clazz)
     }
 
 }

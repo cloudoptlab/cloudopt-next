@@ -34,9 +34,32 @@ interface JsonProvider {
     /**
      * Output json object.
      * @param s Json string
+     * @return Json object
+     */
+    fun toJsonObject(s:String):Any
+
+    /**
+     * Output json object.
+     * @param s Json string
      * @param clazz Java class
      * @return Json object
      */
-    fun toJsonObject(s:String,clazz:Class<Any>):Any
+    fun toJsonObject(s:String,clazz:Class<*>):Any
+
+    /**
+     * Output json array.
+     * @param s Json string
+     * @param clazz Java class
+     * @return Json array
+     */
+    fun toJsonArray(s:String):Any
+
+    /**
+     * Output json array.
+     * @param s Json string
+     * @param clazz Java class
+     * @return Json array
+     */
+    fun toJsonArray(s:String,clazz:Class<*>):Any
 
 }

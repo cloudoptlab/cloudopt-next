@@ -41,38 +41,31 @@ import kotlin.reflect.KClass
 
 object CloudoptServer {
 
-    open var verticleID = "net.cloudopt.next.web"
+    @JvmStatic open var verticleID = "net.cloudopt.next.web"
 
     private val logger = Logger.getLogger(CloudoptServer.javaClass)
 
-    @JvmStatic
-    open val resources: MutableList<Class<Resource>> = arrayListOf()
+    @JvmStatic open val resources: MutableList<Class<Resource>> = arrayListOf()
 
-    @JvmStatic
-    open val handlers = arrayListOf<Handler>()
+    @JvmStatic open val handlers = arrayListOf<Handler>()
 
-    @JvmStatic
-    open val plugins = arrayListOf<Plugin>()
+    @JvmStatic open val plugins = arrayListOf<Plugin>()
 
-    @JvmStatic
-    open val interceptors = mutableMapOf<String, Interceptor>()
+    @JvmStatic open val interceptors = mutableMapOf<String, Interceptor>()
 
-    @JvmStatic
-    open val validators = mutableMapOf<String, MutableMap<HttpMethod, Class<Validator>>>()
+    @JvmStatic open val validators = mutableMapOf<String, MutableMap<HttpMethod, Class<Validator>>>()
 
-    @JvmStatic
-    open val controllers = arrayListOf<ResourceTable>()
+    @JvmStatic open val controllers = arrayListOf<ResourceTable>()
 
-    open var vertxOptions = VertxOptions()
+    @JvmStatic open val vertxOptions = VertxOptions()
 
-    @JvmStatic
-    open var vertx: Vertx = Vertx.vertx()
+    @JvmStatic open var vertx: Vertx = Vertx.vertx()
 
-    var verticle: Verticle = CloudoptServerVerticle()
+    @JvmStatic var verticle: Verticle = CloudoptServerVerticle()
 
-    open var deploymentOptions = DeploymentOptions()
+    @JvmStatic open val deploymentOptions = DeploymentOptions()
 
-    init {
+    fun init() {
         vertxOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
         vertxOptions.setFileResolverCachingEnabled(ConfigManager.vertxConfig.fileCaching)
         vertxOptions.workerPoolSize = ConfigManager.vertxConfig.workerPoolSize
@@ -203,37 +196,55 @@ object CloudoptServer {
         }
     }
 
-    fun run(clazz: Class<*>) {
+    @JvmStatic fun run(clazz: Class<*>) {
         ConfigManager.webConfig.packageName = clazz.`package`.name
         run()
     }
 
-    fun run(clazz: KClass<*>) {
+    @JvmStatic fun run(clazz: KClass<*>) {
         ConfigManager.webConfig.packageName = clazz.java.`package`.name
         run()
     }
 
-    fun run(pageName: String) {
+    @JvmStatic fun run(pageName: String) {
         ConfigManager.webConfig.packageName = pageName
         run()
     }
 
-    fun run() {
+    @JvmStatic fun run() {
+        init()
         // init vertx
         vertx = Vertx.vertx(vertxOptions)
         vertx.deployVerticle("net.cloudopt.next.web.CloudoptServerVerticle", deploymentOptions)
     }
 
-    fun stop() {
+    @JvmStatic fun stop() {
+        init()
         vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
         vertx.close()
     }
 
-    fun addRender(extension: String, render: Render) {
+    @JvmStatic fun addRender(extension: String, render: Render): CloudoptServer {
+        init()
         RenderFactory.add(extension, render)
+        return this
     }
 
-    fun setDefaultRender(name: String) {
+    @JvmStatic fun setDefaultRender(name: String): CloudoptServer {
+        init()
         RenderFactory.setDefaultRender(name)
+        return this
     }
+
+    @JvmStatic fun addPlugin(plugin: Plugin): CloudoptServer {
+        plugins.add(plugin)
+        return this
+    }
+
+    @JvmStatic fun addHandler(handler: Handler):CloudoptServer{
+        handlers.add(handler)
+        return this
+    }
+
+
 }

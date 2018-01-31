@@ -18,15 +18,14 @@ package net.cloudopt.next.web
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
-import io.vertx.ext.web.handler.BodyHandler
-import io.vertx.ext.web.handler.CookieHandler
-import io.vertx.ext.web.handler.ResponseContentTypeHandler
-import io.vertx.ext.web.handler.StaticHandler
+import io.vertx.ext.web.handler.*
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.handler.Handler
+import net.cloudopt.next.yaml.Yamler
+import java.io.File
 import java.lang.reflect.InvocationTargetException
 
 
@@ -59,6 +58,14 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         router.route().handler(BodyHandler.create().setBodyLimit(ConfigManager.webConfig.bodyLimit))
 
+        //Set timeout
+        router.route("/*").handler(TimeoutHandler.create(ConfigManager.webConfig.timeout))
+
+        //Set Csrf
+        if(ConfigManager.wafConfig.csrf){
+            router.route("/*").handler(CSRFHandler.create("cloudopt-next"))
+        }
+
         //Register failure handler
         logger.info("[FAILURE HANDLER] Registered failure handler：" + errorHandler::class.java.getName())
 
@@ -86,15 +93,23 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         //Register plugins
         CloudoptServer.plugins.forEach { plugin ->
-            logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
-            plugin.start()
+            if (plugin.start()) {
+                logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
+            } else {
+                logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
+            }
         }
+
+        router.route("/" + ConfigManager.webConfig.staticPackage + "/*").blockingHandler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
+                .setIncludeHidden(false).setWebRoot("static"))
 
         //Register exception routes
         ConfigManager.webConfig.exclusions.split(";").forEach { exclusion ->
-            logger.info("[EXCEPTION ROUTES] Registered exception routes：" + exclusion)
-            router.route(exclusion).blockingHandler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
-                    .setIncludeHidden(false).setWebRoot(ConfigManager.webConfig.webroot))
+            if (exclusion.isNotBlank()) {
+                logger.info("[EXCEPTION ROUTES] Registered exception routes：" + exclusion)
+                router.route(exclusion).blockingHandler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
+                        .setIncludeHidden(false).setWebRoot(ConfigManager.webConfig.webroot))
+            }
         }
 
         //Register interceptors
@@ -160,7 +175,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                     + resourceTable.url)
         }
 
-        if (CloudoptServer.controllers.size == 0){
+        if (CloudoptServer.controllers.size == 0) {
             router.route(HttpMethod.GET, "/*").blockingHandler({ context ->
                 var resource = Resource()
                 resource.init(context)
@@ -168,28 +183,33 @@ class CloudoptServerVerticle : AbstractVerticle() {
             })
         }
 
-            server.requestHandler({ router.accept(it) }).listen(ConfigManager.webConfig.port) { result ->
-                if (result.succeeded()) {
-                    logger.info(
-                            "==========================================================================================================")
-                    logger.info("Cloudopt Next started is success!")
-                    logger.info(
-                            "==========================================================================================================")
+        server.requestHandler({ router.accept(it) }).listen(ConfigManager.webConfig.port) { result ->
+            if (result.succeeded()) {
+                logger.info(
+                        "==========================================================================================================")
+                logger.info("Cloudopt Next started is success!")
+                logger.info(
+                        "==========================================================================================================")
 
-                } else {
-                    logger.error(
-                            "==========================================================================================================")
-                    logger.error("Cloudopt Next started is error! " + result.cause())
-                    logger.error(
-                            "==========================================================================================================")
-                }
+            } else {
+                logger.error(
+                        "==========================================================================================================")
+                logger.error("Cloudopt Next started is error! " + result.cause())
+                logger.error(
+                        "==========================================================================================================")
             }
+        }
 
 
     }
 
     override fun stop() {
-
+        //Stop plugins
+        CloudoptServer.plugins.forEach { plugin ->
+            if (!plugin.stop()) {
+                logger.info("[PLUGIN] Stoped plugin was error：" + plugin.javaClass.name)
+            }
+        }
     }
 
 }

@@ -19,6 +19,7 @@ import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.web.config.ConfigManager
 
 import java.io.IOException
 
@@ -31,7 +32,7 @@ class HbsRender : Render {
 
     override fun render(response: HttpServerResponse, obj: Any) {
 
-        var view:View = obj as View
+        var view: View = obj as View
 
         val handlebars = Handlebars()
 
@@ -40,7 +41,7 @@ class HbsRender : Render {
         var html = ""
 
         try {
-            template = handlebars.compile(view.view)
+            template = handlebars.compile(ConfigManager.webConfig.webroot + "/" + view.view)
             html = template!!.apply(view.parameters)
         } catch (e: IOException) {
             e.printStackTrace()

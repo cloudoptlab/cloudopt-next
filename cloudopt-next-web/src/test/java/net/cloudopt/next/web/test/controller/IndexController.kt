@@ -16,8 +16,10 @@
 package net.cloudopt.next.web.test.controller
 
 import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.API
 import net.cloudopt.next.web.route.GET
+import net.cloudopt.next.web.route.POST
 
 
 /*
@@ -26,11 +28,55 @@ import net.cloudopt.next.web.route.GET
  * @Description: Test Controller
  */
 @API("/")
-class IndexController: Resource() {
+class IndexController : Resource() {
 
     @GET
-    fun index(){
-        renderText(getParam<String>("name") as String)
+    fun index() {
+        var name = getParam<String>("name") ?: ""
+        renderText(name)
     }
 
+    @GET("html")
+    fun html() {
+        var view = View()
+        view.view = "index"
+        renderHtml(view)
+    }
+
+    @GET("free")
+    fun free() {
+        var view = View()
+        view.view = "index"
+        view.parameters.put("name","free")
+        renderFree(view)
+    }
+
+    @GET("hbs")
+    fun hbs() {
+        var view = View()
+        view.view = "index"
+        view.parameters.put("name","hbs")
+        renderHbs(view)
+    }
+
+    @GET("json")
+    fun json() {
+        var map = hashMapOf<String,Any>()
+        map.put("a",1)
+        map.put("b",2)
+        renderJson(map)
+    }
+
+    @GET("beetl")
+    fun beetl() {
+        var view = View()
+        view.view = "index"
+        view.parameters.put("name","beetl")
+        renderBeetl(view)
+    }
+
+    @POST("csrf")
+    fun csrf(){
+        renderJson("Hi")
+    }
 }

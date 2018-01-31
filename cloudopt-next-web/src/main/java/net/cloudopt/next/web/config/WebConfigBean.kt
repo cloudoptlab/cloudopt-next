@@ -22,17 +22,19 @@ package net.cloudopt.next.web.config
  */
 data class WebConfigBean(var banner: Boolean = true,
                          var dev: Boolean = true,
-                         var showRoute:Boolean = true,
-                         var cors:Boolean = true,
-                         var packageName:String = "",
-                         var port:Int = 8080,
-                         var exclusions:String = "/static/*",
-                         var webroot:String = "webroot",
-                         var errorHandler:String = "net.cloudopt.next.web.handler.DefaultErrorHander",
-                         var jsonProvider:String = "net.cloudopt.next.web.json.VertxJSONProvider",
-                         var maxAgeSeconds:Int = 0,
-                         var indexPage:String = "index.html",
-                         var cookieCors:Boolean = false,
-                         var bodyLimit:Long = 50L * 1024 * 1024,
-                         var logColor:Boolean = true
-                      )
+                         var showRoute: Boolean = true,
+                         var cors: Boolean = true,
+                         var packageName: String = "",
+                         var port: Int = 8080,
+                         var staticPackage: String = "static",
+                         var exclusions: String = "",
+                         var webroot: String = "templates",
+                         var errorHandler: String = "net.cloudopt.next.web.handler.DefaultErrorHander",
+                         var jsonProvider: String = "net.cloudopt.next.web.json.DefaultJSONProvider",
+                         var maxAgeSeconds: Int = 0,
+                         var indexPage: String = "index.html",
+                         var cookieCors: Boolean = false,
+                         var bodyLimit: Long = 50L * 1024 * 1024,
+                         var logColor: Boolean = true,
+                         var timeout:Long = 2L * 60 * 1000
+)

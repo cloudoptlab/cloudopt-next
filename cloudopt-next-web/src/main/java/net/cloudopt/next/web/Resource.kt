@@ -15,11 +15,14 @@
  */
 package net.cloudopt.next.web
 
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
+import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Cookie
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.RedirectAuthHandler
+import net.cloudopt.next.web.json.Jsoner
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View
 
@@ -158,6 +161,10 @@ open class Resource {
         render(RenderFactory.TEXT, result)
     }
 
+    fun renderHtml(view: View) {
+        render(RenderFactory.HTML, view)
+    }
+
     fun renderHbs(view: View) {
         render(RenderFactory.HBS, view)
     }
@@ -185,6 +192,30 @@ open class Resource {
 
     fun fail(code: Int) {
         context?.fail(code)
+    }
+
+    fun getBody(): Buffer? {
+        return context?.body
+    }
+
+    fun getBodyString(): String {
+        return context?.bodyAsString!!
+    }
+
+    fun getBodyJson(): Any? {
+        return Jsoner.toJsonObject(Jsoner.toJsonString(context?.bodyAsJson!!))
+    }
+
+    fun getBodyJson(clazz: Class<*>): Any? {
+        return Jsoner.toJsonObject(Jsoner.toJsonString(context?.bodyAsJson!!), clazz)
+    }
+
+    fun getBodyJsonArray(): Any? {
+        return Jsoner.toJsonArray(Jsoner.toJsonString(context?.bodyAsJson!!))
+    }
+
+    fun getBodyJsonArray(clazz: Class<*>): Any? {
+        return Jsoner.toJsonArray(Jsoner.toJsonString(context?.bodyAsJson!!), clazz)
     }
 
 }

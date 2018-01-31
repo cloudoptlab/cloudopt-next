@@ -22,4 +22,4 @@ import java.util.HashMap
  * @Time: 2018/1/9
  * @Description: View Object
  */
-data class View(var parameters:Map<String,Any> = mapOf(),var view:String = "")
+data class View(var parameters:HashMap<String,Any> = hashMapOf<String,Any>(), var view:String = "")
