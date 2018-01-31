@@ -36,5 +36,6 @@ data class VertxConfigBean(var cpuCoreNumber:Int = Runtime.getRuntime().availabl
                            var hAEnabled:Boolean = false,
                            var hAGroup:String = "DEFAULT",
                            var quorumSize:Int = 1,
-                           var warningExceptionTime:Long = 5L * 1000 * 1000000
+                           var warningExceptionTime:Long = 5L * 1000 * 1000000,
+                           var addressResolver:String = ""
                            )

@@ -21,6 +21,7 @@ import io.vertx.core.VertxOptions
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
 import io.vertx.core.Verticle
+import io.vertx.core.dns.AddressResolverOptions
 import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
@@ -87,6 +88,15 @@ object CloudoptServer {
         deploymentOptions.workerPoolSize = ConfigManager.vertxConfig.workerPoolSize
         deploymentOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
         deploymentOptions.setWorker(true)
+
+        //set dns
+        var addressResolver = AddressResolverOptions()
+        ConfigManager.vertxConfig.addressResolver.split(",").forEach { address ->
+            if (address.isNotBlank()) {
+                addressResolver.addServer(address)
+            }
+        }
+        vertxOptions.setAddressResolverOptions(addressResolver)
 
         //set log color
         Colorer.enable = ConfigManager.webConfig.logColor
@@ -196,52 +206,61 @@ object CloudoptServer {
         }
     }
 
-    @JvmStatic fun run(clazz: Class<*>) {
+    @JvmStatic
+    fun run(clazz: Class<*>) {
         ConfigManager.webConfig.packageName = clazz.`package`.name
         run()
     }
 
-    @JvmStatic fun run(clazz: KClass<*>) {
+    @JvmStatic
+    fun run(clazz: KClass<*>) {
         ConfigManager.webConfig.packageName = clazz.java.`package`.name
         run()
     }
 
-    @JvmStatic fun run(pageName: String) {
+    @JvmStatic
+    fun run(pageName: String) {
         ConfigManager.webConfig.packageName = pageName
         run()
     }
 
-    @JvmStatic fun run() {
+    @JvmStatic
+    fun run() {
         init()
         // init vertx
         vertx = Vertx.vertx(vertxOptions)
         vertx.deployVerticle("net.cloudopt.next.web.CloudoptServerVerticle", deploymentOptions)
     }
 
-    @JvmStatic fun stop() {
+    @JvmStatic
+    fun stop() {
         init()
         vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
         vertx.close()
     }
 
-    @JvmStatic fun addRender(extension: String, render: Render): CloudoptServer {
+    @JvmStatic
+    fun addRender(extension: String, render: Render): CloudoptServer {
         init()
         RenderFactory.add(extension, render)
         return this
     }
 
-    @JvmStatic fun setDefaultRender(name: String): CloudoptServer {
+    @JvmStatic
+    fun setDefaultRender(name: String): CloudoptServer {
         init()
         RenderFactory.setDefaultRender(name)
         return this
     }
 
-    @JvmStatic fun addPlugin(plugin: Plugin): CloudoptServer {
+    @JvmStatic
+    fun addPlugin(plugin: Plugin): CloudoptServer {
         plugins.add(plugin)
         return this
     }
 
-    @JvmStatic fun addHandler(handler: Handler):CloudoptServer{
+    @JvmStatic
+    fun addHandler(handler: Handler): CloudoptServer {
         handlers.add(handler)
         return this
     }
