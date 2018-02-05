@@ -22,6 +22,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Cookie
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.RedirectAuthHandler
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.json.Jsoner
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View

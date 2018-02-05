@@ -16,6 +16,7 @@
 package net.cloudopt.next.web.test.controller
 
 import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.API
 import net.cloudopt.next.web.route.GET
@@ -75,8 +76,9 @@ class IndexController : Resource() {
         renderBeetl(view)
     }
 
-    @POST("csrf")
-    fun csrf(){
-        renderJson("Hi")
+    @GET("event")
+    fun event(){
+        EventManager.send("net.cloudopt.web.test","This is test message!")
+        renderJson("Send Event!")
     }
 }

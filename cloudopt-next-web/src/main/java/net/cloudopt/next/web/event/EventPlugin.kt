@@ -13,28 +13,32 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.test
+package net.cloudopt.next.web.event
 
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.CloudoptServer
-import net.cloudopt.next.web.config.ConfigManager
-import net.cloudopt.next.web.event.EventPlugin
-import net.cloudopt.next.web.render.FreemarkerRender
-import net.cloudopt.next.web.test.plugin.TestPlugin
-import net.cloudopt.next.yaml.Yamler
-import java.io.File
-import kotlin.reflect.KClass
+import net.cloudopt.next.web.Plugin
+
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/17
- * @Description: Test Case
+ * @Time: 2018/2/5
+ * @Description: A plugin for event management.
  */
-fun main(args: Array<String>) {
-    CloudoptServer.addPlugin(TestPlugin())
-    CloudoptServer.addPlugin(EventPlugin())
-    CloudoptServer.run(TestCase::class.java)
-}
+class EventPlugin :Plugin{
 
-class TestCase {
+    override fun start(): Boolean {
+        EventManager.init(CloudoptServer.vertx)
+        return true
+    }
+
+    override fun stop(): Boolean {
+        EventManager.eventBus?.close{result->
+            if (result.failed()){
+                println(result.cause())
+            }
+        }
+        return true
+    }
 
 }

@@ -13,16 +13,21 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.handler
+package net.cloudopt.next.web.test.event
 
-import java.lang.annotation.*
+import io.vertx.core.eventbus.Message
+import net.cloudopt.next.web.event.AutoEvent
+import net.cloudopt.next.web.event.EventListener
+
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Used to register the handler automatically
+ * @Time: 2018/2/5
+ * @Description: Test Case
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
-@Documented
-annotation class AutoHandler
+@AutoEvent("net.cloudopt.web.test")
+class TestEventListener:EventListener {
+    override fun listener(message: Message<Any>) {
+        print(message.body())
+    }
+}

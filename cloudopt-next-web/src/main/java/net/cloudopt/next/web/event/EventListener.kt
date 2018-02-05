@@ -13,16 +13,18 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.handler
+package net.cloudopt.next.web.event
 
-import java.lang.annotation.*
+import io.vertx.core.eventbus.Message
+
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Used to register the handler automatically
+ * @Time: 2018/2/5
+ * @Description: Used to automatically register listeners to the event bus of vertx.
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
-@Documented
-annotation class AutoHandler
+interface EventListener {
+
+    fun listener(message: Message<Any>)
+
+}

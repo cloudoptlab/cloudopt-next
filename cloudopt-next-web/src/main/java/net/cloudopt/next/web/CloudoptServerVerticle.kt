@@ -76,7 +76,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         //Register handlers
         CloudoptServer.handlers.forEach { handler ->
             logger.info("[HANDLER] Registered handler：" + handler::class.java.getName())
-            router.route("/*").blockingHandler { context ->
+            router.route("/*").handler { context ->
                 try {
                     handler.init(context)
                     handler.handle()
@@ -100,21 +100,22 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        router.route("/" + ConfigManager.webConfig.staticPackage + "/*").blockingHandler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
+        router.route("/" + ConfigManager.webConfig.staticPackage + "/*").handler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
                 .setIncludeHidden(false).setWebRoot("static"))
 
         //Register exception routes
         ConfigManager.webConfig.exclusions.split(";").forEach { exclusion ->
             if (exclusion.isNotBlank()) {
                 logger.info("[EXCEPTION ROUTES] Registered exception routes：" + exclusion)
-                router.route(exclusion).blockingHandler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
+                router.route(exclusion).handler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
                         .setIncludeHidden(false).setWebRoot(ConfigManager.webConfig.webroot))
             }
         }
 
         //Register interceptors
         CloudoptServer.interceptors.forEach { url, interceptor ->
-            router.route(url).blockingHandler { context ->
+            logger.info("[INTERCEPTOR] Registered interceptor：" + interceptor.javaClass.name)
+            router.route(url).handler { context ->
                 val resource = Resource()
                 resource.init(context)
                 if (interceptor.intercept(resource)) {
@@ -128,7 +129,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         //Register validators
         CloudoptServer.validators.forEach { url, map ->
             map.keys.forEach { key ->
-                router.route(key, url).blockingHandler { context ->
+                router.route(key, url).handler { context ->
                     try {
                         var v = Beaner.newInstance<Validator>(map.get(key)!!)
                         var resource = Resource()
@@ -154,7 +155,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
             var controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
 
-            router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler({ context ->
+            router.route(resourceTable.httpMethod, resourceTable.url).handler({ context ->
                 try {
                     controllerObj.init(context)
                     var m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
@@ -176,7 +177,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
 
         if (CloudoptServer.controllers.size == 0) {
-            router.route(HttpMethod.GET, "/*").blockingHandler({ context ->
+            router.route(HttpMethod.GET, "/*").handler({ context ->
                 var resource = Resource()
                 resource.init(context)
                 resource.renderText("A first cloudopt next application!")

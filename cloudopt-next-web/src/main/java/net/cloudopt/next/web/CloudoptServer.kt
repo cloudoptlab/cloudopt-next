@@ -42,29 +42,43 @@ import kotlin.reflect.KClass
 
 object CloudoptServer {
 
-    @JvmStatic open var verticleID = "net.cloudopt.next.web"
+    @JvmStatic
+    open var verticleID = "net.cloudopt.next.web"
 
     private val logger = Logger.getLogger(CloudoptServer.javaClass)
 
-    @JvmStatic open val resources: MutableList<Class<Resource>> = arrayListOf()
+    @JvmStatic
+    open val resources: MutableList<Class<Resource>> = arrayListOf()
 
-    @JvmStatic open val handlers = arrayListOf<Handler>()
+    @JvmStatic
+    open val handlers = arrayListOf<Handler>()
 
-    @JvmStatic open val plugins = arrayListOf<Plugin>()
+    @JvmStatic
+    open val plugins = arrayListOf<Plugin>()
 
-    @JvmStatic open val interceptors = mutableMapOf<String, Interceptor>()
+    @JvmStatic
+    open val interceptors = mutableMapOf<String, Interceptor>()
 
-    @JvmStatic open val validators = mutableMapOf<String, MutableMap<HttpMethod, Class<Validator>>>()
+    @JvmStatic
+    open val validators = mutableMapOf<String, MutableMap<HttpMethod, Class<Validator>>>()
 
-    @JvmStatic open val controllers = arrayListOf<ResourceTable>()
+    @JvmStatic
+    open val controllers = arrayListOf<ResourceTable>()
 
-    @JvmStatic open val vertxOptions = VertxOptions()
+    @JvmStatic
+    open val vertxOptions = VertxOptions()
 
-    @JvmStatic open var vertx: Vertx = Vertx.vertx()
+    @JvmStatic
+    open var vertx: Vertx = Vertx.vertx()
 
-    @JvmStatic var verticle: Verticle = CloudoptServerVerticle()
+    @JvmStatic
+    var verticle: Verticle = CloudoptServerVerticle()
 
-    @JvmStatic open val deploymentOptions = DeploymentOptions()
+    @JvmStatic
+    open val deploymentOptions = DeploymentOptions()
+
+    @JvmStatic
+    open var packageName = ""
 
     fun init() {
         vertxOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
@@ -87,7 +101,6 @@ object CloudoptServer {
         deploymentOptions.workerPoolName = verticleID
         deploymentOptions.workerPoolSize = ConfigManager.vertxConfig.workerPoolSize
         deploymentOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
-        deploymentOptions.setWorker(true)
 
         //set dns
         var addressResolver = AddressResolverOptions()
@@ -107,7 +120,7 @@ object CloudoptServer {
                     handlers.add(Beaner.newInstance(clazz))
                 }
 
-        var packageName = if (ConfigManager.webConfig.packageName.isNotBlank()) {
+        packageName = if (ConfigManager.webConfig.packageName.isNotBlank()) {
             ConfigManager.webConfig.packageName
         } else {
             Yamler.getRootClassPath()
@@ -132,7 +145,6 @@ object CloudoptServer {
 
             //Register interceptor
             annotation.interceptor.forEach { inClass ->
-                logger.info("Registered interceptor：" + annotation.value + " | " + clazz.javaClass.name)
                 var interceptor = Beaner.newInstance<Interceptor>(inClass::class.java)
                 var url = annotation.value
                 if (url.endsWith("/")) {
@@ -229,13 +241,13 @@ object CloudoptServer {
         init()
         // init vertx
         vertx = Vertx.vertx(vertxOptions)
-        vertx.deployVerticle("net.cloudopt.next.web.CloudoptServerVerticle", deploymentOptions)
+        Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
     }
 
     @JvmStatic
     fun stop() {
         init()
-        vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
+        Worker.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
         vertx.close()
     }
 
