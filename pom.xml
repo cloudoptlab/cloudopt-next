@@ -15,9 +15,9 @@
         <module>cloudopt-next-utils</module>
         <module>cloudopt-next-waf</module>
         <module>cloudopt-next-encrypt</module>
-        <module>cloudopt-net-orm</module>
         <module>cloudopt-next-web</module>
         <module>cloudopt-next-client</module>
+        <module>cloudopt-next-jooq</module>
     </modules>
     <packaging>pom</packaging>
 

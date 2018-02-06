@@ -34,15 +34,26 @@ object ConfigManager {
 
     val YML = "application.yml"
 
-    @JvmStatic val vertxConfig:VertxConfigBean = init("vertx", VertxConfigBean::class.java) as VertxConfigBean
+    @JvmStatic
+    val vertxConfig: VertxConfigBean = init("vertx", VertxConfigBean::class.java) as VertxConfigBean
 
-    @JvmStatic val webConfig:WebConfigBean = init("web", WebConfigBean::class.java) as WebConfigBean
+    @JvmStatic
+    val webConfig: WebConfigBean = init("web", WebConfigBean::class.java) as WebConfigBean
 
-    @JvmStatic val wafConfig:WafConfigBean = init("waf", WafConfigBean::class.java) as WafConfigBean
+    @JvmStatic
+    val wafConfig: WafConfigBean = init("waf", WafConfigBean::class.java) as WafConfigBean
 
-    @JvmStatic open fun init(name: String, clazz: Class<*>): Any {
+    @JvmStatic
+    open fun init(name: String, clazz: Class<*>): Any {
 
-        var map = Maper.toMap(Beaner.newInstance(clazz))
+        var map = Maper.toMap(Beaner.newInstance(clazz))?.toMutableMap() ?: mutableMapOf()
+
+        return Maper.toObject(initMap(name, map), clazz)!!
+
+    }
+
+    @JvmOverloads
+    open fun initMap(name: String, map: MutableMap<String, Any> = mutableMapOf()): MutableMap<String, Any> {
 
         try {
 
@@ -59,11 +70,12 @@ object ConfigManager {
             if (!dev && Yamler.read(PROYML, "net.cloudopt.next." + name) != null) {
                 map.putAll(Yamler.read(PROYML, "net.cloudopt.next." + name) as Map<out String, Any>)
             }
-        }catch (e:RuntimeException){
+
+        } catch (e: RuntimeException) {
 
         }
 
-        return Maper.toObject(map, clazz)!!
+        return map
 
     }
 
