@@ -31,7 +31,7 @@
 
     <issueManagement>
         <system>Github Issue</system>
-        <url>https://github.com/CloudoptLab/cloudopt-next/issues</url>
+        <url>https://github.com/cloudoptlab/cloudopt-next/issues</url>
     </issueManagement>
 
     <licenses>
@@ -50,9 +50,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git@github.com:CloudoptLab/cloudopt-next.git</connection>
-        <developerConnection>scm:git@github.com:CloudoptLab/cloudopt-next.git</developerConnection>
-        <url>git@github.com:CloudoptLab/cloudopt-next.git</url>
+        <connection>scm:git@github.com:cloudoptlab/cloudopt-next.git</connection>
+        <developerConnection>scm:git@github.com:cloudoptlab/cloudopt-next.git</developerConnection>
+        <url>git@github.com:cloudoptlab/cloudopt-next.git</url>
     </scm>
 
     <properties>
