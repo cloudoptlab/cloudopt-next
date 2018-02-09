@@ -35,7 +35,7 @@ object EventManager {
     open var eventBus: EventBus? = null
 
     @JvmStatic
-    private val eventList: HashMap<String, EventListener> = hashMapOf()
+    private val eventList: HashMap<String, Class<*>> = hashMapOf()
 
     private val logger = Logger.Companion.getLogger(EventManager::class.java)
 
@@ -45,17 +45,18 @@ object EventManager {
 
         Classer.scanPackageByAnnotation(CloudoptServer.packageName, false, AutoEvent::class.java)
                 .forEach { clazz ->
-                    eventList.put(clazz.getDeclaredAnnotation(AutoEvent::class.java).value, Beaner.newInstance(clazz))
+                    eventList.put(clazz.getDeclaredAnnotation(AutoEvent::class.java).value, clazz)
                 }
 
         eventList.keys.forEach { key ->
             eventBus?.consumer<Any>(key, { message ->
-                eventList.get(key)?.listener(message)
+                var listener = Beaner.newInstance<EventListener>(eventList.get(key)!!)
+                listener?.listener(message)
             })?.completionHandler({ res ->
                 if (res.succeeded()) {
-                    logger.info("[EVENT] Registered event listener：[" + key + "] on" + eventList.get(key)!!::class.java.getName())
+                    logger.info("[EVENT] Registered event listener：[" + key + "] on" + eventList.get(key)!!.getName())
                 } else {
-                    logger.error("[EVENT] Registered event listener was error：" + eventList.get(key)!!::class.java.getName())
+                    logger.error("[EVENT] Registered event listener was error：" + eventList.get(key)!!.getName())
                 }
             })
         }
