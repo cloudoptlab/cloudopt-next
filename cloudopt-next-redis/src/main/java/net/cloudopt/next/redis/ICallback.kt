@@ -13,23 +13,18 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package jooq.pool.test
 
-import net.cloudopt.next.jooq.JooqPlugin
-import org.junit.Test
+package net.cloudopt.next.redis
 
-
-/*
+/**
  * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: Test Case
+ * @Time: 2018/2/8
+ * @Description: ICallback.
+ * This is done using multiple Redis operations on the same Redis connection pool.
+ * In addition you can also use the same Cache object to Select(int) method to temporarily switch the database
  */
-class TestCase{
-
-    @Test
-    fun testConnection(){
-        var plugin = JooqPlugin()
-        plugin.start()
-    }
-
+interface ICallback {
+    fun <T> call(cache: Cache): T
 }
+
+

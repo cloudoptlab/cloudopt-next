@@ -13,23 +13,25 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package jooq.pool.test
 
-import net.cloudopt.next.jooq.JooqPlugin
-import org.junit.Test
-
+package net.cloudopt.next.redis.serializer
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: Test Case
+ * @Time: 2018/2/8
+ * @Description: ISerializer.
  */
-class TestCase{
+interface ISerializer {
 
-    @Test
-    fun testConnection(){
-        var plugin = JooqPlugin()
-        plugin.start()
-    }
+    fun keyToBytes(key: String): ByteArray
+    fun keyFromBytes(bytes: ByteArray): String
 
+    fun fieldToBytes(field: Any): ByteArray
+    fun fieldFromBytes(bytes: ByteArray): Any
+
+    fun valueToBytes(value: Any): ByteArray
+    fun valueFromBytes(bytes: ByteArray): Any
 }
+
+
+

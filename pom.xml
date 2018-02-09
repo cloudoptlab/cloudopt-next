@@ -19,6 +19,8 @@
         <module>cloudopt-next-client</module>
         <module>cloudopt-next-jooq</module>
         <module>cloudopt-next-spring</module>
+        <module>cloudopt-next-redis</module>
+        <module>cloudopt-next-kafka</module>
     </modules>
     <packaging>pom</packaging>
 

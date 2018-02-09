@@ -13,7 +13,7 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.jooq.plugin
+package net.cloudopt.next.jooq
 
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
