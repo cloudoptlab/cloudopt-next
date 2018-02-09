@@ -32,7 +32,7 @@ import java.io.IOException
  */
 class FstSerializer : ISerializer {
 
-    private val logger = Logger.getLogger(JdkSerializer::class.java)
+    private val logger = Logger.getLogger(FstSerializer::class.java)
 
     override fun keyToBytes(key: String): ByteArray {
         return SafeEncoder.encode(key)

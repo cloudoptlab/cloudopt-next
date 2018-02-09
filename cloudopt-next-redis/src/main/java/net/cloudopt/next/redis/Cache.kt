@@ -17,8 +17,8 @@
 
 package net.cloudopt.next.redis
 
+import net.cloudopt.next.redis.serializer.FstSerializer
 import net.cloudopt.next.redis.serializer.ISerializer
-import net.cloudopt.next.redis.serializer.JdkSerializer
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 
@@ -37,7 +37,7 @@ class Cache {
     var name: String = ""
         protected set
     var jedisPool: JedisPool = JedisPool()
-    var serializer: ISerializer = JdkSerializer()
+    var serializer: ISerializer = FstSerializer()
         protected set
     var keyNamingPolicy: IKeyNamingPolicy = IKeyNamingPolicy.defaultKeyNamingPolicy
         protected set
