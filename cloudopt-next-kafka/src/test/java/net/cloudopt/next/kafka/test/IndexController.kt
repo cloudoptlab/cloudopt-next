@@ -30,8 +30,8 @@ import net.cloudopt.next.web.route.GET
 class IndexController : Resource() {
 
     @GET("event")
-    fun event(){
-       KafkaManager.send("test-topic","key", "value")
+    fun event() {
+        KafkaManager.send("test-topic", "key", "value")
         renderJson("Send Event!")
     }
 }

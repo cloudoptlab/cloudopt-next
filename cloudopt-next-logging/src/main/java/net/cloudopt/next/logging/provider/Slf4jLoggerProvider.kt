@@ -41,7 +41,7 @@ class Slf4jLoggerProvider : LoggerProvider {
         }
 
         override fun debug(message: String, vararg args: Any) {
-            logger.debug(Colorer.cyan(String.format(message, *args)))
+            logger.debug(Colorer.cyan(String.format(message, *args)),*args)
         }
 
         override fun debug(message: String, t: Throwable) {
@@ -57,7 +57,7 @@ class Slf4jLoggerProvider : LoggerProvider {
         }
 
         override fun info(message: String, vararg args: Any) {
-            logger.info(Colorer.blue(String.format(message, *args)))
+            logger.info(Colorer.blue(String.format(message, *args)),*args)
         }
 
         override fun info(message: String, t: Throwable) {
@@ -73,7 +73,7 @@ class Slf4jLoggerProvider : LoggerProvider {
         }
 
         override fun warn(message: String, vararg args: Any) {
-            logger.warn(Colorer.yellow(String.format(message, *args)))
+            logger.warn(Colorer.yellow(String.format(message, *args)),*args)
         }
 
         override fun warn(message: String, t: Throwable) {
@@ -89,7 +89,7 @@ class Slf4jLoggerProvider : LoggerProvider {
         }
 
         override fun error(message: String, vararg args: Any) {
-            logger.error(Colorer.red(String.format(message, *args)))
+            logger.error(Colorer.red(String.format(message, *args)),*args)
         }
 
         override fun error(message: String, t: Throwable) {
