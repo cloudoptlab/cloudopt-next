@@ -33,7 +33,7 @@ class FreemarkerRender : Render {
 
     companion object {
 
-        @JvmStatic open val config: Configuration = Configuration(Configuration.VERSION_2_3_27)
+        @JvmStatic open var config: Configuration ?= null
 
         @JvmStatic open var contentType = "text/html;charset=utf-8"
 
@@ -41,26 +41,31 @@ class FreemarkerRender : Render {
 
     init {
 
-        if (Class.forName("freemarker.template.Configuration") != null) {
+        try {
+            if (Class.forName("freemarker.template.Configuration") != null) {
 
-            config.defaultEncoding = "UTF-8"
+                config = Configuration(Configuration.VERSION_2_3_27)
 
-            config.templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
+                config?.defaultEncoding = "UTF-8"
 
-            config.logTemplateExceptions = false
+                config?.templateExceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER
 
-            config.numberFormat = "#0.#####"
+                config?.logTemplateExceptions = false
 
-            config.dateFormat = "yyyy-MM-dd"
+                config?.numberFormat = "#0.#####"
 
-            config.timeFormat = "HH:mm:ss"
+                config?.dateFormat = "yyyy-MM-dd"
 
-            config.dateTimeFormat = "yyyy-MM-dd HH:mm:ss"
+                config?.timeFormat = "HH:mm:ss"
 
-            config.setDirectoryForTemplateLoading(File(Yamler.getRootClassPath() + "/" + ConfigManager.webConfig.webroot + "/"))
+                config?.dateTimeFormat = "yyyy-MM-dd HH:mm:ss"
+
+                config?.setDirectoryForTemplateLoading(File(Yamler.getRootClassPath() + "/" + ConfigManager.webConfig.webroot + "/"))
+
+            }
+        }catch (e:ClassNotFoundException){
 
         }
-
 
     }
 
@@ -72,11 +77,11 @@ class FreemarkerRender : Render {
             view.view = view.view + ".ftl"
         }
 
-        var temp = config.getTemplate(view.view)
+        var temp = config?.getTemplate(view.view)
 
         var writer = StringWriter()
 
-        temp.process(view.parameters, writer);
+        temp?.process(view.parameters, writer);
 
         response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
 

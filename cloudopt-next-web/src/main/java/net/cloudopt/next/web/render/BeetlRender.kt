@@ -30,15 +30,19 @@ import org.beetl.core.resource.ClasspathResourceLoader
 class BeetlRender : Render {
 
     companion object {
-        @JvmStatic open var config: Configuration = Configuration.defaultConfiguration()
+        @JvmStatic
+        open var config: Configuration? = null
     }
-
 
     override fun render(response: HttpServerResponse, obj: Any) {
 
-        var view:View = obj as View
+        if (config == null) {
+            config = Configuration.defaultConfiguration()
+        }
 
-        if(view.view.indexOf(".") < 0){
+        var view: View = obj as View
+
+        if (view.view.indexOf(".") < 0) {
             view.view = view.view + ".btl"
         }
 

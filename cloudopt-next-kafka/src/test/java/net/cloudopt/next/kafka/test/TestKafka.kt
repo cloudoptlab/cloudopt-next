@@ -15,10 +15,13 @@
  */
 package net.cloudopt.next.kafka.test
 
-import net.cloudopt.next.kafka.KafkaManager
+import io.vertx.kafka.client.consumer.KafkaConsumerRecord
+import net.cloudopt.next.kafka.AutoKafka
+import net.cloudopt.next.kafka.KafkaListener
 import net.cloudopt.next.kafka.KafkaPlugin
 import net.cloudopt.next.web.CloudoptServer
-
+import net.cloudopt.next.web.Plugin
+import org.junit.Test
 
 
 /*
@@ -26,15 +29,12 @@ import net.cloudopt.next.web.CloudoptServer
  * @Time: 2018/2/6
  * @Description: Test Case
  */
+@AutoKafka("test-topic")
+class TestKafka:KafkaListener {
 
-fun main(args: Array<String>) {
-    CloudoptServer.addPlugin(KafkaPlugin())
-    CloudoptServer.run()
-}
-
-class TestCase {
-
-
+    override fun listener(record: KafkaConsumerRecord<String, Any>) {
+        println("this is kafka.")
+    }
 
 
 }

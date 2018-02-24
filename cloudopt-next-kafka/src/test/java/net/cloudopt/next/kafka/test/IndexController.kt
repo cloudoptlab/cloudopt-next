@@ -16,25 +16,22 @@
 package net.cloudopt.next.kafka.test
 
 import net.cloudopt.next.kafka.KafkaManager
-import net.cloudopt.next.kafka.KafkaPlugin
-import net.cloudopt.next.web.CloudoptServer
-
+import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.route.API
+import net.cloudopt.next.web.route.GET
 
 
 /*
  * @author: Cloudopt
- * @Time: 2018/2/6
- * @Description: Test Case
+ * @Time: 2018/1/26
+ * @Description: Test Controller
  */
+@API("/")
+class IndexController : Resource() {
 
-fun main(args: Array<String>) {
-    CloudoptServer.addPlugin(KafkaPlugin())
-    CloudoptServer.run()
-}
-
-class TestCase {
-
-
-
-
+    @GET("event")
+    fun event(){
+       KafkaManager.send("test-topic","key", "value")
+        renderJson("Send Event!")
+    }
 }

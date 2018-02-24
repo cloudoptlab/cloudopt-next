@@ -17,6 +17,8 @@ package net.cloudopt.next.web
 
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.http.HttpMethod
+import io.vertx.ext.healthchecks.HealthCheckHandler
+import io.vertx.ext.healthchecks.HealthChecks
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
 import net.cloudopt.next.aop.Beaner
@@ -43,6 +45,15 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
     override fun start() {
 
+        //Register plugins
+        CloudoptServer.plugins.forEach { plugin ->
+            if (plugin.start()) {
+                logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
+            } else {
+                logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
+            }
+        }
+
         val server = vertx.createHttpServer()
 
         val router = Router.router(vertx)
@@ -61,7 +72,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         //Set timeout
         router.route("/*").handler(TimeoutHandler.create(ConfigManager.webConfig.timeout))
 
-        //Set Csrf
+        //Set csrf
         if(ConfigManager.wafConfig.csrf){
             router.route("/*").handler(CSRFHandler.create("cloudopt-next"))
         }
@@ -88,15 +99,6 @@ class CloudoptServerVerticle : AbstractVerticle() {
                     e.printStackTrace()
                     context.response().end()
                 }
-            }
-        }
-
-        //Register plugins
-        CloudoptServer.plugins.forEach { plugin ->
-            if (plugin.start()) {
-                logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
-            } else {
-                logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
             }
         }
 
@@ -199,6 +201,8 @@ class CloudoptServerVerticle : AbstractVerticle() {
                         "==========================================================================================================")
             }
         }
+
+
 
 
     }

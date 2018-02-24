@@ -54,9 +54,9 @@ object EventManager {
                 listener?.listener(message)
             })?.completionHandler({ res ->
                 if (res.succeeded()) {
-                    logger.info("[EVENT] Registered event listener：[" + key + "] on" + eventList.get(key)!!.getName())
+                    logger.info("[EVENT] Registered event listener：[${key}] on ${eventList.get(key)!!.getName()}")
                 } else {
-                    logger.error("[EVENT] Registered event listener was error：" + eventList.get(key)!!.getName())
+                    logger.error("[EVENT] Registered event listener was error： ${eventList.get(key)!!.getName()}")
                 }
             })
         }

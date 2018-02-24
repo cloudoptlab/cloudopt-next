@@ -15,6 +15,8 @@
  */
 package net.cloudopt.next.web.config
 
+import io.netty.channel.pool.ChannelHealthChecker
+
 /*
  * @author: Cloudopt
  * @Time: 2018/1/9

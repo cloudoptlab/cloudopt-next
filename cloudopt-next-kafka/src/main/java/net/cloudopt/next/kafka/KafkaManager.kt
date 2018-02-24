@@ -66,8 +66,13 @@ object KafkaManager {
         config["key.serializer"] = map.get("keySerializer") ?: "org.apache.kafka.common.serialization.StringSerializer"
         config["value.serializer"] = map.get("valueSerializer") ?: "org.apache.kafka.common.serialization.StringSerializer"
         config["acks"] = map.get("acks") ?: "1"
-        consumer = KafkaConsumer.create<Any, Any>(vertx, config)
-        producer = KafkaProducer.create<Any, Any>(vertx, config)
+        consumer = KafkaConsumer.create<Any, Any>(vertx, config)?.exceptionHandler({ e ->
+            logger.error("[KAFKA] Consumer was error： ${e.message}")
+        })
+        producer = KafkaProducer.create<Any, Any>(vertx, config)?.exceptionHandler({ e ->
+            logger.error("[KAFKA] Producer was error： ${e.message}")
+        })
+
 
         Classer.scanPackageByAnnotation(CloudoptServer.packageName, false, AutoKafka::class.java)
                 .forEach { clazz ->
@@ -78,15 +83,13 @@ object KafkaManager {
                     }
                 }
 
-        kafkaList.keys.forEach { key ->
-            consumer?.subscribe(key, { ar ->
+
+
+            consumer?.subscribe(kafkaList.keys, { ar ->
                 if (ar.succeeded()) {
-                    kafkaList.get(key)?.forEach { clazz ->
-                        logger.info("[KAFKA] Registered listener：[" + key + "] on" + clazz.getName())
-                    }
 
                 } else {
-                    logger.error("[KAFKA] Registered topic listener was error：" + key)
+                    logger.error("[KAFKA] Registered topic listener was error：${ar.cause()}")
                 }
             })?.handler({ record ->
                 if (record.topic().isNotBlank() && kafkaList.get(record.topic())?.size ?: 0 > 0) {
@@ -98,7 +101,6 @@ object KafkaManager {
             })
 
 
-        }
 
 
     }

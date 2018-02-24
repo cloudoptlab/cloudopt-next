@@ -9,7 +9,6 @@
     <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>cloudopt-next-logging</module>
-        <module>cloudopt-next-example</module>
         <module>cloudopt-next-yaml</module>
         <module>cloudopt-next-parent</module>
         <module>cloudopt-next-utils</module>

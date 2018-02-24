@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.aop
 
+import com.alibaba.fastjson.JSON
 import java.beans.Introspector
 import java.util.HashMap
 import kotlin.reflect.KClass
@@ -34,20 +35,7 @@ object Maper{
      * @return The object after the conversion is completed
      */
     fun toObject(map: Map<String, Any>?, beanClass: Class<*>): Any? {
-        if (map == null)
-            return null
-
-        var obj = beanClass.newInstance()
-        var beanInfo = Introspector.getBeanInfo(obj.javaClass)
-        var propertyDescriptors = beanInfo.getPropertyDescriptors()
-        for (property in propertyDescriptors) {
-            var setter = property.getWriteMethod()
-            if (setter != null) {
-                setter!!.invoke(obj, map[property.getName()])
-            }
-        }
-
-        return obj
+        return JSON.parseObject(JSON.toJSONString(map),beanClass)
     }
 
     /**
@@ -56,24 +44,7 @@ object Maper{
      * @return The map after the conversion is completed
      */
     fun toMap(obj: Any?): HashMap<String, Any>? {
-        if (obj == null)
-            return null
-
-        var map = HashMap<String, Any>()
-
-        var beanInfo = Introspector.getBeanInfo(obj.javaClass)
-        var propertyDescriptors = beanInfo.getPropertyDescriptors()
-        for (property in propertyDescriptors) {
-            var key = property.getName()
-            if (key.compareTo("class", ignoreCase = true) == 0) {
-                continue
-            }
-            var getter = property.getReadMethod()
-            var value = if (getter != null) getter!!.invoke(obj) else null
-            map.put(key, value!!)
-        }
-
-        return map
+        return JSON.parseObject(JSON.toJSONString(obj),Map::class.java) as HashMap<String,Any>
     }
 
 }

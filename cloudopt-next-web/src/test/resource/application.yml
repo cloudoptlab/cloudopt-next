@@ -3,3 +3,4 @@ net:
     next:
       web:
         packageName: "net.cloudopt.next.web.test"
+        cookieCors: true

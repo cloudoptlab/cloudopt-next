@@ -1,4 +1,0 @@
-net:
-  cloudopt:
-      next:
-        test: abc
