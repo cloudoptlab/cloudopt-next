@@ -23,6 +23,14 @@
     </modules>
     <packaging>pom</packaging>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <name>Cloudopt Next</name>
     <description>Cloudopt Next is a Java framework for the next generation</description>
     <url>https://next.cloudopt.net</url>

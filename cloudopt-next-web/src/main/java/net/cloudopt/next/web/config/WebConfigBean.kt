@@ -23,6 +23,7 @@ import io.netty.channel.pool.ChannelHealthChecker
  * @Description: Cloudopt Next Web configuration file
  */
 data class WebConfigBean(var banner: Boolean = true,
+                         var bannerName: String = "banner.txt",
                          var dev: Boolean = true,
                          var showRoute: Boolean = true,
                          var cors: Boolean = true,

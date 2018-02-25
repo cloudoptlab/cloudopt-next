@@ -66,3 +66,6 @@ fabric.properties
 
 # Vertx
 .vertx/
+
+# Javadocs
+javadocs/

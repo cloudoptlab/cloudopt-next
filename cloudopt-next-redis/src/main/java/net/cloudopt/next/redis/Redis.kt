@@ -31,6 +31,7 @@ object Redis {
 
     private val cacheMap = ConcurrentHashMap<String, Cache>()
 
+    @JvmStatic
     fun addCache(cache: Cache?) {
         if (cache == null)
             throw IllegalArgumentException("cache can not be null")
@@ -42,6 +43,7 @@ object Redis {
             mainCache = cache
     }
 
+    @JvmStatic
     fun removeCache(cacheName: String): Cache {
         return cacheMap.remove(cacheName)!!
     }
@@ -50,6 +52,7 @@ object Redis {
      * This method will provide a chance to set main cache mainCache，
      * otherwise, the first initialized Cache will become mainCache.
      */
+    @JvmStatic
     fun setMainCache(cacheName: String) {
         var cacheName = cacheName
         if (cacheName.isBlank())
@@ -60,22 +63,27 @@ object Redis {
         Redis.mainCache = cache
     }
 
+    @JvmStatic
     fun use(): Cache? {
         return mainCache
     }
 
+    @JvmStatic
     fun use(cacheName: String): Cache {
         return cacheMap[cacheName]!!
     }
 
+    @JvmStatic
     fun call(callback: ICallback): Any {
         return call(callback, use()!!)
     }
 
+    @JvmStatic
     fun call(callback: ICallback, cacheName: String): Any {
         return call(callback, use(cacheName))
     }
 
+    @JvmStatic
     private fun call(callback: ICallback, cache: Cache): Any {
         var jedis = cache.getThreadLocalJedis()
         val notThreadLocalJedis = jedis == null
