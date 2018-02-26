@@ -81,4 +81,14 @@ class IndexController : Resource() {
         EventManager.send("net.cloudopt.web.test","This is test message!")
         renderJson("Send Event!")
     }
+
+    @GET("500")
+    fun fail500(){
+        fail500()
+    }
+
+    @GET("i18n")
+    fun i18n(){
+        renderText(lang())
+    }
 }

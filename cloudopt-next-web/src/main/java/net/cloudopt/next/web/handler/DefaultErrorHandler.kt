@@ -20,19 +20,19 @@ import java.util.*
 /*
  * @author: Cloudopt
  * @Time: 2018/1/15
- * @Description: Used to support the use of cookies across domains
+ * @Description: Intercepting error requests
  */
-class DefaultErrorHander : Handler() {
+class DefaultErrorHandler : Handler() {
 
 
     override fun handle() {
         if (Math.abs(errorStatusCode) == 404) {
-            var json = restult("404", "resource not found")
+            var json = restult("404", "[CLOUDOPT-NEXT] Resource not found!")
             renderJson(json)
         }
 
         if (Math.abs(errorStatusCode) == 500) {
-            var json = restult("500", "internal error")
+            var json = restult("500", "[CLOUDOPT-NEXT] Internal error!")
             renderJson(json)
         }
     }

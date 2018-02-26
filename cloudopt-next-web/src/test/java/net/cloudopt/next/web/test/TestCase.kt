@@ -15,6 +15,8 @@
  */
 package net.cloudopt.next.web.test
 
+import io.vertx.core.Vertx
+import io.vertx.ext.web.Router
 import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.event.EventPlugin
@@ -23,6 +25,7 @@ import net.cloudopt.next.web.test.plugin.TestPlugin
 import net.cloudopt.next.yaml.Yamler
 import java.io.File
 import kotlin.reflect.KClass
+import kotlin.test.fail
 
 /*
  * @author: Cloudopt
@@ -35,6 +38,4 @@ fun main(args: Array<String>) {
     CloudoptServer.run(TestCase::class.java)
 }
 
-class TestCase {
-
-}
+class TestCase

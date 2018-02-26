@@ -23,6 +23,8 @@ import net.cloudopt.next.web.config.ConfigManager
 import io.vertx.core.Verticle
 import io.vertx.core.dns.AddressResolverOptions
 import io.vertx.core.http.HttpMethod
+import io.vertx.ext.web.Router
+import io.vertx.ext.web.handler.*
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
 import net.cloudopt.next.logging.Colorer
@@ -32,6 +34,7 @@ import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.yaml.Yamler
+import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 
 /*
@@ -72,15 +75,15 @@ object CloudoptServer {
     open var vertx: Vertx = Vertx.vertx()
 
     @JvmStatic
-    var verticle: Verticle = CloudoptServerVerticle()
-
-    @JvmStatic
     open val deploymentOptions = DeploymentOptions()
 
     @JvmStatic
     open var packageName = ""
 
-    fun init() {
+    @JvmStatic
+    open var errorHandler = Beaner.newInstance<Handler>(Classer.loadClass(ConfigManager.webConfig.errorHandler))
+
+    fun scan() {
         vertxOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
         vertxOptions.setFileResolverCachingEnabled(ConfigManager.vertxConfig.fileCaching)
         vertxOptions.workerPoolSize = ConfigManager.vertxConfig.workerPoolSize
@@ -138,7 +141,7 @@ object CloudoptServer {
                     resources.add(clazz as Class<Resource>)
                 }
 
-        CloudoptServer.resources.forEach { clazz ->
+        resources.forEach { clazz ->
 
             // Get api annotation
             var annotation: API = clazz.getAnnotation(API::class.java)
@@ -238,29 +241,20 @@ object CloudoptServer {
 
     @JvmStatic
     fun run() {
-        init()
+        scan()
         // init vertx
         vertx = Vertx.vertx(vertxOptions)
-        Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
-    }
-
-    @JvmStatic
-    fun stop() {
-        init()
-        Worker.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
-        vertx.close()
+        start()
     }
 
     @JvmStatic
     fun addRender(extension: String, render: Render): CloudoptServer {
-        init()
         RenderFactory.add(extension, render)
         return this
     }
 
     @JvmStatic
     fun setDefaultRender(name: String): CloudoptServer {
-        init()
         RenderFactory.setDefaultRender(name)
         return this
     }
@@ -275,6 +269,174 @@ object CloudoptServer {
     fun addHandler(handler: Handler): CloudoptServer {
         handlers.add(handler)
         return this
+    }
+
+    @JvmStatic
+    private fun start() {
+
+        //Register plugins
+        plugins.forEach { plugin ->
+            if (plugin.start()) {
+                logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
+            } else {
+                logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
+            }
+        }
+
+        val server = vertx.createHttpServer()
+
+        val router = Router.router(vertx)
+
+        Banner.print()
+
+        //The ResponseContentTypeHandler can set the Content-Type header automatically.
+        router.route("/*").handler(ResponseContentTypeHandler.create())
+
+        router.route().handler(BodyHandler.create())
+
+        router.route().handler(CookieHandler.create())
+
+        router.route().handler(BodyHandler.create().setBodyLimit(ConfigManager.webConfig.bodyLimit))
+
+        //Set timeout
+        router.route("/*").handler(TimeoutHandler.create(ConfigManager.webConfig.timeout))
+
+        //Set csrf
+        if (ConfigManager.wafConfig.csrf) {
+            router.route("/*").handler(CSRFHandler.create("cloudopt-next"))
+        }
+
+        //Register failure handler
+        logger.info("[FAILURE HANDLER] Registered failure handler：" + errorHandler::class.java.getName())
+
+        router.route("/*").failureHandler { failureRoutingContext ->
+            errorHandler.init(failureRoutingContext)
+            errorHandler.handle()
+        }
+
+        //Register handlers
+        handlers.forEach { handler ->
+            logger.info("[HANDLER] Registered handler：" + handler::class.java.getName())
+            router.route("/*").handler { context ->
+                try {
+                    handler.init(context)
+                    handler.handle()
+                    handler.context?.next()
+                } catch (e: InstantiationException) {
+                    e.printStackTrace()
+                    context.response().end()
+                } catch (e: IllegalAccessException) {
+                    e.printStackTrace()
+                    context.response().end()
+                }
+            }
+        }
+
+        router.route("/" + ConfigManager.webConfig.staticPackage + "/*").handler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
+                .setIncludeHidden(false).setWebRoot(ConfigManager.webConfig.staticPackage))
+
+        //Register interceptors
+        interceptors.forEach { url, interceptor ->
+            router.route(url).handler { context ->
+                val resource = Resource()
+                resource.init(context)
+                if (interceptor.intercept(resource)) {
+                    context.next()
+                } else {
+                    interceptor.response(resource).response?.end()
+                }
+            }
+        }
+
+        //Register validators
+        validators.forEach { url, map ->
+            map.keys.forEach { key ->
+                router.route(key, url).handler { context ->
+                    try {
+                        var v = Beaner.newInstance<Validator>(map.get(key)!!)
+                        var resource = Resource()
+                        resource.init(context)
+                        if (v.validate(resource)) {
+                            context.next()
+                        } else {
+                            v.error(resource)
+                        }
+                    } catch (e: InstantiationException) {
+                        e.printStackTrace()
+                        context.response().end()
+                    } catch (e: IllegalAccessException) {
+                        e.printStackTrace()
+                        context.response().end()
+                    }
+                }
+            }
+        }
+
+        //Register method
+        controllers.forEach { resourceTable ->
+
+            var controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
+
+            router.route(resourceTable.httpMethod, resourceTable.url).handler({ context ->
+                try {
+                    controllerObj.init(context)
+                    var m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
+                    m.invoke(controllerObj)
+                } catch (e: IllegalAccessException) {
+                    e.printStackTrace()
+                    context.response().end()
+                } catch (e: NoSuchMethodException) {
+                    e.printStackTrace()
+                    context.response().end()
+                } catch (e: InvocationTargetException) {
+                    e.printStackTrace()
+                    context.response().end()
+                }
+            })
+
+            logger.info("[RESOURCE] Registered Resource :" + resourceTable.methodName + " | "
+                    + resourceTable.url)
+        }
+
+        if (controllers.size == 0) {
+            router.route(HttpMethod.GET, "/*").handler({ context ->
+                var resource = Resource()
+                resource.init(context)
+                resource.renderText("A first cloudopt next application!")
+            })
+        }
+
+        server.requestHandler({ router.accept(it) }).listen(ConfigManager.webConfig.port) { result ->
+            if (result.succeeded()) {
+                logger.info(
+                        "==========================================================================================================")
+                logger.info("Cloudopt Next started is success!")
+                logger.info(
+                        "==========================================================================================================")
+
+            } else {
+                logger.error(
+                        "==========================================================================================================")
+                logger.error("Cloudopt Next started is error! " + result.cause())
+                logger.error(
+                        "==========================================================================================================")
+            }
+        }
+
+
+    }
+
+    @JvmStatic
+    fun stop() {
+        vertx.close { result ->
+            if (result.succeeded()) {
+                plugins.forEach { plugin ->
+                    if (!plugin.stop()) {
+                        logger.info("[PLUGIN] Stoped plugin was error：" + plugin.javaClass.name)
+                    }
+                }
+            }
+        }
     }
 
 

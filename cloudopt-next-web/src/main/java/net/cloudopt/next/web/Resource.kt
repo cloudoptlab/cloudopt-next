@@ -195,6 +195,10 @@ open class Resource {
         context?.fail(code)
     }
 
+    fun lang() {
+        context?.preferredLanguage()?.tag()?:"en"
+    }
+
     fun getBody(): Buffer? {
         return context?.body
     }
