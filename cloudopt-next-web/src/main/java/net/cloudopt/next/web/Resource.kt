@@ -20,6 +20,7 @@ import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Cookie
+import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.RedirectAuthHandler
 import net.cloudopt.next.logging.Logger
@@ -221,6 +222,10 @@ open class Resource {
 
     fun getBodyJsonArray(clazz: Class<*>): Any? {
         return Jsoner.toJsonArray(Jsoner.toJsonString(context?.bodyAsJson!!), clazz)
+    }
+
+    fun getFiles(): MutableSet<FileUpload>? {
+        return context?.fileUploads()
     }
 
 }

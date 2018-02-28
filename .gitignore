@@ -69,3 +69,6 @@ fabric.properties
 
 # Javadocs
 javadocs/
+
+# File Upload
+file-uploads/

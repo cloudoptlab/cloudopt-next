@@ -26,6 +26,7 @@ import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.API
 import net.cloudopt.next.web.route.GET
+import net.cloudopt.next.web.route.POST
 import net.cloudopt.next.web.test.interceptor.TestInterceptor
 import net.cloudopt.next.web.test.validator.TestValidator
 import kotlin.reflect.KClass
@@ -107,6 +108,20 @@ class IndexController : Resource() {
         }, Handler<AsyncResult<Any>>{ result ->
 
         })
+    }
+
+    @POST("file")
+    fun file() {
+       var files = getFiles()
+        files?.forEach { file->
+            println("-------------------------------------")
+            println("FileName: ${file.fileName()}")
+            println("UploadedFileName: ${file.uploadedFileName()}")
+            println("ContentType: ${file.contentType()}")
+            println("-------------------------------------")
+        }
+
+        renderText("success!")
     }
 
 }
