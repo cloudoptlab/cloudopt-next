@@ -41,7 +41,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        val server = CloudoptServer.vertx.createHttpServer()
+        val server = CloudoptServer.vertx.createHttpServer(CloudoptServer.httpServerOptions)
 
         val router = Router.router(CloudoptServer.vertx)
 

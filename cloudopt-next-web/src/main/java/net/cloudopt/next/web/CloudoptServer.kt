@@ -22,8 +22,7 @@ import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
 import io.vertx.core.dns.AddressResolverOptions
 import io.vertx.core.http.HttpMethod
-import io.vertx.ext.web.Router
-import io.vertx.ext.web.handler.*
+import io.vertx.core.http.HttpServerOptions
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
 import net.cloudopt.next.logging.Colorer
@@ -33,7 +32,6 @@ import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.yaml.Yamler
-import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 
 /*
@@ -73,6 +71,9 @@ object CloudoptServer {
     open var vertx: Vertx = Vertx.vertx()
 
     @JvmStatic
+    open var httpServerOptions: HttpServerOptions = HttpServerOptions()
+
+    @JvmStatic
     open val deploymentOptions = DeploymentOptions()
 
     @JvmStatic
@@ -103,7 +104,7 @@ object CloudoptServer {
         deploymentOptions.workerPoolSize = ConfigManager.vertxConfig.workerPoolSize
         deploymentOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
 
-        //set dns
+        //Set dns
         var addressResolver = AddressResolverOptions()
         ConfigManager.vertxConfig.addressResolver.split(",").forEach { address ->
             if (address.isNotBlank()) {
@@ -112,10 +113,10 @@ object CloudoptServer {
         }
         vertxOptions.setAddressResolverOptions(addressResolver)
 
-        //set log color
+        //Set log color
         Colorer.enable = ConfigManager.webConfig.logColor
 
-        //scan cloudopt handler
+        //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class.java)
                 .forEach { clazz ->
                     handlers.add(Beaner.newInstance(clazz))
@@ -127,13 +128,13 @@ object CloudoptServer {
             Yamler.getRootClassPath()
         }
 
-        //scan custom handler
+        //Scan custom handler
         Classer.scanPackageByAnnotation(packageName, true, AutoHandler::class.java)
                 .forEach { clazz ->
                     handlers.add(Beaner.newInstance(clazz))
                 }
 
-        //scan resources
+        //Scan resources
         Classer.scanPackageByAnnotation(packageName, true, API::class.java)
                 .forEach { clazz ->
                     resources.add(clazz as Class<Resource>)
