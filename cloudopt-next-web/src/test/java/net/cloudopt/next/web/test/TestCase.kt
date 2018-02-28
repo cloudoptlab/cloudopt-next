@@ -36,7 +36,6 @@ import kotlin.test.fail
  * @Description: Test Case
  */
 fun main(args: Array<String>) {
-    var interceptor = Beaner.newInstance<Interceptor>(TestInterceptor::class.java)
     CloudoptServer.addPlugin(TestPlugin())
     CloudoptServer.addPlugin(EventPlugin())
     CloudoptServer.run(TestCase::class.java)
