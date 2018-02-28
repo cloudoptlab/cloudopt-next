@@ -13,10 +13,10 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.test.validator
+package net.cloudopt.next.web.test.interceptor
 
+import net.cloudopt.next.web.Interceptor
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.Validator
 
 
 /*
@@ -24,15 +24,15 @@ import net.cloudopt.next.web.Validator
  * @Time: 2018/2/28
  * @Description: Test Case
  */
-class TestValidator : Validator {
+class TestInterceptor : Interceptor {
 
-
-    override fun validate(resource: Resource): Boolean {
+    override fun intercept(resource: Resource): Boolean {
+        println("Through the intercept!")
         return true
     }
 
-    override fun error(resource: Resource) {
-
+    override fun response(resource: Resource): Resource {
+        return resource
     }
 
 

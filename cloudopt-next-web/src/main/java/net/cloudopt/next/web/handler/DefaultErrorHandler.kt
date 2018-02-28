@@ -47,7 +47,12 @@ class DefaultErrorHandler : Handler() {
 
     val errorStatusCode: Int
         get() {
-            this.response?.statusCode = this.context?.statusCode()!!
-            return this.context?.statusCode()!!
+            if (this.context?.statusCode() ?: 0 > 0) {
+                this.response?.statusCode = this.context?.statusCode()!!
+            }else{
+                this.response?.statusCode = 500
+            }
+
+            return this.response?.statusCode
         }
 }

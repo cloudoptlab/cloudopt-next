@@ -60,7 +60,7 @@ object CloudoptServer {
     open val plugins = arrayListOf<Plugin>()
 
     @JvmStatic
-    open val interceptors = mutableMapOf<String, Interceptor>()
+    open val interceptors = mutableMapOf<String, KClass<out Interceptor>>()
 
     @JvmStatic
     open val validators = mutableMapOf<String, MutableMap<HttpMethod, KClass<out Validator>>>()
@@ -148,14 +148,13 @@ object CloudoptServer {
 
             //Register interceptor
             annotation?.interceptor?.forEach { inClass ->
-                var interceptor = Beaner.newInstance<Interceptor>(inClass::class.java)
                 var url = annotation.value
                 if (url.endsWith("/")) {
                     url = url + "*"
                 } else {
                     url = url + "/*"
                 }
-                interceptors.put(url, interceptor)
+                interceptors.put(url, inClass)
             }
 
             //Get methods annotation
@@ -339,10 +338,11 @@ object CloudoptServer {
                 .setIncludeHidden(false).setWebRoot(ConfigManager.webConfig.staticPackage))
 
         //Register interceptors
-        interceptors.forEach { url, interceptor ->
+        interceptors.forEach { url, clazz ->
             router.route(url).handler { context ->
-                val resource = Resource()
+                var resource = Resource()
                 resource.init(context)
+                var interceptor = Beaner.newInstance<Interceptor>(clazz.java)
                 if (interceptor.intercept(resource)) {
                     context.next()
                 } else {

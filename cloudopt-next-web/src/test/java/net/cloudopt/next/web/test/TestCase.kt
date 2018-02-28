@@ -17,10 +17,13 @@ package net.cloudopt.next.web.test
 
 import io.vertx.core.Vertx
 import io.vertx.ext.web.Router
+import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.Interceptor
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.event.EventPlugin
 import net.cloudopt.next.web.render.FreemarkerRender
+import net.cloudopt.next.web.test.interceptor.TestInterceptor
 import net.cloudopt.next.web.test.plugin.TestPlugin
 import net.cloudopt.next.yaml.Yamler
 import java.io.File
@@ -33,6 +36,7 @@ import kotlin.test.fail
  * @Description: Test Case
  */
 fun main(args: Array<String>) {
+    var interceptor = Beaner.newInstance<Interceptor>(TestInterceptor::class.java)
     CloudoptServer.addPlugin(TestPlugin())
     CloudoptServer.addPlugin(EventPlugin())
     CloudoptServer.run(TestCase::class.java)

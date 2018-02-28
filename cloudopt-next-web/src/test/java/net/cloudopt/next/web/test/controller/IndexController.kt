@@ -26,6 +26,7 @@ import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.API
 import net.cloudopt.next.web.route.GET
+import net.cloudopt.next.web.test.interceptor.TestInterceptor
 import net.cloudopt.next.web.test.validator.TestValidator
 import kotlin.reflect.KClass
 
@@ -35,7 +36,7 @@ import kotlin.reflect.KClass
  * @Time: 2018/1/26
  * @Description: Test Controller
  */
-@API("/")
+@API("/",interceptor = arrayOf(TestInterceptor::class))
 class IndexController : Resource() {
 
     @GET(valid = arrayOf(TestValidator::class))
