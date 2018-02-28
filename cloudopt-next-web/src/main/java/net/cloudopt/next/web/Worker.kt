@@ -16,25 +16,27 @@
 package net.cloudopt.next.web
 
 import io.vertx.core.*
-import net.cloudopt.next.web.config.ConfigManager
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/16
  * @Description: Vertx tool class
  */
+
 object Worker {
+
     /**
      * It’s done by calling executeBlocking specifying both
      * the blocking code to execute and a result handler to
      * be called back asynchronous when the blocking code has
      * been executed.
-     * @param handler Do something..
+     *
+     * @param handler     Do something..
      * @param queueResult After the completion of the callback
      */
-    @JvmStatic
-    fun then(handler: Handler<Future<Any>>,
-             queueResult: Handler<AsyncResult<Any>>) {
+    @JvmOverloads
+    fun <T> then(handler: Handler<Future<Any>>,
+                 queueResult: Handler<AsyncResult<Any>>) {
         CloudoptServer.vertx.executeBlocking(handler, queueResult)
     }
 
@@ -44,26 +46,27 @@ object Worker {
      * different executeBlocking are executed serially (i.e. one
      * after another).If you don’t care about ordering you can call
      * the function.
+     *
      * @param queueResult After the completion of the callback
      */
-    @JvmStatic
-    fun worker(handler: Handler<Future<Any>>,
-               queueResult: Handler<AsyncResult<Any>>) {
-        CloudoptServer.vertx.executeBlocking(handler, false, queueResult)
+    @JvmOverloads
+    fun <T> worker(handler: Handler<Future<Any>>,
+                   queueResult: Handler<AsyncResult<Any>>) {
+        CloudoptServer.vertx.executeBlocking(handler, queueResult)
     }
 
     /**
      * Automatic deployment in vertx.
+     *
      * @param verticle Package name
-     * @param worker Run with a separate thread pool
+     * @param worker   Run with a separate thread pool
      */
-    @JvmStatic
     @JvmOverloads
     fun deploy(verticle: String, worker: Boolean = false) {
         var options = CloudoptServer.deploymentOptions
-        if(worker){
+        if (worker) {
             options = DeploymentOptions(options)
-            options.setWorker(worker)
+            options.isWorker = worker
         }
         CloudoptServer.vertx.deployVerticle(verticle, options)
     }
@@ -73,8 +76,8 @@ object Worker {
      * Automatic undeployment in vertx.
      * @param verticle Package name
      */
-    @JvmStatic
-    fun undeploy(verticle: String) {
+    fun unploy(verticle: String) {
         CloudoptServer.vertx.undeploy(verticle)
     }
+
 }

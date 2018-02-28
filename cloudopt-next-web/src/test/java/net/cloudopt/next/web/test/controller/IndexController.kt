@@ -15,12 +15,19 @@
  */
 package net.cloudopt.next.web.test.controller
 
+import io.vertx.core.AsyncResult
+import io.vertx.core.Future
+import io.vertx.core.Handler
+import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.Validator
+import net.cloudopt.next.web.Worker
 import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.API
 import net.cloudopt.next.web.route.GET
-import net.cloudopt.next.web.route.POST
+import net.cloudopt.next.web.test.validator.TestValidator
+import kotlin.reflect.KClass
 
 
 /*
@@ -31,9 +38,9 @@ import net.cloudopt.next.web.route.POST
 @API("/")
 class IndexController : Resource() {
 
-    @GET
+    @GET(valid = arrayOf(TestValidator::class))
     fun index() {
-        var name = getParam<String>("name") ?: ""
+        var name = getParam("name") ?: ""
         renderText(name)
     }
 
@@ -48,7 +55,7 @@ class IndexController : Resource() {
     fun free() {
         var view = View()
         view.view = "index"
-        view.parameters.put("name","free")
+        view.parameters.put("name", "free")
         renderFree(view)
     }
 
@@ -56,15 +63,15 @@ class IndexController : Resource() {
     fun hbs() {
         var view = View()
         view.view = "index"
-        view.parameters.put("name","hbs")
+        view.parameters.put("name", "hbs")
         renderHbs(view)
     }
 
     @GET("json")
     fun json() {
-        var map = hashMapOf<String,Any>()
-        map.put("a",1)
-        map.put("b",2)
+        var map = hashMapOf<String, Any>()
+        map.put("a", 1)
+        map.put("b", 2)
         renderJson(map)
     }
 
@@ -72,23 +79,33 @@ class IndexController : Resource() {
     fun beetl() {
         var view = View()
         view.view = "index"
-        view.parameters.put("name","beetl")
+        view.parameters.put("name", "beetl")
         renderBeetl(view)
     }
 
     @GET("event")
-    fun event(){
-        EventManager.send("net.cloudopt.web.test","This is test message!")
+    fun event() {
+        EventManager.send("net.cloudopt.web.test", "This is test message!")
         renderJson("Send Event!")
     }
 
     @GET("500")
-    fun fail500(){
+    fun fail500() {
         fail500()
     }
 
     @GET("i18n")
-    fun i18n(){
+    fun i18n() {
         renderText(lang())
     }
+
+    @GET("asyn")
+    fun asyn() {
+        Worker.worker<Any>(Handler<Future<Any>>{ f ->
+            renderText("success!")
+        }, Handler<AsyncResult<Any>>{ result ->
+
+        })
+    }
+
 }

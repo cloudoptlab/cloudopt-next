@@ -30,6 +30,7 @@ class TestCase{
     fun testConnection(){
         var plugin = JooqPlugin()
         plugin.start()
+
     }
 
 }

@@ -16,6 +16,7 @@
 package net.cloudopt.next.web
 
 import io.vertx.core.http.HttpMethod
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt

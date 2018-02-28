@@ -20,7 +20,6 @@ import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
-import io.vertx.core.Verticle
 import io.vertx.core.dns.AddressResolverOptions
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
@@ -36,13 +35,14 @@ import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.yaml.Yamler
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.functions
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/17
  * @Description: Cloudopt Next Server
  */
-
 object CloudoptServer {
 
     @JvmStatic
@@ -63,7 +63,7 @@ object CloudoptServer {
     open val interceptors = mutableMapOf<String, Interceptor>()
 
     @JvmStatic
-    open val validators = mutableMapOf<String, MutableMap<HttpMethod, Class<Validator>>>()
+    open val validators = mutableMapOf<String, MutableMap<HttpMethod, KClass<out Validator>>>()
 
     @JvmStatic
     open val controllers = arrayListOf<ResourceTable>()
@@ -144,10 +144,10 @@ object CloudoptServer {
         resources.forEach { clazz ->
 
             // Get api annotation
-            var annotation: API = clazz.getAnnotation(API::class.java)
+            var annotation: API? = clazz.getDeclaredAnnotation(API::class.java)
 
             //Register interceptor
-            annotation.interceptor.forEach { inClass ->
+            annotation?.interceptor?.forEach { inClass ->
                 var interceptor = Beaner.newInstance<Interceptor>(inClass::class.java)
                 var url = annotation.value
                 if (url.endsWith("/")) {
@@ -159,62 +159,65 @@ object CloudoptServer {
             }
 
             //Get methods annotation
-            var methods = clazz.getDeclaredMethods()
+            var methods = clazz.methods
 
             methods.forEach { method ->
 
-                var methodAnnotations = method.getDeclaredAnnotations()
+                var methodAnnotations = method.annotations
 
                 var resourceUrl = ""
 
                 var httpMethod: HttpMethod = HttpMethod.GET
 
-                var valids: Array<KClass<Validator>> = arrayOf()
+                var valids: Array<KClass<out Validator>> = arrayOf()
 
                 methodAnnotations.forEach { methodAnnotation ->
 
                     if (methodAnnotation is GET) {
-                        resourceUrl = annotation.value + methodAnnotation.value
+                        resourceUrl = annotation?.value + methodAnnotation.value
                         httpMethod = HttpMethod.GET
                         valids = methodAnnotation.valid
                     }
 
                     if (methodAnnotation is POST) {
-                        resourceUrl = annotation.value + methodAnnotation.value
+                        resourceUrl = annotation?.value + methodAnnotation.value
                         httpMethod = HttpMethod.POST
                         valids = methodAnnotation.valid
                     }
 
                     if (methodAnnotation is PUT) {
-                        resourceUrl = annotation.value + methodAnnotation.value
+                        resourceUrl = annotation?.value + methodAnnotation.value
                         httpMethod = HttpMethod.PUT
                         valids = methodAnnotation.valid
                     }
 
                     if (methodAnnotation is DELETE) {
-                        resourceUrl = annotation.value + methodAnnotation.value
+                        resourceUrl = annotation?.value + methodAnnotation.value
                         httpMethod = HttpMethod.DELETE
                         valids = methodAnnotation.valid
                     }
 
                     if (methodAnnotation is PATCH) {
-                        resourceUrl = annotation.value + methodAnnotation.value
+                        resourceUrl = annotation?.value + methodAnnotation.value
                         httpMethod = HttpMethod.POST
                         valids = methodAnnotation.valid
                     }
 
-                    valids?.forEach { valid ->
-                        var temp = mutableMapOf<HttpMethod, Class<Validator>>()
-                        temp.put(httpMethod, valid.java)
-                        validators.put(resourceUrl, temp)
+                    if(resourceUrl.isNotBlank()){
+                        valids?.forEach { valid ->
+                            var temp = mutableMapOf<HttpMethod, KClass<out Validator>>()
+                            temp.put(httpMethod, valid)
+                            validators.put(resourceUrl, temp)
+                        }
                     }
+
 
                 }
 
-                var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name)
-
-                controllers.add(resourceTable)
-
+                if(resourceUrl.isNotBlank()){
+                    var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name)
+                    controllers.add(resourceTable)
+                }
             }
 
 
@@ -353,7 +356,7 @@ object CloudoptServer {
             map.keys.forEach { key ->
                 router.route(key, url).handler { context ->
                     try {
-                        var v = Beaner.newInstance<Validator>(map.get(key)!!)
+                        var v = Beaner.newInstance<Validator>(map.get(key)?.java!!)
                         var resource = Resource()
                         resource.init(context)
                         if (v.validate(resource)) {

@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.jooq
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
 import net.cloudopt.next.jooq.Jooqer
@@ -24,6 +25,8 @@ import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
+import org.jooq.impl.DataSourceConnectionProvider
+import org.jooq.impl.DefaultTransactionProvider
 import java.sql.SQLException
 
 
@@ -33,15 +36,19 @@ import java.sql.SQLException
  * @Description: Jooq plugin of cloudopt next
  */
 class JooqPlugin : Plugin {
+
     override fun start(): Boolean {
         try {
             var map = ConfigManager.initMap("jooq")
-            var pool:ConnectionPool = HikariCPPool()
+
+            var pool: ConnectionPool = HikariCPPool()
+
             if (map.get("pool") != null) {
                 pool = Beaner.newInstance(Classer.loadClass(map.get("pool") as String))
             }
-            var sqlDialect = when(map.get("database")){
-                "mysql" ->  SQLDialect.MYSQL
+
+            var sqlDialect = when (map.get("database")) {
+                "mysql" -> SQLDialect.MYSQL
                 "mysql 5.7" -> SQLDialect.MYSQL_5_7
                 "mysql 8.0" -> SQLDialect.MYSQL_8_0
                 "cubrid" -> SQLDialect.CUBRID
@@ -55,12 +62,18 @@ class JooqPlugin : Plugin {
                 "postgres 9.4" -> SQLDialect.POSTGRES_9_4
                 "postgres 9.5" -> SQLDialect.POSTGRES_9_5
                 "sqlite" -> SQLDialect.SQLITE
-                else ->{
+                else -> {
                     SQLDialect.MYSQL
                 }
             }
             Jooqer.connection = pool.getConnection()
-            Jooqer.dsl = DSL.using(Jooqer.connection, sqlDialect)
+            Jooqer.connectionProvider = DataSourceConnectionProvider(pool.getDatasource())
+            Jooqer.transactionProvider = DefaultTransactionProvider(Jooqer.connectionProvider)
+            Jooqer.configuration.set(Jooqer.connectionProvider)
+                    .set(Jooqer.transactionProvider)
+                    .set(sqlDialect)
+                    .set(Jooqer.settings)
+            Jooqer.dsl = DSL.using(Jooqer.configuration)
             return true
         } catch (e: SQLException) {
             e.printStackTrace()

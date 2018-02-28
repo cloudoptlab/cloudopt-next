@@ -15,6 +15,9 @@
  */
 package net.cloudopt.next.aop
 
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
+
 /*
  * @author: Cloudopt
  * @Time: 2018/1/4
@@ -26,14 +29,8 @@ object Beaner {
      * @param clazz class
      * @return objects
      */
+    @Throws(InstantiationException::class, IllegalAccessException::class)
     fun <T> newInstance(clazz: Class<*>): T {
-        try {
-            return clazz.newInstance() as T
-        } catch (e: InstantiationException) {
-            throw RuntimeException(e)
-        } catch (e: IllegalAccessException) {
-            throw RuntimeException(e)
-        }
-
+        return clazz.newInstance() as T
     }
 }

@@ -8,4 +8,4 @@ net:
         driverClassName: "com.mysql.cj.jdbc.Driver"
       jooq:
         pool: "net.cloudopt.next.jooq.pool.HikariCPPool"
-        database: "postgres"
+        database: "mysql"

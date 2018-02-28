@@ -16,6 +16,7 @@
 package net.cloudopt.next.jooq.pool
 
 import java.sql.Connection
+import javax.sql.DataSource
 
 
 /*
@@ -26,5 +27,7 @@ import java.sql.Connection
 interface ConnectionPool {
 
     fun getConnection(): Connection
+
+    fun getDatasource():DataSource
 
 }

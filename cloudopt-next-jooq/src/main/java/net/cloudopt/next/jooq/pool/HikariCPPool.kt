@@ -20,6 +20,7 @@ import com.zaxxer.hikari.HikariDataSource
 import com.zaxxer.hikari.HikariConfig
 import net.cloudopt.next.web.config.ConfigManager
 import java.sql.Connection
+import javax.sql.DataSource
 
 
 /*
@@ -31,9 +32,9 @@ class HikariCPPool : ConnectionPool {
 
     private val datasourceConfig: MutableMap<String, Any> = ConfigManager.initMap("datasource")
 
-    @Throws(SQLException::class)
-    override fun getConnection(): Connection {
-        val config = HikariConfig()
+    private val config = HikariConfig()
+
+    init {
         config.jdbcUrl = datasourceConfig.get("jdbcUrl") as String
         config.username = datasourceConfig.get("username") as String
         config.password = datasourceConfig.get("password") as String
@@ -41,7 +42,16 @@ class HikariCPPool : ConnectionPool {
         datasourceConfig.keys.forEach { key ->
             config.addDataSourceProperty(key, datasourceConfig.get(key))
         }
-        return HikariDataSource(config).connection
     }
+
+    @Throws(SQLException::class)
+    override fun getConnection(): Connection {
+        return getDatasource().connection
+    }
+
+    override fun getDatasource(): DataSource {
+        return HikariDataSource(config)
+    }
+
 
 }
