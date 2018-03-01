@@ -74,3 +74,4 @@ Cloudopt Next uses GitHub’s integrated issue tracking system to record bugs an
 ## License
 
 Cloudopt Next is Open Source software released under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html).
+
