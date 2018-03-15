@@ -65,7 +65,7 @@ open class Resource {
      * @param name a String specifying the name of the parameter
      * @return The single value of the parameter
      */
-    fun  getParam(name: String): String? {
+    fun getParam(name: String): String? {
         return request?.getParam(name)
     }
 

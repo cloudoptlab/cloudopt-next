@@ -15,20 +15,9 @@
  */
 package net.cloudopt.next.web.test
 
-import io.vertx.core.Vertx
-import io.vertx.ext.web.Router
-import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.web.CloudoptServer
-import net.cloudopt.next.web.Interceptor
-import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.event.EventPlugin
-import net.cloudopt.next.web.render.FreemarkerRender
-import net.cloudopt.next.web.test.interceptor.TestInterceptor
 import net.cloudopt.next.web.test.plugin.TestPlugin
-import net.cloudopt.next.yaml.Yamler
-import java.io.File
-import kotlin.reflect.KClass
-import kotlin.test.fail
 
 /*
  * @author: Cloudopt
@@ -38,7 +27,7 @@ import kotlin.test.fail
 fun main(args: Array<String>) {
     CloudoptServer.addPlugin(TestPlugin())
     CloudoptServer.addPlugin(EventPlugin())
-    CloudoptServer.run(TestCase::class.java)
+    CloudoptServer.run(TestCase::class)
 }
 
 class TestCase

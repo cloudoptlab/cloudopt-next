@@ -55,8 +55,10 @@ object KafkaManager {
     @JvmStatic
     open var producer: KafkaProducer<Any, Any>? = null
 
+    @JvmStatic
+    var config = mutableMapOf<String, String>()
+
     fun init(vertx: Vertx) {
-        var config = mutableMapOf<String, String>()
         config["bootstrap.servers"] = map.get("servers") ?: ""
         config["key.deserializer"] = map.get("keyDeserializer") ?: "org.apache.kafka.common.serialization.StringDeserializer"
         config["value.deserializer"] = map.get("valueDeserializer") ?: "org.apache.kafka.common.serialization.StringDeserializer"

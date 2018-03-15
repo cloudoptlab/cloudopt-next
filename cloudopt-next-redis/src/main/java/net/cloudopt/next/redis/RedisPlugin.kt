@@ -23,7 +23,6 @@ import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
-import redis.clients.jedis.Protocol
 
 /**
  * @author: Cloudopt

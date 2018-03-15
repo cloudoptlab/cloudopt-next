@@ -21,8 +21,8 @@ package net.cloudopt.next.web.config
  * @Time: 2018/1/10
  * @Description: Cloudopt Next Waf configuration file
  */
-data class WafConfigBean(var plus:Boolean = true,
-                         var csrf:Boolean = true,
+data class WafConfigBean(var plus:Boolean = false,
+                         var csrf:Boolean = false,
                          var xss:Boolean = false,
                          var sql:Boolean = false,
                          var mongodb:Boolean = false)
