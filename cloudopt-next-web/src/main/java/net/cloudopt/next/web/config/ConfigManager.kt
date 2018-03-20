@@ -15,9 +15,11 @@
  */
 package net.cloudopt.next.web.config
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Maper
 import net.cloudopt.next.yaml.Yamler
+import java.io.File
 import kotlin.reflect.KClass
 
 
@@ -55,28 +57,25 @@ object ConfigManager {
     @JvmOverloads
     open fun initMap(name: String, map: MutableMap<String, Any> = mutableMapOf()): MutableMap<String, Any> {
 
-        try {
+        if (Yamler.read(YML, "net.cloudopt.next." + name) != null) {
+            map?.putAll(Yamler.read(YML, "net.cloudopt.next." + name) as Map<out String, Any>)
+        }
 
-            if (Yamler.read(YML, "net.cloudopt.next." + name) != null) {
-                map?.putAll(Yamler.read(YML, "net.cloudopt.next." + name) as Map<out String, Any>)
-            }
+        var dev: Boolean = map?.get("dev")?.toString()?.toBoolean() ?: true
 
-            var dev = map?.get("dev") as Boolean
-
+        if(File(Yamler.getRootClassPath() + "/" + DEVYML).exists()){
             if (dev && Yamler.read(DEVYML, "net.cloudopt.next." + name) != null) {
                 map.putAll(Yamler.read(DEVYML, "net.cloudopt.next." + name) as Map<out String, Any>)
             }
+        }
 
+        if(File(Yamler.getRootClassPath() + "/" + PROYML).exists()){
             if (!dev && Yamler.read(PROYML, "net.cloudopt.next." + name) != null) {
                 map.putAll(Yamler.read(PROYML, "net.cloudopt.next." + name) as Map<out String, Any>)
             }
-
-        } catch (e: RuntimeException) {
-
         }
 
         return map
-
     }
 
 }

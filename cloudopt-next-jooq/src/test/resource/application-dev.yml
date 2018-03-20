@@ -1,0 +1,11 @@
+net:
+  cloudopt:
+    next:
+      datasource:
+        jdbcUrl: "jdbc:mysql://localhost:3306/cloudopt?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC"
+        username: "root"
+        password: "root"
+        driverClassName: "com.mysql.cj.jdbc.Driver"
+      jooq:
+        pool: "net.cloudopt.next.jooq.pool.HikariCPPool"
+        database: "mysql"

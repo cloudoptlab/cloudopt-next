@@ -25,6 +25,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileReader
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
@@ -54,15 +55,12 @@ object Yamler {
     fun read(filePath: String, prefix: String): Map<*, *>? {
         var map = read(filePath)
         var list = prefix.split(".")
-        try {
-            for (s in list) {
-                map = map!!.get(s) as Map<*, *>
+        for (s in list) {
+            if (map != null && map!!.get(s) != null) {
+                map = map!!.get(s) as Map<String, Any>
             }
-            return map
-        } catch (e: RuntimeException) {
-            throw RuntimeException("Cloudopt Next Yaml: prefix was not found!")
         }
-        return null
+        return map ?: mutableMapOf<String,Any>()
     }
 
     /**

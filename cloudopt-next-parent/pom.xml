@@ -18,6 +18,10 @@
     <description>Parent pom providing dependency and plugin management for applications
         built with Maven</description>
 
+    <properties>
+        <cloudopt.next.version>1.0.0-SNAPSHOT</cloudopt.next.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
 
@@ -25,67 +29,67 @@
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-logging</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-yaml</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-client</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-encrypt</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-jooq</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-kafka</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-redis</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-spring</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-utils</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-waf</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>net.cloudopt.next</groupId>
                 <artifactId>cloudopt-next-web</artifactId>
-                <version>${version}</version>
+                <version>${cloudopt.next.version}</version>
             </dependency>
 
             <dependency>
