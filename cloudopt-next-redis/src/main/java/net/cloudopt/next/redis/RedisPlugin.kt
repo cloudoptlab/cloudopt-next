@@ -57,11 +57,11 @@ class RedisPlugin() : Plugin {
         }
 
         if (map.get("port") != null) {
-            port = map.get("port") as Int
+            port = map.get("port").toString().toInt()
         }
 
         if (map.get("timeout") != null) {
-            timeout = map.get("timeout") as Int
+            timeout = map.get("timeout").toString().toInt()
         }
 
         if (map.get("password") != null) {
@@ -69,7 +69,7 @@ class RedisPlugin() : Plugin {
         }
 
         if (map.get("database") != null) {
-            database = map.get("database") as Int
+            database = map.get("database").toString().toInt()
         }
 
 
