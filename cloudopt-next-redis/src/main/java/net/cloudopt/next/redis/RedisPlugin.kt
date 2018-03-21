@@ -89,11 +89,11 @@ class RedisPlugin() : Plugin {
 
     override fun start(): Boolean {
         val jedisPool: JedisPool
-        if (port != null && timeout != null && password != null && database != null && clientName != null)
+        if (port != null && timeout != null && !password.isNullOrBlank() && database != null && !clientName.isNullOrBlank())
             jedisPool = JedisPool(jedisPoolConfig, host, port!!, timeout!!, password, database!!, clientName)
-        else if (port != null && timeout != null && password != null && database != null)
+        else if (port != null && timeout != null && !password.isNullOrBlank() && database != null)
             jedisPool = JedisPool(jedisPoolConfig, host, port!!, timeout!!, password, database!!)
-        else if (port != null && timeout != null && password != null)
+        else if (port != null && timeout != null && !password.isNullOrBlank())
             jedisPool = JedisPool(jedisPoolConfig, host, port!!, timeout!!, password)
         else if (port != null && timeout != null)
             jedisPool = JedisPool(jedisPoolConfig, host, port!!, timeout!!)
@@ -109,9 +109,13 @@ class RedisPlugin() : Plugin {
 
     override fun stop(): Boolean {
         val cache = Redis.removeCache(cacheName)
-        if (cache == Redis.mainCache)
-            Redis.setMainCache(null!!)
-        cache.jedisPool.destroy()
+        try{
+            if (cache == Redis.mainCache)
+                Redis.setMainCache(null!!)
+            cache.jedisPool.destroy()
+        }catch (e:KotlinNullPointerException){
+
+        }
         return true
     }
 

@@ -79,10 +79,14 @@ class Cache {
         }
     }
 
-    operator fun <T> get(key: Any): T {
+    operator fun <T> get(key: Any): Any? {
         val jedis = jedis
         try {
-            return valueFromBytes(jedis.get(keyToBytes(key))) as T
+            if (jedis.exists(keyToBytes(key))){
+                return valueFromBytes(jedis.get(keyToBytes(key)))
+            }else{
+                return null
+            }
         } finally {
             close(jedis)
         }
