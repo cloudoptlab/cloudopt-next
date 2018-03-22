@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.event
 
-import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.Plugin
 
@@ -33,7 +32,7 @@ class EventPlugin :Plugin{
     }
 
     override fun stop(): Boolean {
-        EventManager.eventBus?.close{result->
+        EventManager.eventBus.close { result ->
             if (result.failed()){
                 println(result.cause())
             }
