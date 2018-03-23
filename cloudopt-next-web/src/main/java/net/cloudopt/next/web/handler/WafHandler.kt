@@ -15,16 +15,11 @@
  */
 package net.cloudopt.next.web.handler
 
-import io.vertx.ext.web.Cookie
-import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.waf.Filter
 import net.cloudopt.next.waf.MongoInjection
 import net.cloudopt.next.waf.SQLInjection
 import net.cloudopt.next.waf.XSSInjection
-import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.config.ConfigManager
-import net.cloudopt.next.web.json.JsonProvider
-import net.cloudopt.next.web.json.Jsoner
 
 /*
  * @author: Cloudopt
@@ -36,9 +31,7 @@ import net.cloudopt.next.web.json.Jsoner
 class WafHandler : Handler() {
 
     companion object {
-
-        @JvmStatic private var filters: MutableList<Filter> = mutableListOf()
-
+        private val filters: MutableList<Filter> = mutableListOf()
     }
 
     init {
@@ -66,6 +59,7 @@ class WafHandler : Handler() {
             entry.setValue(value)
         }
 
+
         //Processing header parameters
         request.headers().forEach { entry ->
             var value = entry.value
@@ -79,7 +73,7 @@ class WafHandler : Handler() {
 
 
         //Processing cookie parameters
-        context?.cookies()?.forEach { entry ->
+        context.cookies().forEach { entry ->
             var value = entry.value
             filters.forEach { filter ->
                 if (value.isNotBlank()) {
@@ -89,7 +83,7 @@ class WafHandler : Handler() {
             entry.setValue(value)
         }
 
-        if (ConfigManager.wafConfig.plus){
+        if (ConfigManager.wafConfig.plus) {
             setHeader("Cache-Control", "no-store, no-cache")
             setHeader("X-Content-Type-Options", "nosniff")
             setHeader("X-Download-Options", "noopen")

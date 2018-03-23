@@ -18,12 +18,9 @@ package net.cloudopt.next.web
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
-import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Cookie
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
-import io.vertx.ext.web.handler.RedirectAuthHandler
-import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.json.Jsoner
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View
@@ -35,13 +32,23 @@ import net.cloudopt.next.web.render.View
  */
 open class Resource {
 
-    var context: RoutingContext? = null
+    lateinit var context: RoutingContext
 
-    open val request: HttpServerRequest
-        get() = context!!.request()
+    val request: HttpServerRequest
+        get() {
+            require(this::context.isInitialized) {
+                "RoutingContext must init first!"
+            }
+            return context.request()
+        }
 
-    open val response: HttpServerResponse
-        get() = context!!.response()
+    val response: HttpServerResponse
+        get() {
+            require(this::context.isInitialized) {
+                "RoutingContext must init first!"
+            }
+            return context.response()
+        }
 
     open fun init(context: RoutingContext) {
         this.context = context
@@ -53,11 +60,11 @@ open class Resource {
      * @return The single value of the parameter
      */
     fun getHeader(key: String): String? {
-        return request?.getHeader(key)
+        return request.getHeader(key)
     }
 
     fun setHeader(key: String, value: String) {
-        response?.putHeader(key, value)
+        response.putHeader(key, value)
     }
 
     /**
@@ -66,7 +73,7 @@ open class Resource {
      * @return The single value of the parameter
      */
     fun getParam(name: String): String? {
-        return request?.getParam(name)
+        return request.getParam(name)
     }
 
     /**
@@ -75,8 +82,7 @@ open class Resource {
      * @return The single value of the cookie
      */
     fun getCookieObj(key: String): Cookie? {
-        val cookie = context?.getCookie(key)
-        return cookie
+        return context.getCookie(key)
     }
 
     /**
@@ -85,7 +91,7 @@ open class Resource {
      * @return The single value of the cookie
      */
     fun getCookie(key: String): String? {
-        return context?.getCookie(key)?.value
+        return context.getCookie(key)?.value
     }
 
 
@@ -101,7 +107,7 @@ open class Resource {
     @JvmOverloads
     fun setCookie(key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
                   , httpOnly: Boolean = true, cookieSecureFlag: Boolean = true) {
-        var cookie = Cookie.cookie(key, value)
+        val cookie = Cookie.cookie(key, value)
         if (domain.isNotBlank()) {
             cookie.domain = domain
         }
@@ -113,11 +119,11 @@ open class Resource {
         }
         cookie.setHttpOnly(httpOnly)
         cookie.setSecure(true)
-        context?.addCookie(cookie)
+        context.addCookie(cookie)
     }
 
     fun setCookie(cookie: Cookie) {
-        context?.addCookie(cookie)
+        context.addCookie(cookie)
     }
 
     /**
@@ -125,7 +131,7 @@ open class Resource {
      * @param name cookie name
      */
     fun delCookie(key: String) {
-        context?.removeCookie(key)
+        context.removeCookie(key)
     }
 
     /**
@@ -136,7 +142,7 @@ open class Resource {
         if (ip.isBlank()) {
             ip = request.getHeader("X-Real-IP")
         } else {
-            ip = ip?.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+            ip = ip.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
         }
         if (ip.isBlank() || "unknown".equals(ip, ignoreCase = true)) {
             ip = request.getHeader("Proxy-Client-IP") ?: ""
@@ -147,12 +153,12 @@ open class Resource {
         return ip
     }
 
-    fun render(result: Object) {
-        RenderFactory.getDefaultRender().render(context?.response()!!, result)
+    fun render(result: Any) {
+        RenderFactory.getDefaultRender().render(context.response()!!, result)
     }
 
     fun render(renderName: String, result: Any) {
-        RenderFactory.get(renderName).render(context?.response()!!, result)
+        RenderFactory.get(renderName).render(context.response()!!, result)
     }
 
     fun renderJson(result: Any) {
@@ -180,52 +186,52 @@ open class Resource {
     }
 
     fun sendFile(fileName: String) {
-        response?.sendFile(fileName)
+        response.sendFile(fileName)
     }
 
     fun redirect(url: String) {
-        response?.statusCode = 302
-        response?.putHeader("location", url)
+        response.statusCode = 302
+        response.putHeader("location", url)
     }
 
     fun end() {
-        response?.end()
+        response.end()
     }
 
     fun fail(code: Int) {
-        context?.fail(code)
+        context.fail(code)
     }
 
     fun lang() {
-        context?.preferredLanguage()?.tag()?:"en"
+        context.preferredLanguage().tag() ?: "en"
     }
 
     fun getBody(): Buffer? {
-        return context?.body
+        return context.body
     }
 
-    fun getBodyString(): String {
-        return context?.bodyAsString!!
+    fun getBodyString(): String? {
+        return context.bodyAsString
     }
 
     fun getBodyJson(): Any? {
-        return Jsoner.toJsonObject(Jsoner.toJsonString(context?.bodyAsJson!!))
+        return Jsoner.toJsonObject(Jsoner.toJsonString(context.bodyAsJson))
     }
 
     fun getBodyJson(clazz: Class<*>): Any? {
-        return Jsoner.toJsonObject(Jsoner.toJsonString(context?.bodyAsJson!!), clazz)
+        return Jsoner.toJsonObject(Jsoner.toJsonString(context.bodyAsJson), clazz)
     }
 
     fun getBodyJsonArray(): Any? {
-        return Jsoner.toJsonArray(Jsoner.toJsonString(context?.bodyAsJson!!))
+        return Jsoner.toJsonArray(Jsoner.toJsonString(context.bodyAsJson))
     }
 
     fun getBodyJsonArray(clazz: Class<*>): Any? {
-        return Jsoner.toJsonArray(Jsoner.toJsonString(context?.bodyAsJson!!), clazz)
+        return Jsoner.toJsonArray(Jsoner.toJsonString(context.bodyAsJson), clazz)
     }
 
-    fun getFiles(): MutableSet<FileUpload>? {
-        return context?.fileUploads()
+    fun getFiles(): MutableSet<FileUpload> {
+        return context.fileUploads()
     }
 
 }
