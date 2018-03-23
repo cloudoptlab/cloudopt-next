@@ -44,8 +44,8 @@ object Banner {
 
         var buffer = BufferedReader(InputStreamReader(input))
 
-        if (File(Yamler.getRootClassPath() + "/" + ConfigManager.webConfig.bannerName).exists()) {
-            input = File(Yamler.getRootClassPath() + "/" + ConfigManager.webConfig.bannerName).inputStream()
+        if(ConfigManager.webConfig.bannerName.isNotBlank()){
+            input = Yamler.getFileInputStream(ConfigManager.webConfig.bannerName)
             buffer = BufferedReader(InputStreamReader(input))
         }
 
@@ -55,6 +55,7 @@ object Banner {
             text = text.replace("\${java.vendor}", System.getProperty("java.vendor"))
             text = text.replace("\${os}", System.getProperty("os.name"))
             text = text.replace("\${time}", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+            text = text.replace("\${port}", ConfigManager.webConfig.port.toString())
             logger.info(text)
             text = buffer.readLine()
         }
