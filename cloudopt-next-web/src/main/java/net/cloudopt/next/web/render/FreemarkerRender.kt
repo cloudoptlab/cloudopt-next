@@ -33,9 +33,11 @@ class FreemarkerRender : Render {
 
     companion object {
 
-        @JvmStatic open var config: Configuration ?= null
+        @JvmStatic
+        open var config: Configuration? = null
 
-        @JvmStatic open var contentType = "text/html;charset=utf-8"
+        @JvmStatic
+        open var contentType = "text/html;charset=utf-8"
 
     }
 
@@ -60,10 +62,10 @@ class FreemarkerRender : Render {
 
                 config?.dateTimeFormat = "yyyy-MM-dd HH:mm:ss"
 
-                config?.setDirectoryForTemplateLoading(File(Yamler.getRootClassPath() + "/" + ConfigManager.webConfig.webroot + "/"))
+                config?.setClassForTemplateLoading(FreemarkerRender::class.java, "/" + ConfigManager.webConfig.webroot)
 
             }
-        }catch (e:ClassNotFoundException){
+        } catch (e: Exception) {
 
         }
 
@@ -73,7 +75,7 @@ class FreemarkerRender : Render {
 
         var view: View = obj as View
 
-        if(view.view.indexOf(".") < 0){
+        if (view.view.indexOf(".") < 0) {
             view.view = view.view + ".ftl"
         }
 

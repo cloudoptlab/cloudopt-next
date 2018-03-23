@@ -19,11 +19,7 @@ import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerResponse
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.yaml.Yamler
-
-import java.io.BufferedReader
-import java.io.FileNotFoundException
-import java.io.FileReader
-import java.io.IOException
+import java.io.*
 
 /*
  * @author: Cloudopt
@@ -40,9 +36,9 @@ class HtmlRender : Render {
         }
 
         try {
-            val bufferedReader = BufferedReader(FileReader(Yamler.getRootClassPath() + "/" + ConfigManager.webConfig.webroot + "/" + view.view))
-            val stringBuilder = StringBuilder()
-            var content: String
+            var inputStream = Yamler.getFileInputStream(ConfigManager.webConfig.webroot + "/" + view.view)
+            var bufferedReader = BufferedReader(InputStreamReader(inputStream))
+            var stringBuilder = StringBuilder()
             bufferedReader.forEachLine { content->
                 if (content.isNotBlank()){
                     stringBuilder.append(content)

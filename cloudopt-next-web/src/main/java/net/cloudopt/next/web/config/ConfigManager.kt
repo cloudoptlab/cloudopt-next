@@ -63,13 +63,13 @@ object ConfigManager {
 
         var dev: Boolean = map?.get("dev")?.toString()?.toBoolean() ?: true
 
-        if(File(Yamler.getRootClassPath() + "/" + DEVYML).exists()){
+        if(Yamler.exist(DEVYML)){
             if (dev && Yamler.read(DEVYML, "net.cloudopt.next." + name) != null) {
                 map.putAll(Yamler.read(DEVYML, "net.cloudopt.next." + name) as Map<out String, Any>)
             }
         }
 
-        if(File(Yamler.getRootClassPath() + "/" + PROYML).exists()){
+        if(Yamler.exist(PROYML)){
             if (!dev && Yamler.read(PROYML, "net.cloudopt.next." + name) != null) {
                 map.putAll(Yamler.read(PROYML, "net.cloudopt.next." + name) as Map<out String, Any>)
             }

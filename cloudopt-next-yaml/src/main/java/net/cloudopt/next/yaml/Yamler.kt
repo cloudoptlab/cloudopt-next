@@ -20,10 +20,8 @@ import com.esotericsoftware.yamlbeans.YamlException
 import com.esotericsoftware.yamlbeans.YamlReader
 import net.cloudopt.next.aop.Maper
 import net.cloudopt.next.yaml.annotation.ConfigureBean
-import java.io.File
+import java.io.*
 
-import java.io.FileNotFoundException
-import java.io.FileReader
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
@@ -43,7 +41,6 @@ object Yamler {
     init {
         yamlConfig = YamlConfig()
         yamlConfig!!.setAllowDuplicates(false)
-        getRootClassPath()
     }
 
     /**
@@ -60,7 +57,7 @@ object Yamler {
                 map = map!!.get(s) as Map<String, Any>
             }
         }
-        return map ?: mutableMapOf<String,Any>()
+        return map ?: mutableMapOf<String, Any>()
     }
 
     /**
@@ -71,7 +68,7 @@ object Yamler {
     fun read(filePath: String): Map<*, *>? {
         var reader: YamlReader? = null
         try {
-            reader = YamlReader(FileReader(getRootClassPath() + "/" + filePath), yamlConfig!!)
+            reader = YamlReader(InputStreamReader(getFileInputStream(filePath)), yamlConfig!!)
             var `object`: Any? = null
             `object` = reader.read()
             return `object` as Map<*, *>?
@@ -93,7 +90,7 @@ object Yamler {
     fun <T> read(filePath: String, clazz: Class<T>): T? {
         var reader: YamlReader? = null
         try {
-            reader = YamlReader(FileReader(getRootClassPath() + "/" + filePath), yamlConfig!!)
+            reader = YamlReader(InputStreamReader(getFileInputStream(filePath)), yamlConfig!!)
             return reader.read(clazz)
         } catch (e: FileNotFoundException) {
             throw RuntimeException("Cloudopt Next Yaml: $filePath was not found!")
@@ -134,19 +131,31 @@ object Yamler {
     }
 
     /**
+     * Get the file input stream
+     * @return FileInputStream
+     */
+    fun getFileInputStream(fileName: String): InputStream? {
+        var fileInputStream: InputStream? = try {
+            File(getRootClassPath() + "/" + fileName).inputStream()
+        } catch (e: Exception) {
+            Yamler::class.java.getResourceAsStream("/" + fileName)
+        }
+        return fileInputStream
+    }
+
+    fun exist(fileName: String): Boolean {
+        return getFileInputStream(fileName) != null
+    }
+
+    /**
      * Get the project runtime path
      * @return Path
      */
     fun getRootClassPath(): String {
+        val loader = ClassLoader.getSystemClassLoader()
         if (rootPath == null || rootPath.equals("")) {
-            try {
-                val path = Yamler::class.java!!.getClassLoader().getResource("")!!.toURI().getPath()
-                rootPath = File(path).getAbsolutePath()
-            } catch (e: Exception) {
-                val path = Yamler::class.java!!.getClassLoader().getResource("")!!.getPath()
-                rootPath = File(path).getAbsolutePath()
-            }
-
+            val path = loader.getResource("")!!.getPath()
+            rootPath = File(path).getAbsolutePath()
         }
         return rootPath
     }

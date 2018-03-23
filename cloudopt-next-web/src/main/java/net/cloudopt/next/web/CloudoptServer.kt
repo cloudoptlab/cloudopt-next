@@ -125,7 +125,7 @@ object CloudoptServer {
         packageName = if (ConfigManager.webConfig.packageName.isNotBlank()) {
             ConfigManager.webConfig.packageName
         } else {
-            Yamler.getRootClassPath()
+            throw RuntimeException("Package name must not be null!")
         }
 
         //Scan custom handler
