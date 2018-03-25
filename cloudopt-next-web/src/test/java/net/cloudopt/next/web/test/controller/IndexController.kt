@@ -26,7 +26,8 @@ import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.API
 import net.cloudopt.next.web.route.GET
 import net.cloudopt.next.web.route.POST
-import net.cloudopt.next.web.test.interceptor.TestInterceptor
+import net.cloudopt.next.web.test.interceptor.TestInterceptor1
+import net.cloudopt.next.web.test.interceptor.TestInterceptor2
 import net.cloudopt.next.web.test.validator.TestValidator
 
 
@@ -35,7 +36,7 @@ import net.cloudopt.next.web.test.validator.TestValidator
  * @Time: 2018/1/26
  * @Description: Test Controller
  */
-@API("/", interceptor = arrayOf(TestInterceptor::class))
+@API("/", interceptor = [TestInterceptor1::class, TestInterceptor2::class])
 class IndexController : Resource() {
 
     @GET(valid = arrayOf(TestValidator::class))

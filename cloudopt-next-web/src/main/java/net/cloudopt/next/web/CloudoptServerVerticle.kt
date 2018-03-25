@@ -98,11 +98,16 @@ class CloudoptServerVerticle : AbstractVerticle() {
             router.route(url).handler { context ->
                 val resource = Resource()
                 resource.init(context)
-                val interceptor = Beaner.newInstance<Interceptor>(clazz.java)
-                if (interceptor.intercept(resource)) {
-                    context.next()
-                } else {
+                val interceptors = clazz.map { Beaner.newInstance<Interceptor>(it.java) }
+
+                val interceptor = interceptors.firstOrNull {
+                    !it.intercept(resource)
+                }
+
+                if (interceptor != null){
                     interceptor.response(resource).response.end()
+                }else{
+                    context.next()
                 }
             }
         }

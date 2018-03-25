@@ -25,10 +25,10 @@ import org.slf4j.LoggerFactory
  * @Time: 2018/2/28
  * @Description: Test Case
  */
-class TestInterceptor : Interceptor {
+class TestInterceptor1 : Interceptor {
      val logger = LoggerFactory.getLogger(this::class.java.simpleName)
     override fun intercept(resource: Resource): Boolean {
-         logger.info("Through the intercept !")
+         logger.info("Through the intercept1 !")
         return true
     }
 
