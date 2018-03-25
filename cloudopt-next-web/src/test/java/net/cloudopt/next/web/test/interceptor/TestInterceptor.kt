@@ -17,6 +17,7 @@ package net.cloudopt.next.web.test.interceptor
 
 import net.cloudopt.next.web.Interceptor
 import net.cloudopt.next.web.Resource
+import org.slf4j.LoggerFactory
 
 
 /*
@@ -25,9 +26,9 @@ import net.cloudopt.next.web.Resource
  * @Description: Test Case
  */
 class TestInterceptor : Interceptor {
-
+     val logger = LoggerFactory.getLogger(this::class.java.simpleName)
     override fun intercept(resource: Resource): Boolean {
-        println("Through the intercept!")
+         logger.info("Through the intercept !")
         return true
     }
 

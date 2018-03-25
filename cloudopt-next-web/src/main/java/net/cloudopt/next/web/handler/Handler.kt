@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.handler
 
-import io.vertx.ext.web.RoutingContext
 import net.cloudopt.next.web.Resource
 
 /*

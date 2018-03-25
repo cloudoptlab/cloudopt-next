@@ -79,7 +79,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 try {
                     handler.init(context)
                     handler.handle()
-                    handler.context?.next()
+                    handler.context.next()
                 } catch (e: InstantiationException) {
                     e.printStackTrace()
                     context.response().end()
@@ -96,13 +96,13 @@ class CloudoptServerVerticle : AbstractVerticle() {
         //Register interceptors
         CloudoptServer.interceptors.forEach { url, clazz ->
             router.route(url).handler { context ->
-                var resource = Resource()
+                val resource = Resource()
                 resource.init(context)
-                var interceptor = Beaner.newInstance<Interceptor>(clazz.java)
+                val interceptor = Beaner.newInstance<Interceptor>(clazz.java)
                 if (interceptor.intercept(resource)) {
                     context.next()
                 } else {
-                    interceptor.response(resource).response?.end()
+                    interceptor.response(resource).response.end()
                 }
             }
         }
@@ -112,8 +112,8 @@ class CloudoptServerVerticle : AbstractVerticle() {
             map.keys.forEach { key ->
                 router.route(key, url).handler { context ->
                     try {
-                        var v = Beaner.newInstance<Validator>(map.get(key)?.java!!)
-                        var resource = Resource()
+                        val v = Beaner.newInstance<Validator>(map.get(key)?.java!!)
+                        val resource = Resource()
                         resource.init(context)
                         if (v.validate(resource)) {
                             context.next()
@@ -134,12 +134,12 @@ class CloudoptServerVerticle : AbstractVerticle() {
         //Register method
         CloudoptServer.controllers.forEach { resourceTable ->
 
-            var controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
 
             router.route(resourceTable.httpMethod, resourceTable.url).handler({ context ->
                 try {
+                    val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
                     controllerObj.init(context)
-                    var m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
+                    val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
                     m.invoke(controllerObj)
                 } catch (e: IllegalAccessException) {
                     e.printStackTrace()
@@ -159,7 +159,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         if (CloudoptServer.controllers.size == 0) {
             router.route(HttpMethod.GET, "/*").handler({ context ->
-                var resource = Resource()
+                val resource = Resource()
                 resource.init(context)
                 resource.renderText("A first cloudopt next application!")
             })

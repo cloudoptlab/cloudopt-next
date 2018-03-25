@@ -32,10 +32,9 @@ import net.cloudopt.next.web.json.Jsoner
 object EventManager {
 
     @JvmStatic
-    open var eventBus: EventBus? = null
+    lateinit var eventBus: EventBus
 
-    @JvmStatic
-    private val eventList: HashMap<String, Class<*>> = hashMapOf()
+    private val eventList: MutableMap<String, Class<*>> = hashMapOf()
 
     private val logger = Logger.Companion.getLogger(EventManager::class.java)
 
@@ -49,14 +48,15 @@ object EventManager {
                 }
 
         eventList.keys.forEach { key ->
-            eventBus?.consumer<Any>(key, { message ->
-                var listener = Beaner.newInstance<EventListener>(eventList.get(key)!!)
-                listener?.listener(message)
+            eventBus.consumer<Any>(key, { message ->
+                eventList[key]?.let {
+                    Beaner.newInstance<EventListener>(it)
+                }?.listener(message)
             })?.completionHandler({ res ->
                 if (res.succeeded()) {
-                    logger.info("[EVENT] Registered event listener：[${key}] on ${eventList.get(key)!!.getName()}")
+                    logger.info("[EVENT] Registered event listener：[$key] on ${eventList.get(key)?.name}")
                 } else {
-                    logger.error("[EVENT] Registered event listener was error： ${eventList.get(key)!!.getName()}")
+                    logger.error("[EVENT] Registered event listener was error： ${eventList.get(key)?.name}")
                 }
             })
         }
@@ -64,20 +64,20 @@ object EventManager {
 
     }
 
-    fun send(name: String, obj: Object) {
+    fun send(name: String, obj: Any) {
         send(name, Jsoner.toJsonString(obj))
     }
 
     fun send(name: String, body: String) {
-        eventBus?.send(name, body)
+        eventBus.send(name, body)
     }
 
-    fun publish(name: String, obj: Object) {
+    fun publish(name: String, obj: Any) {
         publish(name, Jsoner.toJsonString(obj))
     }
 
     fun publish(name: String, body: String) {
-        eventBus?.publish(name, body)
+        eventBus.publish(name, body)
     }
 
 

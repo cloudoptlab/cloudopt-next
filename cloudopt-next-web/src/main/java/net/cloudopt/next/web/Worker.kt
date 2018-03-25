@@ -15,7 +15,10 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.core.*
+import io.vertx.core.AsyncResult
+import io.vertx.core.DeploymentOptions
+import io.vertx.core.Future
+import io.vertx.core.Handler
 
 /*
  * @author: Cloudopt
@@ -52,7 +55,7 @@ object Worker {
     @JvmOverloads
     fun <T> worker(handler: Handler<Future<Any>>,
                    queueResult: Handler<AsyncResult<Any>>) {
-        CloudoptServer.vertx.executeBlocking(handler, queueResult)
+        CloudoptServer.vertx.executeBlocking(handler, false, queueResult)
     }
 
     /**
