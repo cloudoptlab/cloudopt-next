@@ -15,8 +15,11 @@
  */
 package net.cloudopt.next.web.test.handler
 
+import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.handler.AutoHandler
 import net.cloudopt.next.web.handler.Handler
+import kotlin.math.log
 
 
 /*
@@ -24,12 +27,24 @@ import net.cloudopt.next.web.handler.Handler
  * @Time: 2018/1/26
  * @Description: Test Handler
  */
-@AutoHandler
 class TestHandler : Handler() {
 
-    override fun handle() {
-
+    companion object {
+        val logger = Logger.getLogger(TestHandler::class.java)
     }
+
+    override fun preHandle(resource: Resource) {
+        logger.info(resource.request.absoluteURI() + "-preHandle")
+    }
+
+    override fun postHandle(resource: Resource) {
+        logger.info(resource.request.absoluteURI() + "-postHandle")
+    }
+
+    override fun afterCompletion(resource: Resource) {
+        logger.info(resource.request.absoluteURI() + "-afterCompletion")
+    }
+
 
 
 }

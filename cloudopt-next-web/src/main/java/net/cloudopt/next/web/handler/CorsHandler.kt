@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web.handler
 
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 
 /*
@@ -24,12 +25,18 @@ import net.cloudopt.next.web.config.ConfigManager
  */
 @AutoHandler
 class CorsHandler : Handler() {
-    override fun handle() {
+    override fun preHandle(resource: Resource) {
         if(ConfigManager.webConfig.cors){
-            setHeader("Access-Control-Allow-Origin", "*")
-            setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
-            setHeader("Access-Control-Allow-Headers", "Content-Type")
-            setHeader("Access-Control-Max-Age", "1800")
+            resource.setHeader("Access-Control-Allow-Origin", "*")
+            resource.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
+            resource.setHeader("Access-Control-Allow-Headers", "Content-Type")
+            resource.setHeader("Access-Control-Max-Age", "1800")
         }
+    }
+
+    override fun postHandle(resource:Resource) {
+    }
+
+    override fun afterCompletion(resource:Resource) {
     }
 }

@@ -16,6 +16,7 @@
 package net.cloudopt.next.web.handler
 
 import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.json.Jsoner
 import java.text.SimpleDateFormat
@@ -29,19 +30,25 @@ import java.util.*
 @AutoHandler
 class ShowRouteHandler : Handler() {
 
-    override fun handle() {
+    override fun preHandle(resource: Resource) {
         if (ConfigManager.webConfig.showRoute) {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             logger.info("Match route ----------------- " + df.format(Date())
                     + " ------------------------------")
-            logger.info("Method       : " + request.method())
-            logger.info("Path         : " + request.uri())
-            logger.info("User-Agent   : " + request.getHeader("User-Agent"))
-            logger.info("Params       : " + Jsoner.toJsonString(request.params()?.entries() ?: "[]"))
-            logger.info("Cookie       : " + Jsoner.toJsonString(request.getHeader("Cookie") ?: ""))
+            logger.info("Method       : " + resource.request.method())
+            logger.info("Path         : " + resource.request.uri())
+            logger.info("User-Agent   : " + resource.request.getHeader("User-Agent"))
+            logger.info("Params       : " + Jsoner.toJsonString(resource.request.params()?.entries() ?: "[]"))
+            logger.info("Cookie       : " + Jsoner.toJsonString(resource.request.getHeader("Cookie") ?: ""))
             logger.info(
                     "--------------------------------------------------------------------------------")
         }
+    }
+
+    override fun postHandle(resource: Resource) {
+    }
+
+    override fun afterCompletion(resource: Resource) {
     }
 
     companion object {

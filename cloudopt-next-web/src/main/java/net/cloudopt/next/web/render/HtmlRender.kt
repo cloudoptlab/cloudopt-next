@@ -17,6 +17,7 @@ package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.yaml.Yamler
 import java.io.*
@@ -28,10 +29,10 @@ import java.io.*
  */
 class HtmlRender : Render {
 
-    override fun render(response: HttpServerResponse, result: Any) {
+    override fun render(resource: Resource, result: Any) {
         val view = result as View
 
-        if(view.view.indexOf(".") < 0){
+        if (view.view.indexOf(".") < 0) {
             view.view = view.view + ".html"
         }
 
@@ -39,20 +40,20 @@ class HtmlRender : Render {
             var inputStream = Yamler.getFileInputStream(ConfigManager.webConfig.webroot + "/" + view.view)
             var bufferedReader = BufferedReader(InputStreamReader(inputStream))
             var stringBuilder = StringBuilder()
-            bufferedReader.forEachLine { content->
-                if (content.isNotBlank()){
+            bufferedReader.forEachLine { content ->
+                if (content.isNotBlank()) {
                     stringBuilder.append(content)
                 }
             }
-            response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
-            response.end(stringBuilder.toString())
+            resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+            end(resource, stringBuilder.toString())
 
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
-            response.end()
+            end(resource)
         } catch (e: IOException) {
             e.printStackTrace()
-            response.end()
+            end(resource)
         }
 
 

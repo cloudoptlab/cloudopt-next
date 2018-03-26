@@ -19,6 +19,7 @@ import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerResponse
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.WebConfigBean
 import net.cloudopt.next.web.json.JsonProvider
 import net.cloudopt.next.web.json.Jsoner
@@ -30,13 +31,13 @@ import net.cloudopt.next.web.json.Jsoner
  */
 class JsonRender : Render {
 
-    override fun render(response: HttpServerResponse, obj: Any) {
+    override fun render(resource: Resource, obj: Any) {
 
         var json = Jsoner.toJsonString(obj)
 
-        response.putHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
+        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
 
-        response.end(json)
+        end(resource, json)
 
     }
 }

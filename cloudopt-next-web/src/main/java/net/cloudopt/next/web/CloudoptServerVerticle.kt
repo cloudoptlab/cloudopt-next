@@ -77,9 +77,8 @@ class CloudoptServerVerticle : AbstractVerticle() {
             CloudoptServer.logger.info("[HANDLER] Registered handler：" + handler::class.java.getName())
             router.route("/*").handler { context ->
                 try {
-                    handler.init(context)
-                    handler.handle()
-                    handler.context.next()
+                    handler.preHandle(Resource().init(context))
+                    context.next()
                 } catch (e: InstantiationException) {
                     e.printStackTrace()
                     context.response().end()
@@ -140,7 +139,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         CloudoptServer.controllers.forEach { resourceTable ->
 
 
-            router.route(resourceTable.httpMethod, resourceTable.url).handler({ context ->
+            router.route(resourceTable.httpMethod, resourceTable.url).handler{ context ->
                 try {
                     val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
                     controllerObj.init(context)
@@ -156,18 +155,20 @@ class CloudoptServerVerticle : AbstractVerticle() {
                     e.printStackTrace()
                     context.response().end()
                 }
-            })
+            }.handler {context->
+
+            }
 
             CloudoptServer.logger.info("[RESOURCE] Registered Resource :" + resourceTable.methodName + " | "
                     + resourceTable.url)
         }
 
         if (CloudoptServer.controllers.size == 0) {
-            router.route(HttpMethod.GET, "/*").handler({ context ->
+            router.route(HttpMethod.GET, "/*").handler{ context ->
                 val resource = Resource()
                 resource.init(context)
                 resource.renderText("A first cloudopt next application!")
-            })
+            }
         }
 
         server.requestHandler({ router.accept(it) }).listen(ConfigManager.webConfig.port) { result ->

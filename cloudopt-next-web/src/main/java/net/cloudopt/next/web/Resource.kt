@@ -50,8 +50,9 @@ open class Resource {
             return context.response()
         }
 
-    open fun init(context: RoutingContext) {
+    open fun init(context: RoutingContext): Resource {
         this.context = context
+        return this
     }
 
     /**
@@ -154,11 +155,18 @@ open class Resource {
     }
 
     fun render(result: Any) {
-        RenderFactory.getDefaultRender().render(context.response()!!, result)
+        render("", result)
     }
 
     fun render(renderName: String, result: Any) {
-        RenderFactory.get(renderName).render(context.response()!!, result)
+        CloudoptServer.handlers.forEach { handler ->
+            handler.postHandle(Resource().init(context))
+        }
+        if (renderName.isBlank()) {
+            RenderFactory.getDefaultRender().render(this, result)
+        } else {
+            RenderFactory.get(renderName).render(this, result)
+        }
     }
 
     fun renderJson(result: Any) {

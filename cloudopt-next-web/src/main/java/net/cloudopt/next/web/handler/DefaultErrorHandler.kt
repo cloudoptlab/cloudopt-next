@@ -22,7 +22,7 @@ import java.util.*
  * @Time: 2018/1/15
  * @Description: Intercepting error requests
  */
-class DefaultErrorHandler : Handler() {
+class DefaultErrorHandler : ErrorHandler() {
 
 
     override fun handle() {

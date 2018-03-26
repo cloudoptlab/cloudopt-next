@@ -33,14 +33,15 @@ object RenderFactory {
 
     private var defaultRender = JSON
 
-    @JvmStatic private var renderMap = object : HashMap<String, Render>() {
+    @JvmStatic
+    private var renderMap = object : HashMap<String, Render>() {
         init {
             put(JSON, JsonRender())
             put(TEXT, TextRender())
             put(HBS, HbsRender())
             put(BEETL, BeetlRender())
-            put(FREE,FreemarkerRender())
-            put(HTML,HtmlRender())
+            put(FREE, FreemarkerRender())
+            put(HTML, HtmlRender())
         }
     }
 
@@ -48,7 +49,7 @@ object RenderFactory {
         return get(defaultRender)
     }
 
-    fun setDefaultRender(name:String) {
+    fun setDefaultRender(name: String) {
         defaultRender = name
     }
 

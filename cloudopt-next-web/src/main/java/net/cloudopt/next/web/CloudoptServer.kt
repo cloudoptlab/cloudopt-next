@@ -27,6 +27,7 @@ import net.cloudopt.next.logging.Colorer
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.handler.AutoHandler
+import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
@@ -79,7 +80,7 @@ object CloudoptServer {
     open var packageName = ""
 
     @JvmStatic
-    open var errorHandler = Beaner.newInstance<Handler>(Classer.loadClass(ConfigManager.webConfig.errorHandler))
+    open var errorHandler = Beaner.newInstance<ErrorHandler>(Classer.loadClass(ConfigManager.webConfig.errorHandler))
 
     fun scan() {
         vertxOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
@@ -152,9 +153,9 @@ object CloudoptServer {
                 } else {
                     url = url + "/*"
                 }
-                if (interceptors.containsKey(url)){
+                if (interceptors.containsKey(url)) {
                     interceptors.get(url)!!.add(inClass)
-                }else{
+                } else {
                     interceptors.put(url, mutableListOf(inClass))
                 }
 
@@ -277,12 +278,10 @@ object CloudoptServer {
     }
 
     @JvmStatic
-    fun stop(){
+    fun stop() {
         vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
         vertx.close()
     }
-
-
 
 
 }

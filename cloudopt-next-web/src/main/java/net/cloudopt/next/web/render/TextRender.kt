@@ -17,6 +17,7 @@ package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.yaml.Yamler
 
@@ -32,8 +33,8 @@ import java.io.IOException
  */
 class TextRender : Render {
 
-    override fun render(response: HttpServerResponse, result: Any) {
-        response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
-        response.end(result.toString())
+    override fun render(resource: Resource, result: Any) {
+        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+        end(resource, result.toString())
     }
 }

@@ -19,6 +19,7 @@ import freemarker.template.Configuration
 import io.vertx.core.http.HttpServerResponse
 import freemarker.template.TemplateExceptionHandler
 import io.vertx.core.http.HttpHeaders
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.yaml.Yamler
 import java.io.File
@@ -71,7 +72,7 @@ class FreemarkerRender : Render {
 
     }
 
-    override fun render(response: HttpServerResponse, obj: Any) {
+    override fun render(resource: Resource, obj: Any) {
 
         var view: View = obj as View
 
@@ -85,9 +86,9 @@ class FreemarkerRender : Render {
 
         temp?.process(view.parameters, writer);
 
-        response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
+        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
 
-        response.end(writer.toString())
+        end(resource, writer.toString())
     }
 
 }

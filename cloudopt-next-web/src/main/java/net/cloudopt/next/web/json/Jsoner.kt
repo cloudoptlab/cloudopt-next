@@ -27,28 +27,34 @@ import net.cloudopt.next.web.config.ConfigManager
  * @Description: JsonProvider Interface
  */
 
-object Jsoner:JsonProvider{
+object Jsoner{
 
-    @JvmStatic private val jsonProvider:JsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.webConfig.jsonProvider))
+    @JvmStatic
+    private val jsonProvider: JsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.webConfig.jsonProvider))
 
-    override fun toJsonString(obj: Any):String {
+    @JvmStatic
+    fun toJsonString(obj: Any): String {
         return jsonProvider.toJsonString(obj)
     }
 
-    override fun toJsonObject(s: String, clazz: Class<*>): Any {
-        return jsonProvider.toJsonObject(s,clazz)
+    @JvmStatic
+    fun toJsonObject(s: String, clazz: Class<*>): Any {
+        return jsonProvider.toJsonObject(s, clazz)
     }
 
-    override fun toJsonObject(s: String): Any {
+    @JvmStatic
+    fun toJsonObject(s: String): Any {
         return jsonProvider.toJsonObject(s)
     }
 
-    override fun toJsonArray(s: String): Any {
+    @JvmStatic
+    fun toJsonArray(s: String): Any {
         return jsonProvider.toJsonArray(s)
     }
 
-    override fun toJsonArray(s: String, clazz: Class<*>): Any {
-        return jsonProvider.toJsonArray(s,clazz)
+    @JvmStatic
+    fun toJsonArray(s: String, clazz: Class<*>): Any {
+        return jsonProvider.toJsonArray(s, clazz)
     }
 
 }

@@ -13,23 +13,19 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.test
+package net.cloudopt.next.web.handler
 
-import net.cloudopt.next.web.CloudoptServer
-import net.cloudopt.next.web.event.EventPlugin
-import net.cloudopt.next.web.test.handler.TestHandler
-import net.cloudopt.next.web.test.plugin.TestPlugin
+import net.cloudopt.next.web.Resource
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/17
- * @Description: Test Case
+ * @Time: 2018/1/15
+ * @Description: The abstract class of handler
  */
-fun main(args: Array<String>) {
-    CloudoptServer.addHandler(TestHandler())
-    CloudoptServer.addPlugin(TestPlugin())
-    CloudoptServer.addPlugin(EventPlugin())
-    CloudoptServer.run(TestCase::class)
+abstract class ErrorHandler : Resource() {
+
+    abstract fun handle()
+
 }
 
-class TestCase
+

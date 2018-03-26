@@ -19,6 +19,7 @@ import net.cloudopt.next.waf.Filter
 import net.cloudopt.next.waf.MongoInjection
 import net.cloudopt.next.waf.SQLInjection
 import net.cloudopt.next.waf.XSSInjection
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 
 /*
@@ -46,10 +47,9 @@ class WafHandler : Handler() {
         }
     }
 
-    override fun handle() {
-
+    override fun preHandle(resource: Resource) {
         //Processing request parameters
-        request.params().forEach { entry ->
+        resource.request.params().forEach { entry ->
             var value = entry.value
             filters.forEach { filter ->
                 if (value.isNotBlank()) {
@@ -61,7 +61,7 @@ class WafHandler : Handler() {
 
 
         //Processing header parameters
-        request.headers().forEach { entry ->
+        resource.request.headers().forEach { entry ->
             var value = entry.value
             filters.forEach { filter ->
                 if (value.isNotBlank()) {
@@ -73,7 +73,7 @@ class WafHandler : Handler() {
 
 
         //Processing cookie parameters
-        context.cookies().forEach { entry ->
+        resource.context.cookies().forEach { entry ->
             var value = entry.value
             filters.forEach { filter ->
                 if (value.isNotBlank()) {
@@ -84,14 +84,19 @@ class WafHandler : Handler() {
         }
 
         if (ConfigManager.wafConfig.plus) {
-            setHeader("Cache-Control", "no-store, no-cache")
-            setHeader("X-Content-Type-Options", "nosniff")
-            setHeader("X-Download-Options", "noopen")
-            setHeader("X-XSS-Protection", "1; mode=block")
-            setHeader("X-FRAME-OPTIONS", "DENY")
+            resource.setHeader("Cache-Control", "no-store, no-cache")
+            resource.setHeader("X-Content-Type-Options", "nosniff")
+            resource.setHeader("X-Download-Options", "noopen")
+            resource.setHeader("X-XSS-Protection", "1; mode=block")
+            resource.setHeader("X-FRAME-OPTIONS", "DENY")
         }
 
     }
 
+    override fun postHandle(resource: Resource) {
+    }
+
+    override fun afterCompletion(resource: Resource) {
+    }
 
 }

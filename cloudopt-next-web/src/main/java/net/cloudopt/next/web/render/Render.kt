@@ -16,6 +16,8 @@
 package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.Resource
 
 /*
  * @author: Cloudopt
@@ -26,10 +28,23 @@ interface Render {
 
     /**
      * Output html fragment.
-     * @param response Http Response
+     * @param resource Resource object
      * @param obj May be the view object may also be just a simple text
      */
-    fun render(response: HttpServerResponse, obj: Any)
+    fun render(resource: Resource, obj: Any)
 
+    fun end(resource: Resource) {
+        CloudoptServer.handlers.forEach { handler ->
+            handler.afterCompletion(resource)
+        }
+        resource.response.end()
+    }
+
+    fun end(resource: Resource, text: String) {
+        CloudoptServer.handlers.forEach { handler ->
+            handler.afterCompletion(resource)
+        }
+        resource.response.end(text)
+    }
 
 }

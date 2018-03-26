@@ -22,9 +22,13 @@ import net.cloudopt.next.web.Resource
  * @Time: 2018/1/15
  * @Description: The abstract class of handler
  */
-abstract class Handler : Resource() {
+abstract class Handler {
 
-    abstract fun handle()
+    abstract fun preHandle(resource: Resource)
+
+    abstract fun postHandle(resource: Resource)
+
+    abstract fun afterCompletion(resource: Resource)
 
 }
 

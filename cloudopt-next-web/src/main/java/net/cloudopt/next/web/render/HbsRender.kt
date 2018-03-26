@@ -19,6 +19,7 @@ import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 
 import java.io.IOException
@@ -30,7 +31,7 @@ import java.io.IOException
  */
 class HbsRender : Render {
 
-    override fun render(response: HttpServerResponse, obj: Any) {
+    override fun render(resource: Resource, obj: Any) {
 
         var view: View = obj as View
 
@@ -45,11 +46,12 @@ class HbsRender : Render {
             html = template!!.apply(view.parameters)
         } catch (e: IOException) {
             e.printStackTrace()
+            end(resource)
         }
 
-        response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
 
-        response.end(html)
+        end(resource, html)
 
     }
 }

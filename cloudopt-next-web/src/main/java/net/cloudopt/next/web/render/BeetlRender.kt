@@ -17,6 +17,7 @@ package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 import org.beetl.core.Configuration
 import org.beetl.core.GroupTemplate
@@ -34,7 +35,7 @@ class BeetlRender : Render {
         open var config: Configuration? = null
     }
 
-    override fun render(response: HttpServerResponse, obj: Any) {
+    override fun render(resource: Resource, obj: Any) {
 
         if (config == null) {
             config = Configuration.defaultConfiguration()
@@ -56,9 +57,9 @@ class BeetlRender : Render {
 
         var html = t.render()
 
-        response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
 
-        response.end(html)
+        end(resource, html)
     }
 
 }
