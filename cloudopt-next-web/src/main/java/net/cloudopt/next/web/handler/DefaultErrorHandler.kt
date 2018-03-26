@@ -27,18 +27,18 @@ class DefaultErrorHandler : Handler() {
 
     override fun handle() {
         if (Math.abs(errorStatusCode) == 404) {
-            var json = restult("404", "[CLOUDOPT-NEXT] Resource not found!")
+            val json = restult("404", "[CLOUDOPT-NEXT] Resource not found!")
             renderJson(json)
         }
 
         if (Math.abs(errorStatusCode) == 500) {
-            var json = restult("500", "[CLOUDOPT-NEXT] Internal error!")
+            val json = restult("500", "[CLOUDOPT-NEXT] Internal error!")
             renderJson(json)
         }
     }
 
     fun restult(error: String, errorMessage: String): HashMap<String, String> {
-        var map = hashMapOf<String, String>()
+        val map = hashMapOf<String, String>()
         map.put("error", error)
         map.put("errorMessage", errorMessage)
         return map
@@ -47,12 +47,11 @@ class DefaultErrorHandler : Handler() {
 
     val errorStatusCode: Int
         get() {
-            if (this.context?.statusCode() ?: 0 > 0) {
-                this.response?.statusCode = this.context?.statusCode()!!
-            }else{
-                this.response?.statusCode = 500
+            if (this.context.statusCode() > 0) {
+                this.response.statusCode = this.context.statusCode()!!
+            } else {
+                this.response.statusCode = 500
             }
-
-            return this.response?.statusCode
+            return this.response.statusCode
         }
 }

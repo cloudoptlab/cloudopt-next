@@ -18,20 +18,19 @@ package net.cloudopt.next.web
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
-import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.web.config.ConfigManager
 import io.vertx.core.dns.AddressResolverOptions
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Classer
 import net.cloudopt.next.logging.Colorer
-import net.cloudopt.next.web.route.*
+import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.handler.AutoHandler
 import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
-import net.cloudopt.next.yaml.Yamler
+import net.cloudopt.next.web.route.*
 import kotlin.reflect.KClass
 
 /*
@@ -56,7 +55,7 @@ object CloudoptServer {
     open val plugins = arrayListOf<Plugin>()
 
     @JvmStatic
-    open val interceptors = mutableMapOf<String, KClass<out Interceptor>>()
+    open val interceptors = mutableMapOf<String, MutableList<KClass<out Interceptor>>>()
 
     @JvmStatic
     open val validators = mutableMapOf<String, MutableMap<HttpMethod, KClass<out Validator>>>()
@@ -153,7 +152,12 @@ object CloudoptServer {
                 } else {
                     url = url + "/*"
                 }
-                interceptors.put(url, inClass)
+                if (interceptors.containsKey(url)){
+                    interceptors.get(url)!!.add(inClass)
+                }else{
+                    interceptors.put(url, mutableListOf(inClass))
+                }
+
             }
 
             //Get methods annotation

@@ -18,18 +18,17 @@ package net.cloudopt.next.web.test.controller
 import io.vertx.core.AsyncResult
 import io.vertx.core.Future
 import io.vertx.core.Handler
-import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.CloudoptServer.logger
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.Validator
 import net.cloudopt.next.web.Worker
 import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.API
 import net.cloudopt.next.web.route.GET
 import net.cloudopt.next.web.route.POST
-import net.cloudopt.next.web.test.interceptor.TestInterceptor
+import net.cloudopt.next.web.test.interceptor.TestInterceptor1
+import net.cloudopt.next.web.test.interceptor.TestInterceptor2
 import net.cloudopt.next.web.test.validator.TestValidator
-import kotlin.reflect.KClass
 
 
 /*
@@ -37,7 +36,7 @@ import kotlin.reflect.KClass
  * @Time: 2018/1/26
  * @Description: Test Controller
  */
-@API("/",interceptor = arrayOf(TestInterceptor::class))
+@API("/", interceptor = [TestInterceptor1::class, TestInterceptor2::class])
 class IndexController : Resource() {
 
     @GET(valid = arrayOf(TestValidator::class))
@@ -103,17 +102,17 @@ class IndexController : Resource() {
 
     @GET("asyn")
     fun asyn() {
-        Worker.worker<Any>(Handler<Future<Any>>{ f ->
+        Worker.worker<Any>(Handler<Future<Any>> { f ->
             renderText("success!")
-        }, Handler<AsyncResult<Any>>{ result ->
+        }, Handler<AsyncResult<Any>> { result ->
 
         })
     }
 
     @POST("file")
     fun file() {
-       var files = getFiles()
-        files?.forEach { file->
+        var files = getFiles()
+        files?.forEach { file ->
             println("-------------------------------------")
             println("FileName: ${file.fileName()}")
             println("UploadedFileName: ${file.uploadedFileName()}")
@@ -123,5 +122,21 @@ class IndexController : Resource() {
 
         renderText("success!")
     }
+
+
+    @GET("cookie/:index")
+    fun cookie() {
+        try {
+            val sleep = Math.max(1L, (Math.random() * 3).toLong())
+            this.setCookie("hello", getParam("index") ?: "-1")
+            context.vertx().setTimer(sleep * 1000L) {
+                renderText(getCookie("hello")?.toIntOrNull() ?: -1)
+            }
+        } catch (e: Exception) {
+            logger.error("error {}", e)
+        }
+
+    }
+
 
 }

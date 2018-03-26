@@ -13,19 +13,28 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.handler
+package net.cloudopt.next.web.test.interceptor
 
+import net.cloudopt.next.web.Interceptor
 import net.cloudopt.next.web.Resource
+import org.slf4j.LoggerFactory
+
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/15
- * @Description: The abstract class of handler
+ * @Time: 2018/2/28
+ * @Description: Test Case
  */
-abstract class Handler : Resource() {
+class TestInterceptor2 : Interceptor {
+     val logger = LoggerFactory.getLogger(this::class.java.simpleName)
+    override fun intercept(resource: Resource): Boolean {
+         logger.info("Through the intercept2 !")
+        return true
+    }
 
-    abstract fun handle()
+    override fun response(resource: Resource): Resource {
+        return resource
+    }
+
 
 }
-
-
