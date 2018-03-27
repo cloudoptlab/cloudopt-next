@@ -174,6 +174,8 @@ object CloudoptServer {
 
                 var valids: Array<KClass<out Validator>> = arrayOf()
 
+                var blocking = false
+
                 methodAnnotations.forEach { methodAnnotation ->
 
                     if (methodAnnotation is GET) {
@@ -206,6 +208,10 @@ object CloudoptServer {
                         valids = methodAnnotation.valid
                     }
 
+                    if(methodAnnotation is Blocking){
+                        blocking = true
+                    }
+
                     if (resourceUrl.isNotBlank()) {
                         valids?.forEach { valid ->
                             var temp = mutableMapOf<HttpMethod, KClass<out Validator>>()
@@ -214,11 +220,10 @@ object CloudoptServer {
                         }
                     }
 
-
                 }
 
                 if (resourceUrl.isNotBlank()) {
-                    var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name)
+                    var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name, blocking)
                     controllers.add(resourceTable)
                 }
             }

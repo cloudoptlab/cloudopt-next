@@ -24,6 +24,7 @@ import net.cloudopt.next.web.Worker
 import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.API
+import net.cloudopt.next.web.route.Blocking
 import net.cloudopt.next.web.route.GET
 import net.cloudopt.next.web.route.POST
 import net.cloudopt.next.web.test.interceptor.TestInterceptor1
@@ -136,6 +137,12 @@ class IndexController : Resource() {
             logger.error("error {}", e)
         }
 
+    }
+
+    @Blocking
+    @GET("blocking")
+    fun blocking() {
+        renderText("This is Blocking!")
     }
 
 

@@ -21,7 +21,6 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.web.config.ConfigManager
-import java.lang.reflect.InvocationTargetException
 
 /*
  * @author: Cloudopt
@@ -141,7 +140,6 @@ class CloudoptServerVerticle : AbstractVerticle() {
         //Register method
         CloudoptServer.controllers.forEach { resourceTable ->
 
-
             router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
                 try {
                     val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
@@ -160,6 +158,30 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 }
             }.handler { context ->
 
+            if (resourceTable.blocking) {
+                router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
+                    try {
+                        val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
+                        controllerObj.init(context)
+                        val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
+                        m.invoke(controllerObj)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        context.response().end()
+                    }
+                }
+            } else {
+                router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
+                    try {
+                        val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
+                        controllerObj.init(context)
+                        val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
+                        m.invoke(controllerObj)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        context.response().end()
+                    }
+                }
             }
 
             CloudoptServer.logger.info("[RESOURCE] Registered Resource :" + resourceTable.methodName + " | "
