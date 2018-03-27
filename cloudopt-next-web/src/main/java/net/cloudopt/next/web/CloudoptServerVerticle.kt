@@ -21,7 +21,6 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.web.config.ConfigManager
-import java.lang.reflect.InvocationTargetException
 
 /*
  * @author: Cloudopt
@@ -103,9 +102,9 @@ class CloudoptServerVerticle : AbstractVerticle() {
                     !it.intercept(resource)
                 }
 
-                if (interceptor != null){
+                if (interceptor != null) {
                     interceptor.response(resource).response.end()
-                }else{
+                } else {
                     context.next()
                 }
             }
@@ -137,26 +136,30 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         //Register method
         CloudoptServer.controllers.forEach { resourceTable ->
-
-
-            router.route(resourceTable.httpMethod, resourceTable.url).handler{ context ->
-                try {
-                    val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
-                    controllerObj.init(context)
-                    val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
-                    m.invoke(controllerObj)
-                } catch (e: IllegalAccessException) {
-                    e.printStackTrace()
-                    context.response().end()
-                } catch (e: NoSuchMethodException) {
-                    e.printStackTrace()
-                    context.response().end()
-                } catch (e: InvocationTargetException) {
-                    e.printStackTrace()
-                    context.response().end()
+            if (resourceTable.blocking) {
+                router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
+                    try {
+                        val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
+                        controllerObj.init(context)
+                        val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
+                        m.invoke(controllerObj)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        context.response().end()
+                    }
                 }
-            }.handler {context->
-
+            } else {
+                router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
+                    try {
+                        val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
+                        controllerObj.init(context)
+                        val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
+                        m.invoke(controllerObj)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        context.response().end()
+                    }
+                }
             }
 
             CloudoptServer.logger.info("[RESOURCE] Registered Resource :" + resourceTable.methodName + " | "
@@ -164,7 +167,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
 
         if (CloudoptServer.controllers.size == 0) {
-            router.route(HttpMethod.GET, "/*").handler{ context ->
+            router.route(HttpMethod.GET, "/*").handler { context ->
                 val resource = Resource()
                 resource.init(context)
                 resource.renderText("A first cloudopt next application!")
