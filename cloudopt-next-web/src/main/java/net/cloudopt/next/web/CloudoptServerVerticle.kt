@@ -103,9 +103,12 @@ class CloudoptServerVerticle : AbstractVerticle() {
                     !it.intercept(resource)
                 }
 
-                if (interceptor != null){
-                    interceptor.response(resource).response.end()
-                }else{
+                if (interceptor != null) {
+                    if (!interceptor.response(resource).response.ended()) {
+                        resource.end()
+                    }
+
+                } else {
                     context.next()
                 }
             }
@@ -139,7 +142,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         CloudoptServer.controllers.forEach { resourceTable ->
 
 
-            router.route(resourceTable.httpMethod, resourceTable.url).handler{ context ->
+            router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
                 try {
                     val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
                     controllerObj.init(context)
@@ -155,7 +158,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                     e.printStackTrace()
                     context.response().end()
                 }
-            }.handler {context->
+            }.handler { context ->
 
             }
 
@@ -164,7 +167,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
 
         if (CloudoptServer.controllers.size == 0) {
-            router.route(HttpMethod.GET, "/*").handler{ context ->
+            router.route(HttpMethod.GET, "/*").handler { context ->
                 val resource = Resource()
                 resource.init(context)
                 resource.renderText("A first cloudopt next application!")

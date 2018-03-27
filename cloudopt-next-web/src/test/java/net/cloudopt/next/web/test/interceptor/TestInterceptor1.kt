@@ -26,13 +26,17 @@ import org.slf4j.LoggerFactory
  * @Description: Test Case
  */
 class TestInterceptor1 : Interceptor {
-     val logger = LoggerFactory.getLogger(this::class.java.simpleName)
+    val logger = LoggerFactory.getLogger(this::class.java.simpleName)
     override fun intercept(resource: Resource): Boolean {
-         logger.info("Through the intercept1 !")
-        return true
+        val interceptRes = Math.random() * 10 > 5
+        logger.info("Through the intercept1 ${if (!interceptRes) " , other Interceptor will not work" else ""} !")
+        return interceptRes
     }
 
     override fun response(resource: Resource): Resource {
+        if (Math.random() * 10 > 5) {
+            resource.renderText("if you see this means I just response")
+        }
         return resource
     }
 
