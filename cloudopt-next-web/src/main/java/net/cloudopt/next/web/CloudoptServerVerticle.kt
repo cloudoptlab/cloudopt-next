@@ -139,25 +139,6 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         //Register method
         CloudoptServer.controllers.forEach { resourceTable ->
-
-            router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
-                try {
-                    val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
-                    controllerObj.init(context)
-                    val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
-                    m.invoke(controllerObj)
-                } catch (e: IllegalAccessException) {
-                    e.printStackTrace()
-                    context.response().end()
-                } catch (e: NoSuchMethodException) {
-                    e.printStackTrace()
-                    context.response().end()
-                } catch (e: InvocationTargetException) {
-                    e.printStackTrace()
-                    context.response().end()
-                }
-            }.handler { context ->
-
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
                     try {
