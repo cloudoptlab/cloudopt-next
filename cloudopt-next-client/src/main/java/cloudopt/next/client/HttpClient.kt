@@ -32,7 +32,7 @@ class HttpClient() {
 
     open var options = WebClientOptions()
 
-    private var client = WebClient.create(Vertx.vertx())
+    private var client = WebClient.create(CloudoptServer.vertx)
 
     private var host = ""
 
