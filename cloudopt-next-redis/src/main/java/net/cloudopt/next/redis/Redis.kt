@@ -17,6 +17,7 @@
 
 package net.cloudopt.next.redis
 
+import io.vertx.redis.RedisClient
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -28,6 +29,9 @@ import java.util.concurrent.ConcurrentHashMap
 object Redis {
 
     internal var mainCache: Cache? = null
+
+    @JvmStatic
+    open lateinit var asyn: RedisClient
 
     private val cacheMap = ConcurrentHashMap<String, Cache>()
 

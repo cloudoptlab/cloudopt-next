@@ -39,6 +39,13 @@
             <version>2.29</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-redis-client</artifactId>
+            <version>3.5.1</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
 
