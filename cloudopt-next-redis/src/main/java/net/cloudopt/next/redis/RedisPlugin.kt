@@ -84,7 +84,7 @@ class RedisPlugin() : Plugin {
         }
 
         if (map.get("asyn") != null) {
-            asyn = map.get("asyn") as Boolean
+            asyn = map.get("asyn").toString().toBoolean()
         }
 
     }
