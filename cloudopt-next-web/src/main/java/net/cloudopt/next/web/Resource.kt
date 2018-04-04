@@ -141,7 +141,7 @@ open class Resource {
     fun getIp(): String {
         var ip: String = request.getHeader("x-forwarded-for") ?: ""
         if (ip.isBlank()) {
-            ip = request.getHeader("X-Real-IP")
+            ip = request.getHeader("X-Real-IP") ?: ""
         } else {
             ip = ip.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
         }
