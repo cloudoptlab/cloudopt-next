@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web.test.interceptor
 
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Interceptor
 import net.cloudopt.next.web.Resource
 import org.slf4j.LoggerFactory
@@ -26,7 +27,7 @@ import org.slf4j.LoggerFactory
  * @Description: Test Case
  */
 class TestInterceptor1 : Interceptor {
-    val logger = LoggerFactory.getLogger(this::class.java.simpleName)
+    val logger = Logger.getLogger(this::class.java.simpleName)
     override fun intercept(resource: Resource): Boolean {
         val interceptRes = Math.random() * 10 > 5
         logger.info("Through the intercept1 ${if (!interceptRes) " , other Interceptor will not work" else ""} !")

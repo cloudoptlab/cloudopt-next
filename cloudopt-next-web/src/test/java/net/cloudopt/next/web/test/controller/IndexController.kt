@@ -29,6 +29,7 @@ import net.cloudopt.next.web.route.GET
 import net.cloudopt.next.web.route.POST
 import net.cloudopt.next.web.test.interceptor.TestInterceptor1
 import net.cloudopt.next.web.test.interceptor.TestInterceptor2
+import net.cloudopt.next.web.test.validator.Test2Validator
 import net.cloudopt.next.web.test.validator.TestValidator
 
 
@@ -40,10 +41,15 @@ import net.cloudopt.next.web.test.validator.TestValidator
 @API("/", interceptor = [TestInterceptor1::class, TestInterceptor2::class])
 class IndexController : Resource() {
 
-    @GET(valid = arrayOf(TestValidator::class))
+    @GET(valid = arrayOf(TestValidator::class,Test2Validator::class))
     fun index() {
         var name = getParam("name") ?: ""
         renderText(name)
+    }
+
+    @POST
+    fun postIndex() {
+        renderText("POST")
     }
 
     @GET("html")

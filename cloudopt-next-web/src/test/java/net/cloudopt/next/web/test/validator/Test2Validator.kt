@@ -13,23 +13,30 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web.test.event
+package net.cloudopt.next.web.test.validator
 
-import io.vertx.core.eventbus.Message
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.web.event.AutoEvent
-import net.cloudopt.next.web.event.EventListener
+import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.Validator
 
 
 /*
  * @author: Cloudopt
- * @Time: 2018/2/5
+ * @Time: 2018/2/28
  * @Description: Test Case
  */
-@AutoEvent("net.cloudopt.web.test")
-class TestEventListener:EventListener {
+class Test2Validator : Validator {
+
     val logger = Logger.getLogger(this::class.java.simpleName)
-    override fun listener(message: Message<Any>) {
-        logger.info(message.body().toString())
+
+    override fun validate(resource: Resource): Boolean {
+        logger.info("Test2Validator")
+        return true
     }
+
+    override fun error(resource: Resource) {
+
+    }
+
+
 }

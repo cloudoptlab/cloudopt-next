@@ -116,24 +116,28 @@ class CloudoptServerVerticle : AbstractVerticle() {
         //Register validators
         CloudoptServer.validators.forEach { url, map ->
             map.keys.forEach { key ->
-                router.route(key, url).handler { context ->
-                    try {
-                        val v = Beaner.newInstance<Validator>(map.get(key)?.java!!)
-                        val resource = Resource()
-                        resource.init(context)
-                        if (v.validate(resource)) {
-                            context.next()
-                        } else {
-                            v.error(resource)
+                val validatorList = map.get(key)
+                validatorList?.forEach {validator->
+                    router.route(key, url).handler { context ->
+                        try {
+                            val v = Beaner.newInstance<Validator>(validator?.java!!)
+                            val resource = Resource()
+                            resource.init(context)
+                            if (v.validate(resource)) {
+                                context.next()
+                            } else {
+                                v.error(resource)
+                            }
+                        } catch (e: InstantiationException) {
+                            e.printStackTrace()
+                            context.response().end()
+                        } catch (e: IllegalAccessException) {
+                            e.printStackTrace()
+                            context.response().end()
                         }
-                    } catch (e: InstantiationException) {
-                        e.printStackTrace()
-                        context.response().end()
-                    } catch (e: IllegalAccessException) {
-                        e.printStackTrace()
-                        context.response().end()
                     }
                 }
+
             }
         }
 

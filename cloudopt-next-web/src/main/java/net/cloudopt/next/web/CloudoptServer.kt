@@ -59,8 +59,7 @@ object CloudoptServer {
     open val interceptors = mutableMapOf<String, MutableList<KClass<out Interceptor>>>()
 
     @JvmStatic
-    open val validators = mutableMapOf<String, MutableMap<HttpMethod, KClass<out Validator>>>()
-
+    open val validators = mutableMapOf<String, MutableMap<HttpMethod, Array<KClass<out Validator>>>>()
     @JvmStatic
     open val controllers = arrayListOf<ResourceTable>()
 
@@ -213,11 +212,9 @@ object CloudoptServer {
                     }
 
                     if (resourceUrl.isNotBlank()) {
-                        valids?.forEach { valid ->
-                            var temp = mutableMapOf<HttpMethod, KClass<out Validator>>()
-                            temp.put(httpMethod, valid)
-                            validators.put(resourceUrl, temp)
-                        }
+                        var temp = mutableMapOf<HttpMethod, Array<KClass<out Validator>>>()
+                        temp.put(httpMethod, valids)
+                        validators.put(resourceUrl, temp)
                     }
 
                 }

@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web.test.plugin
 
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Plugin
 
 
@@ -25,13 +26,15 @@ import net.cloudopt.next.web.Plugin
  */
 class TestPlugin:Plugin{
 
+    val logger = Logger.getLogger(this::class.java.simpleName)
+
     override fun start(): Boolean {
-        println("TestPlugin is starting!")
+        logger.info("TestPlugin is starting!")
         return true
     }
 
     override fun stop(): Boolean {
-        println("TestPlugin is stopping!")
+        logger.info("TestPlugin is stopping!")
         return true
     }
 
