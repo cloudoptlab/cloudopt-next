@@ -67,7 +67,7 @@ object CloudoptServer {
     open val vertxOptions = VertxOptions()
 
     @JvmStatic
-    open var vertx: Vertx = Vertx.vertx()
+    lateinit open var vertx: Vertx
 
     @JvmStatic
     open var httpServerOptions: HttpServerOptions = HttpServerOptions()
@@ -250,9 +250,8 @@ object CloudoptServer {
     @JvmStatic
     fun run() {
         scan()
-        // init vertx
         vertx = Vertx.vertx(vertxOptions)
-        vertx.deployVerticle("net.cloudopt.next.web.CloudoptServerVerticle")
+        Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
     }
 
     @JvmStatic
