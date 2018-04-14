@@ -37,13 +37,19 @@ object ConfigManager {
     val YML = "application.yml"
 
     @JvmStatic
-    val vertxConfig: VertxConfigBean = init("vertx", VertxConfigBean::class.java) as VertxConfigBean
+    var vertxConfig: VertxConfigBean = VertxConfigBean()
 
     @JvmStatic
-    val webConfig: WebConfigBean = init("web", WebConfigBean::class.java) as WebConfigBean
+    var webConfig: WebConfigBean = WebConfigBean()
 
     @JvmStatic
-    val wafConfig: WafConfigBean = init("waf", WafConfigBean::class.java) as WafConfigBean
+    var wafConfig: WafConfigBean = WafConfigBean()
+
+    init {
+        webConfig = init("web", WebConfigBean::class.java) as WebConfigBean
+        vertxConfig = init("vertx", VertxConfigBean::class.java) as VertxConfigBean
+        wafConfig = init("waf", WafConfigBean::class.java) as WafConfigBean
+    }
 
     @JvmStatic
     open fun init(name: String, clazz: Class<*>): Any {
@@ -61,15 +67,15 @@ object ConfigManager {
             map?.putAll(Yamler.read(YML, "net.cloudopt.next." + name) as Map<out String, Any>)
         }
 
-        var dev: Boolean = map?.get("dev")?.toString()?.toBoolean() ?: true
+        var dev = ConfigManager.webConfig.dev
 
-        if(Yamler.exist(DEVYML)){
+        if (Yamler.exist(DEVYML)) {
             if (dev && Yamler.read(DEVYML, "net.cloudopt.next." + name) != null) {
                 map.putAll(Yamler.read(DEVYML, "net.cloudopt.next." + name) as Map<out String, Any>)
             }
         }
 
-        if(Yamler.exist(PROYML)){
+        if (Yamler.exist(PROYML)) {
             if (!dev && Yamler.read(PROYML, "net.cloudopt.next." + name) != null) {
                 map.putAll(Yamler.read(PROYML, "net.cloudopt.next." + name) as Map<out String, Any>)
             }
