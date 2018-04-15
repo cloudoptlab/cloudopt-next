@@ -72,3 +72,5 @@ javadocs/
 
 # File Upload
 file-uploads/
+
+*.log

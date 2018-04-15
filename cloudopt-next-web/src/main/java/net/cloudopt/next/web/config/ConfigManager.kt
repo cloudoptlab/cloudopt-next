@@ -62,12 +62,15 @@ object ConfigManager {
 
     @JvmOverloads
     open fun initMap(name: String, map: MutableMap<String, Any> = mutableMapOf()): MutableMap<String, Any> {
-
         if (Yamler.read(YML, "net.cloudopt.next." + name) != null) {
             map?.putAll(Yamler.read(YML, "net.cloudopt.next." + name) as Map<out String, Any>)
         }
 
-        var dev = ConfigManager.webConfig.dev
+        var dev = if(name.equals("web")){
+            map.get("dev").toString().toBoolean()
+        }else{
+            ConfigManager.webConfig.dev
+        }
 
         if (Yamler.exist(DEVYML)) {
             if (dev && Yamler.read(DEVYML, "net.cloudopt.next." + name) != null) {
