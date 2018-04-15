@@ -47,7 +47,7 @@ class BeetlRender : Render {
             view.view = view.view + ".btl"
         }
 
-        var resourceLoader = ClasspathResourceLoader(ConfigManager.webConfig.webroot + "/")
+        var resourceLoader = ClasspathResourceLoader(ConfigManager.webConfig.webroot)
 
         var gt = GroupTemplate(resourceLoader, config)
 
