@@ -30,6 +30,7 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>1.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
