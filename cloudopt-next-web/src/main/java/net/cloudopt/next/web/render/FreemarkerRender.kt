@@ -16,13 +16,11 @@
 package net.cloudopt.next.web.render
 
 import freemarker.template.Configuration
-import io.vertx.core.http.HttpServerResponse
+import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
-import net.cloudopt.next.yaml.Yamler
-import java.io.File
 import java.io.StringWriter
 
 /*
@@ -39,6 +37,9 @@ class FreemarkerRender : Render {
 
         @JvmStatic
         open var contentType = "text/html;charset=utf-8"
+
+        @JvmStatic
+        private val templates = mutableMapOf<String, Template?>()
 
     }
 
@@ -80,11 +81,16 @@ class FreemarkerRender : Render {
             view.view = view.view + ".ftl"
         }
 
-        var temp = config?.getTemplate(view.view)
+        var temp = if (templates.get(view.view) != null) {
+            templates.get(view.view)
+        } else {
+            templates.put(view.view, config?.getTemplate(view.view))
+            templates.get(view.view)
+        }
 
         var writer = StringWriter()
 
-        temp?.process(view.parameters, writer);
+        temp?.process(view.parameters, writer)
 
         resource.response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
 

@@ -31,6 +31,11 @@ import java.io.IOException
  */
 class HbsRender : Render {
 
+    companion object {
+        @JvmStatic
+        private val templates = mutableMapOf<String, Template?>()
+    }
+
     override fun render(resource: Resource, obj: Any) {
 
         var view: View = obj as View
@@ -42,7 +47,12 @@ class HbsRender : Render {
         var html = ""
 
         try {
-            template = handlebars.compile(ConfigManager.webConfig.webroot + "/" + view.view)
+            template = if (templates.get(view.view) != null) {
+                templates.get(view.view)
+            } else {
+                templates.put(view.view, handlebars.compile(ConfigManager.webConfig.webroot + "/" + view.view))
+            }
+
             html = template!!.apply(view.parameters)
         } catch (e: IOException) {
             e.printStackTrace()

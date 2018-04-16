@@ -21,6 +21,7 @@ import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 import org.beetl.core.Configuration
 import org.beetl.core.GroupTemplate
+import org.beetl.core.Template
 import org.beetl.core.resource.ClasspathResourceLoader
 
 /*
@@ -32,34 +33,39 @@ class BeetlRender : Render {
 
     companion object {
         @JvmStatic
-        open var config: Configuration? = null
+        open var config: Configuration = Configuration.defaultConfiguration()
+
+        @JvmStatic
+        private val templates = mutableMapOf<String, Template>()
+
+        private val resourceLoader = ClasspathResourceLoader(ConfigManager.webConfig.webroot)
+
+        private val gt = GroupTemplate(resourceLoader, config)
     }
 
     override fun render(resource: Resource, obj: Any) {
 
-        if (config == null) {
-            config = Configuration.defaultConfiguration()
-        }
-
-        var view: View = obj as View
+        val view: View = obj as View
 
         if (view.view.indexOf(".") < 0) {
             view.view = view.view + ".btl"
         }
 
-        var resourceLoader = ClasspathResourceLoader(ConfigManager.webConfig.webroot)
+        val t = if (templates.get(view.view) != null) {
+            templates.get(view.view)
+        } else {
+            templates.put(view.view, gt.getTemplate(view.view))
+            templates.get(view.view)
+        }
 
-        var gt = GroupTemplate(resourceLoader, config)
 
-        var t = gt.getTemplate(view.view)
+        t?.binding(view.parameters)
 
-        t.binding(view.parameters)
-
-        var html = t.render()
+        val html = t?.render()
 
         resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
 
-        end(resource, html)
+        end(resource, html ?: "")
     }
 
 }

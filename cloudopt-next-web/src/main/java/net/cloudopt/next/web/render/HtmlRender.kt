@@ -29,6 +29,11 @@ import java.io.*
  */
 class HtmlRender : Render {
 
+    companion object {
+        @JvmStatic
+        private val templates = mutableMapOf<String, String?>()
+    }
+
     override fun render(resource: Resource, result: Any) {
         val view = result as View
 
@@ -37,16 +42,21 @@ class HtmlRender : Render {
         }
 
         try {
-            var inputStream = Yamler.getFileInputStream(ConfigManager.webConfig.webroot + "/" + view.view)
-            var bufferedReader = BufferedReader(InputStreamReader(inputStream))
-            var stringBuilder = StringBuilder()
-            bufferedReader.forEachLine { content ->
-                if (content.isNotBlank()) {
-                    stringBuilder.append(content)
+            var html = if (templates.get(view.view) != null) {
+                templates.get(view.view)
+            } else {
+                var inputStream = Yamler.getFileInputStream(ConfigManager.webConfig.webroot + "/" + view.view)
+                var bufferedReader = BufferedReader(InputStreamReader(inputStream))
+                var stringBuilder = StringBuilder()
+                bufferedReader.forEachLine { content ->
+                    if (content.isNotBlank()) {
+                        stringBuilder.append(content)
+                    }
                 }
+                templates.put(view.view, stringBuilder.toString())
             }
             resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
-            end(resource, stringBuilder.toString())
+            end(resource, html ?: "")
 
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
