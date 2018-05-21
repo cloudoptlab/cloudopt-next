@@ -200,6 +200,7 @@ open class Resource {
     fun redirect(url: String) {
         response.statusCode = 302
         response.putHeader("location", url)
+        end()
     }
 
     fun end() {
