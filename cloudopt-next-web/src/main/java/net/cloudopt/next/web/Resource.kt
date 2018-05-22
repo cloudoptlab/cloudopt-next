@@ -107,7 +107,7 @@ open class Resource {
      */
     @JvmOverloads
     fun setCookie(key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
-                  , httpOnly: Boolean = true, cookieSecureFlag: Boolean = true) {
+                  , httpOnly: Boolean = false, cookieSecureFlag: Boolean = false) {
         val cookie = Cookie.cookie(key, value)
         if (domain.isNotBlank()) {
             cookie.domain = domain
