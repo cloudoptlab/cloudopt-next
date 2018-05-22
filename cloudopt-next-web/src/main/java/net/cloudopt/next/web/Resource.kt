@@ -120,6 +120,7 @@ open class Resource {
         }
         cookie.setHttpOnly(httpOnly)
         cookie.setSecure(true)
+        cookie.setSecure(cookieSecureFlag)
         context.addCookie(cookie)
     }
 
@@ -212,7 +213,7 @@ open class Resource {
     }
 
     fun lang():String {
-        return context.preferredLanguage().tag() ?: "en"
+        return context.preferredLanguage().subtag()?: "en"
     }
 
     fun getBody(): Buffer? {
