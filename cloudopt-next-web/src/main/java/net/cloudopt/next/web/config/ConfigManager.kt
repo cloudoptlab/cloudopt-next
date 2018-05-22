@@ -15,12 +15,10 @@
  */
 package net.cloudopt.next.web.config
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import net.cloudopt.next.aop.Beaner
 import net.cloudopt.next.aop.Maper
+import net.cloudopt.next.aop.Resourcer
 import net.cloudopt.next.yaml.Yamler
-import java.io.File
-import kotlin.reflect.KClass
 
 
 /*
@@ -72,13 +70,13 @@ object ConfigManager {
             ConfigManager.webConfig.dev
         }
 
-        if (Yamler.exist(DEVYML)) {
+        if (Resourcer.exist(DEVYML)) {
             if (dev && Yamler.read(DEVYML, "net.cloudopt.next." + name) != null) {
                 map.putAll(Yamler.read(DEVYML, "net.cloudopt.next." + name) as Map<out String, Any>)
             }
         }
 
-        if (Yamler.exist(PROYML)) {
+        if (Resourcer.exist(PROYML)) {
             if (!dev && Yamler.read(PROYML, "net.cloudopt.next." + name) != null) {
                 map.putAll(Yamler.read(PROYML, "net.cloudopt.next." + name) as Map<out String, Any>)
             }

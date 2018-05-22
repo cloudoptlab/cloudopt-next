@@ -16,10 +16,9 @@
 package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
-import io.vertx.core.http.HttpServerResponse
+import net.cloudopt.next.aop.Resourcer
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
-import net.cloudopt.next.yaml.Yamler
 import java.io.*
 
 /*
@@ -45,7 +44,7 @@ class HtmlRender : Render {
             var html = if (templates.get(view.view) != null) {
                 templates.get(view.view)
             } else {
-                var inputStream = Yamler.getFileInputStream(ConfigManager.webConfig.webroot + "/" + view.view)
+                var inputStream = Resourcer.getFileInputStream(ConfigManager.webConfig.webroot + "/" + view.view)
                 var bufferedReader = BufferedReader(InputStreamReader(inputStream))
                 var stringBuilder = StringBuilder()
                 bufferedReader.forEachLine { content ->

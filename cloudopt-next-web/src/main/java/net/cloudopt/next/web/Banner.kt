@@ -15,10 +15,9 @@
  */
 package net.cloudopt.next.web
 
+import net.cloudopt.next.aop.Resourcer
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
-import net.cloudopt.next.yaml.Yamler
-import java.io.File
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.io.InputStreamReader
@@ -45,7 +44,7 @@ object Banner {
         var buffer = BufferedReader(InputStreamReader(input))
 
         if(ConfigManager.webConfig.bannerName.isNotBlank()){
-            input = Yamler.getFileInputStream(ConfigManager.webConfig.bannerName)
+            input = Resourcer.getFileInputStream(ConfigManager.webConfig.bannerName)
             buffer = BufferedReader(InputStreamReader(input))
         }
 
