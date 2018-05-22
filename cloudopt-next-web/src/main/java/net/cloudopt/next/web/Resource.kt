@@ -121,7 +121,7 @@ open class Resource {
         cookie.setHttpOnly(httpOnly)
         cookie.setSecure(true)
         cookie.setSecure(cookieSecureFlag)
-        context.addCookie(cookie)
+        setCookie(cookie)
     }
 
     fun setCookie(cookie: Cookie) {

@@ -77,8 +77,8 @@
         <cloudopt.next.version>${version}</cloudopt.next.version>
         <logback.version>1.2.3</logback.version>
         <jansi.version>1.13</jansi.version>
-        <vertx.version>3.5.1</vertx.version>
-        <netty.version>4.1.24.Final</netty.version>
+        <vertx.version>3.5.2.CR2</vertx.version>
+        <netty.version>4.1.25.Final</netty.version>
         <fastjson.version>1.2.45</fastjson.version>
     </properties>
 

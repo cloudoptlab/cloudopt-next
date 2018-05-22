@@ -151,6 +151,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-codegen</artifactId>
+            <version>${vertx.version}</version>
+        </dependency>
+
         <!--test-->
         <dependency>
             <groupId>io.vertx</groupId>
