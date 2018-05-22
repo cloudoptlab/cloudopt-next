@@ -16,6 +16,7 @@
 package net.cloudopt.next.web
 
 import io.vertx.core.buffer.Buffer
+import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.Cookie
@@ -125,7 +126,7 @@ open class Resource {
     }
 
     fun setCookie(cookie: Cookie) {
-        context.addCookie(cookie)
+        context.response().headers().add(HttpHeaders.SET_COOKIE, cookie.encode())
     }
 
     /**
@@ -133,7 +134,7 @@ open class Resource {
      * @param name cookie name
      */
     fun delCookie(key: String) {
-        context.removeCookie(key)
+        context.response().headers().add(HttpHeaders.SET_COOKIE, getCookieObj(key)?.setMaxAge(0L)?.encode())
     }
 
     /**

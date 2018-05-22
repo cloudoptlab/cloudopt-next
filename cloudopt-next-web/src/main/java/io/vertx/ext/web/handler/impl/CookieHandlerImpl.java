@@ -54,16 +54,6 @@ public class CookieHandlerImpl implements CookieHandler {
             }
         }
 
-        context.addHeadersEndHandler(v -> {
-            // save the cookies
-            Set<Cookie> cookies = context.cookies();
-            for (Cookie cookie: cookies) {
-                if (cookie.isChanged()) {
-                    context.response().headers().add(SET_COOKIE, cookie.encode());
-                }
-            }
-        });
-
         context.next();
     }
 
