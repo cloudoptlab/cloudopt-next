@@ -20,6 +20,7 @@
         <module>cloudopt-next-spring</module>
         <module>cloudopt-next-redis</module>
         <module>cloudopt-next-kafka</module>
+        <module>cloudopt-next-i18n</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -76,9 +77,8 @@
         <cloudopt.next.version>${version}</cloudopt.next.version>
         <logback.version>1.2.3</logback.version>
         <jansi.version>1.13</jansi.version>
-        <dokka.version>0.9.15</dokka.version>
         <vertx.version>3.5.1</vertx.version>
-        <netty.version>4.1.19.Final</netty.version>
+        <netty.version>4.1.24.Final</netty.version>
         <fastjson.version>1.2.45</fastjson.version>
     </properties>
 
@@ -182,26 +182,6 @@
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                </configuration>
-            </plugin>
-            <!-- Javadoc -->
-            <plugin>
-                <groupId>org.jetbrains.dokka</groupId>
-                <artifactId>dokka-maven-plugin</artifactId>
-                <version>${dokka.version}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>javadocJar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jdkVersion>8</jdkVersion>
-                    <outputFormat>html</outputFormat>
-                    <outputDir>F:\MyDrive\intellj_workspace\cloudopt-next\javadocs</outputDir>
-                    <skipEmptyPackages>true</skipEmptyPackages>
                 </configuration>
             </plugin>
 
