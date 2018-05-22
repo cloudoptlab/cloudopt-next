@@ -211,8 +211,8 @@ open class Resource {
         context.fail(code)
     }
 
-    fun lang() {
-        context.preferredLanguage().tag() ?: "en"
+    fun lang():String {
+        return context.preferredLanguage().tag() ?: "en"
     }
 
     fun getBody(): Buffer? {
