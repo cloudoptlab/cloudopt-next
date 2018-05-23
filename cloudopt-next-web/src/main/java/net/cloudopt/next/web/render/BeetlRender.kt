@@ -40,7 +40,7 @@ class BeetlRender : Render {
 
         private val resourceLoader = ClasspathResourceLoader(ConfigManager.webConfig.webroot)
 
-        private val gt = GroupTemplate(resourceLoader, config)
+        open val gt = GroupTemplate(resourceLoader, config)
     }
 
     override fun render(resource: Resource, obj: Any) {
@@ -58,8 +58,9 @@ class BeetlRender : Render {
             templates.get(view.view)
         }
 
-
         t?.binding(view.parameters)
+
+        t?.binding("resource", resource)
 
         val html = t?.render()
 
