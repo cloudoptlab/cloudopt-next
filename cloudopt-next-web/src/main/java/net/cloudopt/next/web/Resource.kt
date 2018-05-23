@@ -213,7 +213,7 @@ open class Resource {
         context.fail(code)
     }
 
-    fun lang(): String {
+    fun getLang(): String {
         return "${context.preferredLanguage().tag()}_${context.preferredLanguage().subtag()}" ?: "en_US"
     }
 
