@@ -38,13 +38,12 @@ import net.cloudopt.next.web.test.validator.TestValidator
  * @Time: 2018/1/26
  * @Description: Test Controller
  */
-@API("/", interceptor = [TestInterceptor1::class, TestInterceptor2::class])
+@API("/")
 class IndexController : Resource() {
 
-    @GET(valid = arrayOf(TestValidator::class,Test2Validator::class))
+    @GET
     fun index() {
-        var name = getParam("name") ?: ""
-        renderText(name)
+        redirect("/html")
     }
 
     @POST
@@ -54,8 +53,10 @@ class IndexController : Resource() {
 
     @GET("html")
     fun html() {
+        println(getLang())
         var view = View()
         view.view = "index"
+        setCookie("test","cookie","127.0.0.1",360000,"/",false,false)
         renderHtml(view)
     }
 
@@ -104,7 +105,7 @@ class IndexController : Resource() {
 
     @GET("i18n")
     fun i18n() {
-        renderText(lang())
+        renderText(getLang())
     }
 
     @GET("asyn")

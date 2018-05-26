@@ -56,7 +56,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         router.route().handler(BodyHandler.create().setBodyLimit(ConfigManager.webConfig.bodyLimit))
 
         //Set timeout
-        router.route("/*").handler(TimeoutHandler.create(ConfigManager.webConfig.timeout))
+        //router.route("/*").handler(TimeoutHandler.create(ConfigManager.webConfig.timeout))
 
         //Set csrf
         if (ConfigManager.wafConfig.csrf) {

@@ -200,8 +200,15 @@ open class Resource {
     }
 
     fun redirect(url: String) {
-        response.statusCode = 302
-        response.putHeader("location", url)
+        if (!context.response().ended()) {
+            response.statusCode = 302
+            response.putHeader("location", url)
+            end()
+        }
+    }
+
+    fun reroute(url: String) {
+        context.reroute(url)
     }
 
     fun end() {
