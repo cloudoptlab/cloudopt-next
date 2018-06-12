@@ -220,7 +220,11 @@ open class Resource {
     }
 
     fun getLang(): String {
-        return "${context.preferredLanguage().tag()}_${context.preferredLanguage().subtag()}" ?: "en_US"
+        return if(context.preferredLanguage().tag().isNullOrEmpty() || context.preferredLanguage().subtag().isNullOrEmpty()){
+           "en_US"
+       }else{
+            "${context.preferredLanguage().tag()}_${context.preferredLanguage().subtag()}"
+        }
     }
 
     fun getBody(): Buffer? {
