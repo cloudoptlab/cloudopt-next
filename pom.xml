@@ -21,7 +21,7 @@
         <module>cloudopt-next-redis</module>
         <module>cloudopt-next-kafka</module>
         <module>cloudopt-next-i18n</module>
-        <module>cloudopt-next-validation</module>
+        <module>cloudopt-next-validator</module>
     </modules>
     <packaging>pom</packaging>
 

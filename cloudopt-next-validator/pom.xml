@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cloudopt-next-validation</artifactId>
+    <artifactId>cloudopt-next-validator</artifactId>
 
-    <name>Cloudopt Next Validation</name>
-    <description>Validation for Cloudopt Next</description>
+    <name>Cloudopt Next Validator</name>
+    <description>Validators for Cloudopt Next</description>
 
     <dependencies>
         <dependency>

@@ -13,13 +13,12 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.validation
+package net.cloudopt.next.validator
 
-import net.cloudopt.next.validation.annotation.Type
+import net.cloudopt.next.validator.annotation.Type
 
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /*

@@ -13,9 +13,9 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.validation
+package net.cloudopt.next.validator
 
-import net.cloudopt.next.validation.annotation.Chinese
+import net.cloudopt.next.validator.annotation.Chinese
 
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext

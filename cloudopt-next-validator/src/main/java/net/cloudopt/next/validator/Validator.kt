@@ -13,11 +13,9 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.validation
+package net.cloudopt.next.validator
 
-import net.cloudopt.next.validation.annotation.Type
 import java.util.HashSet
-import javax.validation.ConstraintValidator
 import javax.validation.ConstraintViolation
 import javax.validation.Validation
 

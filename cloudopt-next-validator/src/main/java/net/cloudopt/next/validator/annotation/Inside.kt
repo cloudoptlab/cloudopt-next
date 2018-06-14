@@ -13,9 +13,9 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.validation.annotation
+package net.cloudopt.next.validator.annotation
 
-import net.cloudopt.next.validation.ChineseValidator
+import net.cloudopt.next.validator.InsideValidator
 
 import javax.validation.Constraint
 import javax.validation.Payload
@@ -29,11 +29,11 @@ import kotlin.reflect.KClass
 /*
  * @author: Cloudopt
  * @Time: 2018/6/14
- * @Description: It is used to verify whether it is Chinese
+ * @Description: Is used to verify whether a text is in an array
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.ANNOTATION_CLASS)
 @Retention(RUNTIME)
-@Constraint(validatedBy = arrayOf(ChineseValidator::class))
+@Constraint(validatedBy = arrayOf(InsideValidator::class))
 @Documented
-annotation class Chinese(val value: Boolean, val message: String = "{constraints.chinese.message}", val groups: Array<KClass<*>> = arrayOf(), val payload: Array<KClass<out Payload>> = arrayOf())
+annotation class Inside(vararg val value: String, val message: String = "{constraints.inside.message}", val groups: Array<KClass<*>> = arrayOf(), val payload: Array<KClass<out Payload>> = arrayOf())
 
