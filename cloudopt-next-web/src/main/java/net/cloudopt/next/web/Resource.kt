@@ -69,6 +69,14 @@ open class Resource {
         response.putHeader(key, value)
     }
 
+    fun setAttr(key: String, value: String) {
+        context.request().formAttributes().add(key, value)
+    }
+
+    fun getAttr(key:String){
+        context.request().formAttributes().get(key)
+    }
+
     /**
      * Returns the value of a request parameter.
      * @param name a String specifying the name of the parameter
@@ -220,9 +228,9 @@ open class Resource {
     }
 
     fun getLang(): String {
-        return if(context.preferredLanguage().tag().isNullOrEmpty() || context.preferredLanguage().subtag().isNullOrEmpty()){
-           "en_US"
-       }else{
+        return if (context.preferredLanguage().tag().isNullOrEmpty() || context.preferredLanguage().subtag().isNullOrEmpty()) {
+            "en_US"
+        } else {
             "${context.preferredLanguage().tag()}_${context.preferredLanguage().subtag()}"
         }
     }
