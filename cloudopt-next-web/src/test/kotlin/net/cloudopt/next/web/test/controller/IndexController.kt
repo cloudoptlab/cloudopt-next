@@ -50,10 +50,8 @@ class IndexController : Resource() {
     @GET("html")
     fun html() {
         println(getLang())
-        var view = View()
-        view.view = "index"
         setCookie("test", "cookie", "127.0.0.1", 360000, "/", false, false)
-        renderHtml(view)
+        renderHtml(view="index")
     }
 
     @GET("free")
@@ -134,7 +132,7 @@ class IndexController : Resource() {
             val sleep = Math.max(1L, (Math.random() * 3).toLong())
             this.setCookie("hello", getParam("index") ?: "-1")
             context.vertx().setTimer(sleep * 1000L) {
-                renderText(getCookie("hello")?.toIntOrNull() ?: -1)
+                renderText(getCookie("hello")?:"Can't find the cookie!")
             }
         } catch (e: Exception) {
             logger.error("error {}", e)

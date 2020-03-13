@@ -25,6 +25,7 @@ import io.vertx.ext.web.RoutingContext
 import net.cloudopt.next.web.json.Jsoner
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View
+import java.util.HashMap
 
 /*
  * @author: Cloudopt
@@ -185,7 +186,7 @@ open class Resource {
         render(RenderFactory.JSON, result)
     }
 
-    fun renderText(result: Any) {
+    fun renderText(result: String) {
         render(RenderFactory.TEXT, result)
     }
 
@@ -193,16 +194,32 @@ open class Resource {
         render(RenderFactory.HTML, view)
     }
 
+    fun renderHtml(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
+        render(RenderFactory.HTML, View(parameters,view))
+    }
+
     fun renderHbs(view: View) {
         render(RenderFactory.HBS, view)
+    }
+
+    fun renderHbs(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
+        render(RenderFactory.HBS, View(parameters,view))
     }
 
     fun renderBeetl(view: View) {
         render(RenderFactory.BEETL, view)
     }
 
+    fun renderBeetl(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
+        render(RenderFactory.BEETL, View(parameters,view))
+    }
+
     fun renderFree(view: View) {
         render(RenderFactory.FREE, view)
+    }
+
+    fun renderFree(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
+        render(RenderFactory.FREE, View(parameters,view))
     }
 
     fun sendFile(fileName: String) {
