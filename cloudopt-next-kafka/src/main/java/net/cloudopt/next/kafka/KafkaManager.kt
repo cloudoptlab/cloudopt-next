@@ -23,15 +23,11 @@ import io.vertx.kafka.client.consumer.KafkaConsumerRecord
 import io.vertx.kafka.client.producer.KafkaProducer
 import io.vertx.kafka.client.producer.KafkaProducerRecord
 import io.vertx.kafka.client.producer.RecordMetadata
-import net.cloudopt.next.aop.Beaner
-import net.cloudopt.next.aop.Classer
+import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.CloudoptServer
-import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
-import net.cloudopt.next.web.event.AutoEvent
-import net.cloudopt.next.web.event.EventListener
-import net.cloudopt.next.web.event.EventManager
 
 
 /*
@@ -68,12 +64,12 @@ object KafkaManager {
         config["key.serializer"] = map.get("keySerializer") ?: "org.apache.kafka.common.serialization.StringSerializer"
         config["value.serializer"] = map.get("valueSerializer") ?: "org.apache.kafka.common.serialization.StringSerializer"
         config["acks"] = map.get("acks") ?: "1"
-        consumer = KafkaConsumer.create<Any, Any>(vertx, config)?.exceptionHandler({ e ->
+        consumer = KafkaConsumer.create<Any, Any>(vertx, config)?.exceptionHandler { e ->
             logger.error("[KAFKA] Consumer was error： ${e.message}")
-        })
-        producer = KafkaProducer.create<Any, Any>(vertx, config)?.exceptionHandler({ e ->
+        }
+        producer = KafkaProducer.create<Any, Any>(vertx, config)?.exceptionHandler { e ->
             logger.error("[KAFKA] Producer was error： ${e.message}")
-        })
+        }
 
 
         Classer.scanPackageByAnnotation(CloudoptServer.packageName, false, AutoKafka::class.java)
@@ -87,22 +83,20 @@ object KafkaManager {
 
 
 
-            consumer?.subscribe(kafkaList.keys, { ar ->
+            consumer?.subscribe(kafkaList.keys) { ar ->
                 if (ar.succeeded()) {
 
                 } else {
                     logger.error("[KAFKA] Registered topic listener was error：${ar.cause()}")
                 }
-            })?.handler({ record ->
+            }?.handler { record ->
                 if (record.topic().isNotBlank() && kafkaList.get(record.topic())?.size ?: 0 > 0) {
                     kafkaList.get(record.topic())?.forEach { clazz ->
                         var obj = Beaner.newInstance<KafkaListener>(clazz)
                         obj.listener(record as KafkaConsumerRecord<String, Any>)
                     }
                 }
-            })
-
-
+            }
 
 
     }

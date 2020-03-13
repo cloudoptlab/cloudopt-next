@@ -17,8 +17,8 @@ package net.cloudopt.next.web.event
 
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.EventBus
-import net.cloudopt.next.aop.Beaner
-import net.cloudopt.next.aop.Classer
+import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.json.Jsoner

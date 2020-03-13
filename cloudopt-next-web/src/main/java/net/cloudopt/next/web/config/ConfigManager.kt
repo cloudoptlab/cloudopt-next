@@ -15,9 +15,9 @@
  */
 package net.cloudopt.next.web.config
 
-import net.cloudopt.next.aop.Beaner
-import net.cloudopt.next.aop.Maper
-import net.cloudopt.next.aop.Resourcer
+import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Maper
+import net.cloudopt.next.utils.Resourcer
 import net.cloudopt.next.yaml.Yamler
 
 

@@ -13,7 +13,7 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.aop
+package net.cloudopt.next.utils
 
 import com.alibaba.fastjson.JSON
 import java.beans.Introspector

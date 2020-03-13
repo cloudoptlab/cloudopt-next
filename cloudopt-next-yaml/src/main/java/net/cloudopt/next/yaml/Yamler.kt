@@ -18,8 +18,8 @@ package net.cloudopt.next.yaml
 import com.esotericsoftware.yamlbeans.YamlConfig
 import com.esotericsoftware.yamlbeans.YamlException
 import com.esotericsoftware.yamlbeans.YamlReader
-import net.cloudopt.next.aop.Maper
-import net.cloudopt.next.aop.Resourcer
+import net.cloudopt.next.utils.Maper
+import net.cloudopt.next.utils.Resourcer
 import net.cloudopt.next.yaml.annotation.ConfigureBean
 import java.io.*
 

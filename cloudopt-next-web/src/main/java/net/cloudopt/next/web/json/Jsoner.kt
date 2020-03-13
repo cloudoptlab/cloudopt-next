@@ -16,8 +16,8 @@
 package net.cloudopt.next.web.json
 
 import io.vertx.core.json.Json
-import net.cloudopt.next.aop.Beaner
-import net.cloudopt.next.aop.Classer
+import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.config.ConfigManager
 
 

@@ -14,7 +14,7 @@
  *  You may elect to redistribute this code under either of these licenses.
  */
 package net.cloudopt.next.example.ymal
-import net.cloudopt.next.aop.Maper
+import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.yaml.Yamler
 import org.junit.Test
 import java.util.jar.Manifest

@@ -16,7 +16,7 @@
 package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
-import net.cloudopt.next.aop.Resourcer
+import net.cloudopt.next.utils.Resourcer
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 import java.io.*

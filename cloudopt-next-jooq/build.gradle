@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':cloudopt-next-web')
+    implementation project(':cloudopt-next-utils')
     implementation 'org.jooq:jooq:3.10.4'
     implementation 'com.zaxxer:HikariCP:2.7.6'
     testImplementation 'mysql:mysql-connector-java:6.0.6'

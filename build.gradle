@@ -6,6 +6,11 @@ allprojects {
     group = "net.cloudopt.next"
     version = "1.0.0-SNAPSHOT"
     sourceCompatibility = 1.8
+    repositories {
+        maven { url "http://maven.aliyun.com/nexus/content/repositories/central/" }
+        mavenCentral()
+        jcenter()
+    }
 }
 
 subprojects {
@@ -22,12 +27,6 @@ subprojects {
             classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
         }
 
-    }
-
-    repositories {
-        maven { url "http://maven.aliyun.com/nexus/content/repositories/central/" }
-        mavenCentral()
-        jcenter()
     }
 
     apply plugin: "java"

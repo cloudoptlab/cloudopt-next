@@ -19,7 +19,7 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
-import net.cloudopt.next.aop.Beaner
+import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.web.config.ConfigManager
 
 /*
@@ -186,6 +186,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 CloudoptServer.logger.info(
                         "==========================================================================================================")
                 CloudoptServer.logger.info("\uD83D\uDC0B Cloudopt Next started is success!")
+                CloudoptServer.logger.info("http://127.0.0.1:${ConfigManager.webConfig.port}")
                 CloudoptServer.logger.info(
                         "==========================================================================================================")
 

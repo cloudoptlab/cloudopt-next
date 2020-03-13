@@ -13,7 +13,7 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.aop
+package net.cloudopt.next.utils
 
 import java.io.File
 import java.io.FileFilter

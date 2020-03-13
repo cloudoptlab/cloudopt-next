@@ -21,9 +21,8 @@ import io.vertx.core.VertxOptions
 import io.vertx.core.dns.AddressResolverOptions
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
-import net.cloudopt.next.aop.Beaner
-import net.cloudopt.next.aop.Classer
-import net.cloudopt.next.logging.Colorer
+import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.handler.AutoHandler

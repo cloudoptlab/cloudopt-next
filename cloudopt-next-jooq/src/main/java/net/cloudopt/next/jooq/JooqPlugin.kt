@@ -16,8 +16,8 @@
 package net.cloudopt.next.jooq
 
 import com.sun.org.apache.xpath.internal.operations.Bool
-import net.cloudopt.next.aop.Beaner
-import net.cloudopt.next.aop.Classer
+import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.jooq.Jooqer
 import net.cloudopt.next.jooq.pool.ConnectionPool
 import net.cloudopt.next.jooq.pool.HikariCPPool

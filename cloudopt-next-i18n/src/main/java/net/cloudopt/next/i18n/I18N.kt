@@ -17,7 +17,7 @@ package net.cloudopt.next.i18n
 
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
-import net.cloudopt.next.aop.Resourcer
+import net.cloudopt.next.utils.Resourcer
 import java.util.*
 
 

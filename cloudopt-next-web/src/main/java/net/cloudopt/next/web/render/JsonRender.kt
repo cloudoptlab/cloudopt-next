@@ -17,8 +17,8 @@ package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerResponse
-import net.cloudopt.next.aop.Beaner
-import net.cloudopt.next.aop.Classer
+import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.WebConfigBean
 import net.cloudopt.next.web.json.JsonProvider
