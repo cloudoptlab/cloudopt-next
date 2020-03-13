@@ -1,9 +1,9 @@
 dependencies {
     implementation 'io.vertx:vertx-web:3.5.2.CR2'
-    implementation project(':cloudopt-next-yaml')
-    implementation project(':cloudopt-next-waf')
-    implementation project(':cloudopt-next-logging')
-    implementation project(':cloudopt-next-utils')
+    api project(':cloudopt-next-yaml')
+    api project(':cloudopt-next-waf')
+    api project(':cloudopt-next-logging')
+    api project(':cloudopt-next-utils')
     implementation 'com.alibaba:fastjson:1.2.45'
     implementation 'io.vertx:vertx-codegen:3.5.2.CR2'
     testImplementation 'io.vertx:vertx-unit:3.5.2.CR2'
