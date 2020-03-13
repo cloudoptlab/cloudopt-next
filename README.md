@@ -1,4 +1,6 @@
-![Cloudopt Next](https://github.com/cloudoptlab/cloudopt-next/raw/master/logo.svg)
+<img src="https://www.cloudopt.net/static/images/logo.svg" width = "150"/>
+
+<br />
 
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![Apache Licenses Badge](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Twitter Badge](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/CloudoptLab)
 
