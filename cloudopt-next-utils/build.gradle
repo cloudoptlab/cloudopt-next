@@ -1,0 +1,5 @@
+dependencies {
+    implementation 'com.alibaba:fastjson:1.2.45'
+}
+
+description = 'Cloudopt Next Utils'

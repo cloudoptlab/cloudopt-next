@@ -18,7 +18,6 @@ package net.cloudopt.next.web.test.interceptor
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Interceptor
 import net.cloudopt.next.web.Resource
-import org.slf4j.LoggerFactory
 
 
 /*

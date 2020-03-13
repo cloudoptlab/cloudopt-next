@@ -18,7 +18,6 @@ package net.cloudopt.next.web.test.validator
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Validator
-import org.slf4j.LoggerFactory
 
 
 /*

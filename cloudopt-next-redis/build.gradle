@@ -1,0 +1,8 @@
+dependencies {
+    implementation project(':cloudopt-next-web')
+    implementation 'de.ruedigermoeller:fst:2.29'
+    compileOnly 'redis.clients:jedis:2.9.0'
+    compileOnly 'io.vertx:vertx-redis-client:3.5.1'
+}
+
+description = 'Cloudopt Next Redis'

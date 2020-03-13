@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.70'
+}
+allprojects {
+    group = "net.cloudopt.next"
+    version = "1.0.0-SNAPSHOT"
+    sourceCompatibility = 1.8
+}
+
+subprojects {
+
+    ext.kotlinVersion = "1.3.70"
+
+    buildscript {
+        repositories {
+            gradlePluginPortal()
+        }
+        dependencies {
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+            classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
+            classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
+        }
+
+    }
+
+    repositories {
+        maven { url "http://maven.aliyun.com/nexus/content/repositories/central/" }
+        mavenCentral()
+        jcenter()
+    }
+
+    apply plugin: "java"
+    apply plugin: "maven-publish"
+    apply plugin: "kotlin"
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+        implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+        testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+    }
+
+    sourceCompatibility = "1.8"
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from(components.java)
+            }
+        }
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+}
+

@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':cloudopt-next-web')
+    compileOnly 'org.springframework:spring-context:5.0.3.RELEASE'
+}
+
+description = 'Cloudopt Next Spring'

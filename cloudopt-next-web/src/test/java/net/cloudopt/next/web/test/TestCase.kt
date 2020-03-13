@@ -29,7 +29,5 @@ fun main(args: Array<String>) {
     CloudoptServer.addHandler(TestHandler())
     CloudoptServer.addPlugin(TestPlugin())
     CloudoptServer.addPlugin(EventPlugin())
-    CloudoptServer.run(TestCase::class)
+    CloudoptServer.run()
 }
-
-class TestCase

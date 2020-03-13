@@ -1,0 +1,10 @@
+dependencies {
+    implementation project(':cloudopt-next-web')
+    implementation 'org.jooq:jooq:3.10.4'
+    implementation 'com.zaxxer:HikariCP:2.7.6'
+    testImplementation 'mysql:mysql-connector-java:6.0.6'
+    compileOnly 'org.jooq:jooq-meta:3.10.4'
+    compileOnly 'org.jooq:jooq-codegen:3.10.4'
+}
+
+description = 'Cloudopt Next Jooq'

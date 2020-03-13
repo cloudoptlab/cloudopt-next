@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="469.118" height="132" viewBox="0 0 469.118 132">
+  <defs>
+    <style>
+      .cls-1, .cls-3 {
+        fill: #425063;
+        letter-spacing: -0.01em;
+      }
+
+      .cls-1 {
+        font-size: 72px;
+        font-family: OPPOSans-H, OPPOSans;
+      }
+
+      .cls-2 {
+        font-size: 32px;
+        font-family: OPPOSans-M, OPPOSans;
+      }
+
+      .cls-3 {
+        font-size: 36px;
+        font-family: OPPOSans-B, OPPOSans;
+      }
+    </style>
+  </defs>
+  <g id="LOGO" transform="translate(-73.445 -83.023)">
+    <text id="CLOUDOPT_AI_LABORATORY" data-name="CLOUDOPT
+AI LABORATORY" class="cls-1" transform="translate(73.445 155.023)"><tspan x="0" y="0">CLOUDOPT</tspan><tspan class="cls-2"><tspan x="0" y="50">AI LABORATORY</tspan></tspan></text>
+    <text id="_" data-name="®" class="cls-3" transform="translate(519.563 120.93)"><tspan x="0" y="0">®</tspan></text>
+  </g>
+</svg>

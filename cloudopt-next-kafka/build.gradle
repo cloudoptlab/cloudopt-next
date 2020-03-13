@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':cloudopt-next-web')
+    implementation 'io.vertx:vertx-kafka-client:3.5.2.CR2'
+    compileOnly 'org.apache.kafka:kafka-clients:1.0.1'
+}
+
+description = 'Cloudopt Next Kafka'

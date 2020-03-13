@@ -1,6 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 ### Maven template
 target/
+/*/target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -73,4 +74,19 @@ javadocs/
 # File Upload
 file-uploads/
 
+*.log
+
+.gradle
+.DS_Store
+/build
+/captures
+*.iml
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+/*/build/
+proguard/
 *.log
