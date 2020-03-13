@@ -143,6 +143,12 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
+        if (CloudoptServer.controllers.size < 1){
+            router.route("/").blockingHandler { context ->
+                context.response().end(Welcomer.html())
+            }
+        }
+
         //Register method
         CloudoptServer.controllers.forEach { resourceTable ->
             if (resourceTable.blocking) {

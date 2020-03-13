@@ -28,15 +28,11 @@ import net.cloudopt.next.web.Resource
 class TestInterceptor1 : Interceptor {
     val logger = Logger.getLogger(this::class.java.simpleName)
     override fun intercept(resource: Resource): Boolean {
-        val interceptRes = Math.random() * 10 > 5
-        logger.info("Through the intercept1 ${if (!interceptRes) " , other Interceptor will not work" else ""} !")
-        return interceptRes
+        logger.info("TestInterceptor1")
+        return true
     }
 
     override fun response(resource: Resource): Resource {
-        if (Math.random() * 10 > 5) {
-            resource.renderText("if you see this means I just response")
-        }
         return resource
     }
 
