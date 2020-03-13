@@ -24,7 +24,7 @@ import net.cloudopt.next.web.Plugin
  * @Time: 2018/1/17
  * @Description: Test Case
  */
-class TestPlugin:Plugin{
+class TestPlugin : Plugin {
 
     val logger = Logger.getLogger(this::class.java.simpleName)
 

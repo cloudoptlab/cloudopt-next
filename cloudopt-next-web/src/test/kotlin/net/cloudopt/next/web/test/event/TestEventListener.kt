@@ -27,7 +27,7 @@ import net.cloudopt.next.web.event.EventListener
  * @Description: Test Case
  */
 @AutoEvent("net.cloudopt.web.test")
-class TestEventListener:EventListener {
+class TestEventListener : EventListener {
     val logger = Logger.getLogger(this::class.java.simpleName)
     override fun listener(message: Message<Any>) {
         logger.info(message.body().toString())

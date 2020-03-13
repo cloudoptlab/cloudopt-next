@@ -21,9 +21,11 @@ import net.cloudopt.logger.provider.Slf4jLoggerProvider
  * @Description: Configuration file
  */
 
-data class LoggerConfiguration(var color:Boolean = true,
-                               var loggerProvider: LoggerProvider = Slf4jLoggerProvider(),
-                               var debugPrefix:String = "\uD83E\uDD1F DEBUG:",
-                               var infoPrefix:String = "ℹ️ INFO:",
-                               var warnPrefix:String = "⚠️ WARN:",
-                               var errorPrefix:String = "❌ ERRROR:")
+data class LoggerConfiguration(
+    var color: Boolean = true,
+    var loggerProvider: LoggerProvider = Slf4jLoggerProvider(),
+    var debugPrefix: String = "\uD83E\uDD1F DEBUG:",
+    var infoPrefix: String = "ℹ️ INFO:",
+    var warnPrefix: String = "⚠️ WARN:",
+    var errorPrefix: String = "❌ ERRROR:"
+)

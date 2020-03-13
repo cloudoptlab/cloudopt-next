@@ -15,27 +15,26 @@
  */
 package net.cloudopt.next.web.config
 
-import io.netty.channel.pool.ChannelHealthChecker
-
 /*
  * @author: Cloudopt
  * @Time: 2018/1/9
  * @Description: Cloudopt Next Web configuration file
  */
-data class WebConfigBean(var banner: Boolean = true,
-                         var bannerName: String = "banner.txt",
-                         var dev: Boolean = true,
-                         var showRoute: Boolean = true,
-                         var cors: Boolean = true,
-                         var packageName: String = "",
-                         var port: Int = 8080,
-                         var staticPackage: String = "static",
-                         var webroot: String = "templates",
-                         var errorHandler: String = "net.cloudopt.next.web.handler.DefaultErrorHandler",
-                         var jsonProvider: String = "net.cloudopt.next.web.json.DefaultJSONProvider",
-                         var indexPage: String = "index.html",
-                         var cookieCors: Boolean = false,
-                         var bodyLimit: Long = 50L * 1024 * 1024,
-                         var logColor: Boolean = true,
-                         var timeout:Long = 2L * 60 * 1000
+data class WebConfigBean(
+    var banner: Boolean = true,
+    var bannerName: String = "banner.txt",
+    var dev: Boolean = true,
+    var showRoute: Boolean = true,
+    var cors: Boolean = true,
+    var packageName: String = "",
+    var port: Int = 8080,
+    var staticPackage: String = "static",
+    var webroot: String = "templates",
+    var errorHandler: String = "net.cloudopt.next.web.handler.DefaultErrorHandler",
+    var jsonProvider: String = "net.cloudopt.next.web.json.DefaultJSONProvider",
+    var indexPage: String = "index.html",
+    var cookieCors: Boolean = false,
+    var bodyLimit: Long = 50L * 1024 * 1024,
+    var logColor: Boolean = true,
+    var timeout: Long = 2L * 60 * 1000
 )

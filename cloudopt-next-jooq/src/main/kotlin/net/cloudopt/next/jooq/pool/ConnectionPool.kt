@@ -28,6 +28,6 @@ interface ConnectionPool {
 
     fun getConnection(): Connection
 
-    fun getDatasource():DataSource
+    fun getDatasource(): DataSource
 
 }

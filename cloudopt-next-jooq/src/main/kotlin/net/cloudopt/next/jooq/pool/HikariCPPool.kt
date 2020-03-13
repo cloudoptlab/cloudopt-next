@@ -15,11 +15,11 @@
  */
 package net.cloudopt.next.jooq.pool
 
-import java.sql.SQLException
-import com.zaxxer.hikari.HikariDataSource
 import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import net.cloudopt.next.web.config.ConfigManager
 import java.sql.Connection
+import java.sql.SQLException
 import javax.sql.DataSource
 
 

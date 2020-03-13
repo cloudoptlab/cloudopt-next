@@ -11,8 +11,6 @@
  */
 package net.cloudopt.next.logging
 
-import net.cloudopt.next.logging.Logger
-
 /*
  * @author: Cloudopt
  * @Time: 2018/10/18

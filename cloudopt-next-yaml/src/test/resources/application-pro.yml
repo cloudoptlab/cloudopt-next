@@ -1,4 +1,4 @@
 net:
   cloudopt:
-      next:
-        test: 3
+    next:
+      test: 3

@@ -15,13 +15,13 @@
  */
 package net.cloudopt.next.web
 
-import net.cloudopt.next.utils.Resourcer
 import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.utils.Resourcer
 import net.cloudopt.next.web.config.ConfigManager
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.io.InputStreamReader
-import java.io.BufferedReader
 
 
 /*
@@ -43,7 +43,7 @@ object Banner {
 
         var buffer = BufferedReader(InputStreamReader(input))
 
-        if(ConfigManager.webConfig.bannerName.isNotBlank()){
+        if (ConfigManager.webConfig.bannerName.isNotBlank()) {
             input = Resourcer.getFileInputStream(ConfigManager.webConfig.bannerName)
             buffer = BufferedReader(InputStreamReader(input))
         }
@@ -53,7 +53,8 @@ object Banner {
             text = text.replace("\${java.version}", System.getProperty("java.version"))
             text = text.replace("\${java.vendor}", System.getProperty("java.vendor"))
             text = text.replace("\${os}", System.getProperty("os.name"))
-            text = text.replace("\${time}", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+            text =
+                text.replace("\${time}", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
             text = text.replace("\${port}", ConfigManager.webConfig.port.toString())
             logger.info(text)
             text = buffer.readLine()

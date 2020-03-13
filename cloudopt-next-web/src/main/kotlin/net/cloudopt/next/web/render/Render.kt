@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.render
 
-import io.vertx.core.http.HttpServerResponse
 import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.Resource
 

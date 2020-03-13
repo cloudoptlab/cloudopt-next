@@ -33,22 +33,25 @@ class ShowRouteHandler : Handler() {
     override fun preHandle(resource: Resource) {
         if (ConfigManager.webConfig.showRoute) {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            logger.info("Match route ----------------- " + df.format(Date())
-                    + " ------------------------------")
+            logger.info(
+                "Match route ----------------- " + df.format(Date())
+                        + " ------------------------------"
+            )
             logger.info("Method       : " + resource.request.method())
             logger.info("Path         : " + resource.request.uri())
             logger.info("User-Agent   : " + resource.request.getHeader("User-Agent"))
             val params = resource.request.params()
-            params.forEach{entry->
-                if (params.contains(entry.key)){
+            params.forEach { entry ->
+                if (params.contains(entry.key)) {
                     params.remove(entry.key)
-                    params.add(entry.key,entry.value)
+                    params.add(entry.key, entry.value)
                 }
             }
             logger.info("Params       : " + Jsoner.toJsonString(params?.entries() ?: "[]"))
             logger.info("Cookie       : " + Jsoner.toJsonString(resource.request.getHeader("Cookie") ?: ""))
             logger.info(
-                    "--------------------------------------------------------------------------------")
+                "--------------------------------------------------------------------------------"
+            )
         }
     }
 

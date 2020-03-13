@@ -21,9 +21,9 @@ import io.vertx.core.VertxOptions
 import io.vertx.core.dns.AddressResolverOptions
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
-import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.handler.AutoHandler
 import net.cloudopt.next.web.handler.ErrorHandler
@@ -116,9 +116,9 @@ object CloudoptServer {
 
         //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class.java)
-                .forEach { clazz ->
-                    handlers.add(Beaner.newInstance(clazz))
-                }
+            .forEach { clazz ->
+                handlers.add(Beaner.newInstance(clazz))
+            }
 
         packageName = if (ConfigManager.webConfig.packageName.isNotBlank()) {
             ConfigManager.webConfig.packageName
@@ -128,15 +128,15 @@ object CloudoptServer {
 
         //Scan custom handler
         Classer.scanPackageByAnnotation(packageName, true, AutoHandler::class.java)
-                .forEach { clazz ->
-                    handlers.add(Beaner.newInstance(clazz))
-                }
+            .forEach { clazz ->
+                handlers.add(Beaner.newInstance(clazz))
+            }
 
         //Scan resources
         Classer.scanPackageByAnnotation(packageName, true, API::class.java)
-                .forEach { clazz ->
-                    resources.add(clazz as Class<Resource>)
-                }
+            .forEach { clazz ->
+                resources.add(clazz as Class<Resource>)
+            }
 
         resources.forEach { clazz ->
 
@@ -206,7 +206,7 @@ object CloudoptServer {
                         valids = methodAnnotation.valid
                     }
 
-                    if(methodAnnotation is Blocking){
+                    if (methodAnnotation is Blocking) {
                         blocking = true
                     }
 

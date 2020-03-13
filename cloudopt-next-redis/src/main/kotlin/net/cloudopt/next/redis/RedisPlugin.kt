@@ -18,14 +18,14 @@
 package net.cloudopt.next.redis
 
 import io.vertx.redis.RedisClient
+import io.vertx.redis.RedisOptions
 import net.cloudopt.next.redis.serializer.FstSerializer
 import net.cloudopt.next.redis.serializer.ISerializer
+import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
-import io.vertx.redis.RedisOptions
-import net.cloudopt.next.web.CloudoptServer
 
 
 /**
@@ -98,14 +98,14 @@ class RedisPlugin() : Plugin {
         protected set
 
     override fun start(): Boolean {
-        if(asyn){
+        if (asyn) {
             asynOpitions.address = host
             asynOpitions.port = port
             asynOpitions.connectTimeout = timeout
             asynOpitions.auth = password
             asynOpitions.select = database
             Redis.asyn = RedisClient.create(CloudoptServer.vertx, RedisOptions())
-        }else{
+        } else {
             val jedisPool: JedisPool
             if (port != null && timeout != null && !password.isNullOrBlank() && database != null && !clientName.isNullOrBlank())
                 jedisPool = JedisPool(jedisPoolConfig, host, port!!, timeout!!, password, database!!, clientName)
@@ -127,11 +127,11 @@ class RedisPlugin() : Plugin {
     }
 
     override fun stop(): Boolean {
-        if(asyn){
-            Redis.asyn.close{result->
+        if (asyn) {
+            Redis.asyn.close { result ->
 
             }
-        }else{
+        } else {
             val cache = Redis.removeCache(cacheName)
             try {
                 if (cache == Redis.mainCache)

@@ -15,12 +15,10 @@
  */
 package net.cloudopt.next.jooq
 
-import com.sun.org.apache.xpath.internal.operations.Bool
-import net.cloudopt.next.utils.Beaner
-import net.cloudopt.next.utils.Classer
-import net.cloudopt.next.jooq.Jooqer
 import net.cloudopt.next.jooq.pool.ConnectionPool
 import net.cloudopt.next.jooq.pool.HikariCPPool
+import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
 import org.jooq.SQLDialect
@@ -70,9 +68,9 @@ class JooqPlugin : Plugin {
             Jooqer.connectionProvider = DataSourceConnectionProvider(pool.getDatasource())
             Jooqer.transactionProvider = DefaultTransactionProvider(Jooqer.connectionProvider)
             Jooqer.configuration.set(Jooqer.connectionProvider)
-                    .set(Jooqer.transactionProvider)
-                    .set(sqlDialect)
-                    .set(Jooqer.settings)
+                .set(Jooqer.transactionProvider)
+                .set(sqlDialect)
+                .set(Jooqer.settings)
             Jooqer.dsl = DSL.using(Jooqer.configuration)
             return true
         } catch (e: SQLException) {

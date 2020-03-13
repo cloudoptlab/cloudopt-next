@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.json
 
-import io.vertx.core.json.Json
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.config.ConfigManager
@@ -27,7 +26,7 @@ import net.cloudopt.next.web.config.ConfigManager
  * @Description: JsonProvider Interface
  */
 
-object Jsoner{
+object Jsoner {
 
     @JvmStatic
     private val jsonProvider: JsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.webConfig.jsonProvider))

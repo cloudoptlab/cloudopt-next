@@ -64,9 +64,9 @@ object ConfigManager {
             map?.putAll(Yamler.read(YML, "net.cloudopt.next." + name) as Map<out String, Any>)
         }
 
-        var dev = if(name.equals("web")){
+        var dev = if (name.equals("web")) {
             map.get("dev").toString().toBoolean()
-        }else{
+        } else {
             ConfigManager.webConfig.dev
         }
 

@@ -23,7 +23,7 @@ import java.util.*
  * @Time: 2018/1/8
  * @Description: For Base64 encryption and decryption
  */
-class Base64Encrypt:Encrypt(){
+class Base64Encrypt : Encrypt() {
 
     /**
      * Base64 encryption
@@ -39,7 +39,7 @@ class Base64Encrypt:Encrypt(){
      * @param value This is an array of bytes that need to be encrypted
      * @return Encrypted string
      */
-    fun encrypt(value:ByteArray): String {
+    fun encrypt(value: ByteArray): String {
         return String(Base64.getEncoder().encode(value))
     }
 

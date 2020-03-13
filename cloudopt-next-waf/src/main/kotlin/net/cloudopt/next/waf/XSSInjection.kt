@@ -40,12 +40,16 @@ class XSSInjection : Filter {
         s = scriptPattern.matcher(s).replaceAll("")
 
         // Avoid anything in a src='...' type of expression
-        scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE
-                or Pattern.MULTILINE or Pattern.DOTALL)
+        scriptPattern = Pattern.compile(
+            "src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE
+                    or Pattern.MULTILINE or Pattern.DOTALL
+        )
         s = scriptPattern.matcher(s).replaceAll("")
 
-        scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE
-                or Pattern.MULTILINE or Pattern.DOTALL)
+        scriptPattern = Pattern.compile(
+            "src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE
+                    or Pattern.MULTILINE or Pattern.DOTALL
+        )
         s = scriptPattern.matcher(s).replaceAll("")
 
         // Remove any lonesome </script> tag
@@ -53,18 +57,24 @@ class XSSInjection : Filter {
         s = scriptPattern.matcher(s).replaceAll("")
 
         // Remove any lonesome <script ...> tag
-        scriptPattern = Pattern.compile("<script(.*?)>", Pattern.CASE_INSENSITIVE
-                or Pattern.MULTILINE or Pattern.DOTALL)
+        scriptPattern = Pattern.compile(
+            "<script(.*?)>", Pattern.CASE_INSENSITIVE
+                    or Pattern.MULTILINE or Pattern.DOTALL
+        )
         s = scriptPattern.matcher(s).replaceAll("")
 
         // Avoid eval(...) expressions
-        scriptPattern = Pattern.compile("eval\\((.*?)\\)", Pattern.CASE_INSENSITIVE
-                or Pattern.MULTILINE or Pattern.DOTALL)
+        scriptPattern = Pattern.compile(
+            "eval\\((.*?)\\)", Pattern.CASE_INSENSITIVE
+                    or Pattern.MULTILINE or Pattern.DOTALL
+        )
         s = scriptPattern.matcher(s).replaceAll("")
 
         // Avoid expression(...) expressions
-        scriptPattern = Pattern.compile("expression\\((.*?)\\)", Pattern.CASE_INSENSITIVE
-                or Pattern.MULTILINE or Pattern.DOTALL)
+        scriptPattern = Pattern.compile(
+            "expression\\((.*?)\\)", Pattern.CASE_INSENSITIVE
+                    or Pattern.MULTILINE or Pattern.DOTALL
+        )
         s = scriptPattern.matcher(s).replaceAll("")
 
         // Avoid javascript:... expressions
@@ -76,8 +86,10 @@ class XSSInjection : Filter {
         s = scriptPattern.matcher(s).replaceAll("")
 
         // Avoid onload= expressions
-        scriptPattern = Pattern.compile("onload(.*?)=", Pattern.CASE_INSENSITIVE
-                or Pattern.MULTILINE or Pattern.DOTALL)
+        scriptPattern = Pattern.compile(
+            "onload(.*?)=", Pattern.CASE_INSENSITIVE
+                    or Pattern.MULTILINE or Pattern.DOTALL
+        )
         s = scriptPattern.matcher(s).replaceAll("")
 
         return s

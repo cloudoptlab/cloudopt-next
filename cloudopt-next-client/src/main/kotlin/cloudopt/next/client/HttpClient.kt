@@ -15,7 +15,6 @@
  */
 package cloudopt.next.client
 
-import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.WebClient
@@ -42,7 +41,7 @@ class HttpClient() {
 
     private var timeout: Long = 5000
 
-    private var followRedirects:Boolean = true
+    private var followRedirects: Boolean = true
 
     constructor(host: String) : this() {
         if (host.startsWith("https://")) {
@@ -52,10 +51,11 @@ class HttpClient() {
         this.host = host
         this.host = this.host.replace("http://", "")
         this.host = this.host.replace("https://", "")
-        options.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
+        options.userAgent =
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
         options.setKeepAlive(false)
         options.setFollowRedirects(followRedirects)
-        client = WebClient.create(CloudoptServer.vertx,options)
+        client = WebClient.create(CloudoptServer.vertx, options)
     }
 
     fun setPort(port: Int): HttpClient {

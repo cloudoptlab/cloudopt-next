@@ -22,9 +22,9 @@ import com.alibaba.fastjson.JSON
  * @Time: 2018/1/9
  * @Description: Default JsonProvider
  */
-class DefaultJSONProvider: JsonProvider {
+class DefaultJSONProvider : JsonProvider {
 
-    override fun toJsonString(obj: Any):String {
+    override fun toJsonString(obj: Any): String {
         return JSON.toJSONString(obj)
     }
 
@@ -33,7 +33,7 @@ class DefaultJSONProvider: JsonProvider {
     }
 
     override fun toJsonObject(s: String, clazz: Class<*>): Any {
-       return JSON.parseObject(s,clazz)
+        return JSON.parseObject(s, clazz)
     }
 
     override fun toJsonArray(s: String): Any {
@@ -41,7 +41,7 @@ class DefaultJSONProvider: JsonProvider {
     }
 
     override fun toJsonArray(s: String, clazz: Class<*>): Any {
-        return JSON.parseArray(s,clazz)
+        return JSON.parseArray(s, clazz)
     }
 
 }

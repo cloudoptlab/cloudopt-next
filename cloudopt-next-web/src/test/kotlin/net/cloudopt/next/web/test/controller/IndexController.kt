@@ -27,10 +27,6 @@ import net.cloudopt.next.web.route.API
 import net.cloudopt.next.web.route.Blocking
 import net.cloudopt.next.web.route.GET
 import net.cloudopt.next.web.route.POST
-import net.cloudopt.next.web.test.interceptor.TestInterceptor1
-import net.cloudopt.next.web.test.interceptor.TestInterceptor2
-import net.cloudopt.next.web.test.validator.Test2Validator
-import net.cloudopt.next.web.test.validator.TestValidator
 
 
 /*
@@ -56,7 +52,7 @@ class IndexController : Resource() {
         println(getLang())
         var view = View()
         view.view = "index"
-        setCookie("test","cookie","127.0.0.1",360000,"/",false,false)
+        setCookie("test", "cookie", "127.0.0.1", 360000, "/", false, false)
         renderHtml(view)
     }
 

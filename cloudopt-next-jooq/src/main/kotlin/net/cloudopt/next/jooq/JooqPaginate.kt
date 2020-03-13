@@ -52,8 +52,16 @@ class JooqPaginate(query: SelectConditionStep<*>, private var count: Int, privat
     }
 
     fun <T> find(clazz: Class<T>): JooqPage {
-        return JooqPage(count, page, totalPage, totalRow, firstPage, lastPage, query.limit(this.count)?.offset(skip())?.fetchInto(clazz)?.toMutableList()
-                ?: mutableListOf<Any>())
+        return JooqPage(
+            count,
+            page,
+            totalPage,
+            totalRow,
+            firstPage,
+            lastPage,
+            query.limit(this.count)?.offset(skip())?.fetchInto(clazz)?.toMutableList()
+                ?: mutableListOf<Any>()
+        )
     }
 
 

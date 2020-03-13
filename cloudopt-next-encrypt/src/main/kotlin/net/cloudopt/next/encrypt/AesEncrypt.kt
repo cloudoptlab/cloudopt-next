@@ -25,7 +25,7 @@ import javax.crypto.spec.SecretKeySpec
  * @Time: 2018/1/8
  * @Description: For AES encryption
  */
-class AesEncrypt:Encrypt(){
+class AesEncrypt : Encrypt() {
 
     private val ALGORITHM = "AES"
 
@@ -96,7 +96,7 @@ class AesEncrypt:Encrypt(){
     /**
      * Initialization
      */
-    private fun initialize(){
+    private fun initialize() {
         if (!initialized) {
             Security.addProvider(BouncyCastleProvider())
             initialized = true

@@ -23,5 +23,5 @@ import net.cloudopt.next.yaml.annotation.ConfigureBean
  * @Time: 2018/1/9
  * @Description: Test Case
  */
-@ConfigureBean(filePath = "application.yml",prefix = "net.cloudopt.next")
-data class YamlBean(var test:String = "")
+@ConfigureBean(filePath = "application.yml", prefix = "net.cloudopt.next")
+data class YamlBean(var test: String = "")

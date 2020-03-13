@@ -16,8 +16,7 @@
 package net.cloudopt.next.web.route
 
 import net.cloudopt.next.web.Validator
-
-import java.lang.annotation.*
+import java.lang.annotation.Documented
 import kotlin.reflect.KClass
 
 /*

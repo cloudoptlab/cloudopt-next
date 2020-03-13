@@ -16,9 +16,7 @@
 package net.cloudopt.next.utils
 
 import com.alibaba.fastjson.JSON
-import java.beans.Introspector
-import java.util.HashMap
-import kotlin.reflect.KClass
+import java.util.*
 
 
 /*
@@ -26,7 +24,7 @@ import kotlin.reflect.KClass
  * @Time: 2018/1/5
  * @Description: This is used for map to object conversion
  */
-object Maper{
+object Maper {
 
     /**
      * It will convert map to object
@@ -35,7 +33,7 @@ object Maper{
      * @return The object after the conversion is completed
      */
     fun toObject(map: Map<String, Any>?, beanClass: Class<*>): Any? {
-        return JSON.parseObject(JSON.toJSONString(map),beanClass)
+        return JSON.parseObject(JSON.toJSONString(map), beanClass)
     }
 
     /**
@@ -44,7 +42,7 @@ object Maper{
      * @return The map after the conversion is completed
      */
     fun toMap(obj: Any?): HashMap<String, Any>? {
-        return JSON.parseObject(JSON.toJSONString(obj),Map::class.java) as HashMap<String,Any>
+        return JSON.parseObject(JSON.toJSONString(obj), Map::class.java) as HashMap<String, Any>
     }
 
 }

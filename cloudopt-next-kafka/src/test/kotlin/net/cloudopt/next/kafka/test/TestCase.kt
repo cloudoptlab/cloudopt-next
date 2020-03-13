@@ -15,10 +15,8 @@
  */
 package net.cloudopt.next.kafka.test
 
-import net.cloudopt.next.kafka.KafkaManager
 import net.cloudopt.next.kafka.KafkaPlugin
 import net.cloudopt.next.web.CloudoptServer
-
 
 
 /*
@@ -33,8 +31,6 @@ fun main(args: Array<String>) {
 }
 
 class TestCase {
-
-
 
 
 }

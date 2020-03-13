@@ -28,7 +28,7 @@ import net.cloudopt.next.web.Resource
 class TestInterceptor2 : Interceptor {
     val logger = Logger.getLogger(this::class.java.simpleName)
     override fun intercept(resource: Resource): Boolean {
-         logger.info("Through the intercept2 !")
+        logger.info("Through the intercept2 !")
         return true
     }
 

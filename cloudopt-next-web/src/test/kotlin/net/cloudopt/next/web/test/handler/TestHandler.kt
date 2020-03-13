@@ -17,9 +17,7 @@ package net.cloudopt.next.web.test.handler
 
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.handler.AutoHandler
 import net.cloudopt.next.web.handler.Handler
-import kotlin.math.log
 
 
 /*
@@ -44,7 +42,6 @@ class TestHandler : Handler() {
     override fun afterCompletion(resource: Resource) {
         logger.info(resource.request.absoluteURI() + "-afterCompletion")
     }
-
 
 
 }

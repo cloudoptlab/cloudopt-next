@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.web.render
 
-import java.util.HashMap
+import java.util.*
 
 /*
  * @author: Cloudopt

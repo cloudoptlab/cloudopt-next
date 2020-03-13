@@ -26,7 +26,7 @@ import javax.crypto.spec.DESKeySpec
  * @Time: 2018/1/9
  * @Description: For DES encryption (ECB mode)
  */
-class DesEncrypt :Encrypt(){
+class DesEncrypt : Encrypt() {
 
     private val ALGORITHM = "DES"
 
@@ -61,7 +61,7 @@ class DesEncrypt :Encrypt(){
     }
 
     /**
-     * DES decryption 
+     * DES decryption
      * @param value This is a string that needs to be decrypted
      * @return The encrypted string first Base64 decoding and decryption
      */

@@ -24,7 +24,23 @@ import java.net.URLEncoder
  */
 class MongoInjection : Filter {
 
-    private val blackList = arrayOf("{", "}", "\$ne", "\$gte", "\$gt", "\$lt", "\$lte", "\$in", "\$nin", "\$exists", "\$where", "tojson", "==", "db.", "\$where")
+    private val blackList = arrayOf(
+        "{",
+        "}",
+        "\$ne",
+        "\$gte",
+        "\$gt",
+        "\$lt",
+        "\$lte",
+        "\$in",
+        "\$nin",
+        "\$exists",
+        "\$where",
+        "tojson",
+        "==",
+        "db.",
+        "\$where"
+    )
 
     /**
      * @param value Pending content
@@ -34,7 +50,7 @@ class MongoInjection : Filter {
     override fun filter(value: String): String {
         var temp = value
         for (s in blackList) {
-            temp = temp.replace(s, URLEncoder.encode(s,"UTF-8"))
+            temp = temp.replace(s, URLEncoder.encode(s, "UTF-8"))
         }
         return temp
     }

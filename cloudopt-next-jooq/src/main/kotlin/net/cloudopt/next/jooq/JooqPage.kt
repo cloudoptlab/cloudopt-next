@@ -15,12 +15,17 @@
  */
 package net.cloudopt.next.jooq
 
-import java.util.ArrayList
-
 /*
  * @author: Cloudopt
  * @Time: 2018/4/5
  * @Description: Pagination
  */
-data class JooqPage(val count: Int = 0, val page: Int = 0, val totalPage: Int = 0, val totalRow: Long = 0, val firstPage: Boolean = true,
-                    val lastPage: Boolean = true, val list: MutableList<*> = mutableListOf<Any>())
+data class JooqPage(
+    val count: Int = 0,
+    val page: Int = 0,
+    val totalPage: Int = 0,
+    val totalRow: Long = 0,
+    val firstPage: Boolean = true,
+    val lastPage: Boolean = true,
+    val list: MutableList<*> = mutableListOf<Any>()
+)

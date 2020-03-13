@@ -15,8 +15,6 @@
  */
 package net.cloudopt.next.web.json
 
-import java.util.*
-
 /*
  * @author: Cloudopt
  * @Time: 2018/1/9
@@ -36,7 +34,7 @@ interface JsonProvider {
      * @param s Json string
      * @return Json object
      */
-    fun toJsonObject(s:String):Any
+    fun toJsonObject(s: String): Any
 
     /**
      * Output json object.
@@ -44,7 +42,7 @@ interface JsonProvider {
      * @param clazz Java class
      * @return Json object
      */
-    fun toJsonObject(s:String,clazz:Class<*>):Any
+    fun toJsonObject(s: String, clazz: Class<*>): Any
 
     /**
      * Output json array.
@@ -52,7 +50,7 @@ interface JsonProvider {
      * @param clazz Java class
      * @return Json array
      */
-    fun toJsonArray(s:String):Any
+    fun toJsonArray(s: String): Any
 
     /**
      * Output json array.
@@ -60,6 +58,6 @@ interface JsonProvider {
      * @param clazz Java class
      * @return Json array
      */
-    fun toJsonArray(s:String,clazz:Class<*>):Any
+    fun toJsonArray(s: String, clazz: Class<*>): Any
 
 }

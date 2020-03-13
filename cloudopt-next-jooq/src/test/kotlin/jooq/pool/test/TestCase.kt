@@ -24,10 +24,10 @@ import org.junit.Test
  * @Time: 2018/1/9
  * @Description: Test Case
  */
-class TestCase{
+class TestCase {
 
     @Test
-    fun testConnection(){
+    fun testConnection() {
         var plugin = JooqPlugin()
         plugin.start()
 

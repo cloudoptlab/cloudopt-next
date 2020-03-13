@@ -88,8 +88,10 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        router.route("/" + ConfigManager.webConfig.staticPackage + "/*").handler(StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
-                .setIncludeHidden(false).setWebRoot(ConfigManager.webConfig.staticPackage))
+        router.route("/" + ConfigManager.webConfig.staticPackage + "/*").handler(
+            StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
+                .setIncludeHidden(false).setWebRoot(ConfigManager.webConfig.staticPackage)
+        )
 
         //Register interceptors
         CloudoptServer.interceptors.forEach { url, clazz ->
@@ -117,7 +119,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         CloudoptServer.validators.forEach { url, map ->
             map.keys.forEach { key ->
                 val validatorList = map.get(key)
-                validatorList?.forEach {validator->
+                validatorList?.forEach { validator ->
                     router.route(key, url).handler { context ->
                         try {
                             val v = Beaner.newInstance<Validator>(validator?.java!!)
@@ -169,8 +171,10 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 }
             }
 
-            CloudoptServer.logger.info("[RESOURCE] Registered Resource :" + resourceTable.methodName + " | "
-                    + resourceTable.url)
+            CloudoptServer.logger.info(
+                "[RESOURCE] Registered Resource :" + resourceTable.methodName + " | "
+                        + resourceTable.url
+            )
         }
 
         if (CloudoptServer.controllers.size == 0) {
@@ -184,18 +188,22 @@ class CloudoptServerVerticle : AbstractVerticle() {
         server.requestHandler({ router.accept(it) }).listen(ConfigManager.webConfig.port) { result ->
             if (result.succeeded()) {
                 CloudoptServer.logger.info(
-                        "==========================================================================================================")
+                    "=========================================================================================================="
+                )
                 CloudoptServer.logger.info("\uD83D\uDC0B Cloudopt Next started is success!")
                 CloudoptServer.logger.info("http://127.0.0.1:${ConfigManager.webConfig.port}")
                 CloudoptServer.logger.info(
-                        "==========================================================================================================")
+                    "=========================================================================================================="
+                )
 
             } else {
                 CloudoptServer.logger.error(
-                        "==========================================================================================================")
+                    "=========================================================================================================="
+                )
                 CloudoptServer.logger.error("\uD83D\uDC0B Cloudopt Next started is error! " + result.cause())
                 CloudoptServer.logger.error(
-                        "==========================================================================================================")
+                    "=========================================================================================================="
+                )
             }
         }
     }

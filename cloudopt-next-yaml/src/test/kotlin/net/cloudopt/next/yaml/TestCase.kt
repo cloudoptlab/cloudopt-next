@@ -14,10 +14,9 @@
  *  You may elect to redistribute this code under either of these licenses.
  */
 package net.cloudopt.next.example.ymal
-import net.cloudopt.next.utils.Maper
+
 import net.cloudopt.next.yaml.Yamler
 import org.junit.Test
-import java.util.jar.Manifest
 
 /*
  * @author: Cloudopt
@@ -28,15 +27,15 @@ class TestCase {
 
     @Test
     fun test() {
-        println(Yamler.read("application.yml","net.cloudopt.next"))
-        var yaml:YamlBean= Yamler.read(YamlBean::class) as YamlBean
+        println(Yamler.read("application.yml", "net.cloudopt.next"))
+        var yaml: YamlBean = Yamler.read(YamlBean::class) as YamlBean
         //If you want to use the kotlin data class in the JVM,
         // the parameters of the data class must have default values.
         println(yaml.toString())
     }
 
     @Test
-    fun testReadFileList(){
+    fun testReadFileList() {
 
         var map = linkedMapOf<String, Any>()
 

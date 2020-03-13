@@ -18,10 +18,6 @@ package net.cloudopt.next.kafka.test
 import io.vertx.kafka.client.consumer.KafkaConsumerRecord
 import net.cloudopt.next.kafka.AutoKafka
 import net.cloudopt.next.kafka.KafkaListener
-import net.cloudopt.next.kafka.KafkaPlugin
-import net.cloudopt.next.web.CloudoptServer
-import net.cloudopt.next.web.Plugin
-import org.junit.Test
 
 
 /*
@@ -30,7 +26,7 @@ import org.junit.Test
  * @Description: Test Case
  */
 @AutoKafka("test-topic")
-class TestKafka:KafkaListener {
+class TestKafka : KafkaListener {
 
     override fun listener(record: KafkaConsumerRecord<String, Any>) {
         println("this is kafka.")

@@ -23,10 +23,10 @@ import org.junit.Test
  * @Time: 2018/2/7
  * @Description: Test Case
  */
-class TestCase{
+class TestCase {
 
     @Test
-    fun testSpring(){
+    fun testSpring() {
         var plugin = SpringPlugin()
         plugin.start()
     }

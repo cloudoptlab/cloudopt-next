@@ -1,14 +1,14 @@
 <html>
 <head>
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon"/>
+    <link href="/static/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 </head>
 
 <body>
 <h1>Hello World</h1>
 
-<form action="/file" method="post" enctype="multipart/form-data">
-    <input type="file" name="file" value="Select file..."/>
-    <input id="submit_form" type="submit" class="btn btn-success save" value="Submit"/>
+<form action="/file" enctype="multipart/form-data" method="post">
+    <input name="file" type="file" value="Select file..."/>
+    <input class="btn btn-success save" id="submit_form" type="submit" value="Submit"/>
 </form>
 </body>
 </html>

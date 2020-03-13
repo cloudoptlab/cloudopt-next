@@ -18,13 +18,13 @@ package io.vertx.ext.web.handler.impl;
 
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import io.vertx.ext.web.Cookie;
-import io.vertx.ext.web.impl.CookieImpl;
-import io.vertx.ext.web.handler.CookieHandler;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.CookieHandler;
+import io.vertx.ext.web.impl.CookieImpl;
 
 import java.util.Set;
 
-import static io.vertx.core.http.HttpHeaders.*;
+import static io.vertx.core.http.HttpHeaders.COOKIE;
 
 /**
  * # CookieParser
@@ -56,7 +56,6 @@ public class CookieHandlerImpl implements CookieHandler {
 
         context.next();
     }
-
 
 
 }

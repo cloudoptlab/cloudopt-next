@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.validator
 
-import java.util.HashSet
+import java.util.*
 import javax.validation.ConstraintViolation
 import javax.validation.Validation
 
@@ -30,7 +30,7 @@ object Validator {
     fun validate(obj: Any, keys: Array<String> = arrayOf<String>()): String {
         val buffer = StringBuffer(64)
         val validator = Validation.buildDefaultValidatorFactory()
-                .validator
+            .validator
 
         return if (keys.size <= 0) {
             val constraintViolations = validator.validate(obj)

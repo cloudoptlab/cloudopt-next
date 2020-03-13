@@ -38,8 +38,10 @@ object Worker {
      * @param queueResult After the completion of the callback
      */
     @JvmOverloads
-    fun <T> then(handler: Handler<Future<Any>>,
-                 queueResult: Handler<AsyncResult<Any>>) {
+    fun <T> then(
+        handler: Handler<Future<Any>>,
+        queueResult: Handler<AsyncResult<Any>>
+    ) {
         CloudoptServer.vertx.executeBlocking(handler, queueResult)
     }
 
@@ -53,8 +55,10 @@ object Worker {
      * @param queueResult After the completion of the callback
      */
     @JvmOverloads
-    fun <T> worker(handler: Handler<Future<Any>>,
-                   queueResult: Handler<AsyncResult<Any>>) {
+    fun <T> worker(
+        handler: Handler<Future<Any>>,
+        queueResult: Handler<AsyncResult<Any>>
+    ) {
         CloudoptServer.vertx.executeBlocking(handler, false, queueResult)
     }
 

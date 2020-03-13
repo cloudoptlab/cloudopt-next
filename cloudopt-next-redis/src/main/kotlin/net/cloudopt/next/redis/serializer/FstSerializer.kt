@@ -25,11 +25,11 @@ import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
- /*
- * @author: Cloudopt
- * @Time: 2018/2/8
- * @Description: FstSerializer.
- */
+/*
+* @author: Cloudopt
+* @Time: 2018/2/8
+* @Description: FstSerializer.
+*/
 class FstSerializer : ISerializer {
 
     private val logger = Logger.getLogger(FstSerializer::class.java)

@@ -18,10 +18,8 @@ package net.cloudopt.next.web.render
 import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import io.vertx.core.http.HttpHeaders
-import io.vertx.core.http.HttpServerResponse
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
-
 import java.io.IOException
 
 /*

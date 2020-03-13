@@ -27,7 +27,7 @@ import javax.crypto.Cipher
  * @Time: 2018/1/8
  * @Description: For MD5 encryption
  */
-class RsaEncrypt:Encrypt() {
+class RsaEncrypt : Encrypt() {
 
     private val ALGORITHM = "RSA"
 

@@ -17,13 +17,12 @@ package net.cloudopt.next.jooq
 
 import org.jooq.ConnectionProvider
 import org.jooq.DSLContext
-import org.jooq.Record
-import org.jooq.conf.Settings
-import java.sql.Connection
 import org.jooq.TransactionProvider
+import org.jooq.conf.Settings
 import org.jooq.conf.SettingsTools
 import org.jooq.impl.DSL
 import org.jooq.impl.DefaultConfiguration
+import java.sql.Connection
 
 
 /*
@@ -43,17 +42,17 @@ object Jooqer {
     open var transactionProvider: TransactionProvider? = null
 
     @JvmStatic
-    open var connectionProvider:ConnectionProvider ? = null
+    open var connectionProvider: ConnectionProvider? = null
 
     @JvmStatic
-    open var settings:Settings = SettingsTools.defaultSettings()
+    open var settings: Settings = SettingsTools.defaultSettings()
 
     @JvmStatic
-    open var configuration =  DefaultConfiguration()
+    open var configuration = DefaultConfiguration()
 
     @JvmStatic
-    open fun refresh(){
-         this.dsl = DSL.using(connection)
+    open fun refresh() {
+        this.dsl = DSL.using(connection)
     }
 
 }

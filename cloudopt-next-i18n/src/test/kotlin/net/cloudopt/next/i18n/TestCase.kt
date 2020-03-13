@@ -40,7 +40,7 @@ class TestCase {
 
     @Test
     fun i18n1LevelByEnglish() {
-        logger.info(I18N.i18n("title","en") ?: "Not Found")
+        logger.info(I18N.i18n("title", "en") ?: "Not Found")
     }
 
     @Test

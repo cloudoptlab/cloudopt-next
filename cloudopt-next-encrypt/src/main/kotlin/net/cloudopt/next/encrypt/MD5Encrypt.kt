@@ -32,8 +32,8 @@ class MD5Encrypt : Encrypt() {
      * @return Encrypted string
      */
     override fun encrypt(value: String): String {
-        var instance:MessageDigest = MessageDigest.getInstance(ALGORITHM)
-        var digest:ByteArray = instance.digest(value.toByteArray())
+        var instance: MessageDigest = MessageDigest.getInstance(ALGORITHM)
+        var digest: ByteArray = instance.digest(value.toByteArray())
         return toHexString(digest)
     }
 

@@ -21,9 +21,8 @@ import com.esotericsoftware.yamlbeans.YamlReader
 import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.utils.Resourcer
 import net.cloudopt.next.yaml.annotation.ConfigureBean
-import java.io.*
-
-import kotlin.collections.HashMap
+import java.io.FileNotFoundException
+import java.io.InputStreamReader
 import kotlin.reflect.KClass
 
 /*
@@ -126,8 +125,6 @@ object Yamler {
         }
 
     }
-
-
 
 
 }

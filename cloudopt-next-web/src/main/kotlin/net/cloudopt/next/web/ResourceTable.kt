@@ -23,6 +23,8 @@ import io.vertx.core.http.HttpMethod
  * @Description: Resource Table
  */
 
-data class ResourceTable(var url: String = "", var httpMethod: HttpMethod = HttpMethod.GET,
-                         var clazz: Class<Resource> = Resource::class.java, var methodName: String = "",
-                         var blocking: Boolean = false)
+data class ResourceTable(
+    var url: String = "", var httpMethod: HttpMethod = HttpMethod.GET,
+    var clazz: Class<Resource> = Resource::class.java, var methodName: String = "",
+    var blocking: Boolean = false
+)

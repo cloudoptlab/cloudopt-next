@@ -16,15 +16,7 @@
 package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
-import io.vertx.core.http.HttpServerResponse
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.config.ConfigManager
-import net.cloudopt.next.yaml.Yamler
-
-import java.io.BufferedReader
-import java.io.FileNotFoundException
-import java.io.FileReader
-import java.io.IOException
 
 /*
  * @author: Cloudopt

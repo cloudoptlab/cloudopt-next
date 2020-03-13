@@ -24,7 +24,7 @@ import net.cloudopt.next.web.Plugin
  * @Time: 2018/2/5
  * @Description: A plugin for event management.
  */
-class EventPlugin :Plugin{
+class EventPlugin : Plugin {
 
     override fun start(): Boolean {
         EventManager.init(CloudoptServer.vertx)
@@ -33,7 +33,7 @@ class EventPlugin :Plugin{
 
     override fun stop(): Boolean {
         EventManager.eventBus.close { result ->
-            if (result.failed()){
+            if (result.failed()) {
                 println(result.cause())
             }
         }

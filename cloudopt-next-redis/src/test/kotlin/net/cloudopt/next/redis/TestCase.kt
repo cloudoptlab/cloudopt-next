@@ -12,22 +12,22 @@ import org.junit.Test
 class TestCase {
 
     @Before
-    fun init(){
+    fun init() {
         RedisPlugin().start()
     }
 
     @After
-    fun stop(){
+    fun stop() {
         RedisPlugin().stop()
     }
 
     @Test
-    fun set(){
-        Redis.use()?.set("key","value")
+    fun set() {
+        Redis.use()?.set("key", "value")
     }
 
     @Test
-    fun get(){
+    fun get() {
         println(Redis.use()?.get<String>("key"))
     }
 

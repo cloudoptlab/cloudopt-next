@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.kafka
 
-import io.vertx.core.eventbus.Message
 import io.vertx.kafka.client.consumer.KafkaConsumerRecord
 
 
@@ -26,6 +25,6 @@ import io.vertx.kafka.client.consumer.KafkaConsumerRecord
  */
 interface KafkaListener {
 
-    fun listener(record:KafkaConsumerRecord<String,Any>)
+    fun listener(record: KafkaConsumerRecord<String, Any>)
 
 }

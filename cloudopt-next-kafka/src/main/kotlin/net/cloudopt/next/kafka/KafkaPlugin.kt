@@ -19,7 +19,6 @@ import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.Plugin
 
 
-
 /*
  * @author: Cloudopt
  * @Time: 2018/2/6
@@ -35,7 +34,7 @@ class KafkaPlugin : Plugin {
     override fun stop(): Boolean {
         KafkaManager.producer?.close()
         KafkaManager.consumer?.close()
-      return true
+        return true
     }
 
 }

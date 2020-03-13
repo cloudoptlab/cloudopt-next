@@ -31,10 +31,10 @@ abstract class Encrypt {
      * @param value The array to be converted
      * @return This is the converted string
      */
-    fun toHexString(value:ByteArray): String {
-        var sb : StringBuffer = StringBuffer()
+    fun toHexString(value: ByteArray): String {
+        var sb: StringBuffer = StringBuffer()
         for (b in value) {
-            var i :Int = b.toInt() and 0xff
+            var i: Int = b.toInt() and 0xff
             var hexString = Integer.toHexString(i)
             if (hexString.length < 2) {
                 hexString = "0" + hexString

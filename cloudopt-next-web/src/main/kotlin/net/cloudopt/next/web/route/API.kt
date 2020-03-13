@@ -16,8 +16,7 @@
 package net.cloudopt.next.web.route
 
 import net.cloudopt.next.web.Interceptor
-
-import java.lang.annotation.*
+import java.lang.annotation.Documented
 import kotlin.reflect.KClass
 
 /*

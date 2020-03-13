@@ -73,7 +73,7 @@ open class Resource {
         context.request().formAttributes().add(key, value)
     }
 
-    fun getAttr(key:String){
+    fun getAttr(key: String) {
         context.request().formAttributes().get(key)
     }
 
@@ -115,8 +115,10 @@ open class Resource {
      * @param httpOnly Only http or https
      */
     @JvmOverloads
-    fun setCookie(key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
-                  , httpOnly: Boolean = false, cookieSecureFlag: Boolean = false) {
+    fun setCookie(
+        key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
+        , httpOnly: Boolean = false, cookieSecureFlag: Boolean = false
+    ) {
         val cookie = Cookie.cookie(key, value)
         if (domain.isNotBlank()) {
             cookie.domain = domain

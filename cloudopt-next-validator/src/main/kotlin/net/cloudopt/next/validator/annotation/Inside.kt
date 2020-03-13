@@ -16,14 +16,11 @@
 package net.cloudopt.next.validator.annotation
 
 import net.cloudopt.next.validator.InsideValidator
-
-import javax.validation.Constraint
-import javax.validation.Payload
 import java.lang.annotation.Documented
 import java.lang.annotation.Retention
-
-import java.lang.annotation.ElementType.*
 import java.lang.annotation.RetentionPolicy.RUNTIME
+import javax.validation.Constraint
+import javax.validation.Payload
 import kotlin.reflect.KClass
 
 /*
@@ -31,9 +28,20 @@ import kotlin.reflect.KClass
  * @Time: 2018/6/14
  * @Description: Is used to verify whether a text is in an array
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD, AnnotationTarget.ANNOTATION_CLASS)
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER,
+    AnnotationTarget.FIELD,
+    AnnotationTarget.ANNOTATION_CLASS
+)
 @Retention(RUNTIME)
 @Constraint(validatedBy = arrayOf(InsideValidator::class))
 @Documented
-annotation class Inside(vararg val value: String, val message: String = "{constraints.inside.message}", val groups: Array<KClass<*>> = arrayOf(), val payload: Array<KClass<out Payload>> = arrayOf())
+annotation class Inside(
+    vararg val value: String,
+    val message: String = "{constraints.inside.message}",
+    val groups: Array<KClass<*>> = arrayOf(),
+    val payload: Array<KClass<out Payload>> = arrayOf()
+)
 

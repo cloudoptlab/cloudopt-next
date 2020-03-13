@@ -15,9 +15,6 @@
  */
 package net.cloudopt.next.utils
 
-import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
-
 /*
  * @author: Cloudopt
  * @Time: 2018/1/4

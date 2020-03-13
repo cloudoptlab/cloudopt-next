@@ -20,9 +20,7 @@ import java.io.FileFilter
 import java.io.IOException
 import java.net.URL
 import java.net.URLDecoder
-import java.util.Collections
-import java.util.Enumeration
-import java.util.HashSet
+import java.util.*
 import java.util.jar.JarFile
 
 /*
@@ -69,7 +67,8 @@ object Classer {
      * This is a file filter for filtering out unneeded files
      * (leaving only Class files, directories, and Jars)
      */
-    private val fileFilter = FileFilter { pathname -> isClass(pathname.name) || pathname.isDirectory || isJarFile(pathname) }
+    private val fileFilter =
+        FileFilter { pathname -> isClass(pathname.name) || pathname.isDirectory || isJarFile(pathname) }
 
     /**
      * This is used to scan for all classes containing specified annotations in the path of the specified package
@@ -78,7 +77,11 @@ object Classer {
      * @param annotationClass  Annotation class
      * @return Collection of classes
      */
-    fun scanPackageByAnnotation(packageName: String, inJar: Boolean, annotationClass: Class<out Annotation>): Set<Class<*>> {
+    fun scanPackageByAnnotation(
+        packageName: String,
+        inJar: Boolean,
+        annotationClass: Class<out Annotation>
+    ): Set<Class<*>> {
         return scanPackage(packageName, inJar, object : ClassFilter {
             override fun accept(clazz: Class<*>): Boolean {
                 return clazz.isAnnotationPresent(annotationClass)
@@ -215,7 +218,12 @@ object Classer {
      * @param classFilter Class filter
      * @param classes A collection of list
      */
-    private fun fillClasses(path: String, packageName: String, classFilter: ClassFilter, classes: MutableSet<Class<*>>) {
+    private fun fillClasses(
+        path: String,
+        packageName: String,
+        classFilter: ClassFilter,
+        classes: MutableSet<Class<*>>
+    ) {
         var path = path
         // This is is used to determine if the given path is Jar
         val index = path.lastIndexOf(JAR_PATH_EXT)
@@ -240,7 +248,13 @@ object Classer {
      * @param classFilter Class filter
      * @param classes A collection of list
      */
-    private fun fillClasses(classPath: String, file: File, packageName: String, classFilter: ClassFilter, classes: MutableSet<Class<*>>) {
+    private fun fillClasses(
+        classPath: String,
+        file: File,
+        packageName: String,
+        classFilter: ClassFilter,
+        classes: MutableSet<Class<*>>
+    ) {
         if (file.isDirectory) {
             processDirectory(classPath, file, packageName, classFilter, classes)
         } else if (isClassFile(file)) {
@@ -258,7 +272,13 @@ object Classer {
      * @param classFilter Class filter
      * @param classes  Collection of classes
      */
-    private fun processDirectory(classPath: String, directory: File, packageName: String, classFilter: ClassFilter, classes: MutableSet<Class<*>>) {
+    private fun processDirectory(
+        classPath: String,
+        directory: File,
+        packageName: String,
+        classFilter: ClassFilter,
+        classes: MutableSet<Class<*>>
+    ) {
         for (file in directory.listFiles(fileFilter)!!) {
             fillClasses(classPath, file, packageName, classFilter, classes)
         }
@@ -273,7 +293,13 @@ object Classer {
      * @param classFilter Class filter
      * @param classes Collection of classes
      */
-    private fun processClassFile(classPath: String, file: File, packageName: String?, classFilter: ClassFilter, classes: MutableSet<Class<*>>) {
+    private fun processClassFile(
+        classPath: String,
+        file: File,
+        packageName: String?,
+        classFilter: ClassFilter,
+        classes: MutableSet<Class<*>>
+    ) {
         var classPath = classPath
         if (false == classPath.endsWith(File.separator)) {
             classPath += File.separator
@@ -302,7 +328,12 @@ object Classer {
      * @param classFilter Class filter
      * @param classes Collection of classes
      */
-    private fun processJarFile(file: File, packageName: String, classFilter: ClassFilter, classes: MutableSet<Class<*>>) {
+    private fun processJarFile(
+        file: File,
+        packageName: String,
+        classFilter: ClassFilter,
+        classes: MutableSet<Class<*>>
+    ) {
         try {
             for (entry in Collections.list(JarFile(file).entries())) {
                 if (isClass(entry.name)) {
@@ -324,7 +355,12 @@ object Classer {
      * @param classes Collection of classes
      * @param classFilter Class filter
      */
-    private fun fillClass(className: String, packageName: String, classes: MutableSet<Class<*>>, classFilter: ClassFilter?) {
+    private fun fillClass(
+        className: String,
+        packageName: String,
+        classes: MutableSet<Class<*>>,
+        classFilter: ClassFilter?
+    ) {
         if (className.startsWith(packageName)) {
             try {
                 val clazz = loadClass(className)

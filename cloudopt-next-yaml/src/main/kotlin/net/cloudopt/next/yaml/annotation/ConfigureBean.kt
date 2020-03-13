@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.yaml.annotation
 
-import java.lang.annotation.*
+import java.lang.annotation.Documented
 
 /*
  * @author: Cloudopt

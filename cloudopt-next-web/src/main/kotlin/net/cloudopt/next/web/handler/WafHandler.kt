@@ -32,7 +32,8 @@ import net.cloudopt.next.web.config.ConfigManager
 class WafHandler : Handler() {
 
     companion object {
-        @JvmStatic private val filters: MutableList<Filter> = mutableListOf()
+        @JvmStatic
+        private val filters: MutableList<Filter> = mutableListOf()
     }
 
     init {
