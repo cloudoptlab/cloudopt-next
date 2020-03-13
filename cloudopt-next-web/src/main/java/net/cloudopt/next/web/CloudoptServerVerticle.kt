@@ -185,14 +185,14 @@ class CloudoptServerVerticle : AbstractVerticle() {
             if (result.succeeded()) {
                 CloudoptServer.logger.info(
                         "==========================================================================================================")
-                CloudoptServer.logger.info("Cloudopt Next started is success!")
+                CloudoptServer.logger.info("\uD83D\uDC0B Cloudopt Next started is success!")
                 CloudoptServer.logger.info(
                         "==========================================================================================================")
 
             } else {
                 CloudoptServer.logger.error(
                         "==========================================================================================================")
-                CloudoptServer.logger.error("Cloudopt Next started is error! " + result.cause())
+                CloudoptServer.logger.error("\uD83D\uDC0B Cloudopt Next started is error! " + result.cause())
                 CloudoptServer.logger.error(
                         "==========================================================================================================")
             }

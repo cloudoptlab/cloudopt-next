@@ -2,11 +2,7 @@
  * Copyright 2017 Cloudopt.
  *
  *  All rights reserved. This program and the accompanying materials
- *  are made available under the terms of the Eclipse Public License v1.0
- *  and Apache License v2.0 which accompanies this distribution.
- *
- *  The Eclipse Public License is available at
- *  http://www.eclipse.org/legal/epl-v10.html
+ *  are made available under the terms of the Apache License v2.0 which accompanies this distribution.
  *
  *  The Apache License v2.0 is available at
  *  http://www.opensource.org/licenses/apache2.0.php
@@ -19,13 +15,11 @@ import org.fusesource.jansi.Ansi
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/4
+ * @Time: 2018/10/18
  * @Description: Used to help the console output colored text
  */
 
 object Colorer {
-
-    @JvmStatic open var enable = true
 
     /**
      * Output black text
@@ -106,7 +100,7 @@ object Colorer {
      * @return Handled text
      */
     private fun diy(color: String, value: String): String {
-        return if(enable){
+        return if(Logger.configuration.color){
             Ansi.ansi().eraseScreen().render("@|$color $value|@").toString()
         }else{
             value

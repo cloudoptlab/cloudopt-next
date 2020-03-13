@@ -113,7 +113,7 @@ object CloudoptServer {
         vertxOptions.setAddressResolverOptions(addressResolver)
 
         //Set log color
-        Colorer.enable = ConfigManager.webConfig.logColor
+        Logger.configuration.color = ConfigManager.webConfig.logColor
 
         //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class.java)

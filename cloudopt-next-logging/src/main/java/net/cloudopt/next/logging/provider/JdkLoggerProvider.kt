@@ -13,10 +13,10 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.logging.provider
 
 import net.cloudopt.next.logging.Colorer
 import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.logging.LoggerProvider
 
 import java.util.logging.Level
 
@@ -41,68 +41,44 @@ class JdkLoggerProvider : LoggerProvider {
         private val clazzName: String? = null
 
 
-        override fun debug(message: String) {
-            logger.logp(Level.FINE, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.cyan(message))
-        }
-
-        override fun debug(message: String, t: Throwable) {
-            logger.logp(Level.FINE, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.cyan(message), t)
-        }
-
+        @JvmOverloads
         override fun debug(message: String, vararg args: Any) {
-            logger.logp(Level.FINE, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.cyan(String.format(message, *args)))
+            logger.logp(Level.FINE, clazzName, Thread.currentThread().stackTrace[1].methodName,"${Colorer.magenta(Logger.configuration.debugPrefix)} ${String.format(message, *args)}")
         }
 
+        @JvmOverloads
         override fun debug(message: String, t: Throwable, vararg args: Any) {
-            logger.logp(Level.FINE, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.cyan(String.format(message, *args)), t)
+            logger.logp(Level.FINE, clazzName, t.stackTrace[1].methodName,"${Colorer.magenta(Logger.configuration.debugPrefix)} ${String.format(message, *args)}")
         }
 
-        override fun info(message: String) {
-            logger.logp(Level.INFO, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.blue(message))
-        }
-
-        override fun info(message: String, t: Throwable) {
-            logger.logp(Level.INFO, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.blue(message), t)
-        }
-
+        @JvmOverloads
         override fun info(message: String, vararg args: Any) {
-            logger.logp(Level.INFO, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.blue(String.format(message, *args)))
+            logger.logp(Level.INFO, clazzName, Thread.currentThread().stackTrace[1].methodName,"${Colorer.magenta(Logger.configuration.debugPrefix)} ${String.format(message, *args)}")
         }
 
+        @JvmOverloads
         override fun info(message: String, t: Throwable, vararg args: Any) {
-            logger.logp(Level.INFO, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.blue(String.format(message, *args)), t)
+            logger.logp(Level.INFO, clazzName, t.stackTrace[1].methodName,"${Colorer.magenta(Logger.configuration.debugPrefix)} ${String.format(message, *args)}")
         }
 
-        override fun warn(message: String) {
-            logger.logp(Level.WARNING, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.yellow(message))
-        }
-
-        override fun warn(message: String, t: Throwable) {
-            logger.logp(Level.WARNING, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.yellow(message), t)
-        }
-
+        @JvmOverloads
         override fun warn(message: String, vararg args: Any) {
-            logger.logp(Level.WARNING, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.yellow(String.format(message, *args)))
+            logger.logp(Level.WARNING, clazzName, Thread.currentThread().stackTrace[1].methodName,"${Colorer.magenta(Logger.configuration.debugPrefix)} ${String.format(message, *args)}")
         }
 
+        @JvmOverloads
         override fun warn(message: String, t: Throwable, vararg args: Any) {
-            logger.logp(Level.WARNING, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.yellow(String.format(message, *args)), t)
+            logger.logp(Level.WARNING, clazzName, t.stackTrace[1].methodName,"${Colorer.magenta(Logger.configuration.debugPrefix)} ${String.format(message, *args)}")
         }
 
-        override fun error(message: String) {
-            logger.logp(Level.SEVERE, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.red(message))
-        }
-
-        override fun error(message: String, t: Throwable) {
-            logger.logp(Level.SEVERE, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.red(message), t)
-        }
-
+        @JvmOverloads
         override fun error(message: String, vararg args: Any) {
-            logger.logp(Level.SEVERE, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.red(String.format(message, *args)))
+            logger.logp(Level.SEVERE, clazzName, Thread.currentThread().stackTrace[1].methodName,"${Colorer.magenta(Logger.configuration.debugPrefix)} ${String.format(message, *args)}")
         }
 
+        @JvmOverloads
         override fun error(message: String, t: Throwable, vararg args: Any) {
-            logger.logp(Level.SEVERE, clazzName, Thread.currentThread().stackTrace[1].methodName, Colorer.red(String.format(message, *args)), t)
+            logger.logp(Level.SEVERE, clazzName, t.stackTrace[1].methodName,"${Colorer.magenta(Logger.configuration.debugPrefix)} ${String.format(message, *args)}")
         }
 
         override fun isDebugEnabled(): Boolean {
