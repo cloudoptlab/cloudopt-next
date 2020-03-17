@@ -29,6 +29,10 @@ subprojects {
 
     }
 
+    test {
+        useJUnitPlatform()
+    }
+
     apply plugin: "java"
     apply plugin: "maven-publish"
     apply plugin: "kotlin"
@@ -37,6 +41,8 @@ subprojects {
         implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
         implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
         testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
     }
 
     sourceCompatibility = "1.8"
@@ -58,5 +64,6 @@ subprojects {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+
 }
 
