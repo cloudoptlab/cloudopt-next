@@ -1,5 +1,5 @@
 dependencies {
-    implementation 'org.fusesource.jansi:jansi:1.13'
+    implementation 'org.fusesource.jansi:jansi:1.18'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
 }
 

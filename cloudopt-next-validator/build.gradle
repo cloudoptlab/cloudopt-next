@@ -1,5 +1,5 @@
 dependencies {
-    implementation 'org.hibernate:hibernate-validator:6.0.10.Final'
+    implementation 'org.hibernate:hibernate-validator:6.1.2.Final'
 }
 
 description = 'Cloudopt Next Validator'

@@ -47,18 +47,10 @@ class JooqPlugin : Plugin {
 
             var sqlDialect = when (map.get("database")) {
                 "mysql" -> SQLDialect.MYSQL
-                "mysql 5.7" -> SQLDialect.MYSQL_5_7
-                "mysql 8.0" -> SQLDialect.MYSQL_8_0
-                "cubrid" -> SQLDialect.CUBRID
                 "derby" -> SQLDialect.DERBY
                 "firebird" -> SQLDialect.FIREBIRD
-                "firebird 2.5" -> SQLDialect.FIREBIRD_2_5
-                "firebird 3.0" -> SQLDialect.FIREBIRD_3_0
                 "mariadb" -> SQLDialect.MARIADB
                 "postgres" -> SQLDialect.POSTGRES
-                "postgres 9.3" -> SQLDialect.POSTGRES_9_3
-                "postgres 9.4" -> SQLDialect.POSTGRES_9_4
-                "postgres 9.5" -> SQLDialect.POSTGRES_9_5
                 "sqlite" -> SQLDialect.SQLITE
                 else -> {
                     SQLDialect.MYSQL

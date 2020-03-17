@@ -223,7 +223,7 @@ class Cache {
     fun migrate(host: String, port: Int, key: Any, destinationDb: Int, timeout: Int): String {
         val jedis = jedis
         try {
-            return jedis.migrate(valueToBytes(host), port, keyToBytes(key), destinationDb, timeout)
+            return jedis.migrate(host, port, keyToBytes(key), destinationDb, timeout)
         } finally {
             close(jedis)
         }

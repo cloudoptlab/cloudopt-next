@@ -19,7 +19,7 @@ package net.cloudopt.next.redis.serializer
 import net.cloudopt.next.logging.Logger
 import org.nustaq.serialization.FSTObjectInput
 import org.nustaq.serialization.FSTObjectOutput
-import redis.clients.util.SafeEncoder
+import redis.clients.jedis.util.SafeEncoder
 
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream

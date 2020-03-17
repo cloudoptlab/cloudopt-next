@@ -1,6 +1,5 @@
 dependencies {
     implementation project(':cloudopt-next-utils')
-    implementation 'com.alibaba:fastjson:1.2.45'
     testImplementation project(':cloudopt-next-logging')
 }
 
