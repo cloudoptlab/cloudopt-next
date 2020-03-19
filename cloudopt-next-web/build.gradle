@@ -1,14 +1,14 @@
 dependencies {
-    implementation 'io.vertx:vertx-web:3.5.2.CR2'
+    implementation 'io.vertx:vertx-web:3.8.5'
     api project(':cloudopt-next-yaml')
     api project(':cloudopt-next-waf')
     api project(':cloudopt-next-logging')
     api project(':cloudopt-next-utils')
     implementation 'com.alibaba:fastjson:1.2.45'
-    implementation 'io.vertx:vertx-codegen:3.5.2.CR2'
-    testImplementation 'io.vertx:vertx-unit:3.5.2.CR2'
+    implementation 'io.vertx:vertx-codegen:3.8.5'
+    testImplementation 'io.vertx:vertx-unit:3.8.5'
     compileOnly 'com.github.jknack:handlebars:4.0.6'
-    compileOnly 'com.ibeetl:beetl:2.7.28'
+    implementation 'com.ibeetl:beetl:2.7.28'
     compileOnly 'org.freemarker:freemarker:2.3.27-incubating'
 }
 

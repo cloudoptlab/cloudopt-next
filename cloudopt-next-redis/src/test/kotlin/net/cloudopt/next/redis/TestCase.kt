@@ -1,8 +1,11 @@
 package net.cloudopt.next.redis
 
+import net.cloudopt.next.redis.Redis
+import net.cloudopt.next.redis.RedisPlugin
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+
 
 /*
  * @author: Cloudopt

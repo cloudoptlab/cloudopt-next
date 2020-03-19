@@ -2,7 +2,7 @@ dependencies {
     implementation project(':cloudopt-next-web')
     implementation project(':cloudopt-next-utils')
     implementation project(':cloudopt-next-logging')
-    implementation 'io.vertx:vertx-kafka-client:3.5.2.CR2'
+    implementation 'io.vertx:vertx-kafka-client:3.8.5'
     compileOnly 'org.apache.kafka:kafka-clients:1.0.1'
 }
 

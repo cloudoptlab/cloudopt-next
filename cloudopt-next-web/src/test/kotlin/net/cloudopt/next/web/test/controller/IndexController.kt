@@ -16,8 +16,8 @@
 package net.cloudopt.next.web.test.controller
 
 import io.vertx.core.AsyncResult
-import io.vertx.core.Future
 import io.vertx.core.Handler
+import io.vertx.core.Promise
 import net.cloudopt.next.web.CloudoptServer.logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Worker
@@ -51,7 +51,7 @@ class IndexController : Resource() {
     fun html() {
         println(getLang())
         setCookie("test", "cookie", "127.0.0.1", 360000, "/", false, false)
-        renderHtml(view="index")
+        renderHtml(view = "index")
     }
 
     @GET("free")
@@ -104,11 +104,12 @@ class IndexController : Resource() {
 
     @GET("asyn")
     fun asyn() {
-        Worker.worker<Any>(Handler<Future<Any>> { f ->
-            renderText("success!")
-        }, Handler<AsyncResult<Any>> { result ->
+        Worker.worker<Any>(Handler<Promise<Any>> {
+            println("This is worker")
+        }, Handler<AsyncResult<Any>> {
 
         })
+        renderText("success!")
     }
 
     @POST("file")
@@ -132,7 +133,7 @@ class IndexController : Resource() {
             val sleep = Math.max(1L, (Math.random() * 3).toLong())
             this.setCookie("hello", getParam("index") ?: "-1")
             context.vertx().setTimer(sleep * 1000L) {
-                renderText(getCookie("hello")?:"Can't find the cookie!")
+                renderText(getCookie("hello") ?: "Can't find the cookie!")
             }
         } catch (e: Exception) {
             logger.error("error {}", e)

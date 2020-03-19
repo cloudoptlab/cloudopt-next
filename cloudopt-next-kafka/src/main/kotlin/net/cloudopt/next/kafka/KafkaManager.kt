@@ -116,7 +116,7 @@ object KafkaManager {
         if (result == null) {
             producer?.write(record as KafkaProducerRecord<Any, Any>)
         } else {
-            producer?.write(record as KafkaProducerRecord<Any, Any>, result)
+            producer?.write(record as KafkaProducerRecord<Any, Any>)
         }
     }
 
