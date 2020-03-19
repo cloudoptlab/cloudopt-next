@@ -39,19 +39,13 @@ class IndexController : Resource() {
 
     @GET
     fun index() {
-        redirect("/html")
+        setCookie("test", "cookie", "127.0.0.1", 360000, "/", false, false)
+        renderHtml(view = "index")
     }
 
     @POST
     fun postIndex() {
         renderText("POST")
-    }
-
-    @GET("html")
-    fun html() {
-        println(getLang())
-        setCookie("test", "cookie", "127.0.0.1", 360000, "/", false, false)
-        renderHtml(view = "index")
     }
 
     @GET("free")

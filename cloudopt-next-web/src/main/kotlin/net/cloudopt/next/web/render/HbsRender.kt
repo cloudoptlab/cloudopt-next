@@ -49,6 +49,7 @@ class HbsRender : Render {
                 templates.get(view.view)
             } else {
                 templates.put(view.view, handlebars.compile(ConfigManager.webConfig.webroot + "/" + view.view))
+                templates.get(view.view)
             }
 
             html = template!!.apply(view.parameters)

@@ -16,7 +16,9 @@
 package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Resourcer
+import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 import java.io.BufferedReader
@@ -34,6 +36,7 @@ class HtmlRender : Render {
     companion object {
         @JvmStatic
         private val templates = mutableMapOf<String, String?>()
+        val logger = Logger.getLogger(HtmlRender.javaClass)
     }
 
     override fun render(resource: Resource, result: Any) {
@@ -44,8 +47,9 @@ class HtmlRender : Render {
         }
 
         try {
-            var html = if (templates.get(view.view) != null) {
-                templates.get(view.view)
+            resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+            if (templates.get(view.view) != null) {
+                end(resource, templates.get(view.view) ?:"")
             } else {
                 var inputStream = Resourcer.getFileInputStream(ConfigManager.webConfig.webroot + "/" + view.view)
                 var bufferedReader = BufferedReader(InputStreamReader(inputStream))
@@ -56,9 +60,8 @@ class HtmlRender : Render {
                     }
                 }
                 templates.put(view.view, stringBuilder.toString())
+                end(resource, stringBuilder.toString())
             }
-            resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
-            end(resource, html ?: "")
 
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
