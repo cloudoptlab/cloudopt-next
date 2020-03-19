@@ -8,8 +8,11 @@ dependencies {
     implementation 'io.vertx:vertx-codegen:3.8.5'
     testImplementation 'io.vertx:vertx-unit:3.8.5'
     compileOnly 'com.github.jknack:handlebars:4.0.6'
-    implementation 'com.ibeetl:beetl:2.7.28'
-    compileOnly 'org.freemarker:freemarker:2.3.27-incubating'
+    testImplementation 'com.github.jknack:handlebars:4.1.2'
+    compileOnly 'com.ibeetl:beetl:3.0.20.RELEASE'
+    testImplementation 'com.ibeetl:beetl:3.0.20.RELEASE'
+    compileOnly 'org.freemarker:freemarker:2.3.30'
+    testImplementation 'org.freemarker:freemarker:2.3.30'
 }
 
 description = 'Cloudopt Next Web'
