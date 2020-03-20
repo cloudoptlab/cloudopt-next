@@ -1,0 +1,11 @@
+{
+  "net": {
+    "cloudopt": {
+      "next": {
+        "web": {
+          "dev": true
+        }
+      }
+    }
+  }
+}

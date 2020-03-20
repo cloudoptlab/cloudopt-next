@@ -15,10 +15,10 @@
  */
 package net.cloudopt.next.web.config
 
+import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.utils.Resourcer
-import net.cloudopt.next.yaml.Yamler
 
 
 /*
@@ -28,11 +28,11 @@ import net.cloudopt.next.yaml.Yamler
  */
 object ConfigManager {
 
-    val DEVYML = "application-dev.yml"
+    val DEVJSON = "application-dev.json"
 
-    val PROYML = "application-pro.yml"
+    val PROJSON = "application-pro.json"
 
-    val YML = "application.yml"
+    val JSON = "application.json"
 
     @JvmStatic
     var vertxConfig: VertxConfigBean = VertxConfigBean()
@@ -60,8 +60,8 @@ object ConfigManager {
 
     @JvmOverloads
     open fun initMap(name: String, map: MutableMap<String, Any> = mutableMapOf()): MutableMap<String, Any> {
-        if (Yamler.read(YML, "net.cloudopt.next." + name) != null) {
-            map?.putAll(Yamler.read(YML, "net.cloudopt.next." + name) as Map<out String, Any>)
+        if (Jsoner.read(JSON, "net.cloudopt.next." + name) != null) {
+            map?.putAll(Jsoner.read(JSON, "net.cloudopt.next." + name) as Map<out String, Any>)
         }
 
         var dev = if (name.equals("web")) {
@@ -70,15 +70,15 @@ object ConfigManager {
             ConfigManager.webConfig.dev
         }
 
-        if (Resourcer.exist(DEVYML)) {
-            if (dev && Yamler.read(DEVYML, "net.cloudopt.next." + name) != null) {
-                map.putAll(Yamler.read(DEVYML, "net.cloudopt.next." + name) as Map<out String, Any>)
+        if (Resourcer.exist(DEVJSON)) {
+            if (dev && Jsoner.read(DEVJSON, "net.cloudopt.next." + name) != null) {
+                map.putAll(Jsoner.read(DEVJSON, "net.cloudopt.next." + name) as Map<out String, Any>)
             }
         }
 
-        if (Resourcer.exist(PROYML)) {
-            if (!dev && Yamler.read(PROYML, "net.cloudopt.next." + name) != null) {
-                map.putAll(Yamler.read(PROYML, "net.cloudopt.next." + name) as Map<out String, Any>)
+        if (Resourcer.exist(PROJSON)) {
+            if (!dev && Jsoner.read(PROJSON, "net.cloudopt.next." + name) != null) {
+                map.putAll(Jsoner.read(PROJSON, "net.cloudopt.next." + name) as Map<out String, Any>)
             }
         }
 

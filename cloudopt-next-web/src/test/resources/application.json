@@ -1,0 +1,13 @@
+{
+  "net": {
+    "cloudopt": {
+      "next": {
+        "web": {
+          "packageName": "net.cloudopt.next.web.test",
+          "cookieCors": true,
+          "port": 9000
+        }
+      }
+    }
+  }
+}

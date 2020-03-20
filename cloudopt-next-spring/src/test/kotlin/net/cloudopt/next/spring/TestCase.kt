@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.spring
 
-import net.cloudopt.next.spring.SpringPlugin
 import org.junit.Test
 
 

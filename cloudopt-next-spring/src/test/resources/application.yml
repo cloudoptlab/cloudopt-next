@@ -1,5 +1,0 @@
-net:
-  cloudopt:
-    next:
-      spring:
-        xml: "classpath:applicationContext.xml,classpath:applicationContext2.xml"

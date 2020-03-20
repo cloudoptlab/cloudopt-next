@@ -15,10 +15,10 @@
  */
 package net.cloudopt.next.web.handler
 
+import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
-import net.cloudopt.next.web.json.Jsoner
 import java.text.SimpleDateFormat
 import java.util.*
 

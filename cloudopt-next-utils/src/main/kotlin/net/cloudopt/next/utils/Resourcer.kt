@@ -69,22 +69,22 @@ object Resourcer {
      * @param inputStream The inputstream to be processed
      * @return String
      */
-    fun inputSreamToString(inputStream: InputStream, isJson: Boolean = false): String {
-        val reader = inputStream.bufferedReader()
+    fun inputSreamToString(inputStream: InputStream?, isJson: Boolean = false): String {
+        val reader = inputStream?.bufferedReader()
         val sb = StringBuilder()
         try {
-            while (reader.ready()) {
+            while (reader?.ready() ?: false) {
                 if (isJson) {
-                    sb.append(reader.readLine())
+                    sb.append(reader?.readLine())
                 } else {
-                    sb.append(reader.readLine() + "/n")
+                    sb.append(reader?.readLine() + "/n")
                 }
             }
         } catch (e: IOException) {
             e.printStackTrace()
         } finally {
             try {
-                inputStream.close()
+                inputStream?.close()
             } catch (e: IOException) {
                 e.printStackTrace()
             }

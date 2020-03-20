@@ -30,7 +30,7 @@ class TestCase {
 
     @Test
     fun getDefaultLocale() {
-        logger.info(I18N.getI18nJsonObject().toJSONString())
+        logger.info(I18N.getI18nJsonObject().toString())
     }
 
     @Test

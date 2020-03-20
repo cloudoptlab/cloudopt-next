@@ -59,6 +59,7 @@ object CloudoptServer {
 
     @JvmStatic
     open val validators = mutableMapOf<String, MutableMap<HttpMethod, Array<KClass<out Validator>>>>()
+
     @JvmStatic
     open val controllers = arrayListOf<ResourceTable>()
 

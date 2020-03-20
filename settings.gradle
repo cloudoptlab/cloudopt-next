@@ -1,6 +1,6 @@
 rootProject.name = "cloudopt-next"
 include(":cloudopt-next-logging")
-include(":cloudopt-next-yaml")
+include(":cloudopt-next-json")
 include(":cloudopt-next-utils")
 include(":cloudopt-next-waf")
 include(":cloudopt-next-encrypt")

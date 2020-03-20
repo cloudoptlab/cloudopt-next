@@ -31,7 +31,7 @@ data class WebConfigBean(
     var staticPackage: String = "static",
     var webroot: String = "templates",
     var errorHandler: String = "net.cloudopt.next.web.handler.DefaultErrorHandler",
-    var jsonProvider: String = "net.cloudopt.next.web.json.DefaultJSONProvider",
+    var jsonProvider: String = "net.cloudopt.next.json.DefaultJSONProvider",
     var indexPage: String = "index.html",
     var cookieCors: Boolean = false,
     var bodyLimit: Long = 50L * 1024 * 1024,

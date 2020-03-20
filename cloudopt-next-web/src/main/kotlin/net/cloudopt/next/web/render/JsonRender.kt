@@ -16,8 +16,8 @@
 package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
+import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.json.Jsoner
 
 /*
  * @author: Cloudopt

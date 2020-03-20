@@ -16,7 +16,6 @@
 
 package io.vertx.ext.web.impl;
 
-import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.vertx.codegen.annotations.Nullable;
 import io.vertx.core.Handler;
@@ -45,6 +44,8 @@ import java.util.stream.Collectors;
  */
 public class RoutingContextImpl extends RoutingContextImplBase {
 
+    private static final String DEFAULT_404 =
+            "<html><body><h1>Resource not found</h1></body></html>";
     private final RouterImpl router;
     private Map<String, Object> data;
     private Map<String, String> pathParams;
@@ -57,7 +58,6 @@ public class RoutingContextImpl extends RoutingContextImplBase {
     private String normalisedPath;
     private String acceptableContentType;
     private ParsableHeaderValuesContainer parsedHeaders;
-
     // We use Cookie as the key too so we can return keySet in cookies() without copying
     private Map<String, Cookie> cookies;
     private Buffer body;
@@ -79,13 +79,13 @@ public class RoutingContextImpl extends RoutingContextImplBase {
         }
     }
 
-    private String ensureNotNull(String string){
+    private String ensureNotNull(String string) {
         return string == null ? "" : string;
     }
 
     private void fillParsedHeaders(HttpServerRequest request) {
         String accept = request.getHeader("Accept");
-        String acceptCharset = request.getHeader ("Accept-Charset");
+        String acceptCharset = request.getHeader("Accept-Charset");
         String acceptEncoding = request.getHeader("Accept-Encoding");
         String acceptLanguage = request.getHeader("Accept-Language");
         String contentType = ensureNotNull(request.getHeader("Content-Type"));
@@ -176,14 +176,14 @@ public class RoutingContextImpl extends RoutingContextImplBase {
     @SuppressWarnings("unchecked")
     public <T> T get(String key) {
         Object obj = getData().get(key);
-        return (T)obj;
+        return (T) obj;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T remove(String key) {
         Object obj = getData().remove(key);
-        return (T)obj;
+        return (T) obj;
     }
 
     @Override
@@ -236,7 +236,7 @@ public class RoutingContextImpl extends RoutingContextImplBase {
         return request.cookieMap()
                 .values()
                 .stream()
-                .map(c -> (ServerCookie)c)
+                .map(c -> (ServerCookie) c)
                 .map(CookieImpl::wrapIfNecessary)
                 .collect(Collectors.toCollection(HashSet::new));
     }
@@ -395,10 +395,10 @@ public class RoutingContextImpl extends RoutingContextImplBase {
      * Locale does not extend LanguageHeader because I want full backwards compatibility to the previous vertx version<br>
      * Also, Locale is being deprecated and the type of objects that extend it inside vertx should not change.
      */
-    @SuppressWarnings({"rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public List<Locale> acceptableLocales() {
-        return (List)parsedHeaders.acceptLanguage();
+        return (List) parsedHeaders.acceptLanguage();
     }
 
     @Override
@@ -490,8 +490,5 @@ public class RoutingContextImpl extends RoutingContextImplBase {
         }
         return seq;
     }
-
-    private static final String DEFAULT_404 =
-            "<html><body><h1>Resource not found</h1></body></html>";
 
 }

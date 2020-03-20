@@ -19,7 +19,9 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
+import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.config.ConfigManager
 
 /*
@@ -44,7 +46,11 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         val router = Router.router(CloudoptServer.vertx)
 
+        // Print Baner
         Banner.print()
+
+        // Set json provider
+        Jsoner.jsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.webConfig.jsonProvider))
 
         //The ResponseContentTypeHandler can set the Content-Type header automatically.
         router.route("/*").handler(ResponseContentTypeHandler.create())
@@ -143,7 +149,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        if (CloudoptServer.controllers.size < 1){
+        if (CloudoptServer.controllers.size < 1) {
             router.route("/").blockingHandler { context ->
                 context.response().end(Welcomer.html())
             }

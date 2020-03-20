@@ -42,7 +42,8 @@ object Classer {
      * @return Get the Java ClassPath path, excluding jre
      */
     val javaClassPaths: Array<String>
-        get() = System.getProperty("java.class.path").split(System.getProperty("path.separator").toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        get() = System.getProperty("java.class.path").split(System.getProperty("path.separator").toRegex())
+            .dropLastWhile { it.isEmpty() }.toTypedArray()
 
     /**
      * Get the current thread's ClassLoader

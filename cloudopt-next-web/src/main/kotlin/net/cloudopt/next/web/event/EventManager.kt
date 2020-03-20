@@ -17,11 +17,11 @@ package net.cloudopt.next.web.event
 
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.EventBus
+import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.CloudoptServer
-import net.cloudopt.next.web.json.Jsoner
 
 
 /*
@@ -48,17 +48,17 @@ object EventManager {
             }
 
         eventList.keys.forEach { key ->
-            eventBus.consumer<Any>(key, { message ->
+            eventBus.consumer<Any>(key) { message ->
                 eventList[key]?.let {
                     Beaner.newInstance<EventListener>(it)
                 }?.listener(message)
-            })?.completionHandler({ res ->
+            }?.completionHandler { res ->
                 if (res.succeeded()) {
                     logger.info("[EVENT] Registered event listener：[$key] on ${eventList.get(key)?.name}")
                 } else {
                     logger.error("[EVENT] Registered event listener was error： ${eventList.get(key)?.name}")
                 }
-            })
+            }
         }
 
 

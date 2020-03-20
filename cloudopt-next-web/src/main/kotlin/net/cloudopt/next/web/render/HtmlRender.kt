@@ -18,7 +18,6 @@ package net.cloudopt.next.web.render
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Resourcer
-import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 import java.io.BufferedReader
@@ -49,7 +48,7 @@ class HtmlRender : Render {
         try {
             resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
             if (templates.get(view.view) != null) {
-                end(resource, templates.get(view.view) ?:"")
+                end(resource, templates.get(view.view) ?: "")
             } else {
                 var inputStream = Resourcer.getFileInputStream(ConfigManager.webConfig.webroot + "/" + view.view)
                 var bufferedReader = BufferedReader(InputStreamReader(inputStream))

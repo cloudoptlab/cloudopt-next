@@ -15,10 +15,10 @@
  */
 package net.cloudopt.next.i18n
 
-import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.JSONObject
+import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.utils.Resourcer
 import java.util.*
+import kotlin.collections.HashMap
 
 
 /*
@@ -28,7 +28,7 @@ import java.util.*
  */
 object I18N {
 
-    private val i18nCache = mutableMapOf<String, JSONObject>()
+    private val i18nCache = mutableMapOf<String, MutableMap<String, Any>>()
 
     var baseName: String = ""
         get() = field
@@ -59,7 +59,7 @@ object I18N {
 
     @JvmStatic
     @JvmOverloads
-    fun getI18nJsonObject(locale: String = defaultLocale): JSONObject {
+    fun getI18nJsonObject(locale: String = defaultLocale): MutableMap<String, Any> {
         if (i18nCache.get(locale) == null) {
             val fileName = if (baseName.isNotBlank()) {
                 defaultFolder + "/" + baseName + "_" + locale + ".json"
@@ -67,14 +67,14 @@ object I18N {
                 defaultFolder + "/" + locale + ".json"
             }
             if (Resourcer.exist(fileName)) {
-                val json = JSON.parseObject(Resourcer.getFileString(fileName, true))
+                val json = Jsoner.read(fileName)
                 i18nCache.set(locale, json)
                 return json
             } else {
                 throw IllegalArgumentException("$fileName is not found!")
             }
         } else {
-            return i18nCache.get(locale) ?: JSONObject()
+            return i18nCache.get(locale) ?: HashMap<String, Any>()
         }
     }
 
@@ -82,13 +82,13 @@ object I18N {
     @JvmOverloads
     fun i18n(key: String, locale: String = defaultLocale): String? {
         val arr = key.split(".")
-        var jsonObject = getI18nJsonObject(locale)
+        var jsonObject: MutableMap<String, Any> = getI18nJsonObject(locale)
         val maxSize = arr.size - 1
         for (i in arr.indices) {
             if (i != maxSize) {
-                jsonObject = jsonObject.getJSONObject(arr[i])
+                jsonObject = jsonObject.get(arr[i]) as MutableMap<String, Any>
             } else {
-                return jsonObject.getString(arr[i])
+                return jsonObject.get(arr[i]) as String?
             }
         }
         return null

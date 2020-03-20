@@ -22,10 +22,10 @@ import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.Cookie
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
-import net.cloudopt.next.web.json.Jsoner
+import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View
-import java.util.HashMap
+import java.util.*
 
 /*
  * @author: Cloudopt
@@ -195,7 +195,7 @@ open class Resource {
     }
 
     fun renderHtml(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
-        render(RenderFactory.HTML, View(parameters,view))
+        render(RenderFactory.HTML, View(parameters, view))
     }
 
     fun renderHbs(view: View) {
@@ -203,7 +203,7 @@ open class Resource {
     }
 
     fun renderHbs(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
-        render(RenderFactory.HBS, View(parameters,view))
+        render(RenderFactory.HBS, View(parameters, view))
     }
 
     fun renderBeetl(view: View) {
@@ -211,7 +211,7 @@ open class Resource {
     }
 
     fun renderBeetl(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
-        render(RenderFactory.BEETL, View(parameters,view))
+        render(RenderFactory.BEETL, View(parameters, view))
     }
 
     fun renderFree(view: View) {
@@ -219,7 +219,7 @@ open class Resource {
     }
 
     fun renderFree(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
-        render(RenderFactory.FREE, View(parameters,view))
+        render(RenderFactory.FREE, View(parameters, view))
     }
 
     fun sendFile(fileName: String) {
@@ -247,7 +247,9 @@ open class Resource {
     }
 
     fun getLang(): String {
-        return if (context.preferredLanguage().tag().isNullOrEmpty() || context.preferredLanguage().subtag().isNullOrEmpty()) {
+        return if (context.preferredLanguage().tag().isNullOrEmpty() || context.preferredLanguage().subtag()
+                .isNullOrEmpty()
+        ) {
             "en_US"
         } else {
             "${context.preferredLanguage().tag()}_${context.preferredLanguage().subtag()}"
@@ -263,19 +265,19 @@ open class Resource {
     }
 
     fun getBodyJson(): Any? {
-        return Jsoner.toJsonObject(Jsoner.toJsonString(context.bodyAsJson))
+        return Jsoner.toJsonMap(Jsoner.toJsonString(context.bodyAsJson))
     }
 
     fun getBodyJson(clazz: Class<*>): Any? {
-        return Jsoner.toJsonObject(Jsoner.toJsonString(context.bodyAsJson), clazz)
+        return Jsoner.toObject(Jsoner.toJsonString(context.bodyAsJson), clazz)
     }
 
     fun getBodyJsonArray(): Any? {
-        return Jsoner.toJsonArray(Jsoner.toJsonString(context.bodyAsJson))
+        return Jsoner.toJsonMapList(Jsoner.toJsonString(context.bodyAsJson))
     }
 
     fun getBodyJsonArray(clazz: Class<*>): Any? {
-        return Jsoner.toJsonArray(Jsoner.toJsonString(context.bodyAsJson), clazz)
+        return Jsoner.toObjectList(Jsoner.toJsonString(context.bodyAsJson), clazz)
     }
 
     fun getFiles(): MutableSet<FileUpload> {

@@ -15,7 +15,10 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.core.*
+import io.vertx.core.AsyncResult
+import io.vertx.core.DeploymentOptions
+import io.vertx.core.Handler
+import io.vertx.core.Promise
 
 /*
  * @author: Cloudopt

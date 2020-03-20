@@ -15,7 +15,7 @@
  */
 package cloudopt.next.client
 
-import net.cloudopt.next.web.json.Jsoner
+import net.cloudopt.next.json.Jsoner
 
 
 /*
