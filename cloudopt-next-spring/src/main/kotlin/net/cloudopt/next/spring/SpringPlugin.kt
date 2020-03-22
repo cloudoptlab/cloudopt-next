@@ -31,7 +31,7 @@ class SpringPlugin : Plugin {
     private var configFiles: Array<out String> = arrayOf()
     private var configClasses: Array<out Class<*>> = arrayOf()
     private var context: ConfigurableApplicationContext? = null
-    private var map = ConfigManager.initMap("spring")
+    private var map = ConfigManager.init("spring")
 
     constructor() {
         this.configFiles = arrayOf("classpath:applicationContext.xml")

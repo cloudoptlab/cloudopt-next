@@ -16,9 +16,7 @@
 package net.cloudopt.next.web.config
 
 import net.cloudopt.next.json.Jsoner
-import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Maper
-import net.cloudopt.next.utils.Resourcer
 
 
 /*
@@ -28,61 +26,31 @@ import net.cloudopt.next.utils.Resourcer
  */
 object ConfigManager {
 
-    val DEVJSON = "application-dev.json"
-
-    val PROJSON = "application-pro.json"
-
-    val JSON = "application.json"
+    val CONFIG_JSON_FILENAME = "application.json"
 
     @JvmStatic
-    var vertxConfig: VertxConfigBean = VertxConfigBean()
-
-    @JvmStatic
-    var webConfig: WebConfigBean = WebConfigBean()
-
-    @JvmStatic
-    var wafConfig: WafConfigBean = WafConfigBean()
+    var config: WebConfigBean = WebConfigBean()
 
     init {
-        webConfig = init("web", WebConfigBean::class.java) as WebConfigBean
-        vertxConfig = init("vertx", VertxConfigBean::class.java) as VertxConfigBean
-        wafConfig = init("waf", WafConfigBean::class.java) as WafConfigBean
+        // Init web config
+        var webConfigMap: MutableMap<String, Any> = Jsoner.read(CONFIG_JSON_FILENAME)
+
+        if (config.env.isNotBlank()) {
+            val newConfigFileName = "application-${config.env}.json"
+            webConfigMap.putAll(Jsoner.read(newConfigFileName))
+        }
+
+        config = Maper.toObject(webConfigMap, WebConfigBean::class.java) as WebConfigBean
+
     }
 
     @JvmStatic
-    open fun init(name: String, clazz: Class<*>): Any {
-
-        var map = Maper.toMap(Beaner.newInstance(clazz))?.toMutableMap() ?: mutableMapOf()
-
-        return Maper.toObject(initMap(name, map), clazz)!!
-
+    open fun init(prefix: String): MutableMap<String, Any> {
+        var configMap = Jsoner.read(CONFIG_JSON_FILENAME, prefix)
+        if (config.env.isNotBlank()) {
+            val newConfigFileName = "application-${config.env}.json"
+            configMap.putAll(Jsoner.read(newConfigFileName, prefix))
+        }
+        return configMap
     }
-
-    @JvmOverloads
-    open fun initMap(name: String, map: MutableMap<String, Any> = mutableMapOf()): MutableMap<String, Any> {
-        if (Jsoner.read(JSON, "net.cloudopt.next." + name) != null) {
-            map?.putAll(Jsoner.read(JSON, "net.cloudopt.next." + name) as Map<out String, Any>)
-        }
-
-        var dev = if (name.equals("web")) {
-            map.get("dev").toString().toBoolean()
-        } else {
-            ConfigManager.webConfig.dev
-        }
-
-        if (Resourcer.exist(DEVJSON)) {
-            if (dev && Jsoner.read(DEVJSON, "net.cloudopt.next." + name) != null) {
-                map.putAll(Jsoner.read(DEVJSON, "net.cloudopt.next." + name) as Map<out String, Any>)
-            }
-        }
-
-        if (Resourcer.exist(PROJSON)) {
-            if (!dev && Jsoner.read(PROJSON, "net.cloudopt.next." + name) != null) {
-                map.putAll(Jsoner.read(PROJSON, "net.cloudopt.next." + name) as Map<out String, Any>)
-            }
-        }
-
-        return map
-    }
-
 }

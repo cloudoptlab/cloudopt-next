@@ -36,15 +36,15 @@ object Banner {
     @JvmStatic
     fun print() {
 
-        if (!ConfigManager.webConfig.banner) {
+        if (!ConfigManager.config.banner) {
             return
         }
         var input = Banner.javaClass.getClassLoader().getResourceAsStream("banner.txt")
 
         var buffer = BufferedReader(InputStreamReader(input))
 
-        if (ConfigManager.webConfig.bannerName.isNotBlank()) {
-            input = Resourcer.getFileInputStream(ConfigManager.webConfig.bannerName)
+        if (ConfigManager.config.bannerName.isNotBlank()) {
+            input = Resourcer.getFileInputStream(ConfigManager.config.bannerName)
             buffer = BufferedReader(InputStreamReader(input))
         }
 
@@ -55,7 +55,7 @@ object Banner {
             text = text.replace("\${os}", System.getProperty("os.name"))
             text =
                 text.replace("\${time}", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-            text = text.replace("\${port}", ConfigManager.webConfig.port.toString())
+            text = text.replace("\${port}", ConfigManager.config.port.toString())
             logger.info(text)
             text = buffer.readLine()
         }

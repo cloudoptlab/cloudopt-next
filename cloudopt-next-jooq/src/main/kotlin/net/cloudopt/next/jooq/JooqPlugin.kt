@@ -37,7 +37,7 @@ class JooqPlugin : Plugin {
 
     override fun start(): Boolean {
         try {
-            var map = ConfigManager.initMap("jooq")
+            var map = ConfigManager.init("jooq")
 
             var pool: ConnectionPool = HikariCPPool()
 

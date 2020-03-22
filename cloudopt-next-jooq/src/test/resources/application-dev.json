@@ -1,18 +1,12 @@
 {
-  "net": {
-    "cloudopt": {
-      "next": {
-        "datasource": {
-          "jdbcUrl": "jdbc:mysql://127.0.0.1:8889/cloudopt?useUnicode=true&character_set_server=utf8mb4&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true",
-          "username": "root",
-          "password": "root",
-          "driverClassName": "com.mysql.cj.jdbc.Driver"
-        },
-        "jooq": {
-          "pool": "net.cloudopt.next.jooq.pool.HikariCPPool",
-          "database": "mysql"
-        }
-      }
-    }
+  "datasource": {
+    "jdbcUrl": "jdbc:mysql://127.0.0.1:8889/cloudopt?useUnicode=true&character_set_server=utf8mb4&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true",
+    "username": "root",
+    "password": "root",
+    "driverClassName": "com.mysql.cj.jdbc.Driver"
+  },
+  "jooq": {
+    "pool": "net.cloudopt.next.jooq.pool.HikariCPPool",
+    "database": "mysql"
   }
 }

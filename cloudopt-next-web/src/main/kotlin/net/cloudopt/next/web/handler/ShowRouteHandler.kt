@@ -31,7 +31,7 @@ import java.util.*
 class ShowRouteHandler : Handler() {
 
     override fun preHandle(resource: Resource) {
-        if (ConfigManager.webConfig.showRoute) {
+        if (ConfigManager.config.showRoute) {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             logger.info(
                 "Match route ----------------- " + df.format(Date())

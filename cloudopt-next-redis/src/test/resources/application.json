@@ -1,11 +1,4 @@
 {
-  "net": {
-    "cloudopt": {
-      "next": {
-        "web": {
-          "dev": "true"
-        }
-      }
-    }
-  }
+  "debug": true,
+  "env": "dev"
 }

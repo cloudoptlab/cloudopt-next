@@ -50,23 +50,21 @@ class CloudoptServerVerticle : AbstractVerticle() {
         Banner.print()
 
         // Set json provider
-        Jsoner.jsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.webConfig.jsonProvider))
+        Jsoner.jsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.config.jsonProvider))
 
         //The ResponseContentTypeHandler can set the Content-Type header automatically.
         router.route("/*").handler(ResponseContentTypeHandler.create())
 
         router.route().handler(BodyHandler.create())
 
-        router.route().handler(CookieHandler.create())
-
-        router.route().handler(BodyHandler.create().setBodyLimit(ConfigManager.webConfig.bodyLimit))
+        router.route().handler(BodyHandler.create().setBodyLimit(ConfigManager.config.bodyLimit))
 
         //Set timeout
-        //router.route("/*").handler(TimeoutHandler.create(ConfigManager.webConfig.timeout))
+        router.route("/*").handler(TimeoutHandler.create(ConfigManager.config.timeout))
 
         //Set csrf
-        if (ConfigManager.wafConfig.csrf) {
-            router.route("/*").handler(CSRFHandler.create("cloudopt-next"))
+        if (ConfigManager.config.waf.csrf) {
+            router.route("/*").handler(CSRFHandler.create(ConfigManager.config.waf.encryption))
         }
 
         //Register failure handler
@@ -94,9 +92,9 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        router.route("/" + ConfigManager.webConfig.staticPackage + "/*").handler(
-            StaticHandler.create().setIndexPage(ConfigManager.webConfig.indexPage)
-                .setIncludeHidden(false).setWebRoot(ConfigManager.webConfig.staticPackage)
+        router.route("/" + ConfigManager.config.staticPackage + "/*").handler(
+            StaticHandler.create().setIndexPage(ConfigManager.config.indexPage)
+                .setIncludeHidden(false).setWebRoot(ConfigManager.config.staticPackage)
         )
 
         //Register interceptors
@@ -197,13 +195,13 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        server.requestHandler({ router.accept(it) }).listen(ConfigManager.webConfig.port) { result ->
+        server.requestHandler({ router.accept(it) }).listen(ConfigManager.config.port) { result ->
             if (result.succeeded()) {
                 CloudoptServer.logger.info(
                     "=========================================================================================================="
                 )
                 CloudoptServer.logger.info("\uD83D\uDC0B Cloudopt Next started is success!")
-                CloudoptServer.logger.info("http://127.0.0.1:${ConfigManager.webConfig.port}")
+                CloudoptServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
                 CloudoptServer.logger.info(
                     "=========================================================================================================="
                 )

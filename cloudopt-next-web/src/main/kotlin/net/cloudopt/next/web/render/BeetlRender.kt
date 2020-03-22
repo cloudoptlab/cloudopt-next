@@ -37,7 +37,7 @@ class BeetlRender : Render {
         @JvmStatic
         private val templates = mutableMapOf<String, Template>()
 
-        private val resourceLoader = ClasspathResourceLoader(ConfigManager.webConfig.webroot)
+        private val resourceLoader = ClasspathResourceLoader(ConfigManager.config.templates)
 
         open val gt = GroupTemplate(resourceLoader, config)
     }

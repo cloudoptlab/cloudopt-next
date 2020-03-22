@@ -37,10 +37,7 @@ import net.cloudopt.next.web.config.ConfigManager
  */
 object KafkaManager {
 
-    private var map: MutableMap<String, String> = ConfigManager.initMap("kafka") as MutableMap<String, String>
-
-
-    private val logger = Logger.Companion.getLogger(KafkaManager::class.java)
+    private val logger = Logger.getLogger(KafkaManager::class.java)
 
     @JvmStatic
     private val kafkaList: HashMap<String, MutableSet<Class<*>>> = hashMapOf()
@@ -52,21 +49,9 @@ object KafkaManager {
     open var producer: KafkaProducer<Any, Any>? = null
 
     @JvmStatic
-    var config = mutableMapOf<String, String>()
+    var config = ConfigManager.init("kafka") as MutableMap<String, String>
 
     fun init(vertx: Vertx) {
-        config["bootstrap.servers"] = map.get("servers") ?: ""
-        config["key.deserializer"] =
-            map.get("keyDeserializer") ?: "org.apache.kafka.common.serialization.StringDeserializer"
-        config["value.deserializer"] =
-            map.get("valueDeserializer") ?: "org.apache.kafka.common.serialization.StringDeserializer"
-        config["group.id"] = map.get("groupId") ?: "cloudopt"
-        config["auto.offset.reset"] = map.get("offsetRest") ?: "earliest"
-        config["enable.auto.commit"] = map.get("autoCommit") ?: "false"
-        config["key.serializer"] = map.get("keySerializer") ?: "org.apache.kafka.common.serialization.StringSerializer"
-        config["value.serializer"] =
-            map.get("valueSerializer") ?: "org.apache.kafka.common.serialization.StringSerializer"
-        config["acks"] = map.get("acks") ?: "1"
         consumer = KafkaConsumer.create<Any, Any>(vertx, config)?.exceptionHandler { e ->
             logger.error("[KAFKA] Consumer was error： ${e.message}")
         }

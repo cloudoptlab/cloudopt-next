@@ -64,7 +64,7 @@ class FreemarkerRender : Render {
 
                 config?.dateTimeFormat = "yyyy-MM-dd HH:mm:ss"
 
-                config?.setClassForTemplateLoading(FreemarkerRender::class.java, "/" + ConfigManager.webConfig.webroot)
+                config?.setClassForTemplateLoading(FreemarkerRender::class.java, "/" + ConfigManager.config.templates)
 
             }
         } catch (e: Exception) {

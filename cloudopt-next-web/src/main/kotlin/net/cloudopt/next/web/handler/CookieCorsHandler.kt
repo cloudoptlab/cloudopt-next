@@ -26,7 +26,7 @@ import net.cloudopt.next.web.config.ConfigManager
 @AutoHandler
 class CookieCorsHandler : Handler() {
     override fun preHandle(resource: Resource) {
-        if (ConfigManager.webConfig.cookieCors) {
+        if (ConfigManager.config.cookieCors) {
             resource.setHeader("Access-Control-Allow-Credentials", "true")
         }
     }

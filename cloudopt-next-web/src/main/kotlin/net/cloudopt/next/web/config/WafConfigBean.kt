@@ -24,6 +24,7 @@ package net.cloudopt.next.web.config
 data class WafConfigBean(
     var plus: Boolean = false,
     var csrf: Boolean = false,
+    var encryption:String = "",
     var xss: Boolean = false,
     var sql: Boolean = false,
     var mongodb: Boolean = false

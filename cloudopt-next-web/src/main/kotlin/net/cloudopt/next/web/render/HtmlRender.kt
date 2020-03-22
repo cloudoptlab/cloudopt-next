@@ -50,7 +50,7 @@ class HtmlRender : Render {
             if (templates.get(view.view) != null) {
                 end(resource, templates.get(view.view) ?: "")
             } else {
-                var inputStream = Resourcer.getFileInputStream(ConfigManager.webConfig.webroot + "/" + view.view)
+                var inputStream = Resourcer.getFileInputStream(ConfigManager.config.templates + "/" + view.view)
                 var bufferedReader = BufferedReader(InputStreamReader(inputStream))
                 var stringBuilder = StringBuilder()
                 bufferedReader.forEachLine { content ->

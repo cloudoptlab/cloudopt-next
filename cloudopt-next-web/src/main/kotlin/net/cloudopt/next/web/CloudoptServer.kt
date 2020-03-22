@@ -64,9 +64,6 @@ object CloudoptServer {
     open val controllers = arrayListOf<ResourceTable>()
 
     @JvmStatic
-    open val vertxOptions = VertxOptions()
-
-    @JvmStatic
     lateinit open var vertx: Vertx
 
     @JvmStatic
@@ -79,41 +76,15 @@ object CloudoptServer {
     open var packageName = ""
 
     @JvmStatic
-    open var errorHandler = Beaner.newInstance<ErrorHandler>(Classer.loadClass(ConfigManager.webConfig.errorHandler))
+    open var errorHandler = Beaner.newInstance<ErrorHandler>(Classer.loadClass(ConfigManager.config.errorHandler))
 
     fun scan() {
-        vertxOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
-        vertxOptions.setFileResolverCachingEnabled(ConfigManager.vertxConfig.fileCaching)
-        vertxOptions.workerPoolSize = ConfigManager.vertxConfig.workerPoolSize
-        vertxOptions.eventLoopPoolSize = ConfigManager.vertxConfig.eventLoopPoolSize
-        vertxOptions.maxEventLoopExecuteTime = ConfigManager.vertxConfig.maxEventLoopExecuteTime
-        vertxOptions.setInternalBlockingPoolSize(ConfigManager.vertxConfig.internalBlockingPoolSize)
-        vertxOptions.setClustered(ConfigManager.vertxConfig.clustered)
-        vertxOptions.clusterHost = ConfigManager.vertxConfig.clusterHost
-        vertxOptions.clusterPort = ConfigManager.vertxConfig.clusterPort
-        vertxOptions.clusterPingInterval = ConfigManager.vertxConfig.clusterPingInterval
-        vertxOptions.clusterPingReplyInterval = ConfigManager.vertxConfig.clusterPingReplyInterval
-        vertxOptions.blockedThreadCheckInterval = ConfigManager.vertxConfig.blockedThreadCheckInterval
-        vertxOptions.setHAEnabled(ConfigManager.vertxConfig.hAEnabled)
-        vertxOptions.setHAEnabled(ConfigManager.vertxConfig.hAEnabled)
-        vertxOptions.haGroup = ConfigManager.vertxConfig.hAGroup
-        vertxOptions.quorumSize = ConfigManager.vertxConfig.quorumSize
-        vertxOptions.warningExceptionTime = ConfigManager.vertxConfig.warningExceptionTime
         deploymentOptions.workerPoolName = verticleID
-        deploymentOptions.workerPoolSize = ConfigManager.vertxConfig.workerPoolSize
-        deploymentOptions.maxWorkerExecuteTime = ConfigManager.vertxConfig.maxWokerExecuteTime
-
-        //Set dns
-        var addressResolver = AddressResolverOptions()
-        ConfigManager.vertxConfig.addressResolver.split(",").forEach { address ->
-            if (address.isNotBlank()) {
-                addressResolver.addServer(address)
-            }
-        }
-        vertxOptions.setAddressResolverOptions(addressResolver)
+        deploymentOptions.workerPoolSize = ConfigManager.config.vertx.workerPoolSize
+        deploymentOptions.maxWorkerExecuteTime = ConfigManager.config.vertx.maxWorkerExecuteTime
 
         //Set log color
-        Logger.configuration.color = ConfigManager.webConfig.logColor
+        Logger.configuration.color = ConfigManager.config.logColor
 
         //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class.java)
@@ -121,8 +92,8 @@ object CloudoptServer {
                 handlers.add(Beaner.newInstance(clazz))
             }
 
-        packageName = if (ConfigManager.webConfig.packageName.isNotBlank()) {
-            ConfigManager.webConfig.packageName
+        packageName = if (ConfigManager.config.packageName.isNotBlank()) {
+            ConfigManager.config.packageName
         } else {
             throw RuntimeException("Package name must not be null!")
         }
@@ -231,27 +202,27 @@ object CloudoptServer {
 
     @JvmStatic
     fun run(clazz: Class<*>) {
-        ConfigManager.webConfig.packageName = clazz.`package`.name
+        ConfigManager.config.packageName = clazz.`package`.name
         run()
     }
 
     @JvmStatic
     fun run(clazz: KClass<*>) {
-        ConfigManager.webConfig.packageName = clazz.java.`package`.name
+        ConfigManager.config.packageName = clazz.java.`package`.name
         run()
     }
 
     @JvmStatic
     fun run(pageName: String) {
-        ConfigManager.webConfig.packageName = pageName
+        ConfigManager.config.packageName = pageName
         run()
     }
 
     @JvmStatic
     fun run() {
         scan()
-        vertx = Vertx.vertx(vertxOptions)
-        Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
+        vertx = Vertx.vertx(ConfigManager.config.vertx)
+        Worker.deploy(ConfigManager.config.packageName)
     }
 
     @JvmStatic
@@ -280,7 +251,7 @@ object CloudoptServer {
 
     @JvmStatic
     fun stop() {
-        vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
+        vertx.undeploy(ConfigManager.config.packageName)
         vertx.close()
     }
 

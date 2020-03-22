@@ -48,7 +48,7 @@ class HbsRender : Render {
             template = if (templates.get(view.view) != null) {
                 templates.get(view.view)
             } else {
-                templates.put(view.view, handlebars.compile(ConfigManager.webConfig.webroot + "/" + view.view))
+                templates.put(view.view, handlebars.compile(ConfigManager.config.templates + "/" + view.view))
                 templates.get(view.view)
             }
 

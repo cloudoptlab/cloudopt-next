@@ -37,13 +37,13 @@ class WafHandler : Handler() {
     }
 
     init {
-        if (ConfigManager.wafConfig.xss) {
+        if (ConfigManager.config.waf.xss) {
             filters.add(XSSInjection())
         }
-        if (ConfigManager.wafConfig.sql) {
+        if (ConfigManager.config.waf.sql) {
             filters.add(SQLInjection())
         }
-        if (ConfigManager.wafConfig.mongodb) {
+        if (ConfigManager.config.waf.mongodb) {
             filters.add(MongoInjection())
         }
     }
@@ -84,7 +84,7 @@ class WafHandler : Handler() {
             entry.setValue(value)
         }
 
-        if (ConfigManager.wafConfig.plus) {
+        if (ConfigManager.config.waf.plus) {
             resource.setHeader("Cache-Control", "no-store, no-cache")
             resource.setHeader("X-Content-Type-Options", "nosniff")
             resource.setHeader("X-Download-Options", "noopen")

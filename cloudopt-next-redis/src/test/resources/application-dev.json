@@ -1,15 +1,9 @@
 {
-  "net": {
-    "cloudopt": {
-      "next": {
-        "redis": {
-          "host": "localhost",
-          "port": 6379,
-          "timeout": 3000,
-          "password": "",
-          "database": 0
-        }
-      }
-    }
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "timeout": 3000,
+    "password": "",
+    "database": 0
   }
 }

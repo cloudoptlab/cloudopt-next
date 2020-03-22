@@ -26,7 +26,7 @@ import net.cloudopt.next.web.config.ConfigManager
 @AutoHandler
 class CorsHandler : Handler() {
     override fun preHandle(resource: Resource) {
-        if (ConfigManager.webConfig.cors) {
+        if (ConfigManager.config.cors) {
             resource.setHeader("Access-Control-Allow-Origin", "*")
             resource.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
             resource.setHeader("Access-Control-Allow-Headers", "Content-Type")

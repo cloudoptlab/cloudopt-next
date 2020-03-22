@@ -30,7 +30,7 @@ import javax.sql.DataSource
  */
 class HikariCPPool : ConnectionPool {
 
-    private val datasourceConfig: MutableMap<String, Any> = ConfigManager.initMap("datasource")
+    private val datasourceConfig: MutableMap<String, Any> = ConfigManager.init("datasource")
 
     private val config = HikariConfig()
 

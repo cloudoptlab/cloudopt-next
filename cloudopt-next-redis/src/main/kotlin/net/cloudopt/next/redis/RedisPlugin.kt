@@ -39,7 +39,7 @@ import redis.clients.jedis.JedisPoolConfig
  */
 class RedisPlugin() : Plugin {
 
-    private var map = ConfigManager.initMap("redis")
+    private var map = ConfigManager.init("redis")
     protected var cacheName: String = "default"
     protected var host: String = "localhost"
     protected var port: Int = 6379
