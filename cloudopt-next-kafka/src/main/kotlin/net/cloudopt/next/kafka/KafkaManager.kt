@@ -60,7 +60,7 @@ object KafkaManager {
         }
 
 
-        Classer.scanPackageByAnnotation(CloudoptServer.packageName, false, AutoKafka::class.java)
+        Classer.scanPackageByAnnotation(CloudoptServer.packageName, true, AutoKafka::class.java)
             .forEach { clazz ->
                 clazz.getDeclaredAnnotation(AutoKafka::class.java).value.split(",").forEach { topic ->
                     var set = kafkaList.get(topic) ?: mutableSetOf()
@@ -73,7 +73,7 @@ object KafkaManager {
 
         consumer?.subscribe(kafkaList.keys) { ar ->
             if (ar.succeeded()) {
-
+                logger.info("[KAFKA] Registered topic listener was success：${ar.cause()}")
             } else {
                 logger.error("[KAFKA] Registered topic listener was error：${ar.cause()}")
             }
