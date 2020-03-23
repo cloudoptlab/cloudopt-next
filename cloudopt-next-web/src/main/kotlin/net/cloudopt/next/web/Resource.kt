@@ -206,14 +206,6 @@ open class Resource {
         render(RenderFactory.HBS, View(parameters, view))
     }
 
-    fun renderBeetl(view: View) {
-        render(RenderFactory.BEETL, view)
-    }
-
-    fun renderBeetl(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
-        render(RenderFactory.BEETL, View(parameters, view))
-    }
-
     fun renderFree(view: View) {
         render(RenderFactory.FREE, view)
     }

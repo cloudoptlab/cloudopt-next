@@ -39,7 +39,6 @@ object RenderFactory {
             put(JSON, JsonRender())
             put(TEXT, TextRender())
             put(HBS, HbsRender())
-            put(BEETL, BeetlRender())
             put(FREE, FreemarkerRender())
             put(HTML, HtmlRender())
         }
