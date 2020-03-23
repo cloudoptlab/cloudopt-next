@@ -72,14 +72,6 @@ class IndexController : Resource() {
         renderJson(map)
     }
 
-    @GET("beetl")
-    fun beetl() {
-        var view = View()
-        view.view = "index"
-        view.parameters.put("name", "beetl")
-        renderBeetl(view)
-    }
-
     @GET("event")
     fun event() {
         EventManager.send("net.cloudopt.web.test", "This is test message!")
