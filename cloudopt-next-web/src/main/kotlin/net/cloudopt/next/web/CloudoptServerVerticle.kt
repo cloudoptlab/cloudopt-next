@@ -20,6 +20,7 @@ import io.vertx.core.http.HttpMethod
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
 import net.cloudopt.next.json.Jsoner
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.config.ConfigManager
@@ -30,6 +31,8 @@ import net.cloudopt.next.web.config.ConfigManager
  * @Description: Cloudopt Next Server Verticle
  */
 class CloudoptServerVerticle : AbstractVerticle() {
+
+    val logger = Logger.getLogger(CloudoptServerVerticle::class.java)
 
     override fun start() {
 
@@ -42,7 +45,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        val server = CloudoptServer.vertx.createHttpServer(CloudoptServer.httpServerOptions)
+        val server = CloudoptServer.vertx.createHttpServer(ConfigManager.config.vertxHttpServer)
 
         val router = Router.router(CloudoptServer.vertx)
 
@@ -60,19 +63,21 @@ class CloudoptServerVerticle : AbstractVerticle() {
         router.route().handler(BodyHandler.create().setBodyLimit(ConfigManager.config.bodyLimit))
 
         //Set timeout
-        router.route("/*").handler(TimeoutHandler.create(ConfigManager.config.timeout))
+       router.route("/*").handler(TimeoutHandler.create(ConfigManager.config.timeout))
 
-        //Set csrf
+        // Set csrf
         if (ConfigManager.config.waf.csrf) {
             router.route("/*").handler(CSRFHandler.create(ConfigManager.config.waf.encryption))
         }
 
-        //Register failure handler
+        // Register failure handler
         CloudoptServer.logger.info("[FAILURE HANDLER] Registered failure handler：" + CloudoptServer.errorHandler::class.java.getName())
 
         router.route("/*").failureHandler { failureRoutingContext ->
             CloudoptServer.errorHandler.init(failureRoutingContext)
             CloudoptServer.errorHandler.handle()
+            logger.error(failureRoutingContext.failure().toString())
+
         }
 
         //Register handlers
@@ -153,7 +158,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        //Register method
+        // Register method
         CloudoptServer.controllers.forEach { resourceTable ->
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
@@ -187,15 +192,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             )
         }
 
-        if (CloudoptServer.controllers.size == 0) {
-            router.route(HttpMethod.GET, "/*").handler { context ->
-                val resource = Resource()
-                resource.init(context)
-                resource.renderText("A first cloudopt next application!")
-            }
-        }
-
-        server.requestHandler({ router.accept(it) }).listen(ConfigManager.config.port) { result ->
+        server.requestHandler { router.accept(it) }.listen(ConfigManager.config.port) { result ->
             if (result.succeeded()) {
                 CloudoptServer.logger.info(
                     "=========================================================================================================="

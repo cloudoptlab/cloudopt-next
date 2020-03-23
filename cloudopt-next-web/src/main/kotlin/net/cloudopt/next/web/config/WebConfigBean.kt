@@ -15,7 +15,9 @@
  */
 package net.cloudopt.next.web.config
 
+import io.vertx.core.DeploymentOptions
 import io.vertx.core.VertxOptions
+import io.vertx.core.http.HttpServerOptions
 
 /*
  * @author: Cloudopt
@@ -41,5 +43,7 @@ data class WebConfigBean(
         var logColor: Boolean = true,
         var timeout: Long = 2L * 60 * 1000,
         var waf:WafConfigBean = WafConfigBean(),
-        var vertx: VertxOptions = VertxOptions()
+        var vertx: VertxOptions = VertxOptions(),
+        var vertxHttpServer: HttpServerOptions = HttpServerOptions(),
+        var vertxDeployment: DeploymentOptions = DeploymentOptions()
 )

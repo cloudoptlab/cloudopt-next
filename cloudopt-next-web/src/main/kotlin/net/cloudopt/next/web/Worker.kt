@@ -19,6 +19,7 @@ import io.vertx.core.AsyncResult
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Handler
 import io.vertx.core.Promise
+import net.cloudopt.next.web.config.ConfigManager
 
 /*
  * @author: Cloudopt
@@ -70,7 +71,7 @@ object Worker {
      */
     @JvmOverloads
     fun deploy(verticle: String, worker: Boolean = false) {
-        var options = CloudoptServer.deploymentOptions
+        var options = ConfigManager.config.vertxDeployment
         if (worker) {
             options = DeploymentOptions(options)
             options.isWorker = worker

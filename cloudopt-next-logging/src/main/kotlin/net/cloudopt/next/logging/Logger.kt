@@ -48,10 +48,12 @@ abstract class Logger {
         @JvmStatic
         open var configuration = LoggerConfiguration()
 
+        @JvmStatic
         fun getLogger(clazz: Class<*>): Logger {
             return configuration.loggerProvider.getLogger(clazz)
         }
 
+        @JvmStatic
         fun getLogger(clazzName: String): Logger {
             return configuration.loggerProvider.getLogger(clazzName)
         }

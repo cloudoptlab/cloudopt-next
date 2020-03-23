@@ -31,6 +31,7 @@ import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.route.*
+import sun.security.krb5.Config
 import kotlin.reflect.KClass
 
 /*
@@ -67,21 +68,13 @@ object CloudoptServer {
     lateinit open var vertx: Vertx
 
     @JvmStatic
-    open var httpServerOptions: HttpServerOptions = HttpServerOptions()
-
-    @JvmStatic
-    open val deploymentOptions = DeploymentOptions()
-
-    @JvmStatic
     open var packageName = ""
 
     @JvmStatic
     open var errorHandler = Beaner.newInstance<ErrorHandler>(Classer.loadClass(ConfigManager.config.errorHandler))
 
     fun scan() {
-        deploymentOptions.workerPoolName = verticleID
-        deploymentOptions.workerPoolSize = ConfigManager.config.vertx.workerPoolSize
-        deploymentOptions.maxWorkerExecuteTime = ConfigManager.config.vertx.maxWorkerExecuteTime
+        ConfigManager.config.vertxDeployment.workerPoolName = verticleID
 
         //Set log color
         Logger.configuration.color = ConfigManager.config.logColor
@@ -222,7 +215,7 @@ object CloudoptServer {
     fun run() {
         scan()
         vertx = Vertx.vertx(ConfigManager.config.vertx)
-        Worker.deploy(ConfigManager.config.packageName)
+        Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
     }
 
     @JvmStatic
@@ -251,7 +244,7 @@ object CloudoptServer {
 
     @JvmStatic
     fun stop() {
-        vertx.undeploy(ConfigManager.config.packageName)
+        vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
         vertx.close()
     }
 

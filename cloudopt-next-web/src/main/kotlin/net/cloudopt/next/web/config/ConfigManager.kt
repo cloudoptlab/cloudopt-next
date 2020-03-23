@@ -32,6 +32,17 @@ object ConfigManager {
     var config: WebConfigBean = WebConfigBean()
 
     init {
+
+        config.vertx.maxWorkerExecuteTime = 60L * 1000 * 1000000
+
+        config.vertx.fileSystemOptions.isFileCachingEnabled = false
+
+        config.vertx.blockedThreadCheckInterval = 1000
+
+        config.vertx.maxEventLoopExecuteTime = 2L * 1000 * 1000000
+
+        config.vertx.warningExceptionTime = 5L * 1000 * 1000000
+
         // Init web config
         var webConfigMap: MutableMap<String, Any> = Jsoner.read(CONFIG_JSON_FILENAME)
 
@@ -41,7 +52,6 @@ object ConfigManager {
         }
 
         config = Maper.toObject(webConfigMap, WebConfigBean::class.java) as WebConfigBean
-
     }
 
     @JvmStatic
