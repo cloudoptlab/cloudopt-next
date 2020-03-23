@@ -76,7 +76,7 @@ class DefaultJSONProvider : JsonProvider {
         return jsonObj.toJavaObject(clazz)!!
     }
 
-    fun cleanText(jsonString: String): String {
+    private fun cleanText(jsonString: String): String {
         return jsonString.replace("/n", "")
     }
 
