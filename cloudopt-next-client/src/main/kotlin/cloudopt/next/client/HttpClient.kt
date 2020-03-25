@@ -15,6 +15,7 @@
  */
 package cloudopt.next.client
 
+import io.vertx.core.MultiMap
 import io.vertx.core.buffer.Buffer
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.WebClient
@@ -29,7 +30,7 @@ import net.cloudopt.next.web.CloudoptServer
  */
 class HttpClient() {
 
-    open var options = WebClientOptions()
+    open val options = WebClientOptions()
 
     private var client = WebClient.create(CloudoptServer.vertx)
 
@@ -79,37 +80,33 @@ class HttpClient() {
     }
 
     @JvmOverloads
-    fun get(url: String = ""): HttpClient {
+    fun get(url: String = ""): HttpRequest<Buffer> {
         this.request = client.get(port, host, url)
-        return this
+        return this.request!!
     }
 
     @JvmOverloads
-    fun post(url: String = ""): HttpClient {
+    fun post(url: String = ""): HttpRequest<Buffer> {
         this.request = client.post(port, host, url)
-        return this
+        return this.request!!
     }
 
     @JvmOverloads
-    fun put(url: String = ""): HttpClient {
+    fun put(url: String = ""): HttpRequest<Buffer> {
         this.request = client.put(port, host, url)
-        return this
+        return this.request!!
     }
 
     @JvmOverloads
-    fun delete(url: String = ""): HttpClient {
+    fun delete(url: String = ""): HttpRequest<Buffer> {
         this.request = client.delete(port, host, url)
-        return this
+        return this.request!!
     }
 
     @JvmOverloads
     fun patch(url: String = ""): HttpClient {
         this.request = client.patch(port, host, url)
         return this
-    }
-
-    fun creat(): HttpRequest<Buffer> {
-        return this.request!!
     }
 
 
