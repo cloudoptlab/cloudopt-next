@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
 
     var client = HttpClient("https://www.cloudopt.net")
 
-    client.get("/api/v1/grade/website/www.google.com").creat().send { result ->
+    client.get("/api/v1/grade/website/www.google.com").send { result ->
         println(Jsoner.toJsonString(result.result().bodyAsString()))
     }
 }
