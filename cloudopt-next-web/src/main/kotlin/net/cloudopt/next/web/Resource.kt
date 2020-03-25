@@ -23,10 +23,10 @@ import io.vertx.ext.web.Cookie
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
 import net.cloudopt.next.json.Jsoner
+import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View
 import java.util.*
-
 /*
  * @author: Cloudopt
  * @Time: 2018/1/15
@@ -85,6 +85,14 @@ open class Resource {
      */
     fun getParam(name: String): String? {
         return request.getParam(name)
+    }
+
+    /**
+     * Returns request parameters.
+     * @return Parameters Object
+     */
+    fun <T> getParams(clazz: Class<T>) : Any {
+        return Maper.toObject(request.params() as MutableMap<String, Any>,clazz)
     }
 
     /**
