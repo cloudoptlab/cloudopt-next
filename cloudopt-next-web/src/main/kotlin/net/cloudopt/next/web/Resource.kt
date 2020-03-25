@@ -257,19 +257,19 @@ open class Resource {
     }
 
     fun getBodyJson(): Any? {
-        return Jsoner.toJsonMap(Jsoner.toJsonString(context.bodyAsJson))
+        return Jsoner.toJsonMap(context.bodyAsJson.toString())
     }
 
     fun getBodyJson(clazz: Class<*>): Any? {
-        return Jsoner.toObject(Jsoner.toJsonString(context.bodyAsJson), clazz)
+        return Jsoner.toObject(context.bodyAsJson.toString(), clazz)
     }
 
     fun getBodyJsonArray(): Any? {
-        return Jsoner.toJsonMapList(Jsoner.toJsonString(context.bodyAsJson))
+        return Jsoner.toJsonMapList(context.bodyAsJson.toString())
     }
 
     fun getBodyJsonArray(clazz: Class<*>): Any? {
-        return Jsoner.toObjectList(Jsoner.toJsonString(context.bodyAsJson), clazz)
+        return Jsoner.toObjectList(context.bodyAsJson.toString(), clazz)
     }
 
     fun getFiles(): MutableSet<FileUpload> {
