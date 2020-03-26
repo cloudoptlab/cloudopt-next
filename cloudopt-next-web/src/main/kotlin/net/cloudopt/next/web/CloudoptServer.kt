@@ -213,7 +213,6 @@ object CloudoptServer {
 
     @JvmStatic
     fun run() {
-        scan()
         vertx = Vertx.vertx(ConfigManager.config.vertx)
         Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
     }

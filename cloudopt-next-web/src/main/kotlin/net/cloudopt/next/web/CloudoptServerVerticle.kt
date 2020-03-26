@@ -36,6 +36,8 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
     override fun start() {
 
+        CloudoptServer.scan()
+
         //Register plugins
         CloudoptServer.plugins.forEach { plugin ->
             if (plugin.start()) {
