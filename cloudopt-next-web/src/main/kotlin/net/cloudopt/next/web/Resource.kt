@@ -27,6 +27,7 @@ import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View
 import java.util.*
+
 /*
  * @author: Cloudopt
  * @Time: 2018/1/15
@@ -78,6 +79,10 @@ open class Resource {
         context.request().formAttributes().get(key)
     }
 
+    fun <T> getAttrs(clazz: Class<T>): Any {
+        return Maper.toObject(context.request().formAttributes() as MutableMap<String, Any>, clazz)
+    }
+
     /**
      * Returns the value of a request parameter.
      * @param name a String specifying the name of the parameter
@@ -91,8 +96,8 @@ open class Resource {
      * Returns request parameters.
      * @return Parameters Object
      */
-    fun <T> getParams(clazz: Class<T>) : Any {
-        return Maper.toObject(request.params() as MutableMap<String, Any>,clazz)
+    fun <T> getParams(clazz: Class<T>): Any {
+        return Maper.toObject(request.params() as MutableMap<String, Any>, clazz)
     }
 
     /**
