@@ -16,6 +16,7 @@
 package net.cloudopt.next.web
 
 import io.vertx.core.http.HttpMethod
+import java.lang.reflect.Method
 
 /*
  * @author: Cloudopt
@@ -26,5 +27,6 @@ import io.vertx.core.http.HttpMethod
 data class ResourceTable(
     var url: String = "", var httpMethod: HttpMethod = HttpMethod.GET,
     var clazz: Class<Resource> = Resource::class.java, var methodName: String = "",
-    var blocking: Boolean = false
+    var blocking: Boolean = false,
+    var clazzMethod: Method ?= null
 )

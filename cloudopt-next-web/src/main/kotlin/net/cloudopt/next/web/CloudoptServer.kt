@@ -15,12 +15,8 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.core.DeploymentOptions
 import io.vertx.core.Vertx
-import io.vertx.core.VertxOptions
-import io.vertx.core.dns.AddressResolverOptions
 import io.vertx.core.http.HttpMethod
-import io.vertx.core.http.HttpServerOptions
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
@@ -31,7 +27,6 @@ import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.route.*
-import sun.security.krb5.Config
 import kotlin.reflect.KClass
 
 /*
@@ -184,7 +179,7 @@ object CloudoptServer {
                 }
 
                 if (resourceUrl.isNotBlank()) {
-                    var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name, blocking)
+                    var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name, blocking, method)
                     controllers.add(resourceTable)
                 }
             }

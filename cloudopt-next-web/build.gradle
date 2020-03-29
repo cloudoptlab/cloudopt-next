@@ -1,5 +1,5 @@
 dependencies {
-    implementation 'io.vertx:vertx-web:3.8.5'
+    api 'io.vertx:vertx-web:3.8.5'
     api project(':cloudopt-next-waf')
     api project(':cloudopt-next-logging')
     api project(':cloudopt-next-utils')

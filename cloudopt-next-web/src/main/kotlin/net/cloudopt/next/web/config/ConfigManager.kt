@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web.config
 
+import io.vertx.core.json.Json
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.utils.Maper
 
@@ -62,5 +63,10 @@ object ConfigManager {
             configMap.putAll(Jsoner.read(newConfigFileName, prefix))
         }
         return configMap
+    }
+
+    @JvmStatic
+    open fun initObject(prefix: String,clazz:Class<*>): Any {
+        return Jsoner.toObject(Jsoner.toJsonString(init(prefix)),clazz)
     }
 }
