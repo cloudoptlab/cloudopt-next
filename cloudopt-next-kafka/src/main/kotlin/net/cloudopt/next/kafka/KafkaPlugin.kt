@@ -25,6 +25,8 @@ import net.cloudopt.next.web.Plugin
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsConfig
+import org.apache.kafka.streams.processor.AbstractProcessor
+import org.apache.kafka.streams.processor.ProcessorSupplier
 import java.util.*
 
 
@@ -57,31 +59,31 @@ class KafkaPlugin : Plugin {
             }
 
 
-        KafkaManager.kafkaList.forEach { key, set ->
-            KafkaManager.consumer?.subscribe(key) { ar ->
-                if (ar.succeeded()) {
-                    KafkaManager.logger.info("[KAFKA] Registered topic listener was success：${key}")
-                } else {
-                    KafkaManager.logger.error("[KAFKA] Registered topic listener was error：${key}")
-                }
-            }?.handler { record ->
-                set.forEach { clazz ->
+
+        KafkaManager.consumer?.subscribe(KafkaManager.kafkaList.keys) { ar ->
+            if (ar.succeeded()) {
+                KafkaManager.logger.info("[KAFKA] Registered topic listener was success：${KafkaManager.kafkaList.keys}")
+            } else {
+                KafkaManager.logger.error("[KAFKA] Registered topic listener was error：${KafkaManager.kafkaList.keys}")
+            }
+        }?.handler { record ->
+            if (record.topic().isNotBlank() && KafkaManager.kafkaList.get(record.topic())?.size ?: 0 > 0) {
+                KafkaManager.kafkaList.get(record.topic())?.forEach { clazz ->
                     var obj = Beaner.newInstance<KafkaListener>(clazz)
                     obj.listener(record as KafkaConsumerRecord<String, Any>)
                 }
             }
         }
 
-
         /*
         Init kafka streams
          */
         if (KafkaManager.config.get("streams") == "true") {
             val streamsProps: Properties = KafkaManager.config.toProperties()
-            if (!streamsProps.contains(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG)) {
+            if(!streamsProps.contains(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG)){
                 streamsProps[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
             }
-            if (!streamsProps.contains(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG)) {
+            if(!streamsProps.contains(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG)){
                 streamsProps[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
             }
             KafkaManager.streams = KafkaStreams(KafkaManager.streamsTopology, streamsProps)
