@@ -15,8 +15,17 @@
  */
 package net.cloudopt.next.kafka
 
+import io.vertx.kafka.client.consumer.KafkaConsumer
+import io.vertx.kafka.client.consumer.KafkaConsumerRecord
+import io.vertx.kafka.client.producer.KafkaProducer
+import net.cloudopt.next.utils.Beaner
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.Plugin
+import org.apache.kafka.common.serialization.Serdes
+import org.apache.kafka.streams.KafkaStreams
+import org.apache.kafka.streams.StreamsConfig
+import java.util.*
 
 
 /*
@@ -26,14 +35,66 @@ import net.cloudopt.next.web.Plugin
  */
 class KafkaPlugin : Plugin {
 
+
     override fun start(): Boolean {
-        KafkaManager.init(CloudoptServer.vertx)
+        KafkaManager.consumer =
+            KafkaConsumer.create<Any, Any>(CloudoptServer.vertx, KafkaManager.config)?.exceptionHandler { e ->
+                KafkaManager.logger.error("[KAFKA] Consumer was error： ${e.message}")
+            }
+        KafkaManager.producer =
+            KafkaProducer.create<Any, Any>(CloudoptServer.vertx, KafkaManager.config)?.exceptionHandler { e ->
+                KafkaManager.logger.error("[KAFKA] Producer was error： ${e.message}")
+            }
+
+
+        Classer.scanPackageByAnnotation(CloudoptServer.packageName, true, AutoKafka::class.java)
+            .forEach { clazz ->
+                clazz.getDeclaredAnnotation(AutoKafka::class.java).value.split(",").forEach { topic ->
+                    var set = KafkaManager.kafkaList.get(topic) ?: mutableSetOf()
+                    set.add(clazz)
+                    KafkaManager.kafkaList.set(topic, set)
+                }
+            }
+
+
+        KafkaManager.kafkaList.forEach { key, set ->
+            KafkaManager.consumer?.subscribe(key) { ar ->
+                if (ar.succeeded()) {
+                    KafkaManager.logger.info("[KAFKA] Registered topic listener was success：${key}")
+                } else {
+                    KafkaManager.logger.error("[KAFKA] Registered topic listener was error：${key}")
+                }
+            }?.handler { record ->
+                set.forEach { clazz ->
+                    var obj = Beaner.newInstance<KafkaListener>(clazz)
+                    obj.listener(record as KafkaConsumerRecord<String, Any>)
+                }
+            }
+        }
+
+
+        /*
+        Init kafka streams
+         */
+        if (KafkaManager.config.get("streams") == "true") {
+            val streamsProps: Properties = KafkaManager.config.toProperties()
+            if (!streamsProps.contains(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG)) {
+                streamsProps[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+            }
+            if (!streamsProps.contains(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG)) {
+                streamsProps[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
+            }
+            KafkaManager.streams = KafkaStreams(KafkaManager.streamsTopology, streamsProps)
+            KafkaManager.streams?.setUncaughtExceptionHandler { thread: Thread, throwable: Throwable -> throwable.printStackTrace() }
+            KafkaManager.streams?.start()
+        }
         return true
     }
 
     override fun stop(): Boolean {
         KafkaManager.producer?.close()
         KafkaManager.consumer?.close()
+        KafkaManager.streams?.close()
         return true
     }
 

@@ -17,17 +17,18 @@ package net.cloudopt.next.kafka
 
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
-import io.vertx.core.Vertx
 import io.vertx.kafka.client.consumer.KafkaConsumer
-import io.vertx.kafka.client.consumer.KafkaConsumerRecord
 import io.vertx.kafka.client.producer.KafkaProducer
 import io.vertx.kafka.client.producer.KafkaProducerRecord
 import io.vertx.kafka.client.producer.RecordMetadata
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Beaner
-import net.cloudopt.next.utils.Classer
-import net.cloudopt.next.web.CloudoptServer
 import net.cloudopt.next.web.config.ConfigManager
+import org.apache.kafka.streams.KafkaStreams
+import org.apache.kafka.streams.Topology
+import org.apache.kafka.streams.processor.AbstractProcessor
+import org.apache.kafka.streams.processor.Processor
+import java.util.*
+import kotlin.collections.LinkedHashSet
 
 
 /*
@@ -37,10 +38,10 @@ import net.cloudopt.next.web.config.ConfigManager
  */
 object KafkaManager {
 
-    private val logger = Logger.getLogger(KafkaManager::class.java)
+    val logger = Logger.getLogger(KafkaManager::class.java)
 
     @JvmStatic
-    private val kafkaList: HashMap<String, MutableSet<Class<*>>> = hashMapOf()
+    internal val kafkaList: MutableMap<String, MutableSet<Class<*>>> = hashMapOf()
 
     @JvmStatic
     open var consumer: KafkaConsumer<Any, Any>? = null
@@ -49,45 +50,14 @@ object KafkaManager {
     open var producer: KafkaProducer<Any, Any>? = null
 
     @JvmStatic
+    open var streams: KafkaStreams? = null
+
+    @JvmStatic
+    open val streamsTopology = Topology()
+
+    @JvmStatic
     var config = ConfigManager.init("kafka") as MutableMap<String, String>
 
-    fun init(vertx: Vertx) {
-        consumer = KafkaConsumer.create<Any, Any>(vertx, config)?.exceptionHandler { e ->
-            logger.error("[KAFKA] Consumer was error： ${e.message}")
-        }
-        producer = KafkaProducer.create<Any, Any>(vertx, config)?.exceptionHandler { e ->
-            logger.error("[KAFKA] Producer was error： ${e.message}")
-        }
-
-
-        Classer.scanPackageByAnnotation(CloudoptServer.packageName, true, AutoKafka::class.java)
-            .forEach { clazz ->
-                clazz.getDeclaredAnnotation(AutoKafka::class.java).value.split(",").forEach { topic ->
-                    var set = kafkaList.get(topic) ?: mutableSetOf()
-                    set.add(clazz)
-                    kafkaList.set(topic, set)
-                }
-            }
-
-
-
-        consumer?.subscribe(kafkaList.keys) { ar ->
-            if (ar.succeeded()) {
-                logger.info("[KAFKA] Registered topic listener was success：${ar.cause()}")
-            } else {
-                logger.error("[KAFKA] Registered topic listener was error：${ar.cause()}")
-            }
-        }?.handler { record ->
-            if (record.topic().isNotBlank() && kafkaList.get(record.topic())?.size ?: 0 > 0) {
-                kafkaList.get(record.topic())?.forEach { clazz ->
-                    var obj = Beaner.newInstance<KafkaListener>(clazz)
-                    obj.listener(record as KafkaConsumerRecord<String, Any>)
-                }
-            }
-        }
-
-
-    }
 
     @JvmOverloads
     fun send(
