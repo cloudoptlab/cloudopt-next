@@ -25,8 +25,6 @@ import net.cloudopt.next.web.Plugin
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsConfig
-import org.apache.kafka.streams.processor.AbstractProcessor
-import org.apache.kafka.streams.processor.ProcessorSupplier
 import java.util.*
 
 
@@ -58,19 +56,19 @@ class KafkaPlugin : Plugin {
                 }
             }
 
-
-
-        KafkaManager.consumer?.subscribe(KafkaManager.kafkaList.keys) { ar ->
-            if (ar.succeeded()) {
-                KafkaManager.logger.info("[KAFKA] Registered topic listener was success：${KafkaManager.kafkaList.keys}")
-            } else {
-                KafkaManager.logger.error("[KAFKA] Registered topic listener was error：${KafkaManager.kafkaList.keys}")
-            }
-        }?.handler { record ->
-            if (record.topic().isNotBlank() && KafkaManager.kafkaList.get(record.topic())?.size ?: 0 > 0) {
-                KafkaManager.kafkaList.get(record.topic())?.forEach { clazz ->
-                    var obj = Beaner.newInstance<KafkaListener>(clazz)
-                    obj.listener(record as KafkaConsumerRecord<String, Any>)
+        if(KafkaManager.kafkaList.isNotEmpty()){
+            KafkaManager.consumer?.subscribe(KafkaManager.kafkaList.keys) { ar ->
+                if (ar.succeeded()) {
+                    KafkaManager.logger.info("[KAFKA] Registered topic listener was success：${KafkaManager.kafkaList.keys}")
+                } else {
+                    KafkaManager.logger.error("[KAFKA] Registered topic listener was error：${KafkaManager.kafkaList.keys}")
+                }
+            }?.handler { record ->
+                if (record.topic().isNotBlank() && KafkaManager.kafkaList.get(record.topic())?.size ?: 0 > 0) {
+                    KafkaManager.kafkaList.get(record.topic())?.forEach { clazz ->
+                        var obj = Beaner.newInstance<KafkaListener>(clazz)
+                        obj.listener(record as KafkaConsumerRecord<String, Any>)
+                    }
                 }
             }
         }
