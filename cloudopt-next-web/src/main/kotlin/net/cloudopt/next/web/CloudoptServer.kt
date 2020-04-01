@@ -45,6 +45,9 @@ object CloudoptServer {
     open val resources: MutableList<Class<Resource>> = arrayListOf()
 
     @JvmStatic
+    open val sockets: MutableList<Class<SocketJSResource>> = arrayListOf()
+
+    @JvmStatic
     open val handlers = arrayListOf<Handler>()
 
     @JvmStatic
@@ -92,16 +95,22 @@ object CloudoptServer {
                 handlers.add(Beaner.newInstance(clazz))
             }
 
+        //Scan socket
+        Classer.scanPackageByAnnotation(packageName,true,SocketJS::class.java)
+            .forEach{clazz ->
+                sockets.add(clazz as Class<SocketJSResource>)
+            }
+
         //Scan resources
         Classer.scanPackageByAnnotation(packageName, true, API::class.java)
             .forEach { clazz ->
                 resources.add(clazz as Class<Resource>)
             }
 
-        resources.forEach { clazz ->
+        for (clazz in resources){
 
             // Get api annotation
-            var annotation: API? = clazz.getDeclaredAnnotation(API::class.java)
+            val annotation: API? = clazz.getDeclaredAnnotation(API::class.java)
 
             //Register interceptor
             annotation?.interceptor?.forEach { inClass ->

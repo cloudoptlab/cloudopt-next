@@ -18,11 +18,14 @@ package net.cloudopt.next.web
 import io.vertx.core.AbstractVerticle
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.*
+import io.vertx.ext.web.handler.sockjs.SockJSHandler
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.web.route.SocketJS
+
 
 /*
  * @author: Cloudopt
@@ -56,6 +59,20 @@ class CloudoptServerVerticle : AbstractVerticle() {
         // Set json provider
         Jsoner.jsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.config.jsonProvider))
 
+        // Register websockets
+        if (CloudoptServer.sockets.size > 0){
+            val sockJSHandler = SockJSHandler.create(CloudoptServer.vertx, ConfigManager.config.socket)
+            CloudoptServer.sockets.forEach { clazz ->
+                val websocketAnnotation: SocketJS? = clazz.getDeclaredAnnotation(SocketJS::class.java)
+                sockJSHandler.socketHandler { sockJSHandler->
+                    var handler = Beaner.newInstance<SocketJSResource>(clazz)
+                    handler.handler(sockJSHandler)
+                }
+                logger.info("[SOCKET] Registered socket resource: ${websocketAnnotation?.value} -> ${clazz.name}")
+                router.route(websocketAnnotation?.value).handler(sockJSHandler)
+            }
+        }
+
         //The ResponseContentTypeHandler can set the Content-Type header automatically.
         router.route("/*").handler(ResponseContentTypeHandler.create())
 
@@ -64,7 +81,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         router.route().handler(BodyHandler.create().setBodyLimit(ConfigManager.config.bodyLimit))
 
         //Set timeout
-       router.route("/*").handler(TimeoutHandler.create(ConfigManager.config.timeout))
+        router.route("/*").handler(TimeoutHandler.create(ConfigManager.config.timeout))
 
         // Set csrf
         if (ConfigManager.config.waf.csrf) {

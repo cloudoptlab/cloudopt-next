@@ -133,5 +133,10 @@ class IndexController : Resource() {
         renderText("This is Blocking!")
     }
 
+    @GET("socket")
+    fun socketView() {
+        renderHtml(view = "socket")
+    }
+
 
 }
