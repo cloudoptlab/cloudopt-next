@@ -136,38 +136,35 @@ object CloudoptServer {
 
                 methodAnnotations.forEach { methodAnnotation ->
 
-                    if (methodAnnotation is GET) {
-                        resourceUrl = annotation?.value + methodAnnotation.value
-                        httpMethod = HttpMethod.GET
-                        valids = methodAnnotation.valid
-                    }
-
-                    if (methodAnnotation is POST) {
-                        resourceUrl = annotation?.value + methodAnnotation.value
-                        httpMethod = HttpMethod.POST
-                        valids = methodAnnotation.valid
-                    }
-
-                    if (methodAnnotation is PUT) {
-                        resourceUrl = annotation?.value + methodAnnotation.value
-                        httpMethod = HttpMethod.PUT
-                        valids = methodAnnotation.valid
-                    }
-
-                    if (methodAnnotation is DELETE) {
-                        resourceUrl = annotation?.value + methodAnnotation.value
-                        httpMethod = HttpMethod.DELETE
-                        valids = methodAnnotation.valid
-                    }
-
-                    if (methodAnnotation is PATCH) {
-                        resourceUrl = annotation?.value + methodAnnotation.value
-                        httpMethod = HttpMethod.POST
-                        valids = methodAnnotation.valid
-                    }
-
-                    if (methodAnnotation is Blocking) {
-                        blocking = true
+                    when (methodAnnotation) {
+                        is GET -> {
+                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
+                            httpMethod = methodAnnotation.httpMethod
+                            valids = methodAnnotation.valid
+                        }
+                        is POST -> {
+                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
+                            httpMethod = methodAnnotation.httpMethod
+                            valids = methodAnnotation.valid
+                        }
+                        is PUT -> {
+                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
+                            httpMethod = methodAnnotation.httpMethod
+                            valids = methodAnnotation.valid
+                        }
+                        is DELETE -> {
+                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
+                            httpMethod = methodAnnotation.httpMethod
+                            valids = methodAnnotation.valid
+                        }
+                        is PATCH -> {
+                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
+                            httpMethod = methodAnnotation.httpMethod
+                            valids = methodAnnotation.valid
+                        }
+                        is Blocking -> {
+                            blocking = true
+                        }
                     }
 
                     if (resourceUrl.isNotBlank()) {
