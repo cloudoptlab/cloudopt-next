@@ -60,9 +60,9 @@ object ConfigManager {
         var configMap = Jsoner.read(CONFIG_JSON_FILENAME, prefix)
         if (config.env.isNotBlank()) {
             val newConfigFileName = "application-${config.env}.json"
-            configMap.putAll(Jsoner.read(newConfigFileName, prefix))
+            configMap.put(prefix,Jsoner.read(newConfigFileName, prefix))
         }
-        return configMap
+        return configMap.get(prefix) as MutableMap<String, Any>
     }
 
     @JvmStatic
