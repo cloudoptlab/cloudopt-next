@@ -72,7 +72,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
 
         // Register failure handler
-        CloudoptServer.logger.info("[FAILURE HANDLER] Registered failure handler：" + CloudoptServer.errorHandler::class.java.getName())
+        CloudoptServer.logger.info("[FAILURE HANDLER] Registered failure handler：${CloudoptServer.errorHandler::class.java.getName()}")
 
         router.route("/*").failureHandler { failureRoutingContext ->
             CloudoptServer.errorHandler.init(failureRoutingContext)
@@ -83,7 +83,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         //Register handlers
         CloudoptServer.handlers.forEach { handler ->
-            CloudoptServer.logger.info("[HANDLER] Registered handler：" + handler::class.java.getName())
+            CloudoptServer.logger.info("[HANDLER] Registered handler：${handler::class.java.getName()}")
             router.route("/*").handler { context ->
                 try {
                     handler.preHandle(Resource().init(context))
@@ -188,8 +188,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
 
             CloudoptServer.logger.info(
-                "[RESOURCE] Registered Resource :" + resourceTable.methodName + " | "
-                        + resourceTable.url
+                "[RESOURCE] Registered resource :${resourceTable.methodName} | ${resourceTable.url}"
             )
         }
 
@@ -208,7 +207,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 CloudoptServer.logger.error(
                     "=========================================================================================================="
                 )
-                CloudoptServer.logger.error("\uD83D\uDC0B Cloudopt Next started is error! " + result.cause())
+                CloudoptServer.logger.error("\uD83D\uDC0B Cloudopt Next started is error! ${result.cause()}")
                 CloudoptServer.logger.error(
                     "=========================================================================================================="
                 )
@@ -219,7 +218,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
     override fun stop() {
         CloudoptServer.plugins.forEach { plugin ->
             if (!plugin.stop()) {
-                CloudoptServer.logger.info("[PLUGIN] Stoped plugin was error：" + plugin.javaClass.name)
+                CloudoptServer.logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")
             }
         }
     }
