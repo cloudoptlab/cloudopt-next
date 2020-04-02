@@ -68,6 +68,9 @@ class CloudoptServerVerticle : AbstractVerticle() {
                     var handler = Beaner.newInstance<SocketJSResource>(clazz)
                     handler.handler(sockJSHandler)
                 }
+                if (!websocketAnnotation?.value?.endsWith("/*")!!){
+                    logger.error("[SOCKET] Url must be end with /* !")
+                }
                 logger.info("[SOCKET] Registered socket resource: ${websocketAnnotation?.value} -> ${clazz.name}")
                 router.route(websocketAnnotation?.value).handler(sockJSHandler)
             }
