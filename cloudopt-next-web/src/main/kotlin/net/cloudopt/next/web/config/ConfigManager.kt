@@ -57,10 +57,10 @@ object ConfigManager {
 
     @JvmStatic
     open fun init(prefix: String): MutableMap<String, Any> {
-        var configMap = Jsoner.read(CONFIG_JSON_FILENAME, prefix)
+        var configMap = Jsoner.read(CONFIG_JSON_FILENAME)
         if (config.env.isNotBlank()) {
             val newConfigFileName = "application-${config.env}.json"
-            configMap.put(prefix,Jsoner.read(newConfigFileName, prefix))
+            configMap.putAll(Jsoner.read(newConfigFileName))
         }
         return configMap.get(prefix) as MutableMap<String, Any>
     }
