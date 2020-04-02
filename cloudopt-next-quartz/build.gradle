@@ -1,0 +1,6 @@
+dependencies {
+    api project(":cloudopt-next-web")
+    implementation "org.quartz-scheduler:quartz:2.3.2"
+}
+
+description = "Cloudopt Next Quartz"

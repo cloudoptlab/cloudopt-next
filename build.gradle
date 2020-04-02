@@ -51,11 +51,6 @@ subprojects {
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
     }
 
-    sourceCompatibility = "$javaVersion"
-
-    tasks.withType(JavaCompile) {
-        options.encoding = "$javaVersion"
-    }
     compileKotlin {
         kotlinOptions.jvmTarget = "$javaVersion"
     }
