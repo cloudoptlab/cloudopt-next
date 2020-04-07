@@ -1,7 +1,0 @@
-net:
-  cloudopt:
-    next:
-      web:
-        packageName: "net.cloudopt.next.kafka.test"
-      kafka:
-        servers: "PLAINTEXT://127.0.0.1:9092"

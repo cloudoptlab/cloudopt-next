@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':cloudopt-next-web')
+    implementation 'io.vertx:vertx-web-client:3.8.5'
+}
+
+description = 'Cloudopt Next Http Client'

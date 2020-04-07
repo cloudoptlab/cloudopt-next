@@ -1,4 +1,6 @@
-![Cloudopt Next](https://github.com/cloudoptlab/cloudopt-next/raw/master/logo.png)
+<img src="https://www.cloudopt.net/static/images/logo.svg" width = "150"/>
+
+<br />
 
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![Apache Licenses Badge](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Twitter Badge](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/CloudoptLab)
 
@@ -58,7 +60,7 @@ public class IndexController extends Resource {
 
 Having trouble with Cloudopt Next? We’d like to help!
 
-- Follow our [twitter](https://twitter.com/) to get the latest information.
+- Follow our [twitter](https://twitter.com/CloudoptLab) to get the latest information.
 - Check the reference [documentation](https://next.cloudopt.net) carefully for specific code cases or common problems.
 - If you have a problem after the upgrade, check the upgrade instructions in the [Wiki](https://github.com/cloudoptlab/cloudopt-next/wiki).
 - Send mail to support@cloudopt.net.

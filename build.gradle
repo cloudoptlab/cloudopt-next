@@ -1,0 +1,101 @@
+plugins {
+    id "java"
+    id "org.jetbrains.kotlin.jvm" version "1.3.70"
+    id "com.jfrog.bintray" version "1.8.4"
+}
+
+def versionDefined = "2.0.2-BETA"
+
+def kotlinVersion = "1.3.70"
+
+def javaVersion = "1.8"
+
+allprojects {
+    group = "net.cloudopt.next"
+    version = "$versionDefined"
+    sourceCompatibility = 1.8
+    repositories {
+        maven { url "http://maven.aliyun.com/nexus/content/repositories/central/" }
+        mavenCentral()
+        jcenter()
+    }
+}
+
+subprojects {
+
+    buildscript {
+        repositories {
+            gradlePluginPortal()
+        }
+        dependencies {
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+            classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
+            classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
+        }
+
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    apply plugin: "java"
+    apply plugin: "maven-publish"
+    apply plugin: "kotlin"
+
+    dependencies {
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+        implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+        testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "$javaVersion"
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "$javaVersion"
+    }
+
+    task sourceJar(type: Jar, dependsOn: classes) { from sourceSets.main.allSource }
+
+    apply plugin: "maven-publish"
+    apply plugin: "com.jfrog.bintray"
+
+    publishing {
+        publications {
+            Publication(MavenPublication) {
+                groupId 'net.cloudopt.next'
+                artifactId "$project.name"
+                version "$versionDefined" // This is defined on the subproject
+
+                from components.java
+
+                artifact sourceJar {
+                    classifier "sources"
+                }
+            }
+        }
+    }
+
+
+    bintray {
+        user = System.getenv("BINTRAY_USER")
+        key = System.getenv("BINTRAY_KEY")
+        pkg {
+            repo = "maven"
+            name = project.name
+            userOrg = "cloudopt"
+            licenses = ["Apache-2.0"]
+            vcsUrl = "https://github.com/cloudoptlab/cloudopt-next.git"
+            version {
+                name = "$versionDefined"
+            }
+            publications = ['Publication']
+            publish = true
+        }
+    }
+
+
+}

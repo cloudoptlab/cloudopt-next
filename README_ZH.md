@@ -1,4 +1,6 @@
-![Cloudopt Next](https://github.com/cloudoptlab/cloudopt-next/raw/master/logo.png)
+<img src="https://www.cloudopt.net/static/images/logo.svg" width = "150"/>
+
+<br />
 
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin) [![Apache Licenses Badge](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Twitter Badge](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/CloudoptLab)
 
@@ -55,7 +57,7 @@ public class IndexController extends Resource {
 
 在使用Cloudopt Next的过程中遇到了问题？您可以通过下面途径寻求帮助：
 
-- 请关注我们的[推特](https://twitter.com/)，以便获得最新的信息。
+- 请关注我们的[推特](https://twitter.com/CloudoptLab)，以便获得最新的信息。
 - 请仔细检查[参考文档](https://next.cloudopt.net)，查看具体的代码案例或者是常见问题。
 - 如果您在升级版本以后遇到问题，可以查看[Wiki](https://github.com/cloudoptlab/cloudopt-next/wiki)中的升级说明。
 - 请发送邮件到support@cloudopt.net

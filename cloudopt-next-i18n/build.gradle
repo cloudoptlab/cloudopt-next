@@ -1,0 +1,7 @@
+dependencies {
+    implementation project(':cloudopt-next-utils')
+    implementation project(':cloudopt-next-json')
+    testImplementation project(':cloudopt-next-logging')
+}
+
+description = 'Cloudopt Next i18N'

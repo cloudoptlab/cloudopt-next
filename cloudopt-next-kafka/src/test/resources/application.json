@@ -1,0 +1,15 @@
+{
+  "packageName": "net.cloudopt.next.kafka.test",
+  "port": 2333,
+  "kafka": {
+    "streams": "true",
+    "bootstrap.servers": "PLAINTEXT://127.0.0.1:9092",
+    "key.deserializer": "org.apache.kafka.common.serialization.StringDeserializer",
+    "value.deserializer": "org.apache.kafka.common.serialization.StringDeserializer",
+    "key.serializer": "org.apache.kafka.common.serialization.StringSerializer",
+    "value.serializer": "org.apache.kafka.common.serialization.StringSerializer",
+    "acks": "1",
+    "group.id": "net.cloudopt.next",
+    "application.id": "service"
+  }
+}
