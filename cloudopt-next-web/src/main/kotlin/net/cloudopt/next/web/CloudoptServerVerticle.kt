@@ -217,7 +217,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 CloudoptServer.logger.info(
                     "=========================================================================================================="
                 )
-                CloudoptServer.logger.info("\uD83D\uDC0B Cloudopt Next started is success!")
+                CloudoptServer.logger.info("\uD83D\uDC0B Cloudopt Next started success!")
                 CloudoptServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
                 CloudoptServer.logger.info(
                     "=========================================================================================================="
@@ -227,7 +227,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 CloudoptServer.logger.error(
                     "=========================================================================================================="
                 )
-                CloudoptServer.logger.error("\uD83D\uDC0B Cloudopt Next started is error! ${result.cause()}")
+                CloudoptServer.logger.error("\uD83D\uDC0B Cloudopt Next started error! ${result.cause()}")
                 CloudoptServer.logger.error(
                     "=========================================================================================================="
                 )
