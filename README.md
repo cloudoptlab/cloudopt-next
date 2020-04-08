@@ -7,15 +7,16 @@ Cloudopt Next is a very lightweight micro-service framework based on kotlin and 
 **Cloudopt Next has the following features:**
 
 >**Simple** Minimalist design, almost no configuration, no dependence on tomcat, jetty and other web containers.
+
 >**Asyn** Based on vertx, it is easy to achieve high-performance asynchronous services.
+
 >**Plugin** Supports various components of the vertx system, and also supports the extension of functions through plug-ins. The official also provides a large number of useful plug-ins.
+
 >**Chinese** All Chinese documents, Chinese community to help Chinese developers get started quickly
 
 
 
 ## Started
-
----------------------
 
 You can view the [document](https://next.cloudopt.net) by visiting the official website of Cloudopt Next, or you can go to [example](https://github.com/cloudoptlab/cloudopt-next-example) to see a simple example.
 
@@ -86,8 +87,6 @@ fun main(args: Array<String>) {
 
 ## Getting help
 
----------------------
-
 Having trouble with Cloudopt Next? We’d like to help!
 
 - Follow our [twitter](https://twitter.com/) to get the latest information.
@@ -98,8 +97,6 @@ Having trouble with Cloudopt Next? We’d like to help!
 - If you are in China, you can also join the QQ group: 557692142.
 
 ## Reporting Issues
-
----------------------
 
 Cloudopt Next uses GitHub’s integrated issue tracking system to record bugs and feature requests. If you want to raise an issue, please follow the recommendations below:
 
