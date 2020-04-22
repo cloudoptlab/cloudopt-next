@@ -17,6 +17,7 @@ package net.cloudopt.next.web.config
 
 import io.vertx.core.json.Json
 import net.cloudopt.next.json.Jsoner
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Maper
 
 
@@ -32,6 +33,11 @@ object ConfigManager {
     @JvmStatic
     var config: WebConfigBean = WebConfigBean()
 
+    // Init web config
+    var configMap: MutableMap<String, Any> = mutableMapOf()
+
+    val logger = Logger.getLogger(ConfigManager::class.java)
+
     init {
 
         config.vertx.maxWorkerExecuteTime = 60L * 1000 * 1000000
@@ -44,25 +50,28 @@ object ConfigManager {
 
         config.vertx.warningExceptionTime = 5L * 1000 * 1000000
 
-        // Init web config
-        var webConfigMap: MutableMap<String, Any> = Jsoner.read(CONFIG_JSON_FILENAME)
-
-        if (config.env.isNotBlank()) {
-            val newConfigFileName = "application-${config.env}.json"
-            webConfigMap.putAll(Jsoner.read(newConfigFileName))
+        try{
+            configMap = Jsoner.read(CONFIG_JSON_FILENAME)
+        }catch (e:RuntimeException){
+            logger.warn("[COFIG] Configuration we not found!")
         }
 
-        config = Maper.toObject(webConfigMap, WebConfigBean::class.java) as WebConfigBean
-    }
+        config = Maper.toObject(configMap, WebConfigBean::class.java) as WebConfigBean
 
-    @JvmStatic
-    open fun init(prefix: String): MutableMap<String, Any> {
-        var configMap = Jsoner.read(CONFIG_JSON_FILENAME)
         if (config.env.isNotBlank()) {
             val newConfigFileName = "application-${config.env}.json"
             configMap.putAll(Jsoner.read(newConfigFileName))
         }
-        return configMap.get(prefix) as MutableMap<String, Any>
+
+    }
+
+    @JvmStatic
+    open fun init(prefix: String): MutableMap<String, Any> {
+        var newMap = configMap
+        for (key in prefix.split(".")){
+            newMap = configMap.get(key) as MutableMap<String, Any>
+        }
+        return newMap
     }
 
     @JvmStatic

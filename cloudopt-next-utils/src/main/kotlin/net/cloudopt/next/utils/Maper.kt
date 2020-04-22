@@ -16,7 +16,10 @@
 package net.cloudopt.next.utils
 
 import com.alibaba.fastjson.JSON
+import com.alibaba.fastjson.JSONObject
 import com.alibaba.fastjson.serializer.SerializerFeature
+import java.lang.reflect.Modifier
+import java.util.LinkedHashMap
 
 
 /*
@@ -33,14 +36,24 @@ object Maper {
      * @return The object after the conversion is completed
      */
     fun toObject(map: MutableMap<String, Any>, beanClass: Class<*>): Any {
-        return JSON.parseObject(
-            JSON.toJSONString(
-                map,
-                SerializerFeature.WriteMapNullValue,
-                SerializerFeature.WriteNullListAsEmpty,
-                SerializerFeature.WriteNullBooleanAsFalse
-            ), beanClass
-        )
+        val obj = beanClass.newInstance()
+        val fields = obj.javaClass.declaredFields
+        for (field in fields) {
+            val mod: Int = field.modifiers
+            if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
+                continue
+            }
+            field.isAccessible = true
+            if (map.containsKey(field.name)) {
+                try {
+                    field.set(obj, map[field.name])
+                }catch (e:RuntimeException){
+                    var jsonObject:JSONObject = map[field.name] as JSONObject
+                    field.set(obj, toObject(jsonObject.toMutableMap(),field.type))
+                }
+            }
+        }
+        return obj
     }
 
     /**
@@ -49,14 +62,18 @@ object Maper {
      * @return The map after the conversion is completed
      */
     fun toMap(obj: Any): MutableMap<String, Any> {
-        return JSON.parseObject(
-            JSON.toJSONString(
-                obj,
-                SerializerFeature.WriteMapNullValue,
-                SerializerFeature.WriteNullListAsEmpty,
-                SerializerFeature.WriteNullBooleanAsFalse
-            )
-        ).toMutableMap()
+        val map = LinkedHashMap<String,Any>()
+        val clazz = obj.javaClass
+        for (field in clazz.declaredFields) {
+            field.isAccessible = true;
+            var fieldName = field.getName();
+            var value = field.get(obj);
+            if (value != null){
+                map[fieldName] = value;
+            }
+
+        }
+        return map.toMutableMap()
     }
 
 }

@@ -8,5 +8,8 @@
     "xss": true,
     "sql": true,
     "mongodb": true
+  },
+  "vertx": {
+    "eventLoopPoolSize": 4
   }
 }
