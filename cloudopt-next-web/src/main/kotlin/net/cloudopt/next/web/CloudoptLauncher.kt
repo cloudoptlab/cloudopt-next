@@ -6,7 +6,7 @@ object CloudoptLauncher {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        var args: Array<String> = arrayOf("run", "--redeploy=\"**/*.class\"", "--launcher-class=${args[0]}")
+        var args: Array<String> = arrayOf("run", "--redeploy=**/*.class", "--launcher-class=${args[0]}")
         Launcher().dispatch(args)
     }
 
