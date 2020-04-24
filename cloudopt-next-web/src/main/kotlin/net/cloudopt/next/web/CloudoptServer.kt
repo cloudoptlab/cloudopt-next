@@ -17,6 +17,7 @@ package net.cloudopt.next.web
 
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
+import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
@@ -63,7 +64,7 @@ object CloudoptServer {
     open val controllers = arrayListOf<ResourceTable>()
 
     @JvmStatic
-    lateinit open var vertx: Vertx
+    open var vertx: Vertx = Vertx.vertx(ConfigManager.config.vertx)
 
     @JvmStatic
     open var packageName = ""
@@ -214,7 +215,6 @@ object CloudoptServer {
 
     @JvmStatic
     fun run() {
-        vertx = Vertx.vertx(ConfigManager.config.vertx)
         Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
     }
 
