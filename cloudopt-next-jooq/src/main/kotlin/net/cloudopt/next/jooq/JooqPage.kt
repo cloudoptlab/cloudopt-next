@@ -27,5 +27,5 @@ data class JooqPage(
     val totalRow: Long = 0,
     val firstPage: Boolean = true,
     val lastPage: Boolean = true,
-    val list: MutableList<*> = mutableListOf<Any>()
+    var list: MutableList<*> = mutableListOf<Any>()
 )

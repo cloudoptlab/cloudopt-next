@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.jooq
 
+import org.jooq.OrderField
 import org.jooq.SelectConditionStep
 
 /*
@@ -28,7 +29,8 @@ class JooqPaginate(query: SelectConditionStep<*>, private var count: Int, privat
     private val totalRow: Long
     private var firstPage = false
     private var lastPage = false
-    private lateinit var query: SelectConditionStep<*>
+    private var query: SelectConditionStep<*>
+    private lateinit var orderField: OrderField<*>
 
     init {
         this.query = query
@@ -43,7 +45,7 @@ class JooqPaginate(query: SelectConditionStep<*>, private var count: Int, privat
         }
 
         if (totalRow != 0L && this.count <= 0 || this.page <= 0) {
-            throw RuntimeException("JooqPage tips: (づ￣ 3￣)づ count or page is error !")
+            throw RuntimeException("JooqPage tips: count or page is error !")
         }
 
         this.firstPage = this.page == 1
@@ -51,7 +53,21 @@ class JooqPaginate(query: SelectConditionStep<*>, private var count: Int, privat
 
     }
 
+    fun order(orderField: OrderField<*>){
+        this.orderField = orderField
+    }
+
     fun <T> find(clazz: Class<T>): JooqPage {
+        var list = if (orderField == null) {
+            query.limit(this.count).offset(skip()).fetchInto(clazz)
+        } else {
+            query.orderBy(orderField).limit(this.count).offset(skip()).fetchInto(clazz)
+        }
+        list = if (list.isNotEmpty()){
+             list.toMutableList()
+        }else{
+            mutableListOf()
+        }
         return JooqPage(
             count,
             page,
@@ -59,8 +75,7 @@ class JooqPaginate(query: SelectConditionStep<*>, private var count: Int, privat
             totalRow,
             firstPage,
             lastPage,
-            query.limit(this.count)?.offset(skip())?.fetchInto(clazz)?.toMutableList()
-                ?: mutableListOf<Any>()
+            list
         )
     }
 
