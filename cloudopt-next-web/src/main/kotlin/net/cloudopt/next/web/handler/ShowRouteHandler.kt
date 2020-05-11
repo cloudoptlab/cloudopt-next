@@ -37,9 +37,9 @@ class ShowRouteHandler : Handler() {
                 "Match route ----------------- " + df.format(Date())
                         + " ------------------------------"
             )
-            logger.info("Method       : " + resource.request.method())
-            logger.info("Path         : " + resource.request.uri())
-            logger.info("User-Agent   : " + resource.request.getHeader("User-Agent"))
+            logger.info("Method       : ${resource.request.method()}")
+            logger.info("Path         : ${resource.context.normalisedPath()}")
+            logger.info("User-Agent   : ${resource.request.getHeader("User-Agent")}")
             val params = resource.request.params()
             params.forEach { entry ->
                 if (params.contains(entry.key)) {
@@ -47,8 +47,8 @@ class ShowRouteHandler : Handler() {
                     params.add(entry.key, entry.value)
                 }
             }
-            logger.info("Params       : " + Jsoner.toJsonString(params?.entries() ?: "[]"))
-            logger.info("Cookie       : " + Jsoner.toJsonString(resource.request.getHeader("Cookie") ?: ""))
+            logger.info("Params       : ${Jsoner.toJsonString(params?.entries() ?: "[]")}")
+            logger.info("Cookie       : ${Jsoner.toJsonString(resource.request.getHeader("Cookie") ?: "")}")
             logger.info(
                 "--------------------------------------------------------------------------------"
             )

@@ -79,9 +79,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         //The ResponseContentTypeHandler can set the Content-Type header automatically.
         router.route("/*").handler(ResponseContentTypeHandler.create())
 
-        router.route().handler(BodyHandler.create())
-
-        router.route().handler(BodyHandler.create().setBodyLimit(ConfigManager.config.bodyLimit))
+        router.route("/*").handler(BodyHandler.create().setBodyLimit(ConfigManager.config.bodyLimit))
 
         //Set timeout
         router.route("/*").handler(TimeoutHandler.create(ConfigManager.config.timeout))
