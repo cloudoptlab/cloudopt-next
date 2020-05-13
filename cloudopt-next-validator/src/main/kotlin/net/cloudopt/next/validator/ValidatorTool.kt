@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.validator
 
+import org.hibernate.validator.HibernateValidator
 import java.util.*
 import javax.validation.ConstraintViolation
 import javax.validation.Validation
@@ -24,25 +25,26 @@ import javax.validation.Validation
  * @Time: 2018/6/14
  * @Description: Simplified check
  */
-object Validator {
+
+data class ValidatorResult(var result: Boolean = true, var message: String = "")
+
+object ValidatorTool {
+
+    val validator = Validation.byProvider(HibernateValidator::class.java).configure().buildValidatorFactory()
+        .validator
 
     @JvmOverloads
-    fun validate(obj: Any, keys: Array<String> = arrayOf<String>()): String {
-        val buffer = StringBuffer(64)
-        val validator = Validation.buildDefaultValidatorFactory()
-            .validator
-
-        return if (keys.size <= 0) {
+    fun validate(obj: Any, vararg args: String): ValidatorResult {
+        if (args.size <= 0) {
             val constraintViolations = validator.validate(obj)
             val iter = constraintViolations.iterator()
-            while (iter.hasNext()) {
+            if (iter.hasNext()) {
                 val c = iter.next() as ConstraintViolation<*>
-                buffer.append(c.message)
+                return ValidatorResult(false,c.message)
             }
-            buffer.toString()
         } else {
             val constraintViolations = HashSet<ConstraintViolation<Any>>()
-            for (key in keys) {
+            for (key in args) {
                 val it = validator.validateProperty(obj, key).iterator()
                 if (it.hasNext()) {
                     constraintViolations.add(it.next())
@@ -50,13 +52,12 @@ object Validator {
 
             }
             val iter = constraintViolations.iterator()
-            while (iter.hasNext()) {
+            if (iter.hasNext()) {
                 val c = iter.next() as ConstraintViolation<*>
-                buffer.append(c.message)
+                return ValidatorResult(false,c.message)
             }
-            buffer.toString()
         }
-
+        return ValidatorResult(true,"")
     }
 
 
