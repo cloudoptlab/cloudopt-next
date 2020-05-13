@@ -97,7 +97,11 @@ open class Resource {
      * @return Parameters Object
      */
     fun <T> getParams(clazz: Class<T>): Any {
-        return Maper.toObject(request.params() as MutableMap<String, Any>, clazz)
+        var map = mutableMapOf<String,Any>()
+        request.params().forEach { e->
+            map[e.key] = e.value
+        }
+        return Maper.toObject(map, clazz)
     }
 
     /**
