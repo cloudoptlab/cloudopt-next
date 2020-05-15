@@ -27,8 +27,12 @@ import net.cloudopt.next.web.config.ConfigManager
 class CorsHandler : Handler() {
     override fun preHandle(resource: Resource) {
         if (ConfigManager.config.cors) {
-            resource.setHeader("Access-Control-Allow-Origin", "*")
-            resource.setHeader("Access-Control-Allow-Methods", "*")
+            if (resource.request.getHeader("Origin").isNullOrBlank()) {
+                resource.setHeader("Access-Control-Allow-Origin", "*")
+            } else {
+                resource.setHeader("Access-Control-Allow-Origin", resource.request.getHeader("Origin"))
+            }
+            resource.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS")
             resource.setHeader("Access-Control-Allow-Headers", "Content-Type")
             resource.setHeader("Access-Control-Max-Age", "1800")
             resource.setHeader("Sec-Fetch-Mode", "cors")
