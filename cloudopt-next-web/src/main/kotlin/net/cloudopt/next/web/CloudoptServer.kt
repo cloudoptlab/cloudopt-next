@@ -180,7 +180,11 @@ object CloudoptServer {
                     if (resourceUrl.isNotBlank()) {
                         var temp = mutableMapOf<HttpMethod, Array<KClass<out Validator>>>()
                         temp.put(httpMethod, valids)
-                        validators.put(resourceUrl, temp)
+                        if(validators.containsKey(resourceUrl)){
+                            validators.get(resourceUrl)?.putAll(temp)
+                        }else{
+                            validators.put(resourceUrl, temp)
+                        }
                     }
 
                 }
