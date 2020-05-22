@@ -42,7 +42,7 @@ object EventManager {
         // init event bus.
         eventBus = vertx.eventBus()
 
-        Classer.scanPackageByAnnotation(CloudoptServer.packageName, false, AutoEvent::class.java)
+        Classer.scanPackageByAnnotation(CloudoptServer.packageName, true, AutoEvent::class.java)
             .forEach { clazz ->
                 eventList.put(clazz.getDeclaredAnnotation(AutoEvent::class.java).value, clazz)
             }

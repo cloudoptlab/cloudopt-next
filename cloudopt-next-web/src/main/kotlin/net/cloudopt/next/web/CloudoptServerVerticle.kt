@@ -16,7 +16,9 @@
 package net.cloudopt.next.web
 
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.Context
 import io.vertx.ext.web.Router
+import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
 import net.cloudopt.next.json.Jsoner
@@ -24,6 +26,8 @@ import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.web.event.AfterEvent
+import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.route.SocketJS
 
 
@@ -181,27 +185,11 @@ class CloudoptServerVerticle : AbstractVerticle() {
         CloudoptServer.controllers.forEach { resourceTable ->
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
-                    try {
-                        val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
-                        controllerObj.init(context)
-                        val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
-                        m.invoke(controllerObj)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        context.response().end()
-                    }
+                   requestProcessing(resourceTable,context)
                 }
             } else {
                 router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
-                    try {
-                        val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
-                        controllerObj.init(context)
-                        val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
-                        m.invoke(controllerObj)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        context.response().end()
-                    }
+                    requestProcessing(resourceTable,context)
                 }
             }
 
@@ -238,6 +226,26 @@ class CloudoptServerVerticle : AbstractVerticle() {
             if (!plugin.stop()) {
                 CloudoptServer.logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")
             }
+        }
+    }
+
+    private fun requestProcessing(resourceTable:ResourceTable,context: RoutingContext){
+        try{
+            val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
+            controllerObj.init(context)
+            val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
+            m.invoke(controllerObj)
+            // Run after event
+            if(m.getAnnotation(AfterEvent::class.java) != null && context.response().ended()){
+                var afterEvent = m.getAnnotation(AfterEvent::class.java)
+                for (topic in afterEvent.value){
+                    EventManager.send(topic,"${resourceTable.httpMethod}:${resourceTable.url}")
+                }
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+            logger.error(e.message?:"${resourceTable.url} has error occurred, but the error message could not be obtained ")
+            context.response().end()
         }
     }
 

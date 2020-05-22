@@ -21,6 +21,7 @@ import io.vertx.core.Promise
 import net.cloudopt.next.web.CloudoptServer.logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Worker
+import net.cloudopt.next.web.event.AfterEvent
 import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.API
@@ -138,5 +139,10 @@ class IndexController : Resource() {
         renderHtml(view = "socket")
     }
 
+    @GET("afterEvent")
+    @AfterEvent(["net.cloudopt.web.test"])
+    fun afterEvent() {
+        renderText("AfterEvent is success!")
+    }
 
 }
