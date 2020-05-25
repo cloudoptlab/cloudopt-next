@@ -72,6 +72,9 @@ object CloudoptServer {
     @JvmStatic
     open var errorHandler = Beaner.newInstance<ErrorHandler>(Classer.loadClass(ConfigManager.config.errorHandler))
 
+    /**
+     * Scan by annotation and register as a route.
+     */
     fun scan() {
         ConfigManager.config.vertxDeployment.workerPoolName = verticleID
 
@@ -199,53 +202,99 @@ object CloudoptServer {
         }
     }
 
+    /**
+     * Get package path via class.
+     * @param clazz Class<*>
+     */
     @JvmStatic
     fun run(clazz: Class<*>) {
         ConfigManager.config.packageName = clazz.`package`.name
         run()
     }
 
+    /**
+     * Get package path via class.
+     * @param clazz Class<*>
+     */
     @JvmStatic
     fun run(clazz: KClass<*>) {
         ConfigManager.config.packageName = clazz.java.`package`.name
         run()
     }
 
+    /**
+     * Get package path by package's name.
+     * @param pageName package's name
+     */
     @JvmStatic
     fun run(pageName: String) {
         ConfigManager.config.packageName = pageName
         run()
     }
 
+    /**
+     * Get package path by package's name.
+     */
     @JvmStatic
     fun run() {
         Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
     }
 
+    /**
+     * Add custom render.
+     * @see net.cloudopt.next.web.render.Render
+     * @param extension render's name
+     * @param render Render object
+     * @return CloudoptServer
+     */
     @JvmStatic
     fun addRender(extension: String, render: Render): CloudoptServer {
         RenderFactory.add(extension, render)
         return this
     }
 
+    /**
+     * Set the default render.
+     * @param name render name
+     * @return CloudoptServer
+     */
     @JvmStatic
     fun setDefaultRender(name: String): CloudoptServer {
         RenderFactory.setDefaultRender(name)
         return this
     }
 
+    /**
+     * Add the plugins that need to be started and the plugins will start first after the server starts.
+     * @see net.cloudopt.next.web.Plugin
+     * @param plugin Plugin object
+     * @return CloudoptServer
+     */
     @JvmStatic
     fun addPlugin(plugin: Plugin): CloudoptServer {
         plugins.add(plugin)
         return this
     }
 
+    /**
+     * Add a handler that needs to be started and the handler will handle all requests.
+     * @see net.cloudopt.next.web.handler.Handler
+     * @param handler Handler
+     * @return CloudoptServer
+     */
     @JvmStatic
     fun addHandler(handler: Handler): CloudoptServer {
         handlers.add(handler)
         return this
     }
 
+    /**
+     * Stop the the Vertx instance and release any resources held by it.
+     * <p>
+     * The instance cannot be used after it has been closed.
+     * <p>
+     * The actual close is asynchronous and may not complete until after the call has returned.
+     */
     @JvmStatic
     fun stop() {
         vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")

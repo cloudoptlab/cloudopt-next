@@ -27,7 +27,7 @@ import net.cloudopt.next.json.Jsoner
 
 fun main(args: Array<String>) {
 
-    var client = HttpClient("https://www.cloudopt.net")
+    var client = HttpClient("https://www.cloudopt.net").setPort(80)
 
     client.get("/api/v1/grade/website/www.google.com").send { result ->
         println(Jsoner.toJsonString(result.result().bodyAsString()))

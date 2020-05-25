@@ -32,6 +32,12 @@ interface Render {
      */
     fun render(resource: Resource, obj: Any)
 
+    /**
+     * Ends the response. If no data has been written to the response body,
+     * the actual response won't get written until this method gets called.
+     * @see net.cloudopt.next.web.Resource
+     * @param resource Resource object
+     */
     fun end(resource: Resource) {
         CloudoptServer.handlers.forEach { handler ->
             handler.afterCompletion(resource)
@@ -39,6 +45,13 @@ interface Render {
         resource.response.end()
     }
 
+    /**
+     * Ends the response. If no data has been written to the response body,
+     * the actual response won't get written until this method gets called.
+     * @see net.cloudopt.next.web.Resource
+     * @param resource Resource object
+     * @param text the string to write before ending the response
+     */
     fun end(resource: Resource, text: String) {
         CloudoptServer.handlers.forEach { handler ->
             handler.afterCompletion(resource)

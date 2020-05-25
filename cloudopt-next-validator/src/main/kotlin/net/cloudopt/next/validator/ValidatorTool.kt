@@ -33,6 +33,12 @@ object ValidatorTool {
     val validator = Validation.byProvider(HibernateValidator::class.java).configure().buildValidatorFactory()
         .validator
 
+    /**
+     * Check parameters with comments on fields
+     * @param obj Any object
+     * @param args Checking only some fields
+     * @return ValidatorResult
+     */
     @JvmOverloads
     fun validate(obj: Any, vararg args: String): ValidatorResult {
         if (args.size <= 0) {

@@ -16,10 +16,10 @@
 package net.cloudopt.next.web
 
 import io.vertx.core.buffer.Buffer
+import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
-import io.vertx.ext.web.Cookie
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
 import net.cloudopt.next.json.Jsoner
@@ -53,6 +53,12 @@ open class Resource {
             return context.response()
         }
 
+    /**
+     * Initialize the resource object.
+     * @see RoutingContext
+     * @param context RoutingContext
+     * @return Resource
+     */
     open fun init(context: RoutingContext): Resource {
         this.context = context
         return this
@@ -67,18 +73,40 @@ open class Resource {
         return request.getHeader(key)
     }
 
+    /**
+     * Put an HTTP header
+     * @param name  the header name
+     * @param value  the header value.
+     * @return a reference to this, so the API can be used fluently
+     */
     fun setHeader(key: String, value: String) {
         response.putHeader(key, value)
     }
 
+    /**
+     * Adds a new value with the specified name and value in map of
+     * form attributes in the request.
+     * @param key The name
+     * @param value The value being added
+     */
     fun setAttr(key: String, value: String) {
         context.request().formAttributes().add(key, value)
     }
 
+    /**
+     * Get the data in the specified form. By default, the form parameters are merged
+     * with the path parameters and only need to be obtained by getPara().
+     * @param key The name
+     */
     fun getAttr(key: String) {
         context.request().formAttributes().get(key)
     }
 
+    /**
+     * Get the data in the form and convert to object. By default, the form parameters are merged
+     * with the path parameters and only need to be obtained by getPara().
+     * @param clazz The name
+     */
     fun <T> getAttrs(clazz: Class<T>): Any {
         return Maper.toObject(context.request().formAttributes() as MutableMap<String, Any>, clazz)
     }
@@ -153,20 +181,27 @@ open class Resource {
         setCookie(cookie)
     }
 
+    /**
+     * Add a cookie. This will be sent back to the client in the response.
+     * @see Cookie
+     * @param cookie cookie object
+     */
     fun setCookie(cookie: Cookie) {
-        context.response().headers().add(HttpHeaders.SET_COOKIE, cookie.encode())
+        context.response().addCookie(cookie)
     }
 
     /**
      * Delete Cookie
-     * @param name cookie name
+     * @param key cookie name
      */
     fun delCookie(key: String) {
         context.response().headers().add(HttpHeaders.SET_COOKIE, getCookieObj(key)?.setMaxAge(0L)?.encode())
     }
 
     /**
-     * Get ip
+     * Get the user's IP, Get the user's IP from "x-forwarded-for" in the header of http first,
+     * or "X-Real-IP" if not.
+     * @return user's ip
      */
     fun getIp(): String {
         var ip: String = request.getHeader("x-forwarded-for") ?: ""
@@ -184,10 +219,19 @@ open class Resource {
         return ip
     }
 
+    /**
+     * Using the default render, render the data and write it to response.
+     * @param result Any object,
+     */
     fun render(result: Any) {
         render("", result)
     }
 
+    /**
+     * Using the specified render, render the data and write it to response.
+     * @param renderName render name,
+     * @param result Any object,
+     */
     fun render(renderName: String, result: Any) {
         CloudoptServer.handlers.forEach { handler ->
             handler.postHandle(Resource().init(context))
@@ -199,42 +243,92 @@ open class Resource {
         }
     }
 
+    /**
+     * Using the json render, render the data and write it to response.
+     * @param result Any object,
+     */
     fun renderJson(result: Any) {
         render(RenderFactory.JSON, result)
     }
 
+    /**
+     * Using the text render, render the data and write it to response.
+     * @param result Any object,
+     */
     fun renderText(result: String) {
         render(RenderFactory.TEXT, result)
     }
 
+    /**
+     * Using the html render, render the data and write it to response.
+     * @see View
+     * @param view view object
+     */
     fun renderHtml(view: View) {
         render(RenderFactory.HTML, view)
     }
 
+    /**
+     * Using the html render, render the data and write it to response.
+     * @see View
+     * @param parameters data to be rendered
+     * @param view template file name
+     */
     fun renderHtml(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
         render(RenderFactory.HTML, View(parameters, view))
     }
 
+    /**
+     * Using the hbs render, render the data and write it to response.
+     * @see View
+     * @param view view object
+     */
     fun renderHbs(view: View) {
         render(RenderFactory.HBS, view)
     }
 
+    /**
+     * Using the hbs render, render the data and write it to response.
+     * @see View
+     * @param parameters data to be rendered
+     * @param view template file name
+     */
     fun renderHbs(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
         render(RenderFactory.HBS, View(parameters, view))
     }
 
+    /**
+     * Using the freemarker render, render the data and write it to response.
+     * @see View
+     * @param view view object
+     */
     fun renderFree(view: View) {
         render(RenderFactory.FREE, view)
     }
 
+    /**
+     * Using the html render, render the data and write it to response.
+     * @see View
+     * @param parameters data to be rendered
+     * @param view template file name
+     */
     fun renderFree(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
         render(RenderFactory.FREE, View(parameters, view))
     }
 
+    /**
+     * Same as {@link #sendFile(String, long)} using offset @code{0} which means starting from the beginning of the file.
+     *
+     * @param fileName  path to the file to server
+     */
     fun sendFile(fileName: String) {
         response.sendFile(fileName)
     }
 
+    /**
+     * Use the 302 status code to redirect to the page.
+     * @param url the url of the page you want to redirect to it
+     */
     fun redirect(url: String) {
         if (!context.response().ended()) {
             response.statusCode = 302
@@ -243,18 +337,42 @@ open class Resource {
         }
     }
 
+    /**
+     * Restarts the current router with a new path and reusing the original method. All path parameters are then parsed
+     * and available on the params list. Query params will also be allowed and available.
+     *
+     * @param url the new http path.
+     */
     fun reroute(url: String) {
         context.reroute(url)
     }
 
+    /**
+     * Ends the response. If no data has been written to the response body,
+     * the actual response won't get written until this method gets called.
+     * <p>
+     * Once the response has ended, it cannot be used any more.
+     */
     fun end() {
         response.end()
     }
 
+    /**
+     * Fail the context with the specified status code.
+     * This will cause the router to route the context to any matching failure handlers for the request. If no failure handlers
+     * match It will trigger the error handler matching the status code. You can define such error handler with
+     * {@link Router#errorHandler(int, Handler)}. If no error handler is not defined, It will send a default failure response with provided status code.
+     *
+     * @param code  the HTTP status code
+     */
     fun fail(code: Int) {
         context.fail(code)
     }
 
+    /**
+     * Get the language used by the client, if the client does not specify the language, the default is en_US.
+     * @return String
+     */
     fun getLang(): String {
         return if (context.preferredLanguage().tag().isNullOrEmpty() || context.preferredLanguage().subtag()
                 .isNullOrEmpty()
@@ -265,30 +383,53 @@ open class Resource {
         }
     }
 
+    /**
+     * @return Get the entire HTTP request body as a {@link Buffer}. The context must have first been routed to a
+     * {@link io.vertx.ext.web.handler.BodyHandler} for this to be populated.
+     */
     fun getBody(): Buffer? {
         return context.body
     }
 
+    /**
+     * @return  the entire HTTP request body as a string, assuming UTF-8 encoding.
+     */
     fun getBodyString(): String? {
         return context.bodyAsString
     }
 
+    /**
+     * @return  the entire HTTP request body as a json object, assuming UTF-8 encoding.
+     */
     fun getBodyJson(): Any? {
         return Jsoner.toJsonMap(context.bodyAsJson.toString())
     }
 
+    /**
+     * @return  the entire HTTP request body as a json and convert object, assuming UTF-8 encoding.
+     */
     fun getBodyJson(clazz: Class<*>): Any? {
         return Jsoner.toObject(context.bodyAsJson.toString(), clazz)
     }
 
+    /**
+     * @return  the entire HTTP request body as a json array, assuming UTF-8 encoding.
+     */
     fun getBodyJsonArray(): Any? {
         return Jsoner.toJsonMapList(context.bodyAsJson.toString())
     }
 
+    /**
+     * @return  the entire HTTP request body as a json and convert object array, assuming UTF-8 encoding.
+     */
     fun getBodyJsonArray(clazz: Class<*>): Any? {
         return Jsoner.toObjectList(context.bodyAsJson.toString(), clazz)
     }
 
+    /**
+     * @return a set of fileuploads (if any) for the request. The context must have first been routed to a
+     * {@link io.vertx.ext.web.handler.BodyHandler} for this to work.
+     */
     fun getFiles(): MutableSet<FileUpload> {
         return context.fileUploads()
     }

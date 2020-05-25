@@ -39,7 +39,9 @@ object EventManager {
     private val logger = Logger.Companion.getLogger(EventManager::class.java)
 
     fun init(vertx: Vertx) {
-        // init event bus.
+        /**
+         * Init event bus
+         */
         eventBus = vertx.eventBus()
 
         Classer.scanPackageByAnnotation(CloudoptServer.packageName, true, AutoEvent::class.java)
@@ -64,18 +66,44 @@ object EventManager {
 
     }
 
+    /**
+     * Sends a message.
+     * The message will be delivered to at most one of the handlers registered to the topic.
+     * @param name the topic to send it to
+     * @param obj the message, may be {@code null}
+     */
     fun send(name: String, obj: Any) {
         send(name, Jsoner.toJsonString(obj))
     }
 
+    /**
+     * Sends a message.
+     * The message will be delivered to at most one of the handlers registered to the topic.
+     * @param name the topic to send it to
+     * @param body the message, may be {@code null}
+     */
     fun send(name: String, body: String) {
         eventBus.send(name, body)
     }
 
+    /**
+     * Publish a message.
+     * The message will be delivered to all handlers registered to the topic.
+     * @param name the topic to send it to
+     * @param obj the message, may be {@code null}
+     *
+     */
     fun publish(name: String, obj: Any) {
         publish(name, Jsoner.toJsonString(obj))
     }
 
+    /**
+     * Publish a message.
+     * The message will be delivered to all handlers registered to the topic.
+     * @param name the topic to send it to
+     * @param body the message, may be {@code null}
+     *
+     */
     fun publish(name: String, body: String) {
         eventBus.publish(name, body)
     }

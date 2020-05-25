@@ -18,7 +18,7 @@ package net.cloudopt.next.json
 /*
  * @author: Cloudopt
  * @Time: 2018/1/9
- * @Description: JsonProvider Interface
+ * @Description: JsonProvider Interface.
  */
 interface JsonProvider {
 

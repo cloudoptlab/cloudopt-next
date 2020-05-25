@@ -28,7 +28,7 @@ import net.cloudopt.next.utils.Maper
  */
 object ConfigManager {
 
-    val CONFIG_JSON_FILENAME = "application.json"
+    private const val CONFIG_JSON_FILENAME = "application.json"
 
     @JvmStatic
     var config: WebConfigBean = WebConfigBean()
@@ -65,6 +65,11 @@ object ConfigManager {
 
     }
 
+    /**
+     * Get the data in the configuration file according to the specified prefix and convert it to a map object.
+     * @param prefix prefix name
+     * @return MutableMap<String, Any>
+     */
     @JvmStatic
     open fun init(prefix: String): MutableMap<String, Any> {
         var newMap = configMap
@@ -74,6 +79,12 @@ object ConfigManager {
         return newMap
     }
 
+    /**
+     * Get the data in the configuration file according to the specified prefix and convert to the specified object.
+     * @param prefix prefix name
+     * @param clazz class name
+     * @return MutableMap<String, Any>
+     */
     @JvmStatic
     open fun initObject(prefix: String,clazz:Class<*>): Any {
         return Jsoner.toObject(Jsoner.toJsonString(init(prefix)),clazz)

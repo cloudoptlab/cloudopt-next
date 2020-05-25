@@ -24,43 +24,56 @@ import kotlin.collections.HashMap
 /*
  * @author: Cloudopt
  * @Time: 2018/1/4
- * @Description: Used to read yaml
+ * @Description: To help improve internationalization.
  */
 object I18N {
 
     private val i18nCache = mutableMapOf<String, MutableMap<String, Any>>()
 
+    /**
+     * The default filename prefix.
+     */
     var baseName: String = ""
-        get() = field
         set(value) {
             if (value.isBlank()) {
-                throw IllegalArgumentException("baseName can not be blank.")
+                throw IllegalArgumentException("BaseName can not be blank.")
             }
-            field = "$value"
+            field = value
         }
 
+    /**
+     * The default language name. When the specified language file cannot be obtained,
+     * the file with the default language name will be obtained.
+     */
     var defaultLocale: String = Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry()
-        get() = field
         set(value) {
             if (value.isBlank()) {
-                throw IllegalArgumentException("defaultLocale can not be blank.")
+                throw IllegalArgumentException("DefaultLocale can not be blank.")
             }
-            field = "$value"
+            field = value
         }
 
+    /**
+     * The default folder name.
+     */
     var defaultFolder: String = "_locales"
-        get() = field
         set(value) {
             if (value.isBlank()) {
-                throw IllegalArgumentException("defaultFolder can not be blank.")
+                throw IllegalArgumentException("DefaultFolder can not be blank.")
             }
-            field = "$value"
+            field = value
         }
 
+    /**
+     * Get the json object of the specified language file.
+     * JSON objects generally inherit the MAP class, so return map objects.
+     * @param locale specified language name.
+     * @return MutableMap<String, Any>
+     */
     @JvmStatic
     @JvmOverloads
     fun getI18nJsonObject(locale: String = defaultLocale): MutableMap<String, Any> {
-        if (i18nCache.get(locale) == null) {
+        if (i18nCache[locale] == null) {
             val fileName = if (baseName.isNotBlank()) {
                 defaultFolder + "/" + baseName + "_" + locale + ".json"
             } else {
@@ -68,16 +81,22 @@ object I18N {
             }
             if (Resourcer.exist(fileName)) {
                 val json = Jsoner.read(fileName)
-                i18nCache.set(locale, json)
+                i18nCache[locale] = json
                 return json
             } else {
                 throw IllegalArgumentException("$fileName is not found!")
             }
         } else {
-            return i18nCache.get(locale) ?: HashMap<String, Any>()
+            return i18nCache[locale] ?: HashMap<String, Any>()
         }
     }
 
+    /**
+     * Get a translation of the specified name from the specified language file.
+     * @param key the specified name
+     * @param locale the specified language file
+     * @return String?
+     */
     @JvmStatic
     @JvmOverloads
     fun i18n(key: String, locale: String = defaultLocale): String? {
@@ -86,7 +105,7 @@ object I18N {
         val maxSize = arr.size - 1
         for (i in arr.indices) {
             if (i != maxSize) {
-                jsonObject = jsonObject.get(arr[i]) as MutableMap<String, Any>
+                jsonObject = jsonObject[arr[i]] as MutableMap<String, Any>
             } else {
                 return jsonObject.get(arr[i]) as String?
             }

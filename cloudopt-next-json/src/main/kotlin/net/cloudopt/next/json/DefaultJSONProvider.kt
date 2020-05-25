@@ -21,7 +21,7 @@ import net.cloudopt.next.utils.Resourcer
 /*
  * @author: Cloudopt
  * @Time: 2018/1/9
- * @Description: Default JsonProvider
+ * @Description: Default JsonProvider.
  */
 class DefaultJSONProvider : JsonProvider {
     override fun toJsonString(obj: Any): String {
