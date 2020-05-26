@@ -1,0 +1,5 @@
+dependencies {
+    api project(':cloudopt-next-web')
+}
+
+description = 'Cloudopt Next Auth'

@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web.config
 
+import com.alibaba.fastjson.JSONArray
 import io.vertx.core.json.Json
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
@@ -74,7 +75,7 @@ object ConfigManager {
     open fun init(prefix: String): MutableMap<String, Any> {
         var newMap = configMap
         for (key in prefix.split(".")){
-            newMap = configMap.get(key) as MutableMap<String, Any>
+            newMap = newMap.get(key) as MutableMap<String, Any>
         }
         return newMap
     }

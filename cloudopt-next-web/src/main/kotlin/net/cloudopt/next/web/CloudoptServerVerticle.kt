@@ -100,7 +100,6 @@ class CloudoptServerVerticle : AbstractVerticle() {
             CloudoptServer.errorHandler.init(failureRoutingContext)
             CloudoptServer.errorHandler.handle()
             logger.error(failureRoutingContext.failure().toString())
-
         }
 
         //Register handlers

@@ -13,4 +13,5 @@ include(":cloudopt-next-kafka")
 include(":cloudopt-next-i18n")
 include(":cloudopt-next-validator")
 include(":cloudopt-next-quartz")
+include(":cloudopt-next-auth")
 

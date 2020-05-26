@@ -1,0 +1,52 @@
+{
+  "auth": {
+    "roles": [
+      {
+        "id": 1,
+        "name": "operate",
+        "rules": [
+          {
+            "name": "about account",
+            "url": "/api/v1/account/*",
+            "method": "GET",
+            "allow": true
+          }
+        ]
+      }
+    ],
+    "groups": [
+      {
+        "id": 1,
+        "name": "login",
+        "rules": [
+          {
+            "name": "about login",
+            "url": "/api/v1/login",
+            "method": "POST",
+            "allow": true
+          }
+        ]
+      }
+    ],
+    "users": [
+      {
+        "id": 1,
+        "uniqueTag": "SHUH-OSJI-UHIN-UUHG",
+        "rolesIdList": [
+          1
+        ],
+        "groupsIdList": [
+          1
+        ],
+        "rules": [
+          {
+            "name": "block add account",
+            "url": "/api/v1/account/*",
+            "method": "POST||DELETE",
+            "allow": false
+          }
+        ]
+      }
+    ]
+  }
+}
