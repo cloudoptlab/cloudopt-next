@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web
 
+import io.vertx.codegen.annotations.Nullable
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpHeaders
@@ -70,7 +71,7 @@ open class Resource {
      * @return The single value of the parameter
      */
     fun getHeader(key: String): String? {
-        return request.getHeader(key)
+        return Wafer.contentFilter(request.getHeader(key))
     }
 
     /**
@@ -98,8 +99,8 @@ open class Resource {
      * with the path parameters and only need to be obtained by getPara().
      * @param key The name
      */
-    fun getAttr(key: String) {
-        context.request().formAttributes().get(key)
+    fun getAttr(key: String): @Nullable String? {
+        return Wafer.contentFilter(context.request().formAttributes().get(key))
     }
 
     /**
@@ -108,6 +109,10 @@ open class Resource {
      * @param clazz The name
      */
     fun <T> getAttrs(clazz: Class<T>): Any {
+        var map = context.request().formAttributes()
+        map.forEach {it
+            map[it.key] = Wafer.contentFilter(it.value)
+        }
         return Maper.toObject(context.request().formAttributes() as MutableMap<String, Any>, clazz)
     }
 
@@ -117,7 +122,7 @@ open class Resource {
      * @return The single value of the parameter
      */
     fun getParam(name: String): String? {
-        return request.getParam(name)
+        return Wafer.contentFilter(request.getParam(name))
     }
 
     /**
@@ -127,7 +132,7 @@ open class Resource {
     fun <T> getParams(clazz: Class<T>): Any {
         var map = mutableMapOf<String,Any>()
         request.params().forEach { e->
-            map[e.key] = e.value
+            map[e.key] = Wafer.contentFilter(e.value)
         }
         return Maper.toObject(map, clazz)
     }
@@ -138,7 +143,9 @@ open class Resource {
      * @return The single value of the cookie
      */
     fun getCookieObj(key: String): Cookie? {
-        return context.getCookie(key)
+        val cookie = context.getCookie(key)
+        cookie.value = Wafer.contentFilter(cookie.value)
+        return cookie
     }
 
     /**
@@ -147,7 +154,7 @@ open class Resource {
      * @return The single value of the cookie
      */
     fun getCookie(key: String): String? {
-        return context.getCookie(key)?.value
+        return context.getCookie(key)?.value?.let { Wafer.contentFilter(it) }
     }
 
 
@@ -176,7 +183,6 @@ open class Resource {
             cookie.path = path
         }
         cookie.setHttpOnly(httpOnly)
-        cookie.setSecure(true)
         cookie.setSecure(cookieSecureFlag)
         setCookie(cookie)
     }
@@ -187,7 +193,7 @@ open class Resource {
      * @param cookie cookie object
      */
     fun setCookie(cookie: Cookie) {
-        context.response().addCookie(cookie)
+        context.addCookie(cookie)
     }
 
     /**
@@ -195,7 +201,7 @@ open class Resource {
      * @param key cookie name
      */
     fun delCookie(key: String) {
-        context.response().headers().add(HttpHeaders.SET_COOKIE, getCookieObj(key)?.setMaxAge(0L)?.encode())
+        context.removeCookie(key)
     }
 
     /**

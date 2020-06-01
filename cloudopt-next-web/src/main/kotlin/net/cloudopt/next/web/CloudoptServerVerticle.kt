@@ -197,7 +197,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             )
         }
 
-        server.requestHandler { router.accept(it) }.listen(ConfigManager.config.port) { result ->
+        server.requestHandler(router).listen(ConfigManager.config.port) { result ->
             if (result.succeeded()) {
                 CloudoptServer.logger.info(
                     "=========================================================================================================="

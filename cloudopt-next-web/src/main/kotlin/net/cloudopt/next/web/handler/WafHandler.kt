@@ -31,67 +31,13 @@ import net.cloudopt.next.web.config.ConfigManager
 @AutoHandler
 class WafHandler : Handler() {
 
-    companion object {
-        @JvmStatic
-        private val filters: MutableList<Filter> = mutableListOf()
-    }
-
-    init {
-        if (ConfigManager.config.waf.xss) {
-            filters.add(XSSInjection())
-        }
-        if (ConfigManager.config.waf.sql) {
-            filters.add(SQLInjection())
-        }
-        if (ConfigManager.config.waf.mongodb) {
-            filters.add(MongoInjection())
-        }
-    }
-
     override fun preHandle(resource: Resource) {
-        //Processing request parameters
-        resource.request.params().forEach { entry ->
-            var value = entry.value
-            filters.forEach { filter ->
-                if (value.isNotBlank()) {
-                    value = filter.filter(value)
-                }
-            }
-            entry.setValue(value)
-        }
-
-
-        //Processing header parameters
-        resource.request.headers().forEach { entry ->
-            var value = entry.value
-            filters.forEach { filter ->
-                if (value.isNotBlank()) {
-                    value = filter.filter(value)
-                }
-            }
-            entry.setValue(value)
-        }
-
-
-        //Processing cookie parameters
-        resource.context.cookies().forEach { entry ->
-            var value = entry.value
-            filters.forEach { filter ->
-                if (value.isNotBlank()) {
-                    value = filter.filter(value)
-                }
-            }
-            entry.setValue(value)
-        }
-
         if (ConfigManager.config.waf.plus) {
-            resource.setHeader("Cache-Control", "no-store, no-cache")
             resource.setHeader("X-Content-Type-Options", "nosniff")
             resource.setHeader("X-Download-Options", "noopen")
             resource.setHeader("X-XSS-Protection", "1; mode=block")
             resource.setHeader("X-FRAME-OPTIONS", "DENY")
         }
-
     }
 
     override fun postHandle(resource: Resource) {
