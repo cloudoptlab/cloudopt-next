@@ -132,7 +132,7 @@ open class Resource {
     fun <T> getParams(clazz: Class<T>): Any {
         var map = mutableMapOf<String,Any>()
         request.params().forEach { e->
-            map[e.key] = Wafer.contentFilter(e.value)
+            map[e.key] = Wafer.contentFilter(e.value) ?:""
         }
         return Maper.toObject(map, clazz)
     }
