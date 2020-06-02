@@ -44,8 +44,8 @@ object Jsoner {
      * @param jsonString Json string
      * @return MutableMap
      */
-    fun toJsonMap(s: String): MutableMap<String, Any> {
-        return jsonProvider.toJsonMap(s)
+    fun toJsonMap(jsonString: String): MutableMap<String, Any> {
+        return jsonProvider.toJsonMap(jsonString)
     }
 
     /**
@@ -54,8 +54,8 @@ object Jsoner {
      * @param clazz Java class
      * @return Json object
      */
-    fun toObject(s: String, clazz: Class<*>): Any {
-        return jsonProvider.toObject(s, clazz)
+    fun toObject(jsonString: String, clazz: Class<*>): Any {
+        return jsonProvider.toObject(jsonString, clazz)
     }
 
     /**
@@ -63,8 +63,8 @@ object Jsoner {
      * @param jsonString Json string
      * @return MutableList<MutableMap<String,Any>>
      */
-    fun toJsonMapList(s: String): MutableList<MutableMap<String, Any>> {
-        return jsonProvider.toJsonMapList(s)
+    fun toJsonMapList(jsonString: String): MutableList<MutableMap<String, Any>> {
+        return jsonProvider.toJsonMapList(jsonString)
     }
 
     /**
@@ -73,8 +73,17 @@ object Jsoner {
      * @param clazz Java class
      * @return MutableList<Any>
      */
-    fun toObjectList(s: String, clazz: Class<*>): Any {
-        return jsonProvider.toObjectList(s, clazz)
+    fun toObjectList(jsonString: String, clazz: Class<*>): MutableList<Any> {
+        return jsonProvider.toObjectList(jsonString, clazz)
+    }
+
+    /**
+     * Output any list.
+     * @param jsonString Json string
+     * @return MutableList<Any>
+     */
+    fun toList(jsonString: String): MutableList<Any> {
+        return jsonProvider.toList(jsonString)
     }
 
     /**

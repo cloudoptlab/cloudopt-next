@@ -59,6 +59,13 @@ interface JsonProvider {
      */
     fun toObjectList(jsonString: String, clazz: Class<*>): MutableList<Any>
 
+    /**
+     * Output any list.
+     * @param jsonString Json string
+     * @return MutableList<Any>
+     */
+    fun toList(jsonString: String): MutableList<Any>
+
 
     /**
      * Read Json file to json string

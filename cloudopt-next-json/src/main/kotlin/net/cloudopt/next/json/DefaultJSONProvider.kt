@@ -44,6 +44,10 @@ class DefaultJSONProvider : JsonProvider {
         return JSON.parseArray(jsonString, clazz).toMutableList()
     }
 
+    override fun toList(jsonString: String): MutableList<Any> {
+        return JSON.parseArray(jsonString).toMutableList()
+    }
+
     override fun read(filePath: String): MutableMap<String, Any> {
         var jsonString = Resourcer.inputSreamToString(Resourcer.getFileInputStream(filePath))
         jsonString = cleanText(jsonString)
