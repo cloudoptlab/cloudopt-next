@@ -16,6 +16,7 @@
 package net.cloudopt.next.json
 
 import com.alibaba.fastjson.JSON
+import com.alibaba.fastjson.JSONObject
 import net.cloudopt.next.utils.Resourcer
 
 /*
@@ -49,13 +50,13 @@ class DefaultJSONProvider : JsonProvider {
     }
 
     override fun read(filePath: String): MutableMap<String, Any> {
-        var jsonString = Resourcer.inputSreamToString(Resourcer.getFileInputStream(filePath))
+        var jsonString = Resourcer.inputStreamToString(Resourcer.getFileInputStream(filePath))
         jsonString = cleanText(jsonString)
         return toJsonMap(jsonString)
     }
 
     override fun read(filePath: String, prefix: String): MutableMap<String, Any> {
-        var jsonString = Resourcer.inputSreamToString(Resourcer.getFileInputStream(filePath))
+        var jsonString = Resourcer.inputStreamToString(Resourcer.getFileInputStream(filePath))
         jsonString = cleanText(jsonString)
         var jsonObj = JSON.parseObject(jsonString)
         var list = prefix.split(".")
@@ -68,16 +69,8 @@ class DefaultJSONProvider : JsonProvider {
     }
 
     override fun <T> read(filePath: String, prefix: String, clazz: Class<T>): Any {
-        var jsonString = Resourcer.inputSreamToString(Resourcer.getFileInputStream(filePath))
-        jsonString = cleanText(jsonString)
-        var jsonObj = JSON.parseObject(jsonString)
-        var list = prefix.split(".")
-        for (key in list) {
-            if (jsonObj.getJSONObject(key) != null) {
-                jsonObj = jsonObj.getJSONObject(key)
-            }
-        }
-        return jsonObj.toJavaObject(clazz)!!
+        var jsonObj = read(filePath,prefix)
+        return JSONObject(jsonObj).toJavaObject(clazz)!!
     }
 
     private fun cleanText(jsonString: String): String {

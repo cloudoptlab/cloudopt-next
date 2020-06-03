@@ -35,16 +35,15 @@ object Resourcer {
      * @return FileInputStream
      */
     fun getFileInputStream(fileName: String): InputStream? {
-        var fileInputStream: InputStream? = try {
+        return try {
             File(getRootClassPath() + "/" + fileName).inputStream()
         } catch (e: Exception) {
-            Resourcer::class.java.getResourceAsStream("/" + fileName)
+            Resourcer::class.java.getResourceAsStream("/$fileName")
         }
-        return fileInputStream
     }
 
     fun getFileString(fileName: String, isJson: Boolean = false): String {
-        return inputSreamToString(getFileInputStream(fileName)!!, isJson)
+        return inputStreamToString(getFileInputStream(fileName)!!, isJson)
     }
 
     fun exist(fileName: String): Boolean {
@@ -57,27 +56,29 @@ object Resourcer {
      */
     fun getRootClassPath(): String {
         val loader = ClassLoader.getSystemClassLoader()
-        if (rootPath == null || rootPath.equals("")) {
-            val path = loader.getResource("")!!.getPath()
-            rootPath = File(path).getAbsolutePath()
+        return if (rootPath.isBlank()) {
+            val path = loader.getResource("")?.path
+            rootPath = File(path).absolutePath
+            rootPath
+        }else{
+            rootPath
         }
-        return rootPath
     }
 
     /**
-     * Turn the inputstream into a string
-     * @param inputStream The inputstream to be processed
+     * Turn the input stream into a string
+     * @param inputStream The input stream to be processed
      * @return String
      */
-    fun inputSreamToString(inputStream: InputStream?, isJson: Boolean = false): String {
+    fun inputStreamToString(inputStream: InputStream?, isJson: Boolean = false): String {
         val reader = inputStream?.bufferedReader()
         val sb = StringBuilder()
         try {
-            while (reader?.ready() ?: false) {
+            while (reader?.ready() == true) {
                 if (isJson) {
-                    sb.append(reader?.readLine())
+                    sb.append(reader.readLine())
                 } else {
-                    sb.append(reader?.readLine() + "/n")
+                    sb.append(reader.readLine() + "/n")
                 }
             }
         } catch (e: IOException) {
