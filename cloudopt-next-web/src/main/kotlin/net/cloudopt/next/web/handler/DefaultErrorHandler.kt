@@ -15,7 +15,10 @@
  */
 package net.cloudopt.next.web.handler
 
+import io.vertx.core.http.HttpHeaders
+import net.cloudopt.next.web.Welcomer
 import java.util.*
+import kotlin.math.abs
 
 /*
  * @author: Cloudopt
@@ -26,29 +29,31 @@ class DefaultErrorHandler : ErrorHandler() {
 
 
     override fun handle() {
-        if (Math.abs(errorStatusCode) == 404) {
-            val json = restult("404", "[CLOUDOPT-NEXT] Resource not found!")
-            renderJson(json)
+        if (abs(errorStatusCode) == 404) {
+            response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+            context.response().end(Welcomer.notFound())
+            return
         }
 
-        if (Math.abs(errorStatusCode) == 500) {
-            val json = restult("500", "[CLOUDOPT-NEXT] Internal error!")
-            renderJson(json)
+        if (abs(errorStatusCode) == 500) {
+            response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+            context.response().end(Welcomer.systemError())
+            return
         }
     }
 
-    fun restult(error: String, errorMessage: String): HashMap<String, String> {
+    private fun restult(error: String, errorMessage: String): HashMap<String, String> {
         val map = hashMapOf<String, String>()
-        map.put("error", error)
-        map.put("errorMessage", errorMessage)
+        map["error"] = error
+        map["errorMessage"] = errorMessage
         return map
     }
 
 
-    val errorStatusCode: Int
+    private val errorStatusCode: Int
         get() {
             if (this.context.statusCode() > 0) {
-                this.response.statusCode = this.context.statusCode()!!
+                this.response.statusCode = this.context.statusCode()
             } else {
                 this.response.statusCode = 500
             }

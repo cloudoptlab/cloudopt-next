@@ -30,9 +30,9 @@ object Welcomer {
     private val logger = Logger.getLogger(CloudoptServer.javaClass)
 
     @JvmStatic
-    fun html(): String {
+    fun html(fileName:String): String {
 
-        var input = Welcomer.javaClass.getClassLoader().getResourceAsStream("welcome.html")
+        var input = Welcomer.javaClass.classLoader.getResourceAsStream(fileName)
 
         var buffer = BufferedReader(InputStreamReader(input))
 
@@ -41,7 +41,7 @@ object Welcomer {
         var welcomeHtml = ""
 
         while (line != null) {
-            welcomeHtml = welcomeHtml + line
+            welcomeHtml += line
             line = buffer.readLine()
         }
 
@@ -49,6 +49,21 @@ object Welcomer {
 
         return welcomeHtml
 
+    }
+
+    @JvmStatic
+    fun home():String{
+        return html("welcome.html")
+    }
+
+    @JvmStatic
+    fun notFound(): String {
+        return html("404.html")
+    }
+
+    @JvmStatic
+    fun systemError(): String {
+        return html("500.html")
     }
 
 }

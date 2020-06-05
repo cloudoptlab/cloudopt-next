@@ -15,8 +15,8 @@
  */
 package net.cloudopt.next.web
 
+import com.alibaba.fastjson.JSONObject
 import io.vertx.core.AbstractVerticle
-import io.vertx.core.Context
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
@@ -28,6 +28,9 @@ import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.event.AfterEvent
 import net.cloudopt.next.web.event.EventManager
+import net.cloudopt.next.web.handler.ErrorHandler
+import net.cloudopt.next.web.route.Parameter
+import net.cloudopt.next.web.route.RequestBody
 import net.cloudopt.next.web.route.SocketJS
 
 
@@ -64,15 +67,15 @@ class CloudoptServerVerticle : AbstractVerticle() {
         Jsoner.jsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.config.jsonProvider))
 
         // Register websockets
-        if (CloudoptServer.sockets.size > 0){
+        if (CloudoptServer.sockets.size > 0) {
             val sockJSHandler = SockJSHandler.create(CloudoptServer.vertx, ConfigManager.config.socket)
             CloudoptServer.sockets.forEach { clazz ->
                 val websocketAnnotation: SocketJS? = clazz.getDeclaredAnnotation(SocketJS::class.java)
-                sockJSHandler.socketHandler { sockJSHandler->
+                sockJSHandler.socketHandler { sockJSHandler ->
                     var handler = Beaner.newInstance<SocketJSResource>(clazz)
                     handler.handler(sockJSHandler)
                 }
-                if (!websocketAnnotation?.value?.endsWith("/*")!!){
+                if (!websocketAnnotation?.value?.endsWith("/*")!!) {
                     logger.error("[SOCKET] Url must be end with /* !")
                 }
                 logger.info("[SOCKET] Registered socket resource: ${websocketAnnotation?.value} -> ${clazz.name}")
@@ -96,10 +99,14 @@ class CloudoptServerVerticle : AbstractVerticle() {
         // Register failure handler
         CloudoptServer.logger.info("[FAILURE HANDLER] Registered failure handler：${CloudoptServer.errorHandler::class.java.getName()}")
 
-        router.route("/*").failureHandler { failureRoutingContext ->
-            CloudoptServer.errorHandler.init(failureRoutingContext)
-            CloudoptServer.errorHandler.handle()
-            logger.error(failureRoutingContext.failure().toString())
+        router.route("/*").failureHandler { context ->
+            errorProcessing(context)
+        }
+
+        for(i in 400..500){
+            router.errorHandler(i) { context->
+                errorProcessing(context)
+            }
         }
 
         //Register handlers
@@ -176,7 +183,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         if (CloudoptServer.controllers.size < 1) {
             router.route("/").blockingHandler { context ->
-                context.response().end(Welcomer.html())
+                context.response().end(Welcomer.home())
             }
         }
 
@@ -184,11 +191,11 @@ class CloudoptServerVerticle : AbstractVerticle() {
         CloudoptServer.controllers.forEach { resourceTable ->
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
-                   requestProcessing(resourceTable,context)
+                    requestProcessing(resourceTable, context)
                 }
             } else {
                 router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
-                    requestProcessing(resourceTable,context)
+                    requestProcessing(resourceTable, context)
                 }
             }
 
@@ -228,24 +235,83 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
     }
 
-    private fun requestProcessing(resourceTable:ResourceTable,context: RoutingContext){
-        try{
+    private fun errorProcessing(context: RoutingContext){
+        val errorHandler = Beaner.newInstance<ErrorHandler>(CloudoptServer.errorHandler)
+        errorHandler.init(context)
+        errorHandler.handle()
+        if(context.failure() != null){
+            logger.error(context.failure().toString())
+        }
+        if (!errorHandler.response.ended()){
+            errorHandler.end()
+        }
+    }
+
+    private fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
+        try {
             val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
             controllerObj.init(context)
-            val m = resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
-            m.invoke(controllerObj)
+            val m = if (resourceTable.parameterTypes.isNotEmpty()) {
+                resourceTable.clazz.getDeclaredMethod(resourceTable.methodName, *resourceTable.parameterTypes)
+            } else {
+                resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
+            }
+            if (m.parameters.isNotEmpty()) {
+                val arr = arrayListOf<Any>()
+                for (para in m.parameters) {
+                    val parameterAnnotation = para.getAnnotation(Parameter::class.java)
+                    if(parameterAnnotation != null){
+                        getParaByType(para.getAnnotation(Parameter::class.java).value, para, controllerObj)?.let {
+                            arr.add(
+                                it
+                            )
+                        }
+                    }
+                    val requestBodyAnnotation = para.getAnnotation(RequestBody::class.java)
+                    if(requestBodyAnnotation != null){
+                        controllerObj.getBodyJson(para.type)?.let { arr.add(it) }
+                    }
+                }
+                m.invoke(controllerObj, *arr.toArray())
+            } else {
+                m.invoke(controllerObj)
+            }
             // Run after event
-            if(m.getAnnotation(AfterEvent::class.java) != null && context.response().ended()){
+            if (m.getAnnotation(AfterEvent::class.java) != null && context.response().ended()) {
                 var afterEvent = m.getAnnotation(AfterEvent::class.java)
-                for (topic in afterEvent.value){
-                    EventManager.send(topic,"${resourceTable.httpMethod}:${resourceTable.url}")
+                for (topic in afterEvent.value) {
+                    EventManager.send(topic, "${resourceTable.httpMethod}:${resourceTable.url}")
                 }
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
-            logger.error(e.message?:"${resourceTable.url} has error occurred, but the error message could not be obtained ")
+            logger.error(
+                e.message ?: "${resourceTable.url} has error occurred, but the error message could not be obtained "
+            )
             context.response().end()
         }
+    }
+
+    private fun getParaByType(paraName: String, para: java.lang.reflect.Parameter, controllerObj: Resource): Any? {
+
+        val jsonObject = JSONObject(controllerObj.getParams())
+        if (jsonObject[paraName] == null) {
+            jsonObject[paraName] = para.getAnnotation(Parameter::class.java).defaultValue
+        }
+        when (para.type.typeName) {
+            "java.lang.String" -> return jsonObject.getString(paraName)
+            "kotlin.String" -> return jsonObject.getString(paraName)
+            "int" -> return jsonObject.getIntValue(paraName)
+            "double" -> return jsonObject.getDoubleValue(paraName)
+            "float" -> return jsonObject.getFloatValue(paraName)
+            "long" -> return jsonObject.getLongValue(paraName)
+            "short" -> return jsonObject.getShort(paraName)
+            "java.math.BigDecimal" -> return jsonObject.getBigDecimal(paraName)
+            "java.math.BigInteger" -> return jsonObject.getBigInteger(paraName)
+            "java.util.Date" -> return jsonObject.getDate(paraName)
+            "java.sql.Timestamp" -> return jsonObject.getTimestamp(paraName)
+        }
+        return null
     }
 
 }

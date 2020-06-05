@@ -17,7 +17,6 @@ package net.cloudopt.next.web
 
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
-import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
@@ -70,7 +69,7 @@ object CloudoptServer {
     open var packageName = ""
 
     @JvmStatic
-    open var errorHandler = Beaner.newInstance<ErrorHandler>(Classer.loadClass(ConfigManager.config.errorHandler))
+    open var errorHandler = Classer.loadClass(ConfigManager.config.errorHandler)
 
     /**
      * Scan by annotation and register as a route.
@@ -193,7 +192,7 @@ object CloudoptServer {
                 }
 
                 if (resourceUrl.isNotBlank()) {
-                    var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name, blocking, method)
+                    var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name, blocking, method,method.parameterTypes)
                     controllers.add(resourceTable)
                 }
             }

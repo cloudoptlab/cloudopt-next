@@ -13,21 +13,16 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.web
+package net.cloudopt.next.web.route
 
-import io.vertx.core.http.HttpMethod
-import java.lang.reflect.Method
+import java.lang.annotation.Documented
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/18
- * @Description: Resource Table
+ * @Time: 2020/4/1
+ * @Description: Body in the request can be obtained by annotation
  */
-
-data class ResourceTable(
-    var url: String = "", var httpMethod: HttpMethod = HttpMethod.GET,
-    var clazz: Class<Resource> = Resource::class.java, var methodName: String = "",
-    var blocking: Boolean = false,
-    var clazzMethod: Method ?= null,
-    var parameterTypes: Array<Class<*>> = arrayOf<Class<*>>()
-)
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Documented
+annotation class RequestBody()

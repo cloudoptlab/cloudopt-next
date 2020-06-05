@@ -24,10 +24,13 @@ import net.cloudopt.next.web.Worker
 import net.cloudopt.next.web.event.AfterEvent
 import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.render.View
-import net.cloudopt.next.web.route.API
-import net.cloudopt.next.web.route.Blocking
-import net.cloudopt.next.web.route.GET
-import net.cloudopt.next.web.route.POST
+import net.cloudopt.next.web.route.*
+import net.cloudopt.next.web.test.Student
+import net.cloudopt.next.web.test.interceptor.TestInterceptor1
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.sql.Timestamp
+import java.util.*
 
 
 /*
@@ -35,13 +38,35 @@ import net.cloudopt.next.web.route.POST
  * @Time: 2018/1/26
  * @Description: Test Controller
  */
-@API("/")
+@API(value="/",interceptor = [TestInterceptor1::class])
 class IndexController : Resource() {
 
     @GET
     fun index() {
         setCookie("test", "cookie", "127.0.0.1", 360000, "/", false, false)
         renderHtml(view = "index")
+    }
+
+    @GET("delete")
+    fun delete(){
+        delCookie("test")
+        renderHtml(view = "index")
+    }
+
+    @GET("args")
+    fun argsController(
+        @Parameter("name",defaultValue = "Peter") name:String,
+        @Parameter("sex",defaultValue = "1") sex:Int
+    ){
+        var map = hashMapOf<String, Any>()
+        map["name"] = name
+        map["sex"] = sex
+        renderJson(map)
+    }
+
+    @POST("body")
+    fun bodyController(@RequestBody body:Student){
+        renderJson(body)
     }
 
     @POST
@@ -81,7 +106,7 @@ class IndexController : Resource() {
 
     @GET("500")
     fun fail500() {
-        fail500()
+        fail(500)
     }
 
     @GET("i18n")
