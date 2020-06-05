@@ -31,7 +31,7 @@ object Redis {
     internal var mainCache: Cache? = null
 
     @JvmStatic
-    open lateinit var asyn: RedisClient
+    lateinit var asyn: RedisClient
 
     private val cacheMap = ConcurrentHashMap<String, Cache>()
 

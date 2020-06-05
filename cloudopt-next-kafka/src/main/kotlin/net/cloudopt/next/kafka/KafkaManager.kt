@@ -44,16 +44,16 @@ object KafkaManager {
     internal val kafkaList: MutableMap<String, MutableSet<Class<*>>> = hashMapOf()
 
     @JvmStatic
-    open var consumer: KafkaConsumer<Any, Any>? = null
+    var consumer: KafkaConsumer<Any, Any>? = null
 
     @JvmStatic
-    open var producer: KafkaProducer<Any, Any>? = null
+    var producer: KafkaProducer<Any, Any>? = null
 
     @JvmStatic
-    open var streams: KafkaStreams? = null
+    var streams: KafkaStreams? = null
 
     @JvmStatic
-    open val streamsTopology = Topology()
+    val streamsTopology = Topology()
 
     @JvmStatic
     var config = ConfigManager.init("kafka") as MutableMap<String, String>

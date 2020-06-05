@@ -127,7 +127,7 @@ class IndexController : Resource() {
     @POST("file")
     fun file() {
         var files = getFiles()
-        files?.forEach { file ->
+        files.forEach { file ->
             println("-------------------------------------")
             println("FileName: ${file.fileName()}")
             println("UploadedFileName: ${file.uploadedFileName()}")

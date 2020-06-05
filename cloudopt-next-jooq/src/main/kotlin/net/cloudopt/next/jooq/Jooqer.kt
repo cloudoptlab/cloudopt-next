@@ -33,25 +33,25 @@ import java.sql.Connection
 object Jooqer {
 
     @JvmStatic
-    open var connection: Connection? = null
+    var connection: Connection? = null
 
     @JvmStatic
-    open var dsl: DSLContext? = null
+    var dsl: DSLContext? = null
 
     @JvmStatic
-    open var transactionProvider: TransactionProvider? = null
+    var transactionProvider: TransactionProvider? = null
 
     @JvmStatic
-    open var connectionProvider: ConnectionProvider? = null
+    var connectionProvider: ConnectionProvider? = null
 
     @JvmStatic
-    open var settings: Settings = SettingsTools.defaultSettings()
+    var settings: Settings = SettingsTools.defaultSettings()
 
     @JvmStatic
-    open var configuration = DefaultConfiguration()
+    var configuration = DefaultConfiguration()
 
     @JvmStatic
-    open fun refresh() {
+    fun refresh() {
         this.dsl = DSL.using(connection)
     }
 

@@ -16,9 +16,6 @@
 package net.cloudopt.next.validator.annotation
 
 import net.cloudopt.next.validator.TypeValidator
-import java.lang.annotation.Documented
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy.RUNTIME
 import javax.validation.Constraint
 import javax.validation.Payload
 import kotlin.reflect.KClass
@@ -35,9 +32,9 @@ import kotlin.reflect.KClass
     AnnotationTarget.FIELD,
     AnnotationTarget.ANNOTATION_CLASS
 )
-@Retention(RUNTIME)
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
 @Constraint(validatedBy = arrayOf(TypeValidator::class))
-@Documented
+@MustBeDocumented
 annotation class Type(
     val value: String,
     val message: String = "{constraints.type.message}",

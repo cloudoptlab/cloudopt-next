@@ -40,18 +40,18 @@ import redis.clients.jedis.JedisPoolConfig
 class RedisPlugin() : Plugin {
 
     private var map = ConfigManager.init("redis")
-    protected var cacheName: String = "default"
-    protected var host: String = "localhost"
-    protected var port: Int = 6379
-    protected var timeout: Int = 5000
-    protected var password: String? = null
-    protected var database: Int? = null
-    protected var clientName: String? = null
-    protected var asyn: Boolean = false
-    open val asynOpitions = RedisOptions()
+    var cacheName: String = "default"
+    var host: String = "localhost"
+    var port: Int = 6379
+    var timeout: Int = 5000
+    var password: String? = null
+    var database: Int? = null
+    var clientName: String? = null
+    var asyn: Boolean = false
+    val asynOpitions = RedisOptions()
 
-    open var serializer: ISerializer = FstSerializer()
-    open var keyNamingPolicy = IKeyNamingPolicy.defaultKeyNamingPolicy
+    var serializer: ISerializer = FstSerializer()
+    var keyNamingPolicy = IKeyNamingPolicy.defaultKeyNamingPolicy
 
     init {
         if (map.get("name") != null) {
