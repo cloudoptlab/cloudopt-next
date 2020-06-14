@@ -17,6 +17,7 @@ package net.cloudopt.next.json
 
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
+import com.alibaba.fastjson.parser.ParserConfig
 import net.cloudopt.next.utils.Resourcer
 
 /*
@@ -25,6 +26,11 @@ import net.cloudopt.next.utils.Resourcer
  * @Description: Default JsonProvider.
  */
 class DefaultJSONProvider : JsonProvider {
+
+    init{
+        ParserConfig.getGlobalInstance().isSafeMode = true
+    }
+
     override fun toJsonString(obj: Any): String {
         return JSON.toJSONString(obj)
     }
