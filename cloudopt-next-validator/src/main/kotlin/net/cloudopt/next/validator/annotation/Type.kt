@@ -30,7 +30,8 @@ import kotlin.reflect.KClass
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.PROPERTY_SETTER,
     AnnotationTarget.FIELD,
-    AnnotationTarget.ANNOTATION_CLASS
+    AnnotationTarget.ANNOTATION_CLASS,
+    AnnotationTarget.VALUE_PARAMETER
 )
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
 @Constraint(validatedBy = arrayOf(TypeValidator::class))

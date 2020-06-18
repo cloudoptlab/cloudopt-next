@@ -25,6 +25,7 @@ import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
+import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.event.AfterEvent
 import net.cloudopt.next.web.event.EventManager
@@ -272,7 +273,13 @@ class CloudoptServerVerticle : AbstractVerticle() {
                         controllerObj.getBodyJson(para.type)?.let { arr.add(it) }
                     }
                 }
-                m.invoke(controllerObj, *arr.toArray())
+                val validatorResult = ValidatorTool.validateParameters(controllerObj,m,arr.toArray())
+                if (validatorResult.result){
+                    m.invoke(controllerObj, *arr.toArray())
+                }else{
+                    controllerObj.context.put("errorMessage",validatorResult.message)
+                    controllerObj.fail(400)
+                }
             } else {
                 m.invoke(controllerObj)
             }

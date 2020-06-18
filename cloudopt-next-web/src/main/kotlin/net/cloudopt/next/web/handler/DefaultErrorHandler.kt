@@ -40,6 +40,12 @@ class DefaultErrorHandler : ErrorHandler() {
             context.response().end(Welcomer.systemError())
             return
         }
+        val errorMessage = if(context.data().containsKey("errorMessage")){
+            context.data()["errorMessage"].toString()
+        }else{
+            "This is a bad http request, please check if the parameters match the requirements."
+        }
+        renderJson(restult(errorStatusCode.toString(),errorMessage))
     }
 
     private fun restult(error: String, errorMessage: String): HashMap<String, String> {

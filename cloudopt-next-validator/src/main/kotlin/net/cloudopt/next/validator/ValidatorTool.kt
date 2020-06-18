@@ -16,6 +16,7 @@
 package net.cloudopt.next.validator
 
 import org.hibernate.validator.HibernateValidator
+import java.lang.reflect.Method
 import java.util.*
 import javax.validation.ConstraintViolation
 import javax.validation.Validation
@@ -30,10 +31,12 @@ data class ValidatorResult(var result: Boolean = true, var message: String = "")
 
 object ValidatorTool {
 
+    @JvmStatic
     private val validator = Validation.byProvider(HibernateValidator::class.java).configure().buildValidatorFactory()
         .validator
 
-    private val validForExecutables =
+    @JvmStatic
+    private val executableValidator =
         Validation.byProvider(HibernateValidator::class.java).configure().buildValidatorFactory()
             .validator.forExecutables()
 
@@ -47,10 +50,8 @@ object ValidatorTool {
     fun validate(obj: Any, vararg args: String): ValidatorResult {
         if (args.isEmpty()) {
             val constraintViolations = validator.validate(obj)
-            val iter = constraintViolations.iterator()
-            if (iter.hasNext()) {
-                val c = iter.next() as ConstraintViolation<*>
-                return ValidatorResult(false, c.message)
+            if (constraintViolations.isNotEmpty()) {
+                return ValidatorResult(false, constraintViolations.first().message)
             }
         } else {
             val constraintViolations = HashSet<ConstraintViolation<Any>>()
@@ -61,14 +62,34 @@ object ValidatorTool {
                 }
 
             }
-            val iter = constraintViolations.iterator()
-            if (iter.hasNext()) {
-                val c = iter.next() as ConstraintViolation<*>
-                return ValidatorResult(false, c.message)
+            if (constraintViolations.isNotEmpty()) {
+                return ValidatorResult(false, constraintViolations.first().message)
             }
         }
         return ValidatorResult(true, "")
     }
+
+    /**
+     * Validates all constraints placed on the parameters of the given method.
+     *
+     * @param any the object on which the method to validate is invoked
+     * @param method the method for which the parameter constraints is validated
+     * @param parameterValues the values provided by the caller for the given method's
+     *        parameters
+     * @return ValidatorResult with the constraint violations caused by this validation;
+     *         the message will be empty if no error occurs, but never {@code null}
+     * @throws IllegalArgumentException if {@code null} is passed for any of the parameters
+     *         or if parameters don't match with each other
+     */
+    fun validateParameters(any:Any, method:Method, parameterValues: Array<Any>): ValidatorResult {
+        val violations = executableValidator.validateParameters(any,method, parameterValues)
+        return if (violations.isEmpty()){
+            ValidatorResult(true, "")
+        }else{
+            ValidatorResult(false, violations.first().message)
+        }
+    }
+
 
 
 }

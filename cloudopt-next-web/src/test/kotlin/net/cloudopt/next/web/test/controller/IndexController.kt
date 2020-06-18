@@ -18,6 +18,7 @@ package net.cloudopt.next.web.test.controller
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.core.Promise
+import net.cloudopt.next.validator.annotation.Chinese
 import net.cloudopt.next.web.CloudoptServer.logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Worker
@@ -27,7 +28,7 @@ import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.*
 import net.cloudopt.next.web.test.Student
 import net.cloudopt.next.web.test.interceptor.TestInterceptor1
-
+import javax.validation.constraints.Min
 
 /*
  * @author: Cloudopt
@@ -51,12 +52,14 @@ class IndexController : Resource() {
 
     @GET("args")
     fun argsController(
+        @Chinese(false)
         @Parameter("name", defaultValue = "Peter") name: String,
-        @Parameter("sex", defaultValue = "1") sex: Int
+        @Min(18)
+        @Parameter("age") age: Int
     ) {
         var map = hashMapOf<String, Any>()
         map["name"] = name
-        map["sex"] = sex
+        map["age"] = age
         renderJson(map)
     }
 
