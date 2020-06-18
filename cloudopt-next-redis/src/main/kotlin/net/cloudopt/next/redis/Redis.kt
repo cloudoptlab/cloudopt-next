@@ -90,18 +90,12 @@ object Redis {
     @JvmStatic
     private fun call(callback: ICallback, cache: Cache): Any {
         var jedis = cache.getThreadLocalJedis()
-        val notThreadLocalJedis = jedis == null
-        if (notThreadLocalJedis) {
-            jedis = cache.jedisPool.resource
-            cache.setThreadLocalJedis(jedis)
-        }
         try {
             return callback.call(cache)
         } finally {
-            if (notThreadLocalJedis) {
-                cache.removeThreadLocalJedis()
-                jedis.close()
-            }
+            cache.removeThreadLocalJedis()
+            jedis.close()
+
         }
     }
 }

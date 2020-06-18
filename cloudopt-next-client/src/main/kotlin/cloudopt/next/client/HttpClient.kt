@@ -29,7 +29,7 @@ import net.cloudopt.next.web.CloudoptServer
  */
 class HttpClient() {
 
-    open val options = WebClientOptions()
+    val options = WebClientOptions()
 
     private var client = WebClient.create(CloudoptServer.vertx)
 

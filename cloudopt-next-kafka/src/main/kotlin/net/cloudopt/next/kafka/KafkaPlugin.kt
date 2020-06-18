@@ -85,7 +85,7 @@ class KafkaPlugin : Plugin {
                 streamsProps[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
             }
             KafkaManager.streams = KafkaStreams(KafkaManager.streamsTopology, streamsProps)
-            KafkaManager.streams?.setUncaughtExceptionHandler { thread: Thread, throwable: Throwable -> throwable.printStackTrace() }
+            KafkaManager.streams?.setUncaughtExceptionHandler { _: Thread, throwable: Throwable -> throwable.printStackTrace() }
             KafkaManager.streams?.start()
         }
         return true

@@ -72,7 +72,7 @@ class FstSerializer : ISerializer {
     }
 
     override fun valueFromBytes(bytes: ByteArray): Any {
-        if (bytes == null || bytes.size == 0)
+        if (bytes.isEmpty())
             return ""
 
         var fstInput: FSTObjectInput? = null

@@ -470,7 +470,7 @@ class Cache {
         val jedis = jedis
         try {
             val ret = jedis.get(keyNamingPolicy.getKeyName(key)) as String
-            return if (ret != null) java.lang.Long.parseLong(ret) else null
+            return java.lang.Long.parseLong(ret)
         } finally {
             close(jedis)
         }

@@ -24,5 +24,5 @@ import java.lang.annotation.Documented
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
-@Documented
+@MustBeDocumented
 annotation class AutoKafka(val value: String = "")

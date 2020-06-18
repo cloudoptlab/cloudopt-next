@@ -55,11 +55,7 @@ class SpringPlugin : Plugin {
 
     override fun start(): Boolean {
         if (this.context == null) {
-            if (configFiles == null) {
-                this.context = AnnotationConfigApplicationContext(*configClasses!!)
-            } else {
-                this.context = ClassPathXmlApplicationContext(*configFiles!!)
-            }
+            this.context = ClassPathXmlApplicationContext(*configFiles)
         }
         SpringBuilder.setContext(context)
         return true

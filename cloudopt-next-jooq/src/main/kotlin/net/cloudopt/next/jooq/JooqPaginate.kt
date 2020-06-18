@@ -58,11 +58,7 @@ class JooqPaginate(query: SelectConditionStep<*>, private var count: Int, privat
     }
 
     fun <T> find(clazz: Class<T>): JooqPage {
-        var list = if (orderField == null) {
-            query.limit(this.count).offset(skip()).fetchInto(clazz)
-        } else {
-            query.orderBy(orderField).limit(this.count).offset(skip()).fetchInto(clazz)
-        }
+        var list = query.orderBy(orderField).limit(this.count).offset(skip()).fetchInto(clazz)
         list = if (list.isNotEmpty()) {
             list.toMutableList()
         } else {

@@ -108,19 +108,19 @@ class RedisPlugin() : Plugin {
         } else {
             val jedisPool: JedisPool
             if (port != null && timeout != null && !password.isNullOrBlank() && database != null && !clientName.isNullOrBlank())
-                jedisPool = JedisPool(jedisPoolConfig, host, port!!, timeout!!, password, database!!, clientName)
+                jedisPool = JedisPool(jedisPoolConfig, host, port, timeout, password, database!!, clientName)
             else if (port != null && timeout != null && !password.isNullOrBlank() && database != null)
-                jedisPool = JedisPool(jedisPoolConfig, host, port!!, timeout!!, password, database!!)
+                jedisPool = JedisPool(jedisPoolConfig, host, port, timeout, password, database!!)
             else if (port != null && timeout != null && !password.isNullOrBlank())
-                jedisPool = JedisPool(jedisPoolConfig, host, port!!, timeout!!, password)
+                jedisPool = JedisPool(jedisPoolConfig, host, port, timeout, password)
             else if (port != null && timeout != null)
-                jedisPool = JedisPool(jedisPoolConfig, host, port!!, timeout!!)
+                jedisPool = JedisPool(jedisPoolConfig, host, port, timeout)
             else if (port != null)
-                jedisPool = JedisPool(jedisPoolConfig, host, port!!)
+                jedisPool = JedisPool(jedisPoolConfig, host, port)
             else
                 jedisPool = JedisPool(jedisPoolConfig, host)
 
-            val cache = Cache(cacheName, jedisPool, serializer!!, keyNamingPolicy!!)
+            val cache = Cache(cacheName, jedisPool, serializer, keyNamingPolicy)
             Redis.addCache(cache)
         }
         return true
@@ -128,7 +128,7 @@ class RedisPlugin() : Plugin {
 
     override fun stop(): Boolean {
         if (asyn) {
-            Redis.asyn.close { result ->
+            Redis.asyn.close {
 
             }
         } else {
