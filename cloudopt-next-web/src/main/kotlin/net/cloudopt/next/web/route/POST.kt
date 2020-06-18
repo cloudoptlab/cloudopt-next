@@ -28,4 +28,8 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Documented
-annotation class POST(val value: String = "", val valid: Array<KClass<out Validator>> = arrayOf(),val httpMethod: HttpMethod = HttpMethod.POST)
+annotation class POST(
+    val value: String = "",
+    val valid: Array<KClass<out Validator>> = arrayOf(),
+    val httpMethod: HttpMethod = HttpMethod.POST
+)

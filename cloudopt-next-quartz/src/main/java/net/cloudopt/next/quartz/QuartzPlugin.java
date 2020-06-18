@@ -24,9 +24,8 @@ import java.util.List;
 
 public class QuartzPlugin implements Plugin {
 
-    private List<JobBean> jobs = new ArrayList();
-
     private static Scheduler scheduler;
+    private List<JobBean> jobs = new ArrayList();
 
     {
         try {
@@ -36,7 +35,7 @@ public class QuartzPlugin implements Plugin {
         }
     }
 
-    public void addJob(JobBean job){
+    public void addJob(JobBean job) {
 
         TriggerKey triggerKey = TriggerKey.triggerKey(job.getJobDesc(), job.getJobGroup());
         Trigger trigger = null;
@@ -85,7 +84,7 @@ public class QuartzPlugin implements Plugin {
 
     @Override
     public boolean start() {
-        for (JobBean entry:jobs) {
+        for (JobBean entry : jobs) {
             addJob(entry);
         }
         try {

@@ -25,10 +25,6 @@ import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.Topology
-import org.apache.kafka.streams.processor.AbstractProcessor
-import org.apache.kafka.streams.processor.Processor
-import java.util.*
-import kotlin.collections.LinkedHashSet
 
 
 /*

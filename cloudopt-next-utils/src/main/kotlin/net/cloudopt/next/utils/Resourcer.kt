@@ -60,7 +60,7 @@ object Resourcer {
             val path = loader.getResource("")?.path
             rootPath = File(path).absolutePath
             rootPath
-        }else{
+        } else {
             rootPath
         }
     }

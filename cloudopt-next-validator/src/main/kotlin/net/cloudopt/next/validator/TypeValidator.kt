@@ -34,14 +34,19 @@ class TypeValidator : ConstraintValidator<Type, String> {
     }
 
     override fun isValid(s: String, constraintValidatorContext: ConstraintValidatorContext): Boolean {
-        return if (value == "int") {
-            isInt(s)
-        } else if (value == "double") {
-            isDouble(s)
-        } else if (value == "boolean") {
-            isDouble(s)
-        } else {
-            true
+        return when (value) {
+            "int" -> {
+                isInt(s)
+            }
+            "double" -> {
+                isDouble(s)
+            }
+            "boolean" -> {
+                isDouble(s)
+            }
+            else -> {
+                true
+            }
         }
     }
 

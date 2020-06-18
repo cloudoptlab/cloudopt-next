@@ -43,11 +43,11 @@ object Wafer {
      * @param str String
      * @return safe string
      */
-    fun contentFilter(str:String?): String? {
+    fun contentFilter(str: String?): String? {
         var value = str
         filters.forEach { filter ->
             if (value?.isNotBlank() == true) {
-                value = filter.filter(value?:"")
+                value = filter.filter(value ?: "")
             }
         }
         return value

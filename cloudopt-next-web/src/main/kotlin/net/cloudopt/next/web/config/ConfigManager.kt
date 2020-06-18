@@ -15,8 +15,6 @@
  */
 package net.cloudopt.next.web.config
 
-import com.alibaba.fastjson.JSONArray
-import io.vertx.core.json.Json
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Maper
@@ -51,9 +49,9 @@ object ConfigManager {
 
         config.vertx.warningExceptionTime = 5L * 1000 * 1000000
 
-        try{
+        try {
             configMap = Jsoner.read(CONFIG_JSON_FILENAME)
-        }catch (e:RuntimeException){
+        } catch (e: RuntimeException) {
             logger.warn("[COFIG] Configuration we not found!")
         }
 
@@ -74,7 +72,7 @@ object ConfigManager {
     @JvmStatic
     open fun init(prefix: String): MutableMap<String, Any> {
         var newMap = configMap
-        for (key in prefix.split(".")){
+        for (key in prefix.split(".")) {
             newMap = newMap.get(key) as MutableMap<String, Any>
         }
         return newMap
@@ -87,7 +85,7 @@ object ConfigManager {
      * @return MutableMap<String, Any>
      */
     @JvmStatic
-    open fun initObject(prefix: String,clazz:Class<*>): Any {
-        return Jsoner.toObject(Jsoner.toJsonString(init(prefix)),clazz)
+    open fun initObject(prefix: String, clazz: Class<*>): Any {
+        return Jsoner.toObject(Jsoner.toJsonString(init(prefix)), clazz)
     }
 }

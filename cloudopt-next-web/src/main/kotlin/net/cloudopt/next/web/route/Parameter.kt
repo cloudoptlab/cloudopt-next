@@ -25,4 +25,4 @@ import java.lang.annotation.Documented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Documented
-annotation class Parameter(val value: String = "",val defaultValue:String = "")
+annotation class Parameter(val value: String = "", val defaultValue: String = "")

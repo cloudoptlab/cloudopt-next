@@ -18,7 +18,6 @@ package net.cloudopt.next.web
 import io.vertx.codegen.annotations.Nullable
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.Cookie
-import io.vertx.core.http.HttpHeaders
 import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.FileUpload
@@ -110,7 +109,8 @@ open class Resource {
      */
     fun <T> getAttrs(clazz: Class<T>): Any {
         var map = context.request().formAttributes()
-        map.forEach {it
+        map.forEach {
+            it
             map[it.key] = Wafer.contentFilter(it.value)
         }
         return Maper.toObject(context.request().formAttributes() as MutableMap<String, Any>, clazz)
@@ -129,10 +129,10 @@ open class Resource {
      * Returns request parameters.
      * @return Parameters map
      */
-    fun getParams(): MutableMap<String,Any> {
-        var map = mutableMapOf<String,Any>()
-        request.params().forEach { e->
-            map[e.key] = Wafer.contentFilter(e.value) ?:""
+    fun getParams(): MutableMap<String, Any> {
+        var map = mutableMapOf<String, Any>()
+        request.params().forEach { e ->
+            map[e.key] = Wafer.contentFilter(e.value) ?: ""
         }
         return map
     }
@@ -142,9 +142,9 @@ open class Resource {
      * @return Parameters Object
      */
     fun <T> getParams(clazz: Class<T>): Any {
-        var map = mutableMapOf<String,Any>()
-        request.params().forEach { e->
-            map[e.key] = Wafer.contentFilter(e.value) ?:""
+        var map = mutableMapOf<String, Any>()
+        request.params().forEach { e ->
+            map[e.key] = Wafer.contentFilter(e.value) ?: ""
         }
         return Maper.toObject(map, clazz)
     }

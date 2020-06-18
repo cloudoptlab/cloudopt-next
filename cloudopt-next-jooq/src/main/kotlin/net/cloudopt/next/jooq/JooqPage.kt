@@ -14,6 +14,7 @@
  *  You may elect to redistribute this code under either of these licenses.
  */
 package net.cloudopt.next.jooq
+
 import java.io.Serializable
 
 /*
@@ -29,4 +30,4 @@ data class JooqPage(
     val firstPage: Boolean = true,
     val lastPage: Boolean = true,
     var list: MutableList<*> = mutableListOf<Any>()
-): Serializable
+) : Serializable

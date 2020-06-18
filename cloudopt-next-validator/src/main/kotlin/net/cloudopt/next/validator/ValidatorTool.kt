@@ -30,8 +30,12 @@ data class ValidatorResult(var result: Boolean = true, var message: String = "")
 
 object ValidatorTool {
 
-    val validator = Validation.byProvider(HibernateValidator::class.java).configure().buildValidatorFactory()
+    private val validator = Validation.byProvider(HibernateValidator::class.java).configure().buildValidatorFactory()
         .validator
+
+    private val validForExecutables =
+        Validation.byProvider(HibernateValidator::class.java).configure().buildValidatorFactory()
+            .validator.forExecutables()
 
     /**
      * Check parameters with comments on fields
@@ -41,12 +45,12 @@ object ValidatorTool {
      */
     @JvmOverloads
     fun validate(obj: Any, vararg args: String): ValidatorResult {
-        if (args.size <= 0) {
+        if (args.isEmpty()) {
             val constraintViolations = validator.validate(obj)
             val iter = constraintViolations.iterator()
             if (iter.hasNext()) {
                 val c = iter.next() as ConstraintViolation<*>
-                return ValidatorResult(false,c.message)
+                return ValidatorResult(false, c.message)
             }
         } else {
             val constraintViolations = HashSet<ConstraintViolation<Any>>()
@@ -60,10 +64,10 @@ object ValidatorTool {
             val iter = constraintViolations.iterator()
             if (iter.hasNext()) {
                 val c = iter.next() as ConstraintViolation<*>
-                return ValidatorResult(false,c.message)
+                return ValidatorResult(false, c.message)
             }
         }
-        return ValidatorResult(true,"")
+        return ValidatorResult(true, "")
     }
 
 

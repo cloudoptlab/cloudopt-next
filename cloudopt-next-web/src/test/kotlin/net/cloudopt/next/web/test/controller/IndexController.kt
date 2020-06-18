@@ -27,10 +27,6 @@ import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.*
 import net.cloudopt.next.web.test.Student
 import net.cloudopt.next.web.test.interceptor.TestInterceptor1
-import java.math.BigDecimal
-import java.math.BigInteger
-import java.sql.Timestamp
-import java.util.*
 
 
 /*
@@ -38,7 +34,7 @@ import java.util.*
  * @Time: 2018/1/26
  * @Description: Test Controller
  */
-@API(value="/",interceptor = [TestInterceptor1::class])
+@API(value = "/", interceptor = [TestInterceptor1::class])
 class IndexController : Resource() {
 
     @GET
@@ -48,16 +44,16 @@ class IndexController : Resource() {
     }
 
     @GET("delete")
-    fun delete(){
+    fun delete() {
         delCookie("test")
         renderHtml(view = "index")
     }
 
     @GET("args")
     fun argsController(
-        @Parameter("name",defaultValue = "Peter") name:String,
-        @Parameter("sex",defaultValue = "1") sex:Int
-    ){
+        @Parameter("name", defaultValue = "Peter") name: String,
+        @Parameter("sex", defaultValue = "1") sex: Int
+    ) {
         var map = hashMapOf<String, Any>()
         map["name"] = name
         map["sex"] = sex
@@ -65,7 +61,7 @@ class IndexController : Resource() {
     }
 
     @POST("body")
-    fun bodyController(@RequestBody body:Student){
+    fun bodyController(@RequestBody body: Student) {
         renderJson(body)
     }
 

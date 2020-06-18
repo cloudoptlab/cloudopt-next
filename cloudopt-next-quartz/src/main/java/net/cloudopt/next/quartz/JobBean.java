@@ -17,20 +17,42 @@ package net.cloudopt.next.quartz;
 
 public class JobBean {
 
-    /** Job's id */
+    /**
+     * Job's id
+     */
     private String jobId;
 
-    /** Job's description */
+    /**
+     * Job's description
+     */
     private String jobDesc;
 
-    /** Job's runtime expression */
+    /**
+     * Job's runtime expression
+     */
     private String cronExpression;
 
-    /** Job's group */
+    /**
+     * Job's group
+     */
     private String jobGroup;
 
-    /** Job's class */
+    /**
+     * Job's class
+     */
     private String jobClass;
+
+    public JobBean(String jobId, String jobDesc, String cronExpression, String jobGroup, String jobClass) {
+        this.jobId = jobId;
+        this.jobDesc = jobDesc;
+        this.cronExpression = cronExpression;
+        this.jobGroup = jobGroup;
+        this.jobClass = jobClass;
+    }
+
+    public JobBean() {
+        super();
+    }
 
     public String getJobId() {
         return jobId;
@@ -70,17 +92,5 @@ public class JobBean {
 
     public void setJobClass(String jobClass) {
         this.jobClass = jobClass;
-    }
-
-    public JobBean(String jobId, String jobDesc, String cronExpression, String jobGroup, String jobClass) {
-        this.jobId = jobId;
-        this.jobDesc = jobDesc;
-        this.cronExpression = cronExpression;
-        this.jobGroup = jobGroup;
-        this.jobClass = jobClass;
-    }
-
-    public JobBean() {
-        super();
     }
 }

@@ -30,7 +30,7 @@ object Welcomer {
     private val logger = Logger.getLogger(CloudoptServer.javaClass)
 
     @JvmStatic
-    fun html(fileName:String): String {
+    fun html(fileName: String): String {
 
         var input = Welcomer.javaClass.classLoader.getResourceAsStream(fileName)
 
@@ -52,7 +52,7 @@ object Welcomer {
     }
 
     @JvmStatic
-    fun home():String{
+    fun home(): String {
         return html("welcome.html")
     }
 

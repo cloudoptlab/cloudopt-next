@@ -24,8 +24,8 @@ package net.cloudopt.next.auth.bean
  * @constructor
  */
 data class Rule(
-    var name:String="",
-    var url:String="",
-    var method:String="",
-    var allow:Boolean = true
+    var name: String = "",
+    var url: String = "",
+    var method: String = "",
+    var allow: Boolean = true
 )

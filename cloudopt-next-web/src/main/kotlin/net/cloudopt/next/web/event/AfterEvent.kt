@@ -14,6 +14,7 @@
  *  You may elect to redistribute this code under either of these licenses.
  */
 package net.cloudopt.next.web.event
+
 import java.lang.annotation.Documented
 
 /*
@@ -24,4 +25,4 @@ import java.lang.annotation.Documented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @Documented
-annotation class AfterEvent(val value:Array<String> = [])
+annotation class AfterEvent(val value: Array<String> = [])

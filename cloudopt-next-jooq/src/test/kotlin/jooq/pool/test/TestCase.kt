@@ -16,7 +16,6 @@
 package jooq.pool.test
 
 import net.cloudopt.next.jooq.JooqPlugin
-import net.cloudopt.next.jooq.Jooqer
 import org.junit.Test
 
 

@@ -15,10 +15,6 @@
  */
 package net.cloudopt.next.web.handler
 
-import net.cloudopt.next.waf.Filter
-import net.cloudopt.next.waf.MongoInjection
-import net.cloudopt.next.waf.SQLInjection
-import net.cloudopt.next.waf.XSSInjection
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
 

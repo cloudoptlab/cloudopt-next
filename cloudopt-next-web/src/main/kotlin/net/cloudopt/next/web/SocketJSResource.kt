@@ -15,19 +15,7 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.core.buffer.Buffer
-import io.vertx.core.http.HttpHeaders
-import io.vertx.core.http.HttpServerRequest
-import io.vertx.core.http.HttpServerResponse
-import io.vertx.ext.web.Cookie
-import io.vertx.ext.web.FileUpload
-import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.sockjs.SockJSSocket
-import net.cloudopt.next.json.Jsoner
-import net.cloudopt.next.utils.Maper
-import net.cloudopt.next.web.render.RenderFactory
-import net.cloudopt.next.web.render.View
-import java.util.*
 
 /*
  * @author: Cloudopt
@@ -36,6 +24,6 @@ import java.util.*
  */
 open interface SocketJSResource {
 
-    fun handler(socket:SockJSSocket)
+    fun handler(socket: SockJSSocket)
 
 }

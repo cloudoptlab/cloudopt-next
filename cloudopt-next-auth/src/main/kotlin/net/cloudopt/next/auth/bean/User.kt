@@ -28,9 +28,9 @@ import java.util.*
  * @constructor
  */
 data class User(
-    var id:Int = 0,
-    var uniqueTag:String = "",
-    var rolesIdList:List<Int> = mutableListOf(),
-    var groupsIdList:List<Int> = mutableListOf(),
+    var id: Int = 0,
+    var uniqueTag: String = "",
+    var rolesIdList: List<Int> = mutableListOf(),
+    var groupsIdList: List<Int> = mutableListOf(),
     var rules: LinkedList<Rule> = LinkedList()
 )

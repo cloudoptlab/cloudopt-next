@@ -34,7 +34,7 @@ class InsideValidator : ConstraintValidator<Inside, String> {
     }
 
     override fun isValid(s: String, constraintValidatorContext: ConstraintValidatorContext): Boolean {
-        for (text in value!!) {
+        for (text in value) {
             if (text == s) {
                 return true
             }

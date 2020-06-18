@@ -18,7 +18,6 @@ package net.cloudopt.next.quartz.test
 import net.cloudopt.next.quartz.JobBean
 import net.cloudopt.next.quartz.QuartzPlugin
 import net.cloudopt.next.web.CloudoptServer
-import org.junit.Test
 
 
 /*

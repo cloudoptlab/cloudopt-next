@@ -22,7 +22,6 @@ import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.handler.AutoHandler
-import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
@@ -99,8 +98,8 @@ object CloudoptServer {
             }
 
         //Scan socket
-        Classer.scanPackageByAnnotation(packageName,true,SocketJS::class.java)
-            .forEach{clazz ->
+        Classer.scanPackageByAnnotation(packageName, true, SocketJS::class.java)
+            .forEach { clazz ->
                 sockets.add(clazz as Class<SocketJSResource>)
             }
 
@@ -110,7 +109,7 @@ object CloudoptServer {
                 resources.add(clazz as Class<Resource>)
             }
 
-        for (clazz in resources){
+        for (clazz in resources) {
 
             // Get api annotation
             val annotation: API? = clazz.getDeclaredAnnotation(API::class.java)
@@ -182,9 +181,9 @@ object CloudoptServer {
                     if (resourceUrl.isNotBlank()) {
                         var temp = mutableMapOf<HttpMethod, Array<KClass<out Validator>>>()
                         temp.put(httpMethod, valids)
-                        if(validators.containsKey(resourceUrl)){
+                        if (validators.containsKey(resourceUrl)) {
                             validators.get(resourceUrl)?.putAll(temp)
-                        }else{
+                        } else {
                             validators.put(resourceUrl, temp)
                         }
                     }
@@ -192,7 +191,15 @@ object CloudoptServer {
                 }
 
                 if (resourceUrl.isNotBlank()) {
-                    var resourceTable = ResourceTable(resourceUrl, httpMethod, clazz, method.name, blocking, method,method.parameterTypes)
+                    var resourceTable = ResourceTable(
+                        resourceUrl,
+                        httpMethod,
+                        clazz,
+                        method.name,
+                        blocking,
+                        method,
+                        method.parameterTypes
+                    )
                     controllers.add(resourceTable)
                 }
             }

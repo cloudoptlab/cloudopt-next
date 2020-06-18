@@ -7,7 +7,7 @@ import net.cloudopt.next.auth.bean.Role
 import net.cloudopt.next.auth.bean.User
 import net.cloudopt.next.web.config.ConfigManager
 
-var config:PermissionTree = ConfigManager.initObject("auth",PermissionTree::class.java) as PermissionTree
+var config: PermissionTree = ConfigManager.initObject("auth", PermissionTree::class.java) as PermissionTree
 
 class JsonAuth(cache: Boolean = true) : Auth(cache) {
 
@@ -17,7 +17,7 @@ class JsonAuth(cache: Boolean = true) : Auth(cache) {
 
     override fun getRole(roleId: Int): Role? {
         var roles = getRoles()
-        for (role in roles){
+        for (role in roles) {
             if (role.id == roleId) return role
         }
         return null
@@ -29,7 +29,7 @@ class JsonAuth(cache: Boolean = true) : Auth(cache) {
 
     override fun getGroup(groupId: Int): Group? {
         var groups = getGroups()
-        for (group in groups){
+        for (group in groups) {
             if (group.id == groupId) return group
         }
         return null
@@ -41,7 +41,7 @@ class JsonAuth(cache: Boolean = true) : Auth(cache) {
 
     override fun getUser(userId: Int): User? {
         var users = getUsers()
-        for (user in users){
+        for (user in users) {
             if (user.id == userId) return user
         }
         return null
@@ -49,7 +49,7 @@ class JsonAuth(cache: Boolean = true) : Auth(cache) {
 
     override fun getUser(uniqueTag: String): User? {
         var users = getUsers()
-        for (user in users){
+        for (user in users) {
             if (user.uniqueTag == uniqueTag) return user
         }
         return null

@@ -15,7 +15,6 @@
  */
 package cloudopt.next.client
 
-import io.vertx.core.MultiMap
 import io.vertx.core.buffer.Buffer
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.WebClient

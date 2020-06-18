@@ -27,7 +27,7 @@ import net.cloudopt.next.utils.Resourcer
  */
 class DefaultJSONProvider : JsonProvider {
 
-    init{
+    init {
         ParserConfig.getGlobalInstance().isSafeMode = true
     }
 
@@ -75,7 +75,7 @@ class DefaultJSONProvider : JsonProvider {
     }
 
     override fun <T> read(filePath: String, prefix: String, clazz: Class<T>): Any {
-        var jsonObj = read(filePath,prefix)
+        var jsonObj = read(filePath, prefix)
         return JSONObject(jsonObj).toJavaObject(clazz)!!
     }
 

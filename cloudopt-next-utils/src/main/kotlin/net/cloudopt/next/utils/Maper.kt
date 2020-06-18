@@ -17,7 +17,7 @@ package net.cloudopt.next.utils
 
 import com.alibaba.fastjson.JSONObject
 import java.lang.reflect.Modifier
-import java.util.LinkedHashMap
+import java.util.*
 
 
 /*
@@ -45,9 +45,9 @@ object Maper {
             if (map.containsKey(field.name)) {
                 try {
                     field.set(obj, map[field.name])
-                }catch (e:RuntimeException){
-                    var jsonObject:JSONObject = map[field.name] as JSONObject
-                    field.set(obj, toObject(jsonObject.toMutableMap(),field.type))
+                } catch (e: RuntimeException) {
+                    var jsonObject: JSONObject = map[field.name] as JSONObject
+                    field.set(obj, toObject(jsonObject.toMutableMap(), field.type))
                 }
             }
         }
@@ -60,13 +60,13 @@ object Maper {
      * @return The map after the conversion is completed
      */
     fun toMap(obj: Any): MutableMap<String, Any> {
-        val map = LinkedHashMap<String,Any>()
+        val map = LinkedHashMap<String, Any>()
         val clazz = obj.javaClass
         for (field in clazz.declaredFields) {
             field.isAccessible = true;
             var fieldName = field.getName();
             var value = field.get(obj);
-            if (value != null){
+            if (value != null) {
                 map[fieldName] = value;
             }
 

@@ -60,26 +60,26 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         val router = Router.router(CloudoptServer.vertx)
 
-        // Print Baner
+        // Print banner
         Banner.print()
 
         // Set json provider
         Jsoner.jsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.config.jsonProvider))
 
-        // Register websockets
+        // Register websocket
         if (CloudoptServer.sockets.size > 0) {
             val sockJSHandler = SockJSHandler.create(CloudoptServer.vertx, ConfigManager.config.socket)
             CloudoptServer.sockets.forEach { clazz ->
                 val websocketAnnotation: SocketJS? = clazz.getDeclaredAnnotation(SocketJS::class.java)
                 sockJSHandler.socketHandler { sockJSHandler ->
-                    var handler = Beaner.newInstance<SocketJSResource>(clazz)
+                    val handler = Beaner.newInstance<SocketJSResource>(clazz)
                     handler.handler(sockJSHandler)
                 }
                 if (!websocketAnnotation?.value?.endsWith("/*")!!) {
                     logger.error("[SOCKET] Url must be end with /* !")
                 }
-                logger.info("[SOCKET] Registered socket resource: ${websocketAnnotation?.value} -> ${clazz.name}")
-                router.route(websocketAnnotation?.value).handler(sockJSHandler)
+                logger.info("[SOCKET] Registered socket resource: ${websocketAnnotation.value} -> ${clazz.name}")
+                router.route(websocketAnnotation.value).handler(sockJSHandler)
             }
         }
 
@@ -97,21 +97,21 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
 
         // Register failure handler
-        CloudoptServer.logger.info("[FAILURE HANDLER] Registered failure handler：${CloudoptServer.errorHandler::class.java.getName()}")
+        CloudoptServer.logger.info("[FAILURE HANDLER] Registered failure handler：${CloudoptServer.errorHandler::class.java.name}")
 
         router.route("/*").failureHandler { context ->
             errorProcessing(context)
         }
 
-        for(i in 400..500){
-            router.errorHandler(i) { context->
+        for (i in 400..500) {
+            router.errorHandler(i) { context ->
                 errorProcessing(context)
             }
         }
 
         //Register handlers
         CloudoptServer.handlers.forEach { handler ->
-            CloudoptServer.logger.info("[HANDLER] Registered handler：${handler::class.java.getName()}")
+            CloudoptServer.logger.info("[HANDLER] Registered handler：${handler::class.java.name}")
             router.route("/*").handler { context ->
                 try {
                     handler.preHandle(Resource().init(context))
@@ -132,7 +132,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         )
 
         //Register interceptors
-        CloudoptServer.interceptors.forEach { url, clazz ->
+        CloudoptServer.interceptors.forEach { (url, clazz) ->
             router.route(url).handler { context ->
                 val resource = Resource()
                 resource.init(context)
@@ -154,13 +154,13 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
 
         //Register validators
-        CloudoptServer.validators.forEach { url, map ->
+        CloudoptServer.validators.forEach { (url, map) ->
             map.keys.forEach { key ->
-                val validatorList = map.get(key)
+                val validatorList = map[key]
                 validatorList?.forEach { validator ->
                     router.route(key, url).handler { context ->
                         try {
-                            val v = Beaner.newInstance<Validator>(validator?.java!!)
+                            val v = Beaner.newInstance<Validator>(validator.java)
                             val resource = Resource()
                             resource.init(context)
                             if (v.validate(resource)) {
@@ -235,14 +235,14 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
     }
 
-    private fun errorProcessing(context: RoutingContext){
+    private fun errorProcessing(context: RoutingContext) {
         val errorHandler = Beaner.newInstance<ErrorHandler>(CloudoptServer.errorHandler)
         errorHandler.init(context)
         errorHandler.handle()
-        if(context.failure() != null){
+        if (context.failure() != null) {
             logger.error(context.failure().toString())
         }
-        if (!errorHandler.response.ended()){
+        if (!errorHandler.response.ended()) {
             errorHandler.end()
         }
     }
@@ -260,7 +260,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 val arr = arrayListOf<Any>()
                 for (para in m.parameters) {
                     val parameterAnnotation = para.getAnnotation(Parameter::class.java)
-                    if(parameterAnnotation != null){
+                    if (parameterAnnotation != null) {
                         getParaByType(para.getAnnotation(Parameter::class.java).value, para, controllerObj)?.let {
                             arr.add(
                                 it
@@ -268,7 +268,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
                         }
                     }
                     val requestBodyAnnotation = para.getAnnotation(RequestBody::class.java)
-                    if(requestBodyAnnotation != null){
+                    if (requestBodyAnnotation != null) {
                         controllerObj.getBodyJson(para.type)?.let { arr.add(it) }
                     }
                 }
@@ -278,7 +278,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
             // Run after event
             if (m.getAnnotation(AfterEvent::class.java) != null && context.response().ended()) {
-                var afterEvent = m.getAnnotation(AfterEvent::class.java)
+                val afterEvent = m.getAnnotation(AfterEvent::class.java)
                 for (topic in afterEvent.value) {
                     EventManager.send(topic, "${resourceTable.httpMethod}:${resourceTable.url}")
                 }

@@ -56,7 +56,7 @@ class KafkaPlugin : Plugin {
                 }
             }
 
-        if(KafkaManager.kafkaList.isNotEmpty()){
+        if (KafkaManager.kafkaList.isNotEmpty()) {
             KafkaManager.consumer?.subscribe(KafkaManager.kafkaList.keys) { ar ->
                 if (ar.succeeded()) {
                     KafkaManager.logger.info("[KAFKA] Registered topic listener was success：${KafkaManager.kafkaList.keys}")
@@ -78,10 +78,10 @@ class KafkaPlugin : Plugin {
          */
         if (KafkaManager.config.get("streams") == "true") {
             val streamsProps: Properties = KafkaManager.config.toProperties()
-            if(!streamsProps.contains(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG)){
+            if (!streamsProps.contains(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG)) {
                 streamsProps[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
             }
-            if(!streamsProps.contains(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG)){
+            if (!streamsProps.contains(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG)) {
                 streamsProps[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String().javaClass
             }
             KafkaManager.streams = KafkaStreams(KafkaManager.streamsTopology, streamsProps)

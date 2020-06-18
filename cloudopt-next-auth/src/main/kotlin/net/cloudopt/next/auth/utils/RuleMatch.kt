@@ -17,7 +17,6 @@
 package net.cloudopt.next.auth.utils
 
 import net.cloudopt.next.auth.bean.Rule
-import java.util.*
 
 object RuleMatch {
 
@@ -31,8 +30,8 @@ object RuleMatch {
      * If there is no rule that matches, it returns False.
      */
     fun ruleMatch(url: String, method: String, ruleList: MutableList<Rule>): Boolean {
-        for (rule in ruleList){
-            if (ruleMatch(url,method,rule)){
+        for (rule in ruleList) {
+            if (ruleMatch(url, method, rule)) {
                 return true
             }
         }
@@ -51,13 +50,13 @@ object RuleMatch {
     fun ruleMatch(url: String, method: String, rule: Rule): Boolean {
         var methods: List<String> = if (rule.method.contains("||")) {
             rule.method.split("||")
-        } else if (rule.method.equals("*")){
-            mutableListOf("GET", "POST", "PUT", "DELETE","PATCH")
-        }else{
+        } else if (rule.method.equals("*")) {
+            mutableListOf("GET", "POST", "PUT", "DELETE", "PATCH")
+        } else {
             mutableListOf(rule.method)
         }
 
-        return BuiltinOperators.keyMatch2(url,rule.url) && method in methods && rule.allow
+        return BuiltinOperators.keyMatch2(url, rule.url) && method in methods && rule.allow
     }
 
 }

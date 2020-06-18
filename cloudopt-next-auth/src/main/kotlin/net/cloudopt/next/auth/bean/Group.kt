@@ -26,7 +26,7 @@ import java.util.*
  * @constructor
  */
 data class Group(
-    var id:Int = 0,
-    var name:String = "",
+    var id: Int = 0,
+    var name: String = "",
     var rules: LinkedList<Rule> = LinkedList()
 )

@@ -53,7 +53,7 @@ class JooqPaginate(query: SelectConditionStep<*>, private var count: Int, privat
 
     }
 
-    fun order(orderField: OrderField<*>){
+    fun order(orderField: OrderField<*>) {
         this.orderField = orderField
     }
 
@@ -63,9 +63,9 @@ class JooqPaginate(query: SelectConditionStep<*>, private var count: Int, privat
         } else {
             query.orderBy(orderField).limit(this.count).offset(skip()).fetchInto(clazz)
         }
-        list = if (list.isNotEmpty()){
-             list.toMutableList()
-        }else{
+        list = if (list.isNotEmpty()) {
+            list.toMutableList()
+        } else {
             mutableListOf()
         }
         return JooqPage(

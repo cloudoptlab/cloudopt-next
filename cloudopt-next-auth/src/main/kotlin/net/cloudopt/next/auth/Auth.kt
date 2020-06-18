@@ -35,7 +35,7 @@ abstract class Auth {
      */
     constructor(cache: Boolean = true) {
         this.cache = cache
-        if (cache){
+        if (cache) {
             refreshCache()
         }
     }
@@ -43,7 +43,7 @@ abstract class Auth {
     /**
      * Used to refresh the cache.
      */
-    fun refreshCache(){
+    fun refreshCache() {
         var users = getUsers()
         for (user in users) {
             if (cache) {
@@ -121,9 +121,9 @@ abstract class Auth {
      * If there is no rule that matches, it returns False.
      */
     fun enforce(uniqueTag: String, url: String, method: String): Boolean {
-        if (cacheMap.containsKey(uniqueTag)){
-            return RuleMatch.ruleMatch(url,method,cacheMap[uniqueTag]?: mutableListOf())
-        }else{
+        if (cacheMap.containsKey(uniqueTag)) {
+            return RuleMatch.ruleMatch(url, method, cacheMap[uniqueTag] ?: mutableListOf())
+        } else {
             var user: User = getUser(uniqueTag) ?: return false
             var tempRuleMap = cacheMap[user.uniqueTag] ?: user.rules
             for (roleId in user.rolesIdList) {
@@ -132,7 +132,7 @@ abstract class Auth {
             for (groupId in user.groupsIdList) {
                 getGroup(groupId)?.rules?.let { tempRuleMap.addAll(it) }
             }
-            return RuleMatch.ruleMatch(url,method,tempRuleMap)
+            return RuleMatch.ruleMatch(url, method, tempRuleMap)
         }
     }
 

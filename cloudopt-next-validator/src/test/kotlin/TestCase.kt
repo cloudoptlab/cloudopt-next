@@ -9,4 +9,5 @@ fun main() {
     var account = AccountBean()
     println(ValidatorTool.validate(account).result)
     println(ValidatorTool.validate(account).message)
+    println(ValidatorTool.validate(account.username).result)
 }

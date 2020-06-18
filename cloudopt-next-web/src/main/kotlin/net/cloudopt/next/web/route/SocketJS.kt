@@ -15,10 +15,7 @@
  */
 package net.cloudopt.next.web.route
 
-import io.vertx.core.http.HttpMethod
-import net.cloudopt.next.web.Validator
 import java.lang.annotation.Documented
-import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt

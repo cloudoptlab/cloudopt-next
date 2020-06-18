@@ -26,7 +26,7 @@ import java.util.*
  * @constructor
  */
 data class Role(
-    var id:Int = 0,
-    var name:String = "",
-    var rules:LinkedList<Rule> = LinkedList()
+    var id: Int = 0,
+    var name: String = "",
+    var rules: LinkedList<Rule> = LinkedList()
 )
