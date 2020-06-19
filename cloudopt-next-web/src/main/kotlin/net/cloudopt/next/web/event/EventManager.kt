@@ -87,6 +87,16 @@ object EventManager {
     }
 
     /**
+     * Sends a message byu object.
+     * The message will be delivered to at most one of the handlers registered to the topic.
+     * @param name the topic to send it to
+     * @param body the message, may be {@code null}
+     */
+    fun sendObject(name: String, body: Any) {
+        eventBus.send(name, body)
+    }
+
+    /**
      * Publish a message.
      * The message will be delivered to all handlers registered to the topic.
      * @param name the topic to send it to

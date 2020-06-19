@@ -287,7 +287,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             if (m.getAnnotation(AfterEvent::class.java) != null && context.response().ended()) {
                 val afterEvent = m.getAnnotation(AfterEvent::class.java)
                 for (topic in afterEvent.value) {
-                    EventManager.send(topic, "${resourceTable.httpMethod}:${resourceTable.url}")
+                    EventManager.sendObject(topic, context.data()?: mutableMapOf<String, Any>())
                 }
             }
         } catch (e: Exception) {
