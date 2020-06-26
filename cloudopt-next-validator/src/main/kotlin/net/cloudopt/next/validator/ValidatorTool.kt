@@ -20,6 +20,7 @@ import java.lang.reflect.Method
 import java.util.*
 import javax.validation.ConstraintViolation
 import javax.validation.Validation
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
@@ -70,6 +71,28 @@ object ValidatorTool {
     }
 
     /**
+     * Validates all constraints on {@code object}.
+     *
+     * @param obj object to validate
+     * @param groups the group or list of groups targeted for validation (defaults to
+     *        {@link Default})
+     * @param <T> the type of the object to validate
+     * @return constraint violations or an empty set if none
+     * @throws IllegalArgumentException if object is {@code null}
+     *         or if {@code null} is passed to the varargs groups
+     * @throws ValidationException if a non recoverable error happens
+     *         during the validation process
+     */
+    fun validateGroup(obj: Any, vararg groups: Class<*>): ValidatorResult {
+        val violations = validator.validate(obj,*groups)
+        return if (violations.isEmpty()) {
+            ValidatorResult(true, "")
+        } else {
+            ValidatorResult(false, violations.first().message)
+        }
+    }
+
+    /**
      * Validates all constraints placed on the parameters of the given method.
      *
      * @param any the object on which the method to validate is invoked
@@ -81,15 +104,14 @@ object ValidatorTool {
      * @throws IllegalArgumentException if {@code null} is passed for any of the parameters
      *         or if parameters don't match with each other
      */
-    fun validateParameters(any:Any, method:Method, parameterValues: Array<Any>): ValidatorResult {
-        val violations = executableValidator.validateParameters(any,method, parameterValues)
-        return if (violations.isEmpty()){
+    fun validateParameters(any: Any, method: Method, parameterValues: Array<Any>): ValidatorResult {
+        val violations = executableValidator.validateParameters(any, method, parameterValues)
+        return if (violations.isEmpty()) {
             ValidatorResult(true, "")
-        }else{
+        } else {
             ValidatorResult(false, violations.first().message)
         }
     }
-
 
 
 }
