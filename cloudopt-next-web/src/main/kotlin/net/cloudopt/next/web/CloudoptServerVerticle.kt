@@ -17,6 +17,7 @@ package net.cloudopt.next.web
 
 import com.alibaba.fastjson.JSONObject
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.http.HttpHeaders
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
@@ -184,6 +185,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
         if (CloudoptServer.controllers.size < 1) {
             router.route("/").blockingHandler { context ->
+                context.response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
                 context.response().end(Welcomer.home())
             }
         }
