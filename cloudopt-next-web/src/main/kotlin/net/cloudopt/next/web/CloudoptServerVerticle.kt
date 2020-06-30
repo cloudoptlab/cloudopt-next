@@ -295,7 +295,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             logger.error(
                 e.message ?: "${resourceTable.url} has error occurred, but the error message could not be obtained "
             )
-            context.response().end()
+            context.fail(500)
         }
     }
 
