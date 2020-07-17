@@ -21,6 +21,7 @@ import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 public class QuartzPlugin implements Plugin {
 
@@ -57,6 +58,10 @@ public class QuartzPlugin implements Plugin {
 
             // Expression scheduling builder
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression());
+            if (job.getTimeZone() != null && !job.getTimeZone().equals("")) {
+                scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression()).inTimeZone(TimeZone.getTimeZone(job.getTimeZone()));
+            }
+
 
             // Build a new trigger by the new cronExpression expression
             trigger = TriggerBuilder.newTrigger().withIdentity(job.getJobDesc(), job.getJobGroup())
