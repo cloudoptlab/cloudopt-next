@@ -1,4 +1,4 @@
-<img src="https://www.cloudopt.net/static/images/logo.svg" alt="Cloudopt Next" style="zoom:50%;" />
+<img src="https://www.cloudopt.net/static/images/logo.svg" alt="Cloudopt Next" style="width:250px;font-family:'Times New Roman'" />
 
 
 
