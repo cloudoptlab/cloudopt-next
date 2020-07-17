@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web
+package net.cloudopt.next.web.test.controller
 
 import io.vertx.ext.web.handler.sockjs.SockJSSocket
+import net.cloudopt.next.web.SockJSResource
+import net.cloudopt.next.web.route.SocketJS
+
 
 /*
  * @author: Cloudopt
  * @Time: 2020/4/1
- * @Description: Socket Resource
+ * @Description: Test Socket Controller
  */
-open interface SocketJSResource {
 
-    fun handler(socket: SockJSSocket)
+@SocketJS("/socket/api/*")
+class SockController : SockJSResource {
+    override fun handler(socket: SockJSSocket) {
+        println(socket)
+        socket.handler {
+            socket.write("Hello world!")
+        }
+    }
 
 }
