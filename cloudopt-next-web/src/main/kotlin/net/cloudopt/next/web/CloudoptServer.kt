@@ -17,6 +17,7 @@ package net.cloudopt.next.web
 
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
+import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
@@ -44,7 +45,7 @@ object CloudoptServer {
     open val resources: MutableList<Class<Resource>> = arrayListOf()
 
     @JvmStatic
-    open val sockets: MutableList<Class<SocketJSResource>> = arrayListOf()
+    open val sockets: MutableList<Class<SockJSResource>> = arrayListOf()
 
     @JvmStatic
     open val handlers = arrayListOf<Handler>()
@@ -69,6 +70,20 @@ object CloudoptServer {
 
     @JvmStatic
     open var errorHandler = Classer.loadClass(ConfigManager.config.errorHandler)
+
+    init {
+        scan()
+
+        /**
+         * Print banner
+         */
+        Banner.print()
+
+        /**
+         * Set json provider
+         */
+        Jsoner.jsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.config.jsonProvider))
+    }
 
     /**
      * Scan by annotation and register as a route.
@@ -100,7 +115,7 @@ object CloudoptServer {
         //Scan socket
         Classer.scanPackageByAnnotation(packageName, true, SocketJS::class.java)
             .forEach { clazz ->
-                sockets.add(clazz as Class<SocketJSResource>)
+                sockets.add(clazz as Class<SockJSResource>)
             }
 
         //Scan resources
@@ -243,6 +258,7 @@ object CloudoptServer {
      */
     @JvmStatic
     fun run() {
+        startPlugins()
         Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
     }
 
@@ -295,6 +311,32 @@ object CloudoptServer {
     }
 
     /**
+     * Register all plugins
+     */
+    @JvmStatic
+    fun startPlugins(){
+        CloudoptServer.plugins.forEach { plugin ->
+            if (plugin.start()) {
+                CloudoptServer.logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
+            } else {
+                CloudoptServer.logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
+            }
+        }
+    }
+
+    /**
+     * Stop all plugins
+     */
+    @JvmStatic
+    fun stopPlugins(){
+        CloudoptServer.plugins.forEach { plugin ->
+            if (!plugin.stop()) {
+                CloudoptServer.logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")
+            }
+        }
+    }
+
+    /**
      * Stop the the Vertx instance and release any resources held by it.
      * <p>
      * The instance cannot be used after it has been closed.
@@ -303,6 +345,7 @@ object CloudoptServer {
      */
     @JvmStatic
     fun stop() {
+        stopPlugins()
         vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
         vertx.close()
     }

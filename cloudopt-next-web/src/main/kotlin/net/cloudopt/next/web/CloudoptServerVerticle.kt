@@ -47,34 +47,20 @@ class CloudoptServerVerticle : AbstractVerticle() {
 
     override fun start() {
 
-        CloudoptServer.scan()
-
-        //Register plugins
-        CloudoptServer.plugins.forEach { plugin ->
-            if (plugin.start()) {
-                CloudoptServer.logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
-            } else {
-                CloudoptServer.logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
-            }
-        }
-
         val server = CloudoptServer.vertx.createHttpServer(ConfigManager.config.vertxHttpServer)
 
         val router = Router.router(CloudoptServer.vertx)
 
-        // Print banner
-        Banner.print()
 
-        // Set json provider
-        Jsoner.jsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.config.jsonProvider))
-
-        // Register websocket
+        /**
+         * Register sockJS
+         */
         if (CloudoptServer.sockets.size > 0) {
             val sockJSHandler = SockJSHandler.create(CloudoptServer.vertx, ConfigManager.config.socket)
             CloudoptServer.sockets.forEach { clazz ->
                 val websocketAnnotation: SocketJS? = clazz.getDeclaredAnnotation(SocketJS::class.java)
                 sockJSHandler.socketHandler { sockJSHandler ->
-                    val handler = Beaner.newInstance<SocketJSResource>(clazz)
+                    val handler = Beaner.newInstance<SockJSResource>(clazz)
                     handler.handler(sockJSHandler)
                 }
                 if (!websocketAnnotation?.value?.endsWith("/*")!!) {
@@ -85,20 +71,28 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        //The ResponseContentTypeHandler can set the Content-Type header automatically.
+        /**
+         * The ResponseContentTypeHandler can set the Content-Type header automatically
+         */
         router.route("/*").handler(ResponseContentTypeHandler.create())
 
         router.route("/*").handler(BodyHandler.create().setBodyLimit(ConfigManager.config.bodyLimit))
 
-        //Set timeout
+        /**
+         * Set timeout
+         */
         router.route("/*").handler(TimeoutHandler.create(ConfigManager.config.timeout))
 
-        // Set csrf
+        /**
+         * Set csrf
+         */
         if (ConfigManager.config.waf.csrf) {
             router.route("/*").handler(CSRFHandler.create(ConfigManager.config.waf.encryption))
         }
 
-        // Register failure handler
+        /**
+         * Register failure handler
+         */
         CloudoptServer.logger.info("[FAILURE HANDLER] Registered failure handler：${CloudoptServer.errorHandler::class.java.name}")
 
         router.route("/*").failureHandler { context ->
@@ -111,7 +105,9 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        //Register handlers
+        /**
+         * Register handlers
+         */
         CloudoptServer.handlers.forEach { handler ->
             CloudoptServer.logger.info("[HANDLER] Registered handler：${handler::class.java.name}")
             router.route("/*").handler { context ->
@@ -133,7 +129,9 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 .setIncludeHidden(false).setWebRoot(ConfigManager.config.staticPackage)
         )
 
-        //Register interceptors
+        /**
+         * Register interceptors
+         */
         CloudoptServer.interceptors.forEach { (url, clazz) ->
             router.route(url).handler { context ->
                 val resource = Resource()
@@ -155,7 +153,9 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        //Register validators
+        /**
+         * Register validators
+         */
         CloudoptServer.validators.forEach { (url, map) ->
             map.keys.forEach { key ->
                 val validatorList = map[key]
@@ -190,7 +190,9 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        // Register method
+        /**
+         * Register method
+         */
         CloudoptServer.controllers.forEach { resourceTable ->
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
@@ -231,11 +233,6 @@ class CloudoptServerVerticle : AbstractVerticle() {
     }
 
     override fun stop() {
-        CloudoptServer.plugins.forEach { plugin ->
-            if (!plugin.stop()) {
-                CloudoptServer.logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")
-            }
-        }
     }
 
     private fun errorProcessing(context: RoutingContext) {
