@@ -40,8 +40,8 @@ object Worker {
      */
     @JvmOverloads
     fun <T> then(
-        handler: Handler<Promise<Any>>,
-        queueResult: Handler<AsyncResult<Any>>
+            handler: Handler<Promise<Any>>,
+            queueResult: Handler<AsyncResult<Any>>
     ) {
         CloudoptServer.vertx.executeBlocking(handler, queueResult)
     }
@@ -57,8 +57,8 @@ object Worker {
      */
     @JvmOverloads
     fun <T> worker(
-        handler: Handler<Promise<Any>>,
-        queueResult: Handler<AsyncResult<Any>>
+            handler: Handler<Promise<Any>>,
+            queueResult: Handler<AsyncResult<Any>>
     ) {
         CloudoptServer.vertx.executeBlocking(handler, false, queueResult)
     }
@@ -86,6 +86,33 @@ object Worker {
      */
     fun unploy(verticle: String) {
         CloudoptServer.vertx.undeploy(verticle)
+    }
+
+    /**
+     * Set a one-shot timer to fire after {@code delay} milliseconds, at which point {@code handler} will be called with
+     * the id of the timer. If periodic is true, set a periodic timer to fire every {@code delay} milliseconds, at which
+     * point {@code handler} will be called with the id of the timer.
+     * @param delay  the delay in milliseconds, after which the timer will fire
+     * @param periodic If periodic is true, set a periodic timer
+     * @param handler  the handler that will be called with the timer ID when the timer fires
+     * @return the unique ID of the timer
+     */
+    fun setTimer(delay: Long, periodic: Boolean, handler: Handler<Long>) {
+        if(periodic){
+            CloudoptServer.vertx.setPeriodic(delay, handler)
+        }else{
+            CloudoptServer.vertx.setTimer(delay, handler)
+        }
+    }
+
+    /**
+     * Cancels the timer with the specified {@code id}.
+     *
+     * @param id  The id of the timer to cancel
+     * @return true if the timer was successfully cancelled, or false if the timer does not exist.
+     */
+    fun cancelTimer(id: Long) {
+        CloudoptServer.vertx.cancelTimer(id)
     }
 
 }

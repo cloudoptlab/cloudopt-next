@@ -34,9 +34,10 @@ object EventManager {
     @JvmStatic
     lateinit var eventBus: EventBus
 
+    @JvmStatic
     private val eventList: MutableMap<String, Class<*>> = hashMapOf()
 
-    private val logger = Logger.Companion.getLogger(EventManager::class.java)
+    private val logger = Logger.getLogger(EventManager::class.java)
 
     fun init(vertx: Vertx) {
         /**
@@ -46,7 +47,7 @@ object EventManager {
 
         Classer.scanPackageByAnnotation(CloudoptServer.packageName, true, AutoEvent::class.java)
             .forEach { clazz ->
-                eventList.put(clazz.getDeclaredAnnotation(AutoEvent::class.java).value, clazz)
+                eventList[clazz.getDeclaredAnnotation(AutoEvent::class.java).value] = clazz
             }
 
         eventList.keys.forEach { key ->
