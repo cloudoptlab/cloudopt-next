@@ -31,7 +31,7 @@ import java.time.format.DateTimeFormatter
  */
 object Banner {
 
-    private val logger = Logger.getLogger(CloudoptServer.javaClass)
+    private val logger = Logger.getLogger(NextServer.javaClass)
 
     @JvmStatic
     fun print() {

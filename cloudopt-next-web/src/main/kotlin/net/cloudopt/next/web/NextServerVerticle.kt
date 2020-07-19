@@ -40,23 +40,23 @@ import net.cloudopt.next.web.route.WebSocket
  * @Time: 2018/1/17
  * @Description: Cloudopt Next Server Verticle
  */
-class CloudoptServerVerticle : AbstractVerticle() {
+class NextServerVerticle : AbstractVerticle() {
 
-    val logger = Logger.getLogger(CloudoptServerVerticle::class.java)
+    val logger = Logger.getLogger(NextServerVerticle::class.java)
 
     override fun start() {
 
-        val server = CloudoptServer.vertx.createHttpServer(ConfigManager.config.vertxHttpServer)
+        val server = NextServer.vertx.createHttpServer(ConfigManager.config.vertxHttpServer)
 
-        val router = Router.router(CloudoptServer.vertx)
+        val router = Router.router(NextServer.vertx)
 
 
         /**
          * Register sockJS
          */
-        if (CloudoptServer.sockJSes.size > 0) {
-            val sockJSHandler = SockJSHandler.create(CloudoptServer.vertx, ConfigManager.config.socket)
-            CloudoptServer.sockJSes.forEach { clazz ->
+        if (NextServer.sockJSes.size > 0) {
+            val sockJSHandler = SockJSHandler.create(NextServer.vertx, ConfigManager.config.socket)
+            NextServer.sockJSes.forEach { clazz ->
                 val socketAnnotation: SocketJS = clazz.getDeclaredAnnotation(SocketJS::class.java)
                 sockJSHandler.socketHandler { sockJSHandler ->
                     val handler = Beaner.newInstance<SockJSResource>(clazz)
@@ -73,8 +73,8 @@ class CloudoptServerVerticle : AbstractVerticle() {
         /**
          * Register websocket
          */
-        if (CloudoptServer.webSockets.size > 0){
-            CloudoptServer.webSockets.forEach { clazz ->
+        if (NextServer.webSockets.size > 0){
+            NextServer.webSockets.forEach { clazz ->
                 val websocketAnnotation: WebSocket = clazz.getDeclaredAnnotation(WebSocket::class.java)
                 router.route(websocketAnnotation.value).handler { context ->
                     try {
@@ -116,7 +116,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         /**
          * Register failure handler
          */
-        CloudoptServer.logger.info("[FAILURE HANDLER] Registered failure handler：${CloudoptServer.errorHandler::class.java.name}")
+        NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${NextServer.errorHandler::class.java.name}")
 
         router.route("/*").failureHandler { context ->
             errorProcessing(context)
@@ -131,8 +131,8 @@ class CloudoptServerVerticle : AbstractVerticle() {
         /**
          * Register handlers
          */
-        CloudoptServer.handlers.forEach { handler ->
-            CloudoptServer.logger.info("[HANDLER] Registered handler：${handler::class.java.name}")
+        NextServer.handlers.forEach { handler ->
+            NextServer.logger.info("[HANDLER] Registered handler：${handler::class.java.name}")
             router.route("/*").handler { context ->
                 try {
                     handler.preHandle(Resource().init(context))
@@ -155,7 +155,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         /**
          * Register interceptors
          */
-        CloudoptServer.interceptors.forEach { (url, clazz) ->
+        NextServer.interceptors.forEach { (url, clazz) ->
             router.route(url).handler { context ->
                 val resource = Resource()
                 resource.init(context)
@@ -179,7 +179,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         /**
          * Register validators
          */
-        CloudoptServer.validators.forEach { (url, map) ->
+        NextServer.validators.forEach { (url, map) ->
             map.keys.forEach { key ->
                 val validatorList = map[key]
                 validatorList?.forEach { validator ->
@@ -206,7 +206,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
             }
         }
 
-        if (CloudoptServer.controllers.size < 1) {
+        if (NextServer.controllers.size < 1) {
             router.route("/").blockingHandler { context ->
                 context.response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
                 context.response().end(Welcomer.home())
@@ -216,7 +216,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
         /**
          * Register method
          */
-        CloudoptServer.controllers.forEach { resourceTable ->
+        NextServer.controllers.forEach { resourceTable ->
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
                     requestProcessing(resourceTable, context)
@@ -227,28 +227,28 @@ class CloudoptServerVerticle : AbstractVerticle() {
                 }
             }
 
-            CloudoptServer.logger.info(
+            NextServer.logger.info(
                 "[RESOURCE] Registered resource :${resourceTable.methodName} | ${resourceTable.url}"
             )
         }
 
         server.requestHandler(router).listen(ConfigManager.config.port) { result ->
             if (result.succeeded()) {
-                CloudoptServer.logger.info(
+                NextServer.logger.info(
                     "=========================================================================================================="
                 )
-                CloudoptServer.logger.info("\uD83D\uDC0B Cloudopt Next started success!")
-                CloudoptServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
-                CloudoptServer.logger.info(
+                NextServer.logger.info("\uD83D\uDC0B Cloudopt Next started success!")
+                NextServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
+                NextServer.logger.info(
                     "=========================================================================================================="
                 )
 
             } else {
-                CloudoptServer.logger.error(
+                NextServer.logger.error(
                     "=========================================================================================================="
                 )
-                CloudoptServer.logger.error("\uD83D\uDC0B Cloudopt Next started error! ${result.cause()}")
-                CloudoptServer.logger.error(
+                NextServer.logger.error("\uD83D\uDC0B Cloudopt Next started error! ${result.cause()}")
+                NextServer.logger.error(
                     "=========================================================================================================="
                 )
             }
@@ -267,7 +267,7 @@ class CloudoptServerVerticle : AbstractVerticle() {
      * @see RoutingContext
      */
     private fun errorProcessing(context: RoutingContext) {
-        val errorHandler = Beaner.newInstance<ErrorHandler>(CloudoptServer.errorHandler)
+        val errorHandler = Beaner.newInstance<ErrorHandler>(NextServer.errorHandler)
         errorHandler.init(context)
         errorHandler.handle()
         if (context.failure() != null) {

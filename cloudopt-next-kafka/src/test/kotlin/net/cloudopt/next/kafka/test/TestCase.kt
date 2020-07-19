@@ -16,7 +16,7 @@
 package net.cloudopt.next.kafka.test
 
 import net.cloudopt.next.kafka.KafkaPlugin
-import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.NextServer
 
 
 /*
@@ -26,8 +26,8 @@ import net.cloudopt.next.web.CloudoptServer
  */
 
 fun main(args: Array<String>) {
-    CloudoptServer.addPlugin(KafkaPlugin())
-    CloudoptServer.run()
+    NextServer.addPlugin(KafkaPlugin())
+    NextServer.run()
 }
 
 class TestCase {

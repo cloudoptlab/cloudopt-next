@@ -19,7 +19,7 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
-import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.NextServer
 
 
 /*
@@ -31,7 +31,7 @@ class HttpClient() {
 
     val options = WebClientOptions()
 
-    private var client = WebClient.create(CloudoptServer.vertx)
+    private var client = WebClient.create(NextServer.vertx)
 
     private var host = ""
 
@@ -56,7 +56,7 @@ class HttpClient() {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
         options.setKeepAlive(false)
         options.setFollowRedirects(followRedirects)
-        client = WebClient.create(CloudoptServer.vertx, options)
+        client = WebClient.create(NextServer.vertx, options)
     }
 
     /**

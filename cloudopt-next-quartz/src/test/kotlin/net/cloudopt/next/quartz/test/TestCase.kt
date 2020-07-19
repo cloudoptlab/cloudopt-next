@@ -17,7 +17,7 @@ package net.cloudopt.next.quartz.test
 
 import net.cloudopt.next.quartz.JobBean
 import net.cloudopt.next.quartz.QuartzPlugin
-import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.NextServer
 
 
 /*
@@ -33,6 +33,6 @@ fun main() {
     job.jobGroup = "TaskJob"
     job.jobDesc = "TaskJob"
     plugin.addJob(job)
-    CloudoptServer.addPlugin(plugin)
-    CloudoptServer.run()
+    NextServer.addPlugin(plugin)
+    NextServer.run()
 }

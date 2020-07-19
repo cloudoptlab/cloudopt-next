@@ -43,7 +43,7 @@ object Worker {
             handler: Handler<Promise<Any>>,
             queueResult: Handler<AsyncResult<Any>>
     ) {
-        CloudoptServer.vertx.executeBlocking(handler, queueResult)
+        NextServer.vertx.executeBlocking(handler, queueResult)
     }
 
     /**
@@ -60,7 +60,7 @@ object Worker {
             handler: Handler<Promise<Any>>,
             queueResult: Handler<AsyncResult<Any>>
     ) {
-        CloudoptServer.vertx.executeBlocking(handler, false, queueResult)
+        NextServer.vertx.executeBlocking(handler, false, queueResult)
     }
 
     /**
@@ -76,7 +76,7 @@ object Worker {
             options = DeploymentOptions(options)
             options.isWorker = worker
         }
-        CloudoptServer.vertx.deployVerticle(verticle, options)
+        NextServer.vertx.deployVerticle(verticle, options)
     }
 
 
@@ -85,7 +85,7 @@ object Worker {
      * @param verticle Package name
      */
     fun unploy(verticle: String) {
-        CloudoptServer.vertx.undeploy(verticle)
+        NextServer.vertx.undeploy(verticle)
     }
 
     /**
@@ -99,9 +99,9 @@ object Worker {
      */
     fun setTimer(delay: Long, periodic: Boolean, handler: Handler<Long>) {
         if(periodic){
-            CloudoptServer.vertx.setPeriodic(delay, handler)
+            NextServer.vertx.setPeriodic(delay, handler)
         }else{
-            CloudoptServer.vertx.setTimer(delay, handler)
+            NextServer.vertx.setTimer(delay, handler)
         }
     }
 
@@ -112,7 +112,7 @@ object Worker {
      * @return true if the timer was successfully cancelled, or false if the timer does not exist.
      */
     fun cancelTimer(id: Long) {
-        CloudoptServer.vertx.cancelTimer(id)
+        NextServer.vertx.cancelTimer(id)
     }
 
 }

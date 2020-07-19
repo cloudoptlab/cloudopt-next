@@ -20,7 +20,7 @@ import io.vertx.kafka.client.consumer.KafkaConsumerRecord
 import io.vertx.kafka.client.producer.KafkaProducer
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
-import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
@@ -38,16 +38,16 @@ class KafkaPlugin : Plugin {
 
     override fun start(): Boolean {
         KafkaManager.consumer =
-            KafkaConsumer.create<Any, Any>(CloudoptServer.vertx, KafkaManager.config)?.exceptionHandler { e ->
+            KafkaConsumer.create<Any, Any>(NextServer.vertx, KafkaManager.config)?.exceptionHandler { e ->
                 KafkaManager.logger.error("[KAFKA] Consumer was error： ${e.message}")
             }
         KafkaManager.producer =
-            KafkaProducer.create<Any, Any>(CloudoptServer.vertx, KafkaManager.config)?.exceptionHandler { e ->
+            KafkaProducer.create<Any, Any>(NextServer.vertx, KafkaManager.config)?.exceptionHandler { e ->
                 KafkaManager.logger.error("[KAFKA] Producer was error： ${e.message}")
             }
 
 
-        Classer.scanPackageByAnnotation(CloudoptServer.packageName, true, AutoKafka::class.java)
+        Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoKafka::class.java)
             .forEach { clazz ->
                 clazz.getDeclaredAnnotation(AutoKafka::class.java).value.split(",").forEach { topic ->
                     var set = KafkaManager.kafkaList.get(topic) ?: mutableSetOf()

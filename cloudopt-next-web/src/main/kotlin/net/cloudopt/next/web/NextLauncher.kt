@@ -2,7 +2,7 @@ package net.cloudopt.next.web
 
 import io.vertx.core.Launcher
 
-object CloudoptLauncher {
+object NextLauncher {
 
     @JvmStatic
     fun main(args: Array<String>) {

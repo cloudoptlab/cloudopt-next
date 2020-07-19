@@ -21,7 +21,7 @@ import io.vertx.redis.RedisClient
 import io.vertx.redis.RedisOptions
 import net.cloudopt.next.redis.serializer.FstSerializer
 import net.cloudopt.next.redis.serializer.ISerializer
-import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
 import redis.clients.jedis.JedisPool
@@ -104,7 +104,7 @@ class RedisPlugin() : Plugin {
             asynOpitions.connectTimeout = timeout
             asynOpitions.auth = password
             asynOpitions.select = database
-            Redis.asyn = RedisClient.create(CloudoptServer.vertx, RedisOptions())
+            Redis.asyn = RedisClient.create(NextServer.vertx, RedisOptions())
         } else {
             val jedisPool: JedisPool
             if (port != null && timeout != null && !password.isNullOrBlank() && database != null && !clientName.isNullOrBlank())

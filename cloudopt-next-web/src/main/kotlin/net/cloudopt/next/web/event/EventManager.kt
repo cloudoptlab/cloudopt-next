@@ -21,7 +21,7 @@ import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
-import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.NextServer
 
 
 /*
@@ -45,7 +45,7 @@ object EventManager {
          */
         eventBus = vertx.eventBus()
 
-        Classer.scanPackageByAnnotation(CloudoptServer.packageName, true, AutoEvent::class.java)
+        Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoEvent::class.java)
             .forEach { clazz ->
                 eventList[clazz.getDeclaredAnnotation(AutoEvent::class.java).value] = clazz
             }

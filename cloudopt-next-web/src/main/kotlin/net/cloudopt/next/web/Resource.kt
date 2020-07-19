@@ -251,7 +251,7 @@ open class Resource {
      * @param result Any object,
      */
     fun render(renderName: String, result: Any) {
-        CloudoptServer.handlers.forEach { handler ->
+        NextServer.handlers.forEach { handler ->
             handler.postHandle(Resource().init(context))
         }
         if (renderName.isBlank()) {

@@ -34,12 +34,12 @@ import kotlin.reflect.KClass
  * @Time: 2018/1/17
  * @Description: Cloudopt Next Server
  */
-object CloudoptServer {
+object NextServer {
 
     @JvmStatic
     open var verticleID = "net.cloudopt.next.web"
 
-    val logger = Logger.getLogger(CloudoptServer.javaClass)
+    val logger = Logger.getLogger(NextServer.javaClass)
 
     @JvmStatic
     open val resources: MutableList<Class<Resource>> = arrayListOf()
@@ -268,7 +268,7 @@ object CloudoptServer {
     @JvmStatic
     fun run() {
         startPlugins()
-        Worker.deploy("net.cloudopt.next.web.CloudoptServerVerticle")
+        Worker.deploy("net.cloudopt.next.web.NextServerVerticle")
     }
 
     /**
@@ -279,7 +279,7 @@ object CloudoptServer {
      * @return CloudoptServer
      */
     @JvmStatic
-    fun addRender(extension: String, render: Render): CloudoptServer {
+    fun addRender(extension: String, render: Render): NextServer {
         RenderFactory.add(extension, render)
         return this
     }
@@ -290,7 +290,7 @@ object CloudoptServer {
      * @return CloudoptServer
      */
     @JvmStatic
-    fun setDefaultRender(name: String): CloudoptServer {
+    fun setDefaultRender(name: String): NextServer {
         RenderFactory.setDefaultRender(name)
         return this
     }
@@ -302,7 +302,7 @@ object CloudoptServer {
      * @return CloudoptServer
      */
     @JvmStatic
-    fun addPlugin(plugin: Plugin): CloudoptServer {
+    fun addPlugin(plugin: Plugin): NextServer {
         plugins.add(plugin)
         return this
     }
@@ -314,7 +314,7 @@ object CloudoptServer {
      * @return CloudoptServer
      */
     @JvmStatic
-    fun addHandler(handler: Handler): CloudoptServer {
+    fun addHandler(handler: Handler): NextServer {
         handlers.add(handler)
         return this
     }
@@ -324,11 +324,11 @@ object CloudoptServer {
      */
     @JvmStatic
     fun startPlugins(){
-        CloudoptServer.plugins.forEach { plugin ->
+        NextServer.plugins.forEach { plugin ->
             if (plugin.start()) {
-                CloudoptServer.logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
+                NextServer.logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
             } else {
-                CloudoptServer.logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
+                NextServer.logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
             }
         }
     }
@@ -338,9 +338,9 @@ object CloudoptServer {
      */
     @JvmStatic
     fun stopPlugins(){
-        CloudoptServer.plugins.forEach { plugin ->
+        NextServer.plugins.forEach { plugin ->
             if (!plugin.stop()) {
-                CloudoptServer.logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")
+                NextServer.logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")
             }
         }
     }

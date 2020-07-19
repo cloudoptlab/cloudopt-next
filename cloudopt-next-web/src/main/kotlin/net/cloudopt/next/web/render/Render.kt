@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.web.render
 
-import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Resource
 
 /*
@@ -39,7 +39,7 @@ interface Render {
      * @param resource Resource object
      */
     fun end(resource: Resource) {
-        CloudoptServer.handlers.forEach { handler ->
+        NextServer.handlers.forEach { handler ->
             handler.afterCompletion(resource)
         }
         resource.response.end()
@@ -53,7 +53,7 @@ interface Render {
      * @param text the string to write before ending the response
      */
     fun end(resource: Resource, text: String) {
-        CloudoptServer.handlers.forEach { handler ->
+        NextServer.handlers.forEach { handler ->
             handler.afterCompletion(resource)
         }
         resource.response.end(text)

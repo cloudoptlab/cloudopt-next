@@ -19,7 +19,7 @@ import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.core.Promise
 import net.cloudopt.next.validator.annotation.Chinese
-import net.cloudopt.next.web.CloudoptServer.logger
+import net.cloudopt.next.web.NextServer.logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Worker
 import net.cloudopt.next.web.event.AfterEvent

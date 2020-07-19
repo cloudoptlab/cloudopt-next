@@ -27,7 +27,7 @@ import java.io.InputStreamReader
  */
 object Welcomer {
 
-    private val logger = Logger.getLogger(CloudoptServer.javaClass)
+    private val logger = Logger.getLogger(NextServer.javaClass)
 
     @JvmStatic
     fun html(fileName: String): String {

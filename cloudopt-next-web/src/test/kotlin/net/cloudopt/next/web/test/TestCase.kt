@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.web.test
 
-import net.cloudopt.next.web.CloudoptServer
+import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.event.EventPlugin
 import net.cloudopt.next.web.test.plugin.TestPlugin
 
@@ -26,7 +26,7 @@ import net.cloudopt.next.web.test.plugin.TestPlugin
  */
 fun main(args: Array<String>) {
 //    CloudoptServer.addHandler(TestHandler())
-    CloudoptServer.addPlugin(TestPlugin())
-    CloudoptServer.addPlugin(EventPlugin())
-    CloudoptServer.run()
+    NextServer.addPlugin(TestPlugin())
+    NextServer.addPlugin(EventPlugin())
+    NextServer.run()
 }
