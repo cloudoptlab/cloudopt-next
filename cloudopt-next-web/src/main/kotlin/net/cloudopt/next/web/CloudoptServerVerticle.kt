@@ -18,6 +18,7 @@ package net.cloudopt.next.web
 import com.alibaba.fastjson.JSONObject
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.http.HttpHeaders
+import io.vertx.core.http.impl.WebSocketRequestHandler
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
@@ -235,6 +236,14 @@ class CloudoptServerVerticle : AbstractVerticle() {
     override fun stop() {
     }
 
+    /**
+     * This is used to handle http requests where an error occurs, and will automatically call errorHandler when an
+     * error occurs. and ends the Http request to avoid long periods of no response. It also automatically outputs
+     * error messages via the log class.
+     * @param context RoutingContext
+     * @see ErrorHandler
+     * @see RoutingContext
+     */
     private fun errorProcessing(context: RoutingContext) {
         val errorHandler = Beaner.newInstance<ErrorHandler>(CloudoptServer.errorHandler)
         errorHandler.init(context)
@@ -247,15 +256,33 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
     }
 
+    /**
+     * is used to process normal http requests, automatically generating new objects from the resource class of the
+     * route and calls its invoke method. It also injects parameters depending on whether the method corresponding
+     * to the route contains a parameter injection annotation or not. If there is an @afterEvent annotation on the
+     * method, it will automatically execute the afterEvent.
+     * @param resourceTable ResourceTable
+     * @param context RoutingContext
+     * @see ResourceTable
+     * @see RoutingContext
+     * @see AfterEvent
+     */
     private fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
         try {
             val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
             controllerObj.init(context)
+            /**
+             * Check if the method has a list of parameters
+             */
             val m = if (resourceTable.parameterTypes.isNotEmpty()) {
                 resourceTable.clazz.getDeclaredMethod(resourceTable.methodName, *resourceTable.parameterTypes)
             } else {
                 resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
             }
+            /**
+             * If the method supports parameter injection, it will automatically extract the corresponding parameter
+             * and inject it
+             */
             if (m.parameters.isNotEmpty()) {
                 val arr = arrayListOf<Any>()
                 for (para in m.parameters) {
@@ -272,6 +299,10 @@ class CloudoptServerVerticle : AbstractVerticle() {
                         controllerObj.getBodyJson(para.type)?.let { arr.add(it) }
                     }
                 }
+                /**
+                 * Support for verifying injected parameters
+                 * @see ValidatorTool
+                 */
                 val validatorResult = ValidatorTool.validateParameters(controllerObj,m,arr.toArray())
                 if (validatorResult.result){
                     m.invoke(controllerObj, *arr.toArray())
@@ -280,9 +311,16 @@ class CloudoptServerVerticle : AbstractVerticle() {
                     controllerObj.fail(400)
                 }
             } else {
+                /**
+                 * If there are no arguments, just execute the method
+                 */
                 m.invoke(controllerObj)
             }
-            // Run after event
+            /**
+             * If the afterEvent annotation is included, the event is automatically sent to EventBus after the
+             * http request ends
+             * @see AfterEvent
+             */
             if (m.getAnnotation(AfterEvent::class.java) != null && context.response().ended()) {
                 val afterEvent = m.getAnnotation(AfterEvent::class.java)
                 for (topic in afterEvent.value) {
@@ -298,6 +336,13 @@ class CloudoptServerVerticle : AbstractVerticle() {
         }
     }
 
+    /**
+     * Converts an http argument to the same type as a method argument
+     * @param paraName String
+     * @param para Parameter
+     * @param controllerObj Resource
+     * @return Any?
+     */
     private fun getParaByType(paraName: String, para: java.lang.reflect.Parameter, controllerObj: Resource): Any? {
 
         val jsonObject = JSONObject(controllerObj.getParams())
