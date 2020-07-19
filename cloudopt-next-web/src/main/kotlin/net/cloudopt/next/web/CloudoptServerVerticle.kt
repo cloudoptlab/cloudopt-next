@@ -18,15 +18,12 @@ package net.cloudopt.next.web
 import com.alibaba.fastjson.JSONObject
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.http.HttpHeaders
-import io.vertx.core.http.impl.WebSocketRequestHandler
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
-import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
-import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.event.AfterEvent
@@ -35,6 +32,7 @@ import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.route.Parameter
 import net.cloudopt.next.web.route.RequestBody
 import net.cloudopt.next.web.route.SocketJS
+import net.cloudopt.next.web.route.WebSocket
 
 
 /*
@@ -56,19 +54,43 @@ class CloudoptServerVerticle : AbstractVerticle() {
         /**
          * Register sockJS
          */
-        if (CloudoptServer.sockets.size > 0) {
+        if (CloudoptServer.sockJSes.size > 0) {
             val sockJSHandler = SockJSHandler.create(CloudoptServer.vertx, ConfigManager.config.socket)
-            CloudoptServer.sockets.forEach { clazz ->
-                val websocketAnnotation: SocketJS? = clazz.getDeclaredAnnotation(SocketJS::class.java)
+            CloudoptServer.sockJSes.forEach { clazz ->
+                val socketAnnotation: SocketJS = clazz.getDeclaredAnnotation(SocketJS::class.java)
                 sockJSHandler.socketHandler { sockJSHandler ->
                     val handler = Beaner.newInstance<SockJSResource>(clazz)
                     handler.handler(sockJSHandler)
                 }
-                if (!websocketAnnotation?.value?.endsWith("/*")!!) {
+                if (!socketAnnotation.value.endsWith("/*")) {
                     logger.error("[SOCKET] Url must be end with /* !")
                 }
-                logger.info("[SOCKET] Registered socket resource: ${websocketAnnotation.value} -> ${clazz.name}")
-                router.route(websocketAnnotation.value).handler(sockJSHandler)
+                logger.info("[SOCKET] Registered socket resource: ${socketAnnotation.value} -> ${clazz.name}")
+                router.route(socketAnnotation.value).handler(sockJSHandler)
+            }
+        }
+
+        /**
+         * Register websocket
+         */
+        if (CloudoptServer.webSockets.size > 0){
+            CloudoptServer.webSockets.forEach { clazz ->
+                val websocketAnnotation: WebSocket = clazz.getDeclaredAnnotation(WebSocket::class.java)
+                router.route(websocketAnnotation.value).handler { context ->
+                    try {
+                        val userWebSocketConnection = context.request().upgrade()
+                        val controllerObj = Beaner.newInstance<WebSocketResource>(clazz)
+                        controllerObj.handler(userWebSocketConnection)
+                    } catch (e: InstantiationException) {
+                        e.printStackTrace()
+                        context.response().end()
+                    } catch (e: IllegalAccessException) {
+                        e.printStackTrace()
+                        context.response().end()
+                    }
+                }
+                logger.info("[WEBSOCKET] Registered socket resource: ${websocketAnnotation.value} -> ${clazz.name}")
+
             }
         }
 

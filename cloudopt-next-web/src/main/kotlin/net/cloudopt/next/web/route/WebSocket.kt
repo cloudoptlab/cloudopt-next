@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web
+package net.cloudopt.next.web.route
 
-import io.vertx.ext.web.handler.sockjs.SockJSSocket
+import java.lang.annotation.Documented
 
 /*
  * @author: Cloudopt
  * @Time: 2020/4/1
- * @Description: Socket Resource
+ * @Description: WebSocket Annotation
  */
-open interface SockJSResource {
-
-    fun handler(userSocketConnection: SockJSSocket)
-
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
+@Documented
+annotation class WebSocket(val value: String = "")

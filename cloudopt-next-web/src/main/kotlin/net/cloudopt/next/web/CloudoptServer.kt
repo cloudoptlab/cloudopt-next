@@ -45,7 +45,10 @@ object CloudoptServer {
     open val resources: MutableList<Class<Resource>> = arrayListOf()
 
     @JvmStatic
-    open val sockets: MutableList<Class<SockJSResource>> = arrayListOf()
+    open val sockJSes: MutableList<Class<SockJSResource>> = arrayListOf()
+
+    @JvmStatic
+    open val webSockets: MutableList<Class<WebSocketResource>> = arrayListOf()
 
     @JvmStatic
     open val handlers = arrayListOf<Handler>()
@@ -112,11 +115,17 @@ object CloudoptServer {
                 handlers.add(Beaner.newInstance(clazz))
             }
 
-        //Scan socket
+        //Scan sockJS
         Classer.scanPackageByAnnotation(packageName, true, SocketJS::class.java)
             .forEach { clazz ->
-                sockets.add(clazz as Class<SockJSResource>)
+                sockJSes.add(clazz as Class<SockJSResource>)
             }
+
+        //Scan webSocket
+        Classer.scanPackageByAnnotation(packageName, true, WebSocket::class.java)
+                .forEach { clazz ->
+                    webSockets.add(clazz as Class<WebSocketResource>)
+                }
 
         //Scan resources
         Classer.scanPackageByAnnotation(packageName, true, API::class.java)

@@ -15,15 +15,15 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.ext.web.handler.sockjs.SockJSSocket
+import io.vertx.core.http.ServerWebSocket
 
 /*
  * @author: Cloudopt
- * @Time: 2020/4/1
- * @Description: Socket Resource
+ * @Time: 2020/7/19
+ * @Description: WebSocket Resource
  */
-open interface SockJSResource {
+open interface WebSocketResource {
 
-    fun handler(userSocketConnection: SockJSSocket)
+    fun handler(userWebSocketConnection: ServerWebSocket)
 
 }

@@ -13,17 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web
+package net.cloudopt.next.web.test.controller
 
-import io.vertx.ext.web.handler.sockjs.SockJSSocket
+import io.vertx.core.http.ServerWebSocket
+import net.cloudopt.next.web.WebSocketResource
+import net.cloudopt.next.web.route.WebSocket
+
 
 /*
  * @author: Cloudopt
- * @Time: 2020/4/1
- * @Description: Socket Resource
+ * @Time: 2020/7/19
+ * @Description: Test WebSocket Controller
  */
-open interface SockJSResource {
 
-    fun handler(userSocketConnection: SockJSSocket)
+@WebSocket("/websocket")
+class WebSocketController : WebSocketResource {
+    override fun handler(userWebSocketConnection: ServerWebSocket) {
+        println("Connected!")
+        userWebSocketConnection.writeTextMessage("Hello World")
+        userWebSocketConnection.frameHandler { frame ->
+            println(frame.textData())
+        }
+    }
+
 
 }

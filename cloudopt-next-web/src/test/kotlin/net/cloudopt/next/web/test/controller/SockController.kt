@@ -28,10 +28,10 @@ import net.cloudopt.next.web.route.SocketJS
 
 @SocketJS("/socket/api/*")
 class SockController : SockJSResource {
-    override fun handler(socket: SockJSSocket) {
-        println(socket)
-        socket.handler {
-            socket.write("Hello world!")
+    override fun handler(userSocketConnection: SockJSSocket) {
+        println(userSocketConnection)
+        userSocketConnection.handler {
+            userSocketConnection.write("Hello world!")
         }
     }
 
