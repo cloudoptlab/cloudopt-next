@@ -35,6 +35,4 @@ class WebSocketController : WebSocketResource {
             println(frame.textData())
         }
     }
-
-
 }

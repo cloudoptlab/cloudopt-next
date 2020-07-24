@@ -16,12 +16,15 @@
 package net.cloudopt.next.web.event
 
 import io.vertx.core.Vertx
+import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.EventBus
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.web.event.codec.MapMessageCodec
+import net.cloudopt.next.web.event.codec.ObjectMessageCodec
 
 
 /*
@@ -44,11 +47,13 @@ object EventManager {
          * Init event bus
          */
         eventBus = vertx.eventBus()
+        eventBus.registerCodec(MapMessageCodec())
+        eventBus.registerCodec(ObjectMessageCodec())
 
         Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoEvent::class.java)
-            .forEach { clazz ->
-                eventList[clazz.getDeclaredAnnotation(AutoEvent::class.java).value] = clazz
-            }
+                .forEach { clazz ->
+                    eventList[clazz.getDeclaredAnnotation(AutoEvent::class.java).value] = clazz
+                }
 
         eventList.keys.forEach { key ->
             eventBus.consumer<Any>(key) { message ->
@@ -88,17 +93,31 @@ object EventManager {
     }
 
     /**
-     * Sends a message byu object.
+     * Sends a message by object.
      * The message will be delivered to at most one of the handlers registered to the topic.
      * @param name the topic to send it to
      * @param body the message, may be {@code null}
      */
     fun sendObject(name: String, body: Any) {
-        eventBus.send(name, body)
+        sendObject(name, body, "object")
     }
 
     /**
-     * Publish a message.
+     * Sends a message by object.
+     * The message will be delivered to at most one of the handlers registered to the topic.
+     * @param name the topic to send it to
+     * @param body the message, may be {@code null}
+     * @param codecName When sending or publishing a message a codec name can be provided. This must correspond with a previously registered
+     * message codec. This allows you to send arbitrary objects on the event bus (e.g. POJOs).
+     */
+    fun sendObject(name: String, body: Any, codecName: String) {
+        var options = DeliveryOptions()
+        options.codecName = codecName
+        eventBus.send(name, body, options)
+    }
+
+    /**
+     * Publish a message.p
      * The message will be delivered to all handlers registered to the topic.
      * @param name the topic to send it to
      * @param obj the message, may be {@code null}
@@ -117,6 +136,30 @@ object EventManager {
      */
     fun publish(name: String, body: String) {
         eventBus.publish(name, body)
+    }
+
+    /**
+     * Publish a message by object.
+     * The message will be delivered to all handlers registered to the topic.
+     * @param name the topic to send it to
+     * @param body the message, may be {@code null}
+     */
+    fun publishObject(name: String, body: Any){
+        publishObject(name, body, "object")
+    }
+
+    /**
+     * Publish a message by object.
+     * The message will be delivered to all handlers registered to the topic.
+     * @param name the topic to send it to
+     * @param body the message, may be {@code null}
+     * @param codecName When sending or publishing a message a codec name can be provided. This must correspond with a previously registered
+     * message codec. This allows you to send arbitrary objects on the event bus (e.g. POJOs).
+     */
+    fun publishObject(name: String, body: Any, codecName: String){
+        var options = DeliveryOptions()
+        options.codecName = codecName
+        eventBus.publish(name, body, options)
     }
 
 

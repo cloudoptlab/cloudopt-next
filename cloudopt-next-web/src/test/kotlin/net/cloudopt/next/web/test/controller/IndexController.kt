@@ -168,6 +168,7 @@ class IndexController : Resource() {
     @GET("afterEvent")
     @AfterEvent(["net.cloudopt.web.test"])
     fun afterEvent() {
+        this.context.data().put("key","value")
         renderText("AfterEvent is success!")
     }
 

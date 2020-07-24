@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web.event
 
+import io.vertx.core.eventbus.impl.CodecManager
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
 

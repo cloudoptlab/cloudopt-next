@@ -346,7 +346,7 @@ class NextServerVerticle : AbstractVerticle() {
             if (m.getAnnotation(AfterEvent::class.java) != null && context.response().ended()) {
                 val afterEvent = m.getAnnotation(AfterEvent::class.java)
                 for (topic in afterEvent.value) {
-                    EventManager.sendObject(topic, context.data()?: mutableMapOf<String, Any>())
+                    EventManager.sendObject(topic, context.data(),"map")
                 }
             }
         } catch (e: Exception) {
