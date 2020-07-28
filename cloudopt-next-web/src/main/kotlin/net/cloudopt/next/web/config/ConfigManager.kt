@@ -73,7 +73,11 @@ object ConfigManager {
     open fun init(prefix: String): MutableMap<String, Any> {
         var newMap = configMap
         for (key in prefix.split(".")) {
-            newMap = newMap.get(key) as MutableMap<String, Any>
+            if(newMap[key] != null){
+                newMap = newMap[key] as MutableMap<String, Any>
+            }else{
+                return mutableMapOf()
+            }
         }
         return newMap
     }
