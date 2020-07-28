@@ -63,7 +63,7 @@ object NextServer {
     open val validators = mutableMapOf<String, MutableMap<HttpMethod, Array<KClass<out Validator>>>>()
 
     @JvmStatic
-    open val controllers = arrayListOf<ResourceTable>()
+    open val resourceTables = arrayListOf<ResourceTable>()
 
     @JvmStatic
     open var vertx: Vertx = Vertx.vertx(ConfigManager.config.vertx)
@@ -99,9 +99,9 @@ object NextServer {
 
         //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class.java)
-            .forEach { clazz ->
-                handlers.add(Beaner.newInstance(clazz))
-            }
+                .forEach { clazz ->
+                    handlers.add(Beaner.newInstance(clazz))
+                }
 
         packageName = if (ConfigManager.config.packageName.isNotBlank()) {
             ConfigManager.config.packageName
@@ -111,15 +111,15 @@ object NextServer {
 
         //Scan custom handler
         Classer.scanPackageByAnnotation(packageName, true, AutoHandler::class.java)
-            .forEach { clazz ->
-                handlers.add(Beaner.newInstance(clazz))
-            }
+                .forEach { clazz ->
+                    handlers.add(Beaner.newInstance(clazz))
+                }
 
         //Scan sockJS
         Classer.scanPackageByAnnotation(packageName, true, SocketJS::class.java)
-            .forEach { clazz ->
-                sockJSes.add(clazz as Class<SockJSResource>)
-            }
+                .forEach { clazz ->
+                    sockJSes.add(clazz as Class<SockJSResource>)
+                }
 
         //Scan webSocket
         Classer.scanPackageByAnnotation(packageName, true, WebSocket::class.java)
@@ -129,9 +129,9 @@ object NextServer {
 
         //Scan resources
         Classer.scanPackageByAnnotation(packageName, true, API::class.java)
-            .forEach { clazz ->
-                resources.add(clazz as Class<Resource>)
-            }
+                .forEach { clazz ->
+                    resources.add(clazz as Class<Resource>)
+                }
 
         for (clazz in resources) {
 
@@ -216,15 +216,15 @@ object NextServer {
 
                 if (resourceUrl.isNotBlank()) {
                     var resourceTable = ResourceTable(
-                        resourceUrl,
-                        httpMethod,
-                        clazz,
-                        method.name,
-                        blocking,
-                        method,
-                        method.parameterTypes
+                            resourceUrl,
+                            httpMethod,
+                            clazz,
+                            method.name,
+                            blocking,
+                            method,
+                            method.parameterTypes
                     )
-                    controllers.add(resourceTable)
+                    resourceTables.add(resourceTable)
                 }
             }
 
@@ -323,7 +323,7 @@ object NextServer {
      * Register all plugins
      */
     @JvmStatic
-    fun startPlugins(){
+    fun startPlugins() {
         NextServer.plugins.forEach { plugin ->
             if (plugin.start()) {
                 NextServer.logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
@@ -337,7 +337,7 @@ object NextServer {
      * Stop all plugins
      */
     @JvmStatic
-    fun stopPlugins(){
+    fun stopPlugins() {
         NextServer.plugins.forEach { plugin ->
             if (!plugin.stop()) {
                 NextServer.logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")

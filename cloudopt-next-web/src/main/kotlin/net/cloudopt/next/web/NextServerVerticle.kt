@@ -73,7 +73,7 @@ class NextServerVerticle : AbstractVerticle() {
         /**
          * Register websocket
          */
-        if (NextServer.webSockets.size > 0){
+        if (NextServer.webSockets.size > 0) {
             NextServer.webSockets.forEach { clazz ->
                 val websocketAnnotation: WebSocket = clazz.getDeclaredAnnotation(WebSocket::class.java)
                 router.route(websocketAnnotation.value).handler { context ->
@@ -148,8 +148,8 @@ class NextServerVerticle : AbstractVerticle() {
         }
 
         router.route("/" + ConfigManager.config.staticPackage + "/*").handler(
-            StaticHandler.create().setIndexPage(ConfigManager.config.indexPage)
-                .setIncludeHidden(false).setWebRoot(ConfigManager.config.staticPackage)
+                StaticHandler.create().setIndexPage(ConfigManager.config.indexPage)
+                        .setIncludeHidden(false).setWebRoot(ConfigManager.config.staticPackage)
         )
 
         /**
@@ -206,7 +206,7 @@ class NextServerVerticle : AbstractVerticle() {
             }
         }
 
-        if (NextServer.controllers.size < 1) {
+        if (NextServer.resourceTables.size < 1) {
             router.route("/").blockingHandler { context ->
                 context.response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
                 context.response().end(Welcomer.home())
@@ -216,7 +216,7 @@ class NextServerVerticle : AbstractVerticle() {
         /**
          * Register method
          */
-        NextServer.controllers.forEach { resourceTable ->
+        NextServer.resourceTables.forEach { resourceTable ->
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
                     requestProcessing(resourceTable, context)
@@ -228,28 +228,28 @@ class NextServerVerticle : AbstractVerticle() {
             }
 
             NextServer.logger.info(
-                "[RESOURCE] Registered resource :${resourceTable.methodName} | ${resourceTable.url}"
+                    "[RESOURCE] Registered resource :${resourceTable.methodName} | ${resourceTable.url}"
             )
         }
 
         server.requestHandler(router).listen(ConfigManager.config.port) { result ->
             if (result.succeeded()) {
                 NextServer.logger.info(
-                    "=========================================================================================================="
+                        "=========================================================================================================="
                 )
                 NextServer.logger.info("\uD83D\uDC0B Cloudopt Next started success!")
                 NextServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
                 NextServer.logger.info(
-                    "=========================================================================================================="
+                        "=========================================================================================================="
                 )
 
             } else {
                 NextServer.logger.error(
-                    "=========================================================================================================="
+                        "=========================================================================================================="
                 )
                 NextServer.logger.error("\uD83D\uDC0B Cloudopt Next started error! ${result.cause()}")
                 NextServer.logger.error(
-                    "=========================================================================================================="
+                        "=========================================================================================================="
                 )
             }
         }
@@ -312,7 +312,7 @@ class NextServerVerticle : AbstractVerticle() {
                     if (parameterAnnotation != null) {
                         getParaByType(para.getAnnotation(Parameter::class.java).value, para, controllerObj)?.let {
                             arr.add(
-                                it
+                                    it
                             )
                         }
                     }
@@ -325,11 +325,11 @@ class NextServerVerticle : AbstractVerticle() {
                  * Support for verifying injected parameters
                  * @see ValidatorTool
                  */
-                val validatorResult = ValidatorTool.validateParameters(controllerObj,m,arr.toArray())
-                if (validatorResult.result){
+                val validatorResult = ValidatorTool.validateParameters(controllerObj, m, arr.toArray())
+                if (validatorResult.result) {
                     m.invoke(controllerObj, *arr.toArray())
-                }else{
-                    controllerObj.context.put("errorMessage",validatorResult.message)
+                } else {
+                    controllerObj.context.put("errorMessage", validatorResult.message)
                     controllerObj.fail(400)
                 }
             } else {
@@ -346,13 +346,13 @@ class NextServerVerticle : AbstractVerticle() {
             if (m.getAnnotation(AfterEvent::class.java) != null && context.response().ended()) {
                 val afterEvent = m.getAnnotation(AfterEvent::class.java)
                 for (topic in afterEvent.value) {
-                    EventManager.sendObject(topic, context.data(),"map")
+                    EventManager.sendObject(topic, context.data(), "map")
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
             logger.error(
-                e.message ?: "${resourceTable.url} has error occurred, but the error message could not be obtained "
+                    e.message ?: "${resourceTable.url} has error occurred, but the error message could not be obtained "
             )
             context.fail(500)
         }
