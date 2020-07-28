@@ -1,0 +1,8 @@
+dependencies {
+    implementation project(':cloudopt-next-web')
+    implementation 'net.oschina.j2cache:j2cache-core:2.8.2-release'
+    implementation 'io.lettuce:lettuce-core:5.3.2.RELEASE'
+    implementation 'com.github.ben-manes.caffeine:caffeine:2.8.5'
+}
+
+description = 'Cloudopt Next Cache'
