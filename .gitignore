@@ -80,6 +80,8 @@ file-uploads/
 /*/.gradle
 .DS_Store
 /build
+/*/build
+/plugins/*/build/**
 /captures
 *.iml
 *.apk
@@ -88,6 +90,5 @@ file-uploads/
 *.class
 bin/
 gen/
-/*/build/
 proguard/
 *.log
