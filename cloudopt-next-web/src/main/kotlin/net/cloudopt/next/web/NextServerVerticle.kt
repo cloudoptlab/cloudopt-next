@@ -209,6 +209,11 @@ class NextServerVerticle : AbstractVerticle() {
         if (NextServer.resourceTables.size < 1) {
             router.route("/").blockingHandler { context ->
                 context.response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+                context.response().endHandler {
+                    NextServer.handlers.forEach { handler ->
+                        handler.afterCompletion(Resource().init(context))
+                    }
+                }
                 context.response().end(Welcomer.home())
             }
         }
@@ -267,6 +272,11 @@ class NextServerVerticle : AbstractVerticle() {
      * @see RoutingContext
      */
     private fun errorProcessing(context: RoutingContext) {
+        context.response().endHandler {
+            NextServer.handlers.forEach { handler ->
+                handler.afterCompletion(Resource().init(context))
+            }
+        }
         val errorHandler = Beaner.newInstance<ErrorHandler>(NextServer.errorHandler)
         errorHandler.init(context)
         errorHandler.handle()
@@ -301,6 +311,30 @@ class NextServerVerticle : AbstractVerticle() {
             } else {
                 resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
             }
+
+            if(NextServer.handlers.isNotEmpty() || m.getAnnotation(AfterEvent::class.java) != null){
+                context.response().endHandler {
+                    /**
+                     * Executes a global handler that is called at the end of the route
+                     */
+                    NextServer.handlers.forEach { handler ->
+                        handler.afterCompletion(Resource().init(context))
+                    }
+
+                    /**
+                     * If the afterEvent annotation is included, the event is automatically sent to EventBus after the
+                     * http request ends
+                     * @see AfterEvent
+                     */
+                    if (m.getAnnotation(AfterEvent::class.java) != null) {
+                        val afterEvent = m.getAnnotation(AfterEvent::class.java)
+                        for (topic in afterEvent.value) {
+                            EventManager.sendObject(topic, context.data(), "map")
+                        }
+                    }
+                }
+            }
+
             /**
              * If the method supports parameter injection, it will automatically extract the corresponding parameter
              * and inject it
@@ -337,17 +371,6 @@ class NextServerVerticle : AbstractVerticle() {
                  * If there are no arguments, just execute the method
                  */
                 m.invoke(controllerObj)
-            }
-            /**
-             * If the afterEvent annotation is included, the event is automatically sent to EventBus after the
-             * http request ends
-             * @see AfterEvent
-             */
-            if (m.getAnnotation(AfterEvent::class.java) != null && context.response().ended()) {
-                val afterEvent = m.getAnnotation(AfterEvent::class.java)
-                for (topic in afterEvent.value) {
-                    EventManager.sendObject(topic, context.data(), "map")
-                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

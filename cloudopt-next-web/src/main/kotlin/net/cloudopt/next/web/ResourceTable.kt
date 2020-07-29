@@ -28,6 +28,6 @@ data class ResourceTable(
     var url: String = "", var httpMethod: HttpMethod = HttpMethod.GET,
     var clazz: Class<Resource> = Resource::class.java, var methodName: String = "",
     var blocking: Boolean = false,
-    var clazzMethod: Method? = null,
+    var clazzMethod: Method,
     var parameterTypes: Array<Class<*>> = arrayOf<Class<*>>()
 )
