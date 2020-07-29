@@ -39,9 +39,6 @@ interface Render {
      * @param resource Resource object
      */
     fun end(resource: Resource) {
-        NextServer.handlers.forEach { handler ->
-            handler.afterCompletion(resource)
-        }
         resource.response.end()
     }
 
@@ -54,7 +51,12 @@ interface Render {
      */
     fun end(resource: Resource, text: String) {
         NextServer.handlers.forEach { handler ->
-            handler.afterCompletion(resource)
+            if(!handler.afterRender(resource, text)){
+                if (!resource.context.response().ended()) {
+                    resource.context.response().end()
+                }
+                return
+            }
         }
         resource.response.end(text)
     }

@@ -135,8 +135,11 @@ class NextServerVerticle : AbstractVerticle() {
             NextServer.logger.info("[HANDLER] Registered handler：${handler::class.java.name}")
             router.route("/*").handler { context ->
                 try {
-                    handler.preHandle(Resource().init(context))
-                    context.next()
+                    if (handler.preHandle(Resource().init(context))) {
+                        context.next()
+                    } else if (!context.response().ended()) {
+                        context.response().end()
+                    }
                 } catch (e: InstantiationException) {
                     e.printStackTrace()
                     context.response().end()
@@ -312,7 +315,7 @@ class NextServerVerticle : AbstractVerticle() {
                 resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
             }
 
-            if(NextServer.handlers.isNotEmpty() || m.getAnnotation(AfterEvent::class.java) != null){
+            if (NextServer.handlers.isNotEmpty() || m.getAnnotation(AfterEvent::class.java) != null) {
                 context.response().endHandler {
                     /**
                      * Executes a global handler that is called at the end of the route

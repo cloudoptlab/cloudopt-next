@@ -24,17 +24,24 @@ import net.cloudopt.next.web.config.ConfigManager
  * @Description: Used to support the use of cookies across domains
  */
 @AutoHandler
-class CookieCorsHandler : Handler() {
-    override fun preHandle(resource: Resource) {
+class CookieCorsHandler : Handler {
+    override fun preHandle(resource: Resource): Boolean {
         if (ConfigManager.config.cookieCors) {
             resource.setHeader("Access-Control-Allow-Credentials", "true")
         }
+        return true
     }
 
-    override fun postHandle(resource: Resource) {
+    override fun postHandle(resource: Resource): Boolean {
+        return true
     }
 
-    override fun afterCompletion(resource: Resource) {
+    override fun afterRender(resource: Resource, bodyString: String): Boolean {
+        return true
+    }
+
+    override fun afterCompletion(resource: Resource): Boolean {
+        return true
     }
 
 }

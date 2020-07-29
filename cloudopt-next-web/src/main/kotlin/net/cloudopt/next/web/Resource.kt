@@ -181,8 +181,8 @@ open class Resource {
      */
     @JvmOverloads
     fun setCookie(
-        key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
-        , httpOnly: Boolean = false, cookieSecureFlag: Boolean = false
+            key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
+            , httpOnly: Boolean = false, cookieSecureFlag: Boolean = false
     ) {
         val cookie = Cookie.cookie(key, value)
         if (domain.isNotBlank()) {
@@ -252,7 +252,12 @@ open class Resource {
      */
     fun render(renderName: String, result: Any) {
         NextServer.handlers.forEach { handler ->
-            handler.postHandle(Resource().init(context))
+            if (!handler.postHandle(Resource().init(context))) {
+                if (!context.response().ended()) {
+                    context.response().end()
+                }
+                return
+            }
         }
         if (renderName.isBlank()) {
             RenderFactory.getDefaultRender().render(this, result)
@@ -393,7 +398,7 @@ open class Resource {
      */
     fun getLang(): String {
         return if (context.preferredLanguage().tag().isNullOrEmpty() || context.preferredLanguage().subtag()
-                .isNullOrEmpty()
+                        .isNullOrEmpty()
         ) {
             "en_US"
         } else {

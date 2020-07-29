@@ -24,8 +24,8 @@ import net.cloudopt.next.web.config.ConfigManager
  * @Description: Used to support the use of across domains
  */
 @AutoHandler
-class CorsHandler : Handler() {
-    override fun preHandle(resource: Resource) {
+class CorsHandler : Handler {
+    override fun preHandle(resource: Resource): Boolean {
         if (ConfigManager.config.cors) {
             if (resource.request.getHeader("Origin").isNullOrBlank()) {
                 resource.setHeader("Access-Control-Allow-Origin", "*")
@@ -38,11 +38,18 @@ class CorsHandler : Handler() {
             resource.setHeader("Sec-Fetch-Mode", "cors")
 
         }
+        return true
     }
 
-    override fun postHandle(resource: Resource) {
+    override fun postHandle(resource: Resource): Boolean {
+        return true
     }
 
-    override fun afterCompletion(resource: Resource) {
+    override fun afterRender(resource: Resource, bodyString: String): Boolean {
+        return true
+    }
+
+    override fun afterCompletion(resource: Resource): Boolean {
+        return true
     }
 }

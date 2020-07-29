@@ -25,21 +25,28 @@ import net.cloudopt.next.web.config.ConfigManager
  */
 
 @AutoHandler
-class WafHandler : Handler() {
+class WafHandler : Handler {
 
-    override fun preHandle(resource: Resource) {
+    override fun preHandle(resource: Resource): Boolean {
         if (ConfigManager.config.waf.plus) {
             resource.setHeader("X-Content-Type-Options", "nosniff")
             resource.setHeader("X-Download-Options", "noopen")
             resource.setHeader("X-XSS-Protection", "1; mode=block")
             resource.setHeader("X-FRAME-OPTIONS", "DENY")
         }
+        return true
     }
 
-    override fun postHandle(resource: Resource) {
+    override fun postHandle(resource: Resource): Boolean {
+        return true
     }
 
-    override fun afterCompletion(resource: Resource) {
+    override fun afterRender(resource: Resource, text: String): Boolean {
+        return true
+    }
+
+    override fun afterCompletion(resource: Resource): Boolean {
+        return true
     }
 
 }

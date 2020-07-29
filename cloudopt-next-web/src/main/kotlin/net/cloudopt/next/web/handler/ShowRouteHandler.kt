@@ -28,14 +28,14 @@ import java.util.*
  * @Description: Used to output route related information
  */
 @AutoHandler
-class ShowRouteHandler : Handler() {
+class ShowRouteHandler : Handler {
 
-    override fun preHandle(resource: Resource) {
+    override fun preHandle(resource: Resource): Boolean {
         if (ConfigManager.config.showRoute) {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             logger.info(
-                "Match route ----------------- " + df.format(Date())
-                        + " ------------------------------"
+                    "Match route ----------------- " + df.format(Date())
+                            + " ------------------------------"
             )
             logger.info("Method       : ${resource.request.method()}")
             logger.info("Path         : ${resource.context.normalisedPath()}")
@@ -50,15 +50,22 @@ class ShowRouteHandler : Handler() {
             logger.info("Params       : ${Jsoner.toJsonString(params?.entries() ?: "[]")}")
             logger.info("Cookie       : ${Jsoner.toJsonString(resource.request.getHeader("Cookie") ?: "")}")
             logger.info(
-                "--------------------------------------------------------------------------------"
+                    "--------------------------------------------------------------------------------"
             )
         }
+        return true
     }
 
-    override fun postHandle(resource: Resource) {
+    override fun postHandle(resource: Resource): Boolean {
+        return true
     }
 
-    override fun afterCompletion(resource: Resource) {
+    override fun afterRender(resource: Resource, bodyString: String): Boolean {
+        return true
+    }
+
+    override fun afterCompletion(resource: Resource): Boolean {
+        return true
     }
 
     companion object {

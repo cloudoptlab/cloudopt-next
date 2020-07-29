@@ -22,13 +22,43 @@ import net.cloudopt.next.web.Resource
  * @Time: 2018/1/15
  * @Description: The abstract class of handler
  */
-abstract class Handler {
+interface Handler {
 
-    abstract fun preHandle(resource: Resource)
+    /**
+     * Call before routing method processor
+     * @param resource Resource
+     * @see Resource
+     * @return Boolean, if it is true, it will continue to proceed. If it is false,
+     * it will close the request directly
+     */
+    fun preHandle(resource: Resource): Boolean
 
-    abstract fun postHandle(resource: Resource)
+    /**
+     * After entering the routing method, it is called before rendering
+     * @param resource Resource
+     * @see Resource
+     * @return Boolean, if it is true, it will continue to proceed. If it is false,
+     * it will close the request directly
+     */
+    fun postHandle(resource: Resource): Boolean
 
-    abstract fun afterCompletion(resource: Resource)
+    /**
+     * After rendering
+     * @param resource Resource
+     * @see Resource
+     * @return Boolean, if it is true, it will continue to proceed. If it is false,
+     * it will close the request directly
+     */
+    fun afterRender(resource: Resource, bodyString: String): Boolean
+
+    /**
+     * After the request is called, because Next is an asyn web framework,
+     * it may not get the context object
+     * @param resource Resource
+     * @see Resource
+     * @return Boolean, Whether it returns true or false, the execution is complete
+     */
+    fun afterCompletion(resource: Resource): Boolean
 
 }
 
