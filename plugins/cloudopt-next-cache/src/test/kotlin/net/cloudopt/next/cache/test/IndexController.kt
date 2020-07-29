@@ -15,17 +15,22 @@
  */
 package net.cloudopt.next.cache.test
 
-import net.cloudopt.next.cache.CacheHandler
-import net.cloudopt.next.cache.CachePlugin
-import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.cache.Cache
+import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.route.API
+import net.cloudopt.next.web.route.GET
 
 /*
  * @author: Cloudopt
- * @Time: 2020/07/29
- * @Description: Test Case
+ * @Time: 2018/1/26
+ * @Description: Test Controller
  */
-fun main(args: Array<String>) {
-    NextServer.addPlugin(CachePlugin())
-    NextServer.addHandler(CacheHandler())
-    NextServer.run()
+@API(value = "/")
+class IndexController : Resource() {
+
+    @Cache("default")
+    @GET
+    fun index() {
+        renderText("This is Text")
+    }
 }

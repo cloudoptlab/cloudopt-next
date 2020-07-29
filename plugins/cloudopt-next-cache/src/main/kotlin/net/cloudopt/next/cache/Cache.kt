@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.cache.test
+package net.cloudopt.next.cache
 
-import net.cloudopt.next.cache.CacheHandler
-import net.cloudopt.next.cache.CachePlugin
-import net.cloudopt.next.web.NextServer
+import java.lang.annotation.Documented
 
-/*
- * @author: Cloudopt
- * @Time: 2020/07/29
- * @Description: Test Case
- */
-fun main(args: Array<String>) {
-    NextServer.addPlugin(CachePlugin())
-    NextServer.addHandler(CacheHandler())
-    NextServer.run()
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+@Documented
+annotation class Cache(
+        val region: String = "default"
+)

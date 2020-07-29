@@ -15,6 +15,8 @@
  */
 package net.cloudopt.next.cache
 
+import net.cloudopt.next.cache.CacheManager.PREFIX
+import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
 import net.oschina.j2cache.CacheChannel
@@ -23,13 +25,24 @@ import net.oschina.j2cache.J2CacheConfig
 
 
 object CacheManager {
-    val config = ConfigManager.init("cache")
+
+    internal const val PREFIX = "NEXT-CACHE-ROUTE-"
+
+    internal val config = ConfigManager.init("cache")
+
+    @JvmStatic
+    internal val cacheEnabledUrl = mutableMapOf<String, String>()
+
+    @JvmStatic
     lateinit var channel: CacheChannel
 }
 
 
 class CachePlugin : Plugin {
     override fun start(): Boolean {
+        /**
+         * Initializing J2Cache configuration
+         */
         val j2config = J2CacheConfig()
         j2config.broadcast = "none"
         if (CacheManager.config["broadcast"] != null && CacheManager.config["broadcast"] as Boolean? == true) {
@@ -38,6 +51,14 @@ class CachePlugin : Plugin {
         j2config.l1CacheName = "none"
         if (CacheManager.config["l1"] != null && CacheManager.config["l1"] as Boolean? == true) {
             j2config.l1CacheName = "caffeine"
+            val regions = CacheManager.config["regions"] as MutableMap<String, String>
+            if (regions.isEmpty()) {
+                j2config.l1CacheProperties["region.default"] = "1000, 30m"
+            }
+            for (key in regions.keys) {
+                j2config.l1CacheProperties["region.$key"] = regions[key]
+            }
+
         }
         j2config.l2CacheName = "lettuce"
         j2config.isDefaultCacheNullObject = false
@@ -56,11 +77,27 @@ class CachePlugin : Plugin {
 
         val builder = J2CacheBuilder.init(j2config)
         CacheManager.channel = builder.channel
+
+
+        /**
+         * Scanning for routes with annotations
+         * @see Cache
+         */
+        for (r in NextServer.resourceTables) {
+            val method = r.clazzMethod
+            if (method.getDeclaredAnnotation(Cache::class.java) != null) {
+                val annotation: Cache = method.getDeclaredAnnotation(Cache::class.java)
+                CacheManager.cacheEnabledUrl["${PREFIX}:${r.httpMethod}:${r.url}"] = annotation.region
+            }
+
+
+        }
         return true
     }
 
     override fun stop(): Boolean {
         CacheManager.channel.close()
+        CacheManager.cacheEnabledUrl.clear()
         return true
     }
 }

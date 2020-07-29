@@ -15,17 +15,39 @@
  */
 package net.cloudopt.next.cache.test
 
-import net.cloudopt.next.cache.CacheHandler
+import net.cloudopt.next.cache.CacheManager
 import net.cloudopt.next.cache.CachePlugin
-import net.cloudopt.next.web.NextServer
+import net.oschina.j2cache.CacheChannel
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+
 
 /*
  * @author: Cloudopt
- * @Time: 2020/07/29
+ * @Time: 2018/2/7
  * @Description: Test Case
  */
-fun main(args: Array<String>) {
-    NextServer.addPlugin(CachePlugin())
-    NextServer.addHandler(CacheHandler())
-    NextServer.run()
+
+class TestPluginCase {
+
+    lateinit var cache: CacheChannel
+
+    @BeforeTest
+    fun start() {
+        var plugin = CachePlugin()
+        plugin.start()
+        cache = CacheManager.channel
+    }
+
+
+    @Test
+    fun set() {
+        cache.set("default", "key","value")
+    }
+
+    @Test
+    fun get() {
+        println(cache.get("default", "key"))
+    }
+
 }
