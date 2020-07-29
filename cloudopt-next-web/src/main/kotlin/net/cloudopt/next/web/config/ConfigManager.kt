@@ -71,7 +71,7 @@ object ConfigManager {
      */
     @JvmStatic
     open fun init(prefix: String): MutableMap<String, Any> {
-        var newMap = configMap
+        var newMap = configMap.toMutableMap()
         for (key in prefix.split(".")) {
             if(newMap[key] != null){
                 newMap = newMap[key] as MutableMap<String, Any>
