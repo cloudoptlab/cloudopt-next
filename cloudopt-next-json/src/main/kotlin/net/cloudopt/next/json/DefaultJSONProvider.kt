@@ -28,7 +28,8 @@ import net.cloudopt.next.utils.Resourcer
 class DefaultJSONProvider : JsonProvider {
 
     init {
-        ParserConfig.getGlobalInstance().isSafeMode = true
+        val cfg = ParserConfig.getGlobalInstance()
+        cfg.addAccept("net.cloudopt.next.")
     }
 
     override fun toJsonString(obj: Any): String {
