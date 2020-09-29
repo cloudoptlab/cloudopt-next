@@ -20,7 +20,6 @@ import io.vertx.core.Handler
 import io.vertx.kafka.client.consumer.KafkaConsumer
 import io.vertx.kafka.client.producer.KafkaProducer
 import io.vertx.kafka.client.producer.KafkaProducerRecord
-import io.vertx.kafka.client.producer.RecordMetadata
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
 import org.apache.kafka.streams.KafkaStreams
@@ -57,17 +56,22 @@ object KafkaManager {
 
     @JvmOverloads
     fun send(
-        topic: String,
-        key: String = "",
-        value: String = "",
-        partition: Int = 0,
-        result: Handler<AsyncResult<RecordMetadata>>? = null
+            topic: String,
+            key: String,
+            value: String,
+            partition: Int = -1,
+            callback: Handler<AsyncResult<Void>>? = null
     ) {
-        var record = KafkaProducerRecord.create<Any, String>(topic, key, value, partition)
-        if (result == null) {
+        var record = if (partition < 0) {
+            KafkaProducerRecord.create<Any, String>(topic, key, value)
+        } else {
+            KafkaProducerRecord.create<Any, String>(topic, key, value, partition)
+        }
+
+        if (callback == null) {
             producer?.write(record as KafkaProducerRecord<Any, Any>)
         } else {
-            producer?.write(record as KafkaProducerRecord<Any, Any>)
+            producer?.write(record as KafkaProducerRecord<Any, Any>, callback)
         }
     }
 
