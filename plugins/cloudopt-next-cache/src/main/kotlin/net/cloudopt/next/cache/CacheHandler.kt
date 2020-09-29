@@ -31,7 +31,7 @@ class CacheHandler : Handler {
         val key = getKey(httpMethod, url)
         if (isCacheEnabledUrl(httpMethod, url) && CacheManager.channel.exists(region, key)) {
             val cacheData: CacheData = CacheManager.channel.get(region, key).value as CacheData
-            resource.context.response().headers().addAll(cacheData.headers)
+            resource.response.headers().addAll(cacheData.headers)
             resource.response.end(cacheData.bodyString)
             return false
         }

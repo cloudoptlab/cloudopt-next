@@ -75,13 +75,6 @@ object NextServer {
     open var errorHandler = Classer.loadClass(ConfigManager.config.errorHandler)
 
     init {
-        scan()
-
-        /**
-         * Print banner
-         */
-        Banner.print()
-
         /**
          * Set json provider
          */
@@ -267,6 +260,11 @@ object NextServer {
      */
     @JvmStatic
     fun run() {
+        scan()
+        /**
+         * Print banner
+         */
+        Banner.print()
         startPlugins()
         Worker.deploy("net.cloudopt.next.web.NextServerVerticle")
     }
