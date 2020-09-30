@@ -9,7 +9,9 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.logging
+package net.cloudopt.next.logging.provider
+
+import net.cloudopt.next.logging.Logger
 
 /*
  * @author: Cloudopt
@@ -21,5 +23,6 @@ interface LoggerProvider {
     fun getLogger(clazz: Class<*>): Logger
 
     fun getLogger(clazzName: String): Logger
+
 
 }

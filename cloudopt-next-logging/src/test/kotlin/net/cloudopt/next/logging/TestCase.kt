@@ -28,10 +28,21 @@ class TestCase {
 
     @Test
     fun test() {
+
         logger.debug("debug")
         logger.info("info")
         logger.warn("warn")
         logger.error("error")
+
+        logger.debug("Hello {}","World")
+        logger.info("Hello {}","World")
+        logger.warn("Hello {}","World")
+        logger.error("Hello {}","World")
+
+        logger.debug("Loading {}","100%")
+        logger.info("Loading {}","100%")
+        logger.warn("Loading {}","100%")
+        logger.error("Loading {}","100%")
     }
 
 }

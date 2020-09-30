@@ -9,11 +9,11 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.logger.provider
+package net.cloudopt.next.logging.provider
 
 import net.cloudopt.next.logging.Colorer
+import net.cloudopt.next.logging.Format
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.logging.LoggerProvider
 
 
 /*
@@ -22,6 +22,8 @@ import net.cloudopt.next.logging.LoggerProvider
  * @Description: SLF4J log implementation class
  */
 class Slf4jLoggerProvider : LoggerProvider {
+
+    private val format = Format("{", "}")
 
     override fun getLogger(clazz: Class<*>): Logger {
         return Slf4JLogger(org.slf4j.LoggerFactory.getLogger(clazz))
@@ -36,42 +38,42 @@ class Slf4jLoggerProvider : LoggerProvider {
 
         @JvmOverloads
         override fun debug(message: String, vararg args: Any) {
-            logger.debug("${Colorer.magenta(Logger.configuration.debugPrefix)} ${String.format(message, *args)}", *args)
+            logger.debug("${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}", *args)
         }
 
         @JvmOverloads
         override fun debug(message: String, t: Throwable, vararg args: Any) {
-            logger.debug("${Colorer.green(Logger.configuration.debugPrefix)} ${String.format(message, *args)}", t)
+            logger.debug("${Colorer.green(Logger.configuration.debugPrefix)} ${format.format(message, *args)}", t)
         }
 
         @JvmOverloads
         override fun info(message: String, vararg args: Any) {
-            logger.info("${Colorer.blue(Logger.configuration.infoPrefix)} ${String.format(message, *args)}", *args)
+            logger.info("${Colorer.blue(Logger.configuration.infoPrefix)} ${format.format(message, *args)}", *args)
         }
 
         @JvmOverloads
         override fun info(message: String, t: Throwable, vararg args: Any) {
-            logger.info("${Colorer.blue(Logger.configuration.infoPrefix)} ${String.format(message, *args)}", t)
+            logger.info("${Colorer.blue(Logger.configuration.infoPrefix)} ${format.format(message, *args)}", t)
         }
 
         @JvmOverloads
         override fun warn(message: String, vararg args: Any) {
-            logger.warn("${Colorer.yellow(Logger.configuration.warnPrefix)} ${String.format(message, *args)}", *args)
+            logger.warn("${Colorer.yellow(Logger.configuration.warnPrefix)} ${format.format(message, *args)}", *args)
         }
 
         @JvmOverloads
         override fun warn(message: String, t: Throwable, vararg args: Any) {
-            logger.warn("${Colorer.yellow(Logger.configuration.warnPrefix)} ${String.format(message, *args)}", t)
+            logger.warn("${Colorer.yellow(Logger.configuration.warnPrefix)} ${format.format(message, *args)}", t)
         }
 
         @JvmOverloads
         override fun error(message: String, vararg args: Any) {
-            logger.error("${Colorer.red(Logger.configuration.errorPrefix)} ${String.format(message, *args)}", *args)
+            logger.error("${Colorer.red(Logger.configuration.errorPrefix)} ${format.format(message, *args)}", *args)
         }
 
         @JvmOverloads
         override fun error(message: String, t: Throwable, vararg args: Any) {
-            logger.error("${Colorer.red(Logger.configuration.errorPrefix)} ${String.format(message, *args)}", t)
+            logger.error("${Colorer.red(Logger.configuration.errorPrefix)} ${format.format(message, *args)}", t)
         }
 
         override fun isDebugEnabled(): Boolean {
