@@ -17,6 +17,9 @@ class Format(openToken: String, closeToken: String) {
      * @return String?
      */
     fun format(text: String, vararg args: Any): String {
+        if (args.isEmpty()) {
+            return text
+        }
         var argsIndex = 0
         val src = text.toCharArray()
         var offset = 0
