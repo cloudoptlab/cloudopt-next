@@ -15,6 +15,8 @@
  */
 package net.cloudopt.next.json
 
+import kotlin.reflect.KClass
+
 /*
  * @author: Cloudopt
  * @Time: 2018/1/9
@@ -42,7 +44,7 @@ interface JsonProvider {
      * @param clazz Java class
      * @return Json object
      */
-    fun toObject(jsonString: String, clazz: Class<*>): Any
+    fun toObject(jsonString: String, clazz: KClass<*>): Any
 
     /**
      * Output json map list.
@@ -57,7 +59,7 @@ interface JsonProvider {
      * @param clazz Java class
      * @return MutableList<Any>
      */
-    fun toObjectList(jsonString: String, clazz: Class<*>): MutableList<Any>
+    fun toObjectList(jsonString: String, clazz: KClass<*>): MutableList<Any>
 
     /**
      * Output any list.
@@ -90,6 +92,6 @@ interface JsonProvider {
      * @param clazz Class name
      * @return Object
      */
-    fun <T> read(filePath: String, prefix: String, clazz: Class<T>): Any
+    fun read(filePath: String, prefix: String, clazz: KClass<*>): Any
 
 }

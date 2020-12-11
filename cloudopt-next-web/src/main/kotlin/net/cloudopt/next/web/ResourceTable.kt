@@ -16,7 +16,9 @@
 package net.cloudopt.next.web
 
 import io.vertx.core.http.HttpMethod
-import java.lang.reflect.Method
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.KTypeParameter
 
 /*
  * @author: Cloudopt
@@ -26,8 +28,8 @@ import java.lang.reflect.Method
 
 data class ResourceTable(
     var url: String = "", var httpMethod: HttpMethod = HttpMethod.GET,
-    var clazz: Class<Resource> = Resource::class.java, var methodName: String = "",
+    var clazz: KClass<Resource> = Resource::class, var methodName: String = "",
     var blocking: Boolean = false,
-    var clazzMethod: Method,
-    var parameterTypes: Array<Class<*>> = arrayOf<Class<*>>()
+    var clazzMethod: KFunction<*>,
+    var parameterTypes: List<KTypeParameter> = listOf()
 )

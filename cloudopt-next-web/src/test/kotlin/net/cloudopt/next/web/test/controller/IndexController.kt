@@ -56,7 +56,7 @@ class IndexController : Resource() {
         @Parameter("name", defaultValue = "Peter")
         name: String,
         @Min(18)
-        @Parameter("age")
+        @Parameter()
         age: Int
     ) {
         var map = hashMapOf<String, Any>()

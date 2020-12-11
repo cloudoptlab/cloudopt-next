@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
 import com.alibaba.fastjson.parser.ParserConfig
 import net.cloudopt.next.utils.Resourcer
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
@@ -40,16 +41,16 @@ class DefaultJSONProvider : JsonProvider {
         return JSON.parseObject(jsonString).toMutableMap()
     }
 
-    override fun toObject(jsonString: String, clazz: Class<*>): Any {
-        return JSON.parseObject(jsonString, clazz)
+    override fun toObject(jsonString: String, clazz: KClass<*>): Any {
+        return JSON.parseObject(jsonString, clazz.java)
     }
 
     override fun toJsonMapList(s: String): MutableList<MutableMap<String, Any>> {
         return JSON.parseArray(s).toMutableList() as MutableList<MutableMap<String, Any>>
     }
 
-    override fun toObjectList(jsonString: String, clazz: Class<*>): MutableList<Any> {
-        return JSON.parseArray(jsonString, clazz).toMutableList()
+    override fun toObjectList(jsonString: String, clazz: KClass<*>): MutableList<Any> {
+        return JSON.parseArray(jsonString, clazz.java).toMutableList()
     }
 
     override fun toList(jsonString: String): MutableList<Any> {
@@ -75,9 +76,9 @@ class DefaultJSONProvider : JsonProvider {
         return jsonObj.toMutableMap()
     }
 
-    override fun <T> read(filePath: String, prefix: String, clazz: Class<T>): Any {
+    override fun read(filePath: String, prefix: String, clazz: KClass<*>): Any {
         var jsonObj = read(filePath, prefix)
-        return JSONObject(jsonObj).toJavaObject(clazz)!!
+        return JSONObject(jsonObj).toJavaObject(clazz.java)!!
     }
 
     private fun cleanText(jsonString: String): String {

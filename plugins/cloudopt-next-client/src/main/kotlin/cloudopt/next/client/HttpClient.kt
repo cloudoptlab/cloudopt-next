@@ -46,7 +46,7 @@ class HttpClient() {
 
     constructor(host: String) : this() {
         if (host.startsWith("https://")) {
-            options.setSsl(true)
+            options.isSsl = true
             this.port = 443
         }
         this.host = host
@@ -54,8 +54,8 @@ class HttpClient() {
         this.host = this.host.replace("https://", "")
         options.userAgent =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
-        options.setKeepAlive(false)
-        options.setFollowRedirects(followRedirects)
+        options.isKeepAlive = false
+        options.isFollowRedirects = followRedirects
         client = WebClient.create(NextServer.vertx, options)
     }
 

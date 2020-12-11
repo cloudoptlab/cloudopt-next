@@ -27,6 +27,7 @@ import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View
 import java.util.*
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
@@ -431,7 +432,7 @@ open class Resource {
     /**
      * @return  the entire HTTP request body as a json and convert object, assuming UTF-8 encoding.
      */
-    fun getBodyJson(clazz: Class<*>): Any? {
+    fun getBodyJson(clazz: KClass<*>): Any? {
         return Jsoner.toObject(context.bodyAsJson.toString(), clazz)
     }
 
@@ -445,7 +446,7 @@ open class Resource {
     /**
      * @return  the entire HTTP request body as a json and convert object array, assuming UTF-8 encoding.
      */
-    fun getBodyJsonArray(clazz: Class<*>): Any? {
+    fun getBodyJsonArray(clazz: KClass<*>): Any? {
         return Jsoner.toObjectList(context.bodyAsJson.toString(), clazz)
     }
 

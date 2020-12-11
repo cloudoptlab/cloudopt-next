@@ -15,8 +15,6 @@
  */
 package net.cloudopt.next.kafka
 
-import java.lang.annotation.Documented
-
 /*
  * @author: Cloudopt
  * @Time: 2018/2/8

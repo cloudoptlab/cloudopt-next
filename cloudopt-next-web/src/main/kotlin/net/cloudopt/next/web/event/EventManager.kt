@@ -20,11 +20,14 @@ import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.EventBus
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.event.codec.MapMessageCodec
 import net.cloudopt.next.web.event.codec.ObjectMessageCodec
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.jvm.jvmName
 
 
 /*
@@ -38,7 +41,7 @@ object EventManager {
     lateinit var eventBus: EventBus
 
     @JvmStatic
-    private val eventList: MutableMap<String, Class<*>> = hashMapOf()
+    private val eventList: MutableMap<String, KClass<*>> = hashMapOf()
 
     private val logger = Logger.getLogger(EventManager::class.java)
 
@@ -50,21 +53,21 @@ object EventManager {
         eventBus.registerCodec(MapMessageCodec())
         eventBus.registerCodec(ObjectMessageCodec())
 
-        Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoEvent::class.java)
+        Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoEvent::class)
                 .forEach { clazz ->
-                    eventList[clazz.getDeclaredAnnotation(AutoEvent::class.java).value] = clazz
+                    eventList[clazz.findAnnotation<AutoEvent>()?.value!!] = clazz
                 }
 
         eventList.keys.forEach { key ->
             eventBus.consumer<Any>(key) { message ->
                 eventList[key]?.let {
-                    Beaner.newInstance<EventListener>(it)
+                    it.createInstance() as EventListener
                 }?.listener(message)
             }?.completionHandler { res ->
                 if (res.succeeded()) {
-                    logger.info("[EVENT] Registered event listener：[$key] on ${eventList.get(key)?.name}")
+                    logger.info("[EVENT] Registered event listener：[$key] on ${eventList?.get(key)?.jvmName}")
                 } else {
-                    logger.error("[EVENT] Registered event listener was error： ${eventList.get(key)?.name}")
+                    logger.error("[EVENT] Registered event listener was error： ${eventList?.get(key)?.jvmName}")
                 }
             }
         }

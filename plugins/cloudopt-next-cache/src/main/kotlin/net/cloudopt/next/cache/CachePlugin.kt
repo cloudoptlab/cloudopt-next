@@ -73,7 +73,7 @@ class CachePlugin : Plugin {
         j2config.l2CacheProperties["database"] = CacheManager.config["database"] ?: 0
         j2config.l2CacheProperties["timeout"] = CacheManager.config["timeout"] ?: 10000
         j2config.l2CacheProperties["clusterTopologyRefresh"] = CacheManager.config["clusterTopologyRefresh"]
-                ?: 3000
+            ?: 3000
 
         val builder = J2CacheBuilder.init(j2config)
         CacheManager.channel = builder.channel

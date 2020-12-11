@@ -54,7 +54,7 @@ abstract class Auth {
                 for (groupId in user.groupsIdList) {
                     getGroup(groupId)?.rules?.let { tempRuleMap.addAll(it) }
                 }
-                cacheMap.put(user.uniqueTag, tempRuleMap)
+                cacheMap[user.uniqueTag] = tempRuleMap
             }
         }
     }

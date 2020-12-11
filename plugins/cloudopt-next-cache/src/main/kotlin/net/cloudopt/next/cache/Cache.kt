@@ -21,5 +21,5 @@ import java.lang.annotation.Documented
 @Target(AnnotationTarget.FUNCTION)
 @Documented
 annotation class Cache(
-        val region: String = "default"
+    val region: String = "default"
 )

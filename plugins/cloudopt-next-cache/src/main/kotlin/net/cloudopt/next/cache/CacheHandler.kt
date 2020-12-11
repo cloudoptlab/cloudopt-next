@@ -18,6 +18,7 @@ package net.cloudopt.next.cache
 import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.handler.Handler
+
 /**
  * If the route accessed is in the cache list, the first access is automatically cached
  */

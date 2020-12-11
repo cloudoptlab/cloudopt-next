@@ -25,22 +25,29 @@ import net.cloudopt.next.web.handler.Handler
  * @Time: 2018/1/26
  * @Description: Test Handler
  */
-class TestHandler : Handler() {
+class TestHandler : Handler {
 
     companion object {
         val logger = Logger.getLogger(TestHandler::class.java)
     }
 
-    override fun preHandle(resource: Resource) {
+    override fun preHandle(resource: Resource): Boolean {
         logger.info(resource.request.absoluteURI() + "-preHandle")
+        return true
     }
 
-    override fun postHandle(resource: Resource) {
+    override fun postHandle(resource: Resource): Boolean {
         logger.info(resource.request.absoluteURI() + "-postHandle")
+        return true
     }
 
-    override fun afterCompletion(resource: Resource) {
+    override fun afterRender(resource: Resource, bodyString: String): Boolean {
+        return true
+    }
+
+    override fun afterCompletion(resource: Resource): Boolean {
         logger.info(resource.request.absoluteURI() + "-afterCompletion")
+        return true
     }
 
 

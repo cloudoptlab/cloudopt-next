@@ -42,7 +42,7 @@ class TestPluginCase {
 
     @Test
     fun set() {
-        cache.set("default", "key","value")
+        cache.set("default", "key", "value")
     }
 
     @Test

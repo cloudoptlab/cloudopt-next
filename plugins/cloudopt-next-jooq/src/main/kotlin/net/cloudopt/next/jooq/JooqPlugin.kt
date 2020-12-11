@@ -17,7 +17,6 @@ package net.cloudopt.next.jooq
 
 import net.cloudopt.next.jooq.pool.ConnectionPool
 import net.cloudopt.next.jooq.pool.HikariCPPool
-import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
@@ -26,6 +25,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DataSourceConnectionProvider
 import org.jooq.impl.DefaultTransactionProvider
 import java.sql.SQLException
+import kotlin.reflect.full.createInstance
 
 
 /*
@@ -42,7 +42,7 @@ class JooqPlugin : Plugin {
             var pool: ConnectionPool = HikariCPPool()
 
             if (map.get("pool") != null) {
-                pool = Beaner.newInstance(Classer.loadClass(map.get("pool") as String))
+                pool = Classer.loadClass(map.get("pool") as String).createInstance() as ConnectionPool
             }
 
             var sqlDialect = when (map.get("database")) {

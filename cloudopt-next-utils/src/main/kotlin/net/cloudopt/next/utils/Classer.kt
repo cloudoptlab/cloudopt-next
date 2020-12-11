@@ -22,12 +22,21 @@ import java.net.URL
 import java.net.URLDecoder
 import java.util.*
 import java.util.jar.JarFile
+import kotlin.reflect.KClass
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.javaConstructor
+import kotlin.reflect.jvm.jvmName
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/4
  * @Description: This is for scanning tools class
  */
+
 object Classer {
 
     private val CLASS_EXT = ".class"
@@ -41,7 +50,7 @@ object Classer {
     /**
      * @return Get the Java ClassPath path, excluding jre
      */
-    val javaClassPaths: Array<String>
+    private val javaClassPaths: Array<String>
         get() = System.getProperty("java.class.path").split(System.getProperty("path.separator").toRegex())
             .dropLastWhile { it.isEmpty() }.toTypedArray()
 
@@ -49,7 +58,7 @@ object Classer {
      * Get the current thread's ClassLoader
      * @return The current thread's class loader
      */
-    val contextClassLoader: ClassLoader
+    private val contextClassLoader: ClassLoader
         get() = Thread.currentThread().contextClassLoader
 
     /**
@@ -57,7 +66,7 @@ object Classer {
      * If the current thread class loader does not exist, take the current class loader class
      * @return class loader
      */
-    val classLoader: ClassLoader
+    private val classLoader: ClassLoader
         get() {
             var classLoader: ClassLoader? = contextClassLoader
             return classLoader ?: Classer::class.java.classLoader
@@ -81,11 +90,11 @@ object Classer {
     fun scanPackageByAnnotation(
         packageName: String,
         inJar: Boolean,
-        annotationClass: Class<out Annotation>
-    ): Set<Class<*>> {
+        annotationClass: KClass<out Annotation>
+    ): Set<KClass<*>> {
         return scanPackage(packageName, inJar, object : ClassFilter {
-            override fun accept(clazz: Class<*>): Boolean {
-                return clazz.isAnnotationPresent(annotationClass)
+            override fun accept(clazz: KClass<*>): Boolean {
+                return clazz.java.isAnnotationPresent(annotationClass.java)
             }
         })
     }
@@ -97,10 +106,10 @@ object Classer {
      * @param superClass  Father class
      * @return Collection of classes
      */
-    fun scanPackageBySuper(packageName: String, inJar: Boolean, superClass: Class<*>): Set<Class<*>> {
+    fun scanPackageBySuper(packageName: String, inJar: Boolean, superClass: Class<*>): Set<KClass<*>> {
         return scanPackage(packageName, inJar, object : ClassFilter {
-            override fun accept(clazz: Class<*>): Boolean {
-                return superClass.isAssignableFrom(clazz) && superClass != clazz
+            override fun accept(clazz: KClass<*>): Boolean {
+                return superClass.isAssignableFrom(clazz::class.java) && superClass != clazz
             }
         })
     }
@@ -113,26 +122,23 @@ object Classer {
      *
      * @param packageName Package  path com | com. | com.abs | com.abs.
      * @param inJar  Find in the jar package
-     * @param This is a classFilter class filter, which is used to filter out unneeded class
+     * @param classFilter This is a classFilter class filter, which is used to filter out unneeded class
      * @return Collection of classes
      */
-    fun scanPackage(packageName: String?, inJar: Boolean, classFilter: ClassFilter): Set<Class<*>> {
-        var packageName = packageName
-        if (packageName == null) {
-            packageName = ""
-        }
-        packageName = getWellFormedPackageName(packageName!!)
+    fun scanPackage(packageName: String="", inJar: Boolean, classFilter: ClassFilter): Set<KClass<*>> {
 
-        val classes = HashSet<Class<*>>()
-        for (classPath in getClassPaths(packageName)) {
+        var wellFormedPackageName = getWellFormedPackageName(packageName)
+
+        val classes = HashSet<KClass<*>>()
+        for (classPath in getClassPaths(wellFormedPackageName)) {
             // This is used to populate the classes and decode the classpath
-            fillClasses(decodeUrl(classPath), packageName, classFilter, classes)
+            fillClasses(decodeUrl(classPath), wellFormedPackageName, classFilter, classes)
         }
         // If you do not find packageName in your project's ClassPath, go to your system-defined ClassPath
         if (inJar) {
             for (classPath in javaClassPaths) {
                 // This is used to populate the classes and decode the classpath
-                fillClasses(decodeUrl(classPath), File(classPath), packageName, classFilter, classes)
+                fillClasses(decodeUrl(classPath), File(classPath), wellFormedPackageName, classFilter, classes)
             }
         }
         return classes
@@ -166,15 +172,15 @@ object Classer {
      * @throws ClassNotFoundException  Can not find abnormalities
      */
     @Throws(ClassNotFoundException::class)
-    fun loadClass(className: String): Class<*> {
+    fun loadClass(className: String): KClass<*> {
         try {
-            return contextClassLoader.loadClass(className)
+            return contextClassLoader.loadClass(className).kotlin
         } catch (e: ClassNotFoundException) {
-            try {
-                return Class.forName(className, false, classLoader)
+            return try {
+                Class.forName(className, false, classLoader).kotlin
             } catch (ex: ClassNotFoundException) {
                 try {
-                    return ClassLoader::class.java.classLoader.loadClass(className)
+                    ClassLoader::class.java.classLoader.loadClass(className).kotlin
                 } catch (exc: ClassNotFoundException) {
                     throw exc
                 }
@@ -223,7 +229,7 @@ object Classer {
         path: String,
         packageName: String,
         classFilter: ClassFilter,
-        classes: MutableSet<Class<*>>
+        classes: MutableSet<KClass<*>>
     ) {
         var path = path
         // This is is used to determine if the given path is Jar
@@ -254,7 +260,7 @@ object Classer {
         file: File,
         packageName: String,
         classFilter: ClassFilter,
-        classes: MutableSet<Class<*>>
+        classes: MutableSet<KClass<*>>
     ) {
         if (file.isDirectory) {
             processDirectory(classPath, file, packageName, classFilter, classes)
@@ -278,7 +284,7 @@ object Classer {
         directory: File,
         packageName: String,
         classFilter: ClassFilter,
-        classes: MutableSet<Class<*>>
+        classes: MutableSet<KClass<*>>
     ) {
         for (file in directory.listFiles(fileFilter)!!) {
             fillClasses(classPath, file, packageName, classFilter, classes)
@@ -299,7 +305,7 @@ object Classer {
         file: File,
         packageName: String?,
         classFilter: ClassFilter,
-        classes: MutableSet<Class<*>>
+        classes: MutableSet<KClass<*>>
     ) {
         var classPath = classPath
         if (false == classPath.endsWith(File.separator)) {
@@ -333,7 +339,7 @@ object Classer {
         file: File,
         packageName: String,
         classFilter: ClassFilter,
-        classes: MutableSet<Class<*>>
+        classes: MutableSet<KClass<*>>
     ) {
         try {
             for (entry in Collections.list(JarFile(file).entries())) {
@@ -359,7 +365,7 @@ object Classer {
     private fun fillClass(
         className: String,
         packageName: String,
-        classes: MutableSet<Class<*>>,
+        classes: MutableSet<KClass<*>>,
         classFilter: ClassFilter?
     ) {
         if (className.startsWith(packageName)) {
@@ -404,7 +410,7 @@ object Classer {
      * This is a class filter, which is used to filter classes that do not need to be loaded
      */
     interface ClassFilter {
-        fun accept(clazz: Class<*>): Boolean
+        fun accept(clazz: KClass<*>): Boolean
     }
 
     /**

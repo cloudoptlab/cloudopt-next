@@ -33,7 +33,7 @@ class TestCase {
 
     @Test
     fun testReadToObj() {
-        println(Jsoner.read("test1.json", "", Student::class.java))
+        println(Jsoner.read("test1.json", "", Student::class))
     }
 
     @Test
@@ -52,11 +52,21 @@ class TestCase {
     }
 
     @Test
+    fun toObject(){
+        println(
+            Jsoner.toObject(
+                "{\"name\":\"Andy\",\"sex\":1}",
+                Student::class
+            )
+        )
+    }
+
+    @Test
     fun toObjectList() {
         println(
             Jsoner.toObjectList(
                 "[{\"name\":\"Andy\",\"sex\":1},{\"name\":\"Andy\",\"sex\":1}]",
-                Student::class.java
+                Student::class
             )
         )
     }

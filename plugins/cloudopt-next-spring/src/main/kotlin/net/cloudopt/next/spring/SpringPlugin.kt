@@ -18,7 +18,6 @@ package net.cloudopt.next.spring
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
 
 /*
@@ -35,7 +34,7 @@ class SpringPlugin : Plugin {
 
     constructor() {
         this.configFiles = arrayOf("classpath:applicationContext.xml")
-        if (map.get("xml") != null && map.get("xml").toString().isNotBlank()) {
+        if (map["xml"] != null && map["xml"].toString().isNotBlank()) {
             var s = map.get("xml").toString()
             configFiles = s.split(",").toTypedArray()
         }

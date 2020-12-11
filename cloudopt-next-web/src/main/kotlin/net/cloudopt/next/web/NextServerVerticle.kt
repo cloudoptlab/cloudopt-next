@@ -23,7 +23,6 @@ import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.event.AfterEvent
@@ -33,6 +32,12 @@ import net.cloudopt.next.web.route.Parameter
 import net.cloudopt.next.web.route.RequestBody
 import net.cloudopt.next.web.route.SocketJS
 import net.cloudopt.next.web.route.WebSocket
+import kotlin.reflect.KParameter
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.jvm.jvmErasure
+import kotlin.reflect.jvm.jvmName
 
 
 /*
@@ -57,15 +62,15 @@ class NextServerVerticle : AbstractVerticle() {
         if (NextServer.sockJSes.size > 0) {
             val sockJSHandler = SockJSHandler.create(NextServer.vertx, ConfigManager.config.socket)
             NextServer.sockJSes.forEach { clazz ->
-                val socketAnnotation: SocketJS = clazz.getDeclaredAnnotation(SocketJS::class.java)
+                val socketAnnotation: SocketJS? = clazz.findAnnotation<SocketJS>()
                 sockJSHandler.socketHandler { sockJSHandler ->
-                    val handler = Beaner.newInstance<SockJSResource>(clazz)
+                    val handler = clazz.createInstance<SockJSResource>()
                     handler.handler(sockJSHandler)
                 }
-                if (!socketAnnotation.value.endsWith("/*")) {
+                if (!socketAnnotation?.value?.endsWith("/*")!!) {
                     logger.error("[SOCKET] Url must be end with /* !")
                 }
-                logger.info("[SOCKET] Registered socket resource: ${socketAnnotation.value} -> ${clazz.name}")
+                logger.info("[SOCKET] Registered socket resource: ${socketAnnotation.value} -> ${clazz.jvmName}")
                 router.route(socketAnnotation.value).handler(sockJSHandler)
             }
         }
@@ -75,11 +80,11 @@ class NextServerVerticle : AbstractVerticle() {
          */
         if (NextServer.webSockets.size > 0) {
             NextServer.webSockets.forEach { clazz ->
-                val websocketAnnotation: WebSocket = clazz.getDeclaredAnnotation(WebSocket::class.java)
-                router.route(websocketAnnotation.value).handler { context ->
+                val websocketAnnotation: WebSocket? = clazz.findAnnotation<WebSocket>()
+                router.route(websocketAnnotation?.value).handler { context ->
                     try {
                         val userWebSocketConnection = context.request().upgrade()
-                        val controllerObj = Beaner.newInstance<WebSocketResource>(clazz)
+                        val controllerObj = clazz.createInstance<WebSocketResource>()
                         controllerObj.handler(userWebSocketConnection)
                     } catch (e: InstantiationException) {
                         e.printStackTrace()
@@ -89,7 +94,7 @@ class NextServerVerticle : AbstractVerticle() {
                         context.response().end()
                     }
                 }
-                logger.info("[WEBSOCKET] Registered socket resource: ${websocketAnnotation.value} -> ${clazz.name}")
+                logger.info("[WEBSOCKET] Registered socket resource: ${websocketAnnotation?.value} -> ${clazz.jvmName}")
 
             }
         }
@@ -151,8 +156,8 @@ class NextServerVerticle : AbstractVerticle() {
         }
 
         router.route("/" + ConfigManager.config.staticPackage + "/*").handler(
-                StaticHandler.create().setIndexPage(ConfigManager.config.indexPage)
-                        .setIncludeHidden(false).setWebRoot(ConfigManager.config.staticPackage)
+            StaticHandler.create().setIndexPage(ConfigManager.config.indexPage)
+                .setIncludeHidden(false).setWebRoot(ConfigManager.config.staticPackage)
         )
 
         /**
@@ -162,7 +167,7 @@ class NextServerVerticle : AbstractVerticle() {
             router.route(url).handler { context ->
                 val resource = Resource()
                 resource.init(context)
-                val interceptors = clazz.map { Beaner.newInstance<Interceptor>(it.java) }
+                val interceptors = clazz.map { it.createInstance() }
 
                 val interceptor = interceptors.firstOrNull {
                     !it.intercept(resource)
@@ -188,7 +193,7 @@ class NextServerVerticle : AbstractVerticle() {
                 validatorList?.forEach { validator ->
                     router.route(key, url).handler { context ->
                         try {
-                            val v = Beaner.newInstance<Validator>(validator.java)
+                            val v = validator.createInstance()
                             val resource = Resource()
                             resource.init(context)
                             if (v.validate(resource)) {
@@ -236,28 +241,28 @@ class NextServerVerticle : AbstractVerticle() {
             }
 
             NextServer.logger.info(
-                    "[RESOURCE] Registered resource :${resourceTable.methodName} | ${resourceTable.url}"
+                "[RESOURCE] Registered resource :${resourceTable.methodName} | ${resourceTable.url}"
             )
         }
 
         server.requestHandler(router).listen(ConfigManager.config.port) { result ->
             if (result.succeeded()) {
                 NextServer.logger.info(
-                        "=========================================================================================================="
+                    "=========================================================================================================="
                 )
                 NextServer.logger.info("\uD83D\uDC0B Cloudopt Next started success!")
                 NextServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
                 NextServer.logger.info(
-                        "=========================================================================================================="
+                    "=========================================================================================================="
                 )
 
             } else {
                 NextServer.logger.error(
-                        "=========================================================================================================="
+                    "=========================================================================================================="
                 )
                 NextServer.logger.error("\uD83D\uDC0B Cloudopt Next started error! ${result.cause()}")
                 NextServer.logger.error(
-                        "=========================================================================================================="
+                    "=========================================================================================================="
                 )
             }
         }
@@ -280,7 +285,7 @@ class NextServerVerticle : AbstractVerticle() {
                 handler.afterCompletion(Resource().init(context))
             }
         }
-        val errorHandler = Beaner.newInstance<ErrorHandler>(NextServer.errorHandler)
+        val errorHandler = NextServer.errorHandler.createInstance()
         errorHandler.init(context)
         errorHandler.handle()
         if (context.failure() != null) {
@@ -304,18 +309,10 @@ class NextServerVerticle : AbstractVerticle() {
      */
     private fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
         try {
-            val controllerObj = Beaner.newInstance<Resource>(resourceTable.clazz)
+            val controllerObj = resourceTable.clazz.createInstance()
             controllerObj.init(context)
-            /**
-             * Check if the method has a list of parameters
-             */
-            val m = if (resourceTable.parameterTypes.isNotEmpty()) {
-                resourceTable.clazz.getDeclaredMethod(resourceTable.methodName, *resourceTable.parameterTypes)
-            } else {
-                resourceTable.clazz.getDeclaredMethod(resourceTable.methodName)
-            }
 
-            if (NextServer.handlers.isNotEmpty() || m.getAnnotation(AfterEvent::class.java) != null) {
+            if (NextServer.handlers.isNotEmpty() || resourceTable.clazzMethod.hasAnnotation<AfterEvent>()) {
                 context.response().endHandler {
                     /**
                      * Executes a global handler that is called at the end of the route
@@ -329,8 +326,9 @@ class NextServerVerticle : AbstractVerticle() {
                      * http request ends
                      * @see AfterEvent
                      */
-                    if (m.getAnnotation(AfterEvent::class.java) != null) {
-                        val afterEvent = m.getAnnotation(AfterEvent::class.java)
+                    if (resourceTable.clazzMethod.hasAnnotation<AfterEvent>()) {
+                        val afterEvent =
+                            resourceTable.clazzMethod.findAnnotation<AfterEvent>() ?: AfterEvent::class.createInstance()
                         for (topic in afterEvent.value) {
                             EventManager.sendObject(topic, context.data(), "map")
                         }
@@ -340,45 +338,48 @@ class NextServerVerticle : AbstractVerticle() {
 
             /**
              * If the method supports parameter injection, it will automatically extract the corresponding parameter
-             * and inject it
+             * and inject it.When using kotlin's reflection calls to get the parameters of a function, if the function
+             * needs to be instantiated first, then it will take an INSTANCE parameter by default.
+             *
              */
-            if (m.parameters.isNotEmpty()) {
-                val arr = arrayListOf<Any>()
-                for (para in m.parameters) {
-                    val parameterAnnotation = para.getAnnotation(Parameter::class.java)
-                    if (parameterAnnotation != null) {
-                        getParaByType(para.getAnnotation(Parameter::class.java).value, para, controllerObj)?.let {
-                            arr.add(
-                                    it
-                            )
-                        }
+            if (resourceTable.clazzMethod.parameters.isEmpty() ||
+                (resourceTable.clazzMethod.parameters.size == 1 &&
+                        resourceTable.clazzMethod.parameters[0].kind.name == "INSTANCE")
+            ) {
+                /**
+                 * If there are no arguments, just execute the method
+                 */
+                resourceTable.clazzMethod.call(controllerObj)
+
+            } else {
+                val arr = mutableMapOf<KParameter, Any?>()
+                val jsonObject:JSONObject = JSONObject.toJSON(controllerObj.getParams()) as JSONObject
+                for (para in resourceTable.clazzMethod.parameters) {
+                    if (para.kind.name == "VALUE" && para.hasAnnotation<Parameter>()) {
+                        getParaByType(para.findAnnotation<Parameter>()?.value, para, jsonObject)?.let { arr.put(para,it) }
                     }
-                    val requestBodyAnnotation = para.getAnnotation(RequestBody::class.java)
-                    if (requestBodyAnnotation != null) {
-                        controllerObj.getBodyJson(para.type)?.let { arr.add(it) }
+                    if (para.hasAnnotation<RequestBody>()) {
+                        controllerObj.getBodyJson(para.type.jvmErasure)?.let { arr.put(para,it) }
                     }
                 }
                 /**
                  * Support for verifying injected parameters
                  * @see ValidatorTool
                  */
-                val validatorResult = ValidatorTool.validateParameters(controllerObj, m, arr.toArray())
+                val validatorResult =
+                    ValidatorTool.validateParameters(controllerObj, resourceTable.clazzMethod, arr)
                 if (validatorResult.result) {
-                    m.invoke(controllerObj, *arr.toArray())
+                    arr[resourceTable.clazzMethod.parameters[0]] = controllerObj
+                    resourceTable.clazzMethod.callBy(arr)
                 } else {
                     controllerObj.context.put("errorMessage", validatorResult.message)
                     controllerObj.fail(400)
                 }
-            } else {
-                /**
-                 * If there are no arguments, just execute the method
-                 */
-                m.invoke(controllerObj)
             }
         } catch (e: Exception) {
             e.printStackTrace()
             logger.error(
-                    e.message ?: "${resourceTable.url} has error occurred, but the error message could not be obtained "
+                e.message ?: "${resourceTable.url} has error occurred, but the error message could not be obtained "
             )
             context.fail(500)
         }
@@ -388,27 +389,35 @@ class NextServerVerticle : AbstractVerticle() {
      * Converts an http argument to the same type as a method argument
      * @param paraName String
      * @param para Parameter
-     * @param controllerObj Resource
+     * @param jsonObject The json object after all parameters are formatted
      * @return Any?
      */
-    private fun getParaByType(paraName: String, para: java.lang.reflect.Parameter, controllerObj: Resource): Any? {
-
-        val jsonObject = JSONObject(controllerObj.getParams())
-        if (jsonObject[paraName] == null) {
-            jsonObject[paraName] = para.getAnnotation(Parameter::class.java).defaultValue
+    private fun getParaByType(
+        paraName: String?,
+        para: KParameter,
+        jsonObject: JSONObject
+    ): Any? {
+        var finalParaName = if(paraName.isNullOrBlank()){
+            para.name
+        }else{
+            paraName
         }
-        when (para.type.typeName) {
-            "java.lang.String" -> return jsonObject.getString(paraName)
-            "kotlin.String" -> return jsonObject.getString(paraName)
-            "int" -> return jsonObject.getIntValue(paraName)
-            "double" -> return jsonObject.getDoubleValue(paraName)
-            "float" -> return jsonObject.getFloatValue(paraName)
-            "long" -> return jsonObject.getLongValue(paraName)
-            "short" -> return jsonObject.getShort(paraName)
-            "java.math.BigDecimal" -> return jsonObject.getBigDecimal(paraName)
-            "java.math.BigInteger" -> return jsonObject.getBigInteger(paraName)
-            "java.util.Date" -> return jsonObject.getDate(paraName)
-            "java.sql.Timestamp" -> return jsonObject.getTimestamp(paraName)
+        if (jsonObject[finalParaName] == null && para.findAnnotation<Parameter>()?.defaultValue?.isNotBlank() == true
+        ) {
+            jsonObject[finalParaName] = para.findAnnotation<Parameter>()?.defaultValue
+        }
+        when (para.type.jvmErasure.jvmName) {
+            "java.lang.String" -> return jsonObject.getString(finalParaName)
+            "kotlin.String" -> return jsonObject.getString(finalParaName)
+            "int" -> return jsonObject.getIntValue(finalParaName)
+            "double" -> return jsonObject.getDoubleValue(finalParaName)
+            "float" -> return jsonObject.getFloatValue(finalParaName)
+            "long" -> return jsonObject.getLongValue(finalParaName)
+            "short" -> return jsonObject.getShort(finalParaName)
+            "java.math.BigDecimal" -> return jsonObject.getBigDecimal(finalParaName)
+            "java.math.BigInteger" -> return jsonObject.getBigInteger(finalParaName)
+            "java.util.Date" -> return jsonObject.getDate(finalParaName)
+            "java.sql.Timestamp" -> return jsonObject.getTimestamp(finalParaName)
         }
         return null
     }

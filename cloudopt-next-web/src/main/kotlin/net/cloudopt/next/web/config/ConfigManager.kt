@@ -18,6 +18,7 @@ package net.cloudopt.next.web.config
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Maper
+import kotlin.reflect.KClass
 
 
 /*
@@ -89,7 +90,7 @@ object ConfigManager {
      * @return MutableMap<String, Any>
      */
     @JvmStatic
-    open fun initObject(prefix: String, clazz: Class<*>): Any {
+    open fun initObject(prefix: String, clazz: KClass<*>): Any {
         return Jsoner.toObject(Jsoner.toJsonString(init(prefix)), clazz)
     }
 }
