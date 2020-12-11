@@ -22,7 +22,7 @@ import io.vertx.core.eventbus.MessageCodec
 
 
 class ObjectMessageCodec : MessageCodec<Any, Any> {
-    override fun encodeToWire(buffer: Buffer, any:Any) {
+    override fun encodeToWire(buffer: Buffer, any: Any) {
         var byteArray = JSON.toJSONString(any).toByteArray(CharsetUtil.UTF_8)
         buffer.appendInt(byteArray.size)
         buffer.appendBytes(byteArray)

@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.route
 
-import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.web.Validator
 import kotlin.reflect.KClass
 
@@ -28,6 +27,6 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 annotation class DELETE(
     val value: String = "",
-    val valid: Array<KClass<out Validator>> = arrayOf(),
-    val httpMethod: HttpMethod = HttpMethod.DELETE
+    val valid: Array<KClass<out Validator>> = [],
+    val method: String = "DELETE"
 )

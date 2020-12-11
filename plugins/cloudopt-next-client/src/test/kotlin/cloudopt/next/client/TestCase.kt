@@ -15,8 +15,6 @@
  */
 package cloudopt.next.client
 
-import net.cloudopt.next.json.Jsoner
-
 
 /*
  * @author: Cloudopt
@@ -27,10 +25,12 @@ import net.cloudopt.next.json.Jsoner
 
 fun main(args: Array<String>) {
 
-    var client = HttpClient("https://www.cloudopt.net").setPort(80)
+    var client = HttpClient("https://www.cloudopt.net").setPort(443)
 
-    client.get("/api/v1/grade/website/www.google.com").send { result ->
-        println(Jsoner.toJsonString(result.result().bodyAsString()))
+    client.get("/api/v1/grade/website/www.baidu.com").send().onSuccess { response->
+        print(response.bodyAsString())
+    }.onFailure{err->
+        println("Connection failure!")
     }
 }
 

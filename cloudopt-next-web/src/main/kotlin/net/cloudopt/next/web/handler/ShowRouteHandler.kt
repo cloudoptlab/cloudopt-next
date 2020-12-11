@@ -34,14 +34,14 @@ class ShowRouteHandler : Handler {
         if (ConfigManager.config.showRoute) {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             logger.info(
-                    "Match route ----------------- " + df.format(Date())
-                            + " ------------------------------"
+                "Match route ----------------- " + df.format(Date())
+                        + " ------------------------------"
             )
             logger.info("Method       : ${resource.request.method()}")
-            logger.info("Path         : ${resource.context.normalisedPath()}")
+            logger.info("Path         : ${resource.context.normalizedPath()}")
             logger.info("User-Agent   : ${resource.request.getHeader("User-Agent")}")
             val params = resource.request.params()
-            params.forEach { entry ->
+            params.entries().forEach { entry ->
                 if (params.contains(entry.key)) {
                     params.remove(entry.key)
                     params.add(entry.key, entry.value)
@@ -50,7 +50,7 @@ class ShowRouteHandler : Handler {
             logger.info("Params       : ${Jsoner.toJsonString(params?.entries() ?: "[]")}")
             logger.info("Cookie       : ${Jsoner.toJsonString(resource.request.getHeader("Cookie") ?: "")}")
             logger.info(
-                    "--------------------------------------------------------------------------------"
+                "--------------------------------------------------------------------------------"
             )
         }
         return true

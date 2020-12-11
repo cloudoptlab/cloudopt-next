@@ -29,8 +29,6 @@ import net.cloudopt.next.web.NextServer
  */
 class HttpClient() {
 
-    val options = WebClientOptions()
-
     private var client = WebClient.create(NextServer.vertx)
 
     private var host = ""
@@ -44,7 +42,7 @@ class HttpClient() {
     private var followRedirects: Boolean = true
 
 
-    constructor(host: String) : this() {
+    constructor(host: String, options: WebClientOptions = WebClientOptions()) : this() {
         if (host.startsWith("https://")) {
             options.isSsl = true
             this.port = 443

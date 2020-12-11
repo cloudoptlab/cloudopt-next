@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.route
 
-import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.web.Validator
 import java.lang.annotation.Documented
 import kotlin.reflect.KClass
@@ -30,6 +29,6 @@ import kotlin.reflect.KClass
 @Documented
 annotation class POST(
     val value: String = "",
-    val valid: Array<KClass<out Validator>> = arrayOf(),
-    val httpMethod: HttpMethod = HttpMethod.POST
+    val valid: Array<KClass<out Validator>> = [],
+    val method: String = "POST"
 )

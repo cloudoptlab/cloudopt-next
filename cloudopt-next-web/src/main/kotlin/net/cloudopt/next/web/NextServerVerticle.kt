@@ -83,7 +83,7 @@ class NextServerVerticle : AbstractVerticle() {
                 val websocketAnnotation: WebSocket? = clazz.findAnnotation<WebSocket>()
                 router.route(websocketAnnotation?.value).handler { context ->
                     try {
-                        val userWebSocketConnection = context.request().upgrade()
+                        val userWebSocketConnection = context.request().toWebSocket()
                         val controllerObj = clazz.createInstance<WebSocketResource>()
                         controllerObj.handler(userWebSocketConnection)
                     } catch (e: InstantiationException) {
@@ -115,7 +115,7 @@ class NextServerVerticle : AbstractVerticle() {
          * Set csrf
          */
         if (ConfigManager.config.waf.csrf) {
-            router.route("/*").handler(CSRFHandler.create(ConfigManager.config.waf.encryption))
+            router.route("/*").handler(CSRFHandler.create(vertx, ConfigManager.config.waf.encryption))
         }
 
         /**
@@ -241,7 +241,7 @@ class NextServerVerticle : AbstractVerticle() {
             }
 
             NextServer.logger.info(
-                "[RESOURCE] Registered resource :${resourceTable.methodName} | ${resourceTable.url}"
+                "[RESOURCE] Registered resource ${resourceTable.httpMethod} :${resourceTable.methodName} | ${resourceTable.url}"
             )
         }
 
@@ -289,6 +289,7 @@ class NextServerVerticle : AbstractVerticle() {
         errorHandler.init(context)
         errorHandler.handle()
         if (context.failure() != null) {
+            context.failure().printStackTrace()
             logger.error(context.failure().toString())
         }
         if (!errorHandler.response.ended()) {
@@ -353,13 +354,18 @@ class NextServerVerticle : AbstractVerticle() {
 
             } else {
                 val arr = mutableMapOf<KParameter, Any?>()
-                val jsonObject:JSONObject = JSONObject.toJSON(controllerObj.getParams()) as JSONObject
+                val jsonObject: JSONObject = JSONObject.toJSON(controllerObj.getParams()) as JSONObject
                 for (para in resourceTable.clazzMethod.parameters) {
                     if (para.kind.name == "VALUE" && para.hasAnnotation<Parameter>()) {
-                        getParaByType(para.findAnnotation<Parameter>()?.value, para, jsonObject)?.let { arr.put(para,it) }
+                        getParaByType(para.findAnnotation<Parameter>()?.value, para, jsonObject)?.let {
+                            arr.put(
+                                para,
+                                it
+                            )
+                        }
                     }
                     if (para.hasAnnotation<RequestBody>()) {
-                        controllerObj.getBodyJson(para.type.jvmErasure)?.let { arr.put(para,it) }
+                        controllerObj.getBodyJson(para.type.jvmErasure)?.let { arr.put(para, it) }
                     }
                 }
                 /**
@@ -397,9 +403,9 @@ class NextServerVerticle : AbstractVerticle() {
         para: KParameter,
         jsonObject: JSONObject
     ): Any? {
-        var finalParaName = if(paraName.isNullOrBlank()){
+        var finalParaName = if (paraName.isNullOrBlank()) {
             para.name
-        }else{
+        } else {
             paraName
         }
         if (jsonObject[finalParaName] == null && para.findAnnotation<Parameter>()?.defaultValue?.isNotBlank() == true

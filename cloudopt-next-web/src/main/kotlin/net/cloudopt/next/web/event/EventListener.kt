@@ -24,7 +24,5 @@ import io.vertx.core.eventbus.Message
  * @Description: Used to automatically register listeners to the event bus of vertx.
  */
 interface EventListener {
-
     fun listener(message: Message<Any>)
-
 }

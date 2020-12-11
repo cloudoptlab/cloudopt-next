@@ -2,7 +2,7 @@
   "packageName": "net.cloudopt.next.web.test",
   "cookieCors": true,
   "port": 9001,
-  "waf":{
+  "waf": {
     "plus": true,
     "csrf": false,
     "xss": true,

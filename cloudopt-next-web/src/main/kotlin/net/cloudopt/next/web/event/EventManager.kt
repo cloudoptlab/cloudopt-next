@@ -41,7 +41,7 @@ object EventManager {
     lateinit var eventBus: EventBus
 
     @JvmStatic
-    private val eventList: MutableMap<String, KClass<*>> = hashMapOf()
+    val eventList: MutableMap<String, KClass<*>> = hashMapOf()
 
     private val logger = Logger.getLogger(EventManager::class.java)
 
@@ -54,9 +54,9 @@ object EventManager {
         eventBus.registerCodec(ObjectMessageCodec())
 
         Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoEvent::class)
-                .forEach { clazz ->
-                    eventList[clazz.findAnnotation<AutoEvent>()?.value!!] = clazz
-                }
+            .forEach { clazz ->
+                eventList[clazz.findAnnotation<AutoEvent>()?.value!!] = clazz
+            }
 
         eventList.keys.forEach { key ->
             eventBus.consumer<Any>(key) { message ->
@@ -147,7 +147,7 @@ object EventManager {
      * @param name the topic to send it to
      * @param body the message, may be {@code null}
      */
-    fun publishObject(name: String, body: Any){
+    fun publishObject(name: String, body: Any) {
         publishObject(name, body, "object")
     }
 
@@ -159,7 +159,7 @@ object EventManager {
      * @param codecName When sending or publishing a message a codec name can be provided. This must correspond with a previously registered
      * message codec. This allows you to send arbitrary objects on the event bus (e.g. POJOs).
      */
-    fun publishObject(name: String, body: Any, codecName: String){
+    fun publishObject(name: String, body: Any, codecName: String) {
         var options = DeliveryOptions()
         options.codecName = codecName
         eventBus.publish(name, body, options)

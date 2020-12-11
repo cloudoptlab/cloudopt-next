@@ -40,8 +40,8 @@ object Worker {
      */
     @JvmOverloads
     fun <T> then(
-            handler: Handler<Promise<Any>>,
-            queueResult: Handler<AsyncResult<Any>>
+        handler: Handler<Promise<Any>>,
+        queueResult: Handler<AsyncResult<Any>>
     ) {
         NextServer.vertx.executeBlocking(handler, queueResult)
     }
@@ -57,8 +57,8 @@ object Worker {
      */
     @JvmOverloads
     fun <T> worker(
-            handler: Handler<Promise<Any>>,
-            queueResult: Handler<AsyncResult<Any>>
+        handler: Handler<Promise<Any>>,
+        queueResult: Handler<AsyncResult<Any>>
     ) {
         NextServer.vertx.executeBlocking(handler, false, queueResult)
     }
@@ -98,9 +98,9 @@ object Worker {
      * @return the unique ID of the timer
      */
     fun setTimer(delay: Long, periodic: Boolean, handler: Handler<Long>) {
-        if(periodic){
+        if (periodic) {
             NextServer.vertx.setPeriodic(delay, handler)
-        }else{
+        } else {
             NextServer.vertx.setTimer(delay, handler)
         }
     }

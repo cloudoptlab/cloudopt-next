@@ -76,7 +76,8 @@ object NextServer {
     open var packageName = ""
 
     @JvmStatic
-    open var errorHandler:KClass<ErrorHandler> = Classer.loadClass(ConfigManager.config.errorHandler) as KClass<ErrorHandler>
+    open var errorHandler: KClass<ErrorHandler> =
+        Classer.loadClass(ConfigManager.config.errorHandler) as KClass<ErrorHandler>
 
     init {
         /**
@@ -96,9 +97,9 @@ object NextServer {
 
         //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class)
-                .forEach { clazz ->
-                    handlers.add(clazz.createInstance() as Handler)
-                }
+            .forEach { clazz ->
+                handlers.add(clazz.createInstance() as Handler)
+            }
 
         packageName = if (ConfigManager.config.packageName.isNotBlank()) {
             ConfigManager.config.packageName
@@ -108,27 +109,27 @@ object NextServer {
 
         //Scan custom handler
         Classer.scanPackageByAnnotation(packageName, true, AutoHandler::class)
-                .forEach { clazz ->
-                    handlers.add(clazz.createInstance() as Handler)
-                }
+            .forEach { clazz ->
+                handlers.add(clazz.createInstance() as Handler)
+            }
 
         //Scan sockJS
         Classer.scanPackageByAnnotation(packageName, true, SocketJS::class)
-                .forEach { clazz ->
-                    sockJSes.add(clazz as KClass<SockJSResource>)
-                }
+            .forEach { clazz ->
+                sockJSes.add(clazz as KClass<SockJSResource>)
+            }
 
         //Scan webSocket
         Classer.scanPackageByAnnotation(packageName, true, WebSocket::class)
-                .forEach { clazz ->
-                    webSockets.add(clazz as KClass<WebSocketResource>)
-                }
+            .forEach { clazz ->
+                webSockets.add(clazz as KClass<WebSocketResource>)
+            }
 
         //Scan resources
         Classer.scanPackageByAnnotation(packageName, true, API::class)
-                .forEach { clazz ->
-                    resources.add(clazz as KClass<Resource>)
-                }
+            .forEach { clazz ->
+                resources.add(clazz as KClass<Resource>)
+            }
 
         for (clazz in resources) {
 
@@ -167,31 +168,35 @@ object NextServer {
                 var blocking = false
 
                 functionsAnnotations.forEach { functionAnnotation ->
-
                     when (functionAnnotation) {
                         is GET -> {
                             resourceUrl = "${annotation?.value}${functionAnnotation.value}"
-                            httpMethod = functionAnnotation.httpMethod
+                            httpMethod = HttpMethod(functionAnnotation.method)
                             valids = functionAnnotation.valid
                         }
                         is POST -> {
                             resourceUrl = "${annotation?.value}${functionAnnotation.value}"
-                            httpMethod = functionAnnotation.httpMethod
+                            httpMethod = HttpMethod(functionAnnotation.method)
                             valids = functionAnnotation.valid
                         }
                         is PUT -> {
                             resourceUrl = "${annotation?.value}${functionAnnotation.value}"
-                            httpMethod = functionAnnotation.httpMethod
+                            httpMethod = HttpMethod(functionAnnotation.method)
                             valids = functionAnnotation.valid
                         }
                         is DELETE -> {
                             resourceUrl = "${annotation?.value}${functionAnnotation.value}"
-                            httpMethod = functionAnnotation.httpMethod
+                            httpMethod = HttpMethod(functionAnnotation.method)
                             valids = functionAnnotation.valid
                         }
                         is PATCH -> {
                             resourceUrl = "${annotation?.value}${functionAnnotation.value}"
-                            httpMethod = functionAnnotation.httpMethod
+                            httpMethod = HttpMethod(functionAnnotation.method)
+                            valids = functionAnnotation.valid
+                        }
+                        is net.cloudopt.next.web.route.HttpMethod -> {
+                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            httpMethod = HttpMethod(functionAnnotation.method)
                             valids = functionAnnotation.valid
                         }
                         is Blocking -> {
@@ -213,13 +218,13 @@ object NextServer {
 
                 if (resourceUrl.isNotBlank()) {
                     var resourceTable = ResourceTable(
-                            resourceUrl,
-                            httpMethod,
-                            clazz,
-                            function.name,
-                            blocking,
-                            function,
-                            function.typeParameters
+                        resourceUrl,
+                        httpMethod,
+                        clazz,
+                        function.name,
+                        blocking,
+                        function,
+                        function.typeParameters
                     )
                     resourceTables.add(resourceTable)
                 }

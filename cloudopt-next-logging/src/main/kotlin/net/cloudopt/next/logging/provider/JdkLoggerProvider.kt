@@ -29,7 +29,7 @@ import java.util.logging.Level
 
 class JdkLoggerProvider : LoggerProvider {
 
-    private val format = Format("{","}")
+    private val format = Format("{", "}")
 
     override fun getLogger(clazz: Class<*>): Logger {
         return JdkLogger(java.util.logging.Logger.getLogger(clazz.name))
@@ -47,80 +47,80 @@ class JdkLoggerProvider : LoggerProvider {
         @JvmOverloads
         override fun debug(message: String, vararg args: Any) {
             logger.logp(
-                    Level.FINE,
-                    clazzName,
-                    Thread.currentThread().stackTrace[1].methodName,
-                    "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                Level.FINE,
+                clazzName,
+                Thread.currentThread().stackTrace[1].methodName,
+                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
             )
         }
 
         @JvmOverloads
         override fun debug(message: String, t: Throwable, vararg args: Any) {
             logger.logp(
-                    Level.FINE,
-                    clazzName,
-                    t.stackTrace[1].methodName,
-                    "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                Level.FINE,
+                clazzName,
+                t.stackTrace[1].methodName,
+                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
             )
         }
 
         @JvmOverloads
         override fun info(message: String, vararg args: Any) {
             logger.logp(
-                    Level.INFO,
-                    clazzName,
-                    Thread.currentThread().stackTrace[1].methodName,
-                    "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                Level.INFO,
+                clazzName,
+                Thread.currentThread().stackTrace[1].methodName,
+                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
             )
         }
 
         @JvmOverloads
         override fun info(message: String, t: Throwable, vararg args: Any) {
             logger.logp(
-                    Level.INFO,
-                    clazzName,
-                    t.stackTrace[1].methodName,
-                    "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                Level.INFO,
+                clazzName,
+                t.stackTrace[1].methodName,
+                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
             )
         }
 
         @JvmOverloads
         override fun warn(message: String, vararg args: Any) {
             logger.logp(
-                    Level.WARNING,
-                    clazzName,
-                    Thread.currentThread().stackTrace[1].methodName,
-                    "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                Level.WARNING,
+                clazzName,
+                Thread.currentThread().stackTrace[1].methodName,
+                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
             )
         }
 
         @JvmOverloads
         override fun warn(message: String, t: Throwable, vararg args: Any) {
             logger.logp(
-                    Level.WARNING,
-                    clazzName,
-                    t.stackTrace[1].methodName,
-                    "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                Level.WARNING,
+                clazzName,
+                t.stackTrace[1].methodName,
+                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
             )
         }
 
         @JvmOverloads
         override fun error(message: String, vararg args: Any) {
             logger.logp(
-                    Level.SEVERE,
-                    clazzName,
-                    Thread.currentThread().stackTrace[1].methodName,
-                    "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                Level.SEVERE,
+                clazzName,
+                Thread.currentThread().stackTrace[1].methodName,
+                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
             )
         }
 
         @JvmOverloads
         override fun error(message: String, t: Throwable, vararg args: Any) {
             logger.logp(
-                    Level.SEVERE,
-                    clazzName,
-                    t.stackTrace[1].methodName,
-                    "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                Level.SEVERE,
+                clazzName,
+                t.stackTrace[1].methodName,
+                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
             )
         }
 

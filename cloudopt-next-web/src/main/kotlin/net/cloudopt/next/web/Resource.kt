@@ -182,8 +182,13 @@ open class Resource {
      */
     @JvmOverloads
     fun setCookie(
-            key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
-            , httpOnly: Boolean = false, cookieSecureFlag: Boolean = false
+        key: String,
+        value: String,
+        domain: String = "",
+        age: Long = 0,
+        path: String = "",
+        httpOnly: Boolean = false,
+        cookieSecureFlag: Boolean = false
     ) {
         val cookie = Cookie.cookie(key, value)
         if (domain.isNotBlank()) {
@@ -399,7 +404,7 @@ open class Resource {
      */
     fun getLang(): String {
         return if (context.preferredLanguage().tag().isNullOrEmpty() || context.preferredLanguage().subtag()
-                        .isNullOrEmpty()
+                .isNullOrEmpty()
         ) {
             "en_US"
         } else {
@@ -425,28 +430,28 @@ open class Resource {
     /**
      * @return  the entire HTTP request body as a json object, assuming UTF-8 encoding.
      */
-    fun getBodyJson(): Any? {
+    fun getBodyJson(): Any {
         return Jsoner.toJsonMap(context.bodyAsJson.toString())
     }
 
     /**
      * @return  the entire HTTP request body as a json and convert object, assuming UTF-8 encoding.
      */
-    fun getBodyJson(clazz: KClass<*>): Any? {
+    fun getBodyJson(clazz: KClass<*>): Any {
         return Jsoner.toObject(context.bodyAsJson.toString(), clazz)
     }
 
     /**
      * @return  the entire HTTP request body as a json array, assuming UTF-8 encoding.
      */
-    fun getBodyJsonArray(): Any? {
+    fun getBodyJsonArray(): Any {
         return Jsoner.toJsonMapList(context.bodyAsJson.toString())
     }
 
     /**
      * @return  the entire HTTP request body as a json and convert object array, assuming UTF-8 encoding.
      */
-    fun getBodyJsonArray(clazz: KClass<*>): Any? {
+    fun getBodyJsonArray(clazz: KClass<*>): Any {
         return Jsoner.toObjectList(context.bodyAsJson.toString(), clazz)
     }
 

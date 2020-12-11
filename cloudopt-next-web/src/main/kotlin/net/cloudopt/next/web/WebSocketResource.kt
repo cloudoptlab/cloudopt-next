@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web
 
+import io.vertx.core.Future
 import io.vertx.core.http.ServerWebSocket
 
 /*
@@ -24,6 +25,6 @@ import io.vertx.core.http.ServerWebSocket
  */
 open interface WebSocketResource {
 
-    fun handler(userWebSocketConnection: ServerWebSocket)
+    fun handler(userWebSocketConnection: Future<ServerWebSocket>)
 
 }

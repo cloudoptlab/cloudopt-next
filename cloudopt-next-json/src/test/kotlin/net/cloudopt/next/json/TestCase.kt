@@ -52,7 +52,7 @@ class TestCase {
     }
 
     @Test
-    fun toObject(){
+    fun toObject() {
         println(
             Jsoner.toObject(
                 "{\"name\":\"Andy\",\"sex\":1}",

@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.event
 
-import io.vertx.core.eventbus.impl.CodecManager
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
 
@@ -33,10 +32,9 @@ class EventPlugin : Plugin {
     }
 
     override fun stop(): Boolean {
-        EventManager.eventBus.close { result ->
-            if (result.failed()) {
-                println(result.cause())
-            }
+        EventManager.eventList.keys.forEach { key ->
+            EventManager.eventBus.unregisterCodec(key)
+
         }
         return true
     }

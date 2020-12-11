@@ -17,11 +17,8 @@
 
 package net.cloudopt.next.redis
 
-import io.vertx.redis.RedisClient
-import io.vertx.redis.RedisOptions
 import net.cloudopt.next.redis.serializer.FstSerializer
 import net.cloudopt.next.redis.serializer.ISerializer
-import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
 import redis.clients.jedis.JedisPool
@@ -47,9 +44,6 @@ class RedisPlugin() : Plugin {
     var password: String? = null
     var database: Int? = null
     var clientName: String? = null
-    var asyn: Boolean = false
-    val asynOpitions = RedisOptions()
-
     var serializer: ISerializer = FstSerializer()
     var keyNamingPolicy = IKeyNamingPolicy.defaultKeyNamingPolicy
 
@@ -83,10 +77,6 @@ class RedisPlugin() : Plugin {
             clientName = map.get("clientName") as String
         }
 
-        if (map.get("asyn") != null) {
-            asyn = map.get("asyn").toString().toBoolean()
-        }
-
     }
 
     /**
@@ -98,14 +88,6 @@ class RedisPlugin() : Plugin {
         protected set
 
     override fun start(): Boolean {
-        if (asyn) {
-            asynOpitions.address = host
-            asynOpitions.port = port
-            asynOpitions.connectTimeout = timeout
-            asynOpitions.auth = password
-            asynOpitions.select = database
-            Redis.asyn = RedisClient.create(NextServer.vertx, RedisOptions())
-        } else {
             val jedisPool: JedisPool
             if (port != null && timeout != null && !password.isNullOrBlank() && database != null && !clientName.isNullOrBlank())
                 jedisPool = JedisPool(jedisPoolConfig, host, port, timeout, password, database!!, clientName)
@@ -122,24 +104,17 @@ class RedisPlugin() : Plugin {
 
             val cache = Cache(cacheName, jedisPool, serializer, keyNamingPolicy)
             Redis.addCache(cache)
-        }
         return true
     }
 
     override fun stop(): Boolean {
-        if (asyn) {
-            Redis.asyn.close {
+        val cache = Redis.removeCache(cacheName)
+        try {
+            if (cache == Redis.mainCache)
+                Redis.setMainCache(null!!)
+            cache.jedisPool.destroy()
+        } catch (e: KotlinNullPointerException) {
 
-            }
-        } else {
-            val cache = Redis.removeCache(cacheName)
-            try {
-                if (cache == Redis.mainCache)
-                    Redis.setMainCache(null!!)
-                cache.jedisPool.destroy()
-            } catch (e: KotlinNullPointerException) {
-
-            }
         }
 
         return true

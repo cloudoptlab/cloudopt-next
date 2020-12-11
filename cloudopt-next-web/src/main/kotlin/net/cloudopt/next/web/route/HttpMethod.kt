@@ -21,14 +21,14 @@ import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Patch Annotation
+ * @Time: 2020/12/11
+ * @Description: Other Http Method Annotation
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Documented
-annotation class PATCH(
+annotation class HttpMethod(
     val value: String = "",
     val valid: Array<KClass<out Validator>> = [],
-    val method: String = "PATCH"
+    val method: String = ""
 )

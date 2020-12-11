@@ -25,4 +25,4 @@ import java.lang.annotation.Documented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Documented
-annotation class RequestBody()
+annotation class RequestBody

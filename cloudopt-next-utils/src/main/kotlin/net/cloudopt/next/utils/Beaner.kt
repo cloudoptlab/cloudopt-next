@@ -26,7 +26,8 @@ object Beaner {
      * @param clazz class
      * @return objects
      */
-    @kotlin.Deprecated("This method will be removed soon, please use kotlin native syntax.",
+    @kotlin.Deprecated(
+        "This method will be removed soon, please use kotlin native syntax.",
         ReplaceWith("clazz.createInstance() as T")
     )
     @Throws(InstantiationException::class, IllegalAccessException::class)

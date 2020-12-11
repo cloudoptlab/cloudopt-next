@@ -23,13 +23,6 @@ import java.net.URLDecoder
 import java.util.*
 import java.util.jar.JarFile
 import kotlin.reflect.KClass
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.jvm.javaConstructor
-import kotlin.reflect.jvm.jvmName
 
 /*
  * @author: Cloudopt
@@ -125,7 +118,7 @@ object Classer {
      * @param classFilter This is a classFilter class filter, which is used to filter out unneeded class
      * @return Collection of classes
      */
-    fun scanPackage(packageName: String="", inJar: Boolean, classFilter: ClassFilter): Set<KClass<*>> {
+    fun scanPackage(packageName: String = "", inJar: Boolean, classFilter: ClassFilter): Set<KClass<*>> {
 
         var wellFormedPackageName = getWellFormedPackageName(packageName)
 

@@ -27,4 +27,4 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
 @Documented
-annotation class API(val value: String, val interceptor: Array<KClass<out Interceptor>> = arrayOf())
+annotation class API(val value: String, val interceptor: Array<KClass<out Interceptor>> = [])

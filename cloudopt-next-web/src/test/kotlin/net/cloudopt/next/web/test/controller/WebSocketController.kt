@@ -15,6 +15,8 @@
  */
 package net.cloudopt.next.web.test.controller
 
+import io.vertx.core.Future
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.ServerWebSocket
 import net.cloudopt.next.web.WebSocketResource
 import net.cloudopt.next.web.route.WebSocket
@@ -28,11 +30,20 @@ import net.cloudopt.next.web.route.WebSocket
 
 @WebSocket("/websocket")
 class WebSocketController : WebSocketResource {
-    override fun handler(userWebSocketConnection: ServerWebSocket) {
+    override fun handler(userWebSocketConnection: Future<ServerWebSocket>) {
         println("Connected!")
-        userWebSocketConnection.writeTextMessage("Hello World")
-        userWebSocketConnection.frameHandler { frame ->
-            println(frame.textData())
+        userWebSocketConnection.onSuccess { handler ->
+            handler.writeTextMessage("Connection successful!")
+            val buffer: Buffer = Buffer.buffer().appendInt(123).appendFloat(1.23f)
+            handler.writeBinaryMessage(buffer)
+
+            handler.frameHandler { frame ->
+                println(frame.textData())
+                handler.writeTextMessage("This is the message from the server!")
+            }
+        }
+        userWebSocketConnection.compose { handler ->
+            handler.writeTextMessage("Hello World")
         }
     }
 }

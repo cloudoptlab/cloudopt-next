@@ -85,7 +85,7 @@ object ValidatorTool {
      *         during the validation process
      */
     fun validateGroup(obj: Any, vararg groups: Class<*>): ValidatorResult {
-        val violations = validator.validate(obj,*groups)
+        val violations = validator.validate(obj, *groups)
         return if (violations.isEmpty()) {
             ValidatorResult(true, "")
         } else {
@@ -105,8 +105,13 @@ object ValidatorTool {
      * @throws IllegalArgumentException if {@code null} is passed for any of the parameters
      *         or if parameters don't match with each other
      */
-    fun validateParameters(any: Any, method: KFunction<*>, parameterValues: MutableMap<KParameter, Any?>): ValidatorResult {
-        val violations = executableValidator.validateParameters(any, method.javaMethod, parameterValues.values.toTypedArray())
+    fun validateParameters(
+        any: Any,
+        method: KFunction<*>,
+        parameterValues: MutableMap<KParameter, Any?>
+    ): ValidatorResult {
+        val violations =
+            executableValidator.validateParameters(any, method.javaMethod, parameterValues.values.toTypedArray())
         return if (violations.isEmpty()) {
             ValidatorResult(true, "")
         } else {

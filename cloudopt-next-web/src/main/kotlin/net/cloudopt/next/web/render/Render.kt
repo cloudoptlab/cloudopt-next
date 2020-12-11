@@ -51,7 +51,7 @@ interface Render {
      */
     fun end(resource: Resource, text: String) {
         NextServer.handlers.forEach { handler ->
-            if(!handler.afterRender(resource, text)){
+            if (!handler.afterRender(resource, text)) {
                 if (!resource.context.response().ended()) {
                     resource.context.response().end()
                 }
