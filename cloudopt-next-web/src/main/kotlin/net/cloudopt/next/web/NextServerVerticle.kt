@@ -85,7 +85,39 @@ class NextServerVerticle : AbstractVerticle() {
                     try {
                         val userWebSocketConnection = context.request().toWebSocket()
                         val controllerObj = clazz.createInstance<WebSocketResource>()
-                        controllerObj.handler(userWebSocketConnection)
+                        userWebSocketConnection.onComplete {
+                            controllerObj.onConnectionComplete(userWebSocketConnection.result())
+                        }
+                        /**
+                         * Automatically register methods in websocket routing.
+                         */
+                        userWebSocketConnection.onSuccess {
+                            var userWebSocketConnectionResult = userWebSocketConnection.result()
+                            userWebSocketConnectionResult.frameHandler { frame ->
+                                controllerObj.onFrameMessage(frame, userWebSocketConnectionResult)
+                            }
+                            userWebSocketConnectionResult.textMessageHandler { text ->
+                                controllerObj.onTextMessage(text, userWebSocketConnectionResult)
+                            }
+                            userWebSocketConnectionResult.binaryMessageHandler { binary ->
+                                controllerObj.onBinaryMessage(binary, userWebSocketConnectionResult)
+                            }
+                            userWebSocketConnectionResult.pongHandler { buffer ->
+                                controllerObj.onPingPong(buffer, userWebSocketConnectionResult)
+                            }
+                            userWebSocketConnectionResult.exceptionHandler { throwable ->
+                                controllerObj.onException(throwable, userWebSocketConnectionResult)
+                            }
+                            userWebSocketConnectionResult.drainHandler {
+                                controllerObj.onDrain(userWebSocketConnectionResult)
+                            }
+                            userWebSocketConnectionResult.endHandler {
+                                controllerObj.onEnd(userWebSocketConnectionResult)
+                            }
+                        }
+                        userWebSocketConnection.onFailure {
+                            controllerObj.onConnectionFailure(userWebSocketConnection.cause())
+                        }
                     } catch (e: InstantiationException) {
                         e.printStackTrace()
                         context.response().end()
