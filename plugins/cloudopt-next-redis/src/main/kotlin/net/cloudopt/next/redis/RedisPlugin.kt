@@ -111,7 +111,7 @@ class RedisPlugin() : Plugin {
         val cache = Redis.removeCache(cacheName)
         try {
             if (cache == Redis.mainCache)
-                Redis.setMainCache(null!!)
+                Redis.setMainCache("")
             cache.jedisPool.destroy()
         } catch (e: KotlinNullPointerException) {
 

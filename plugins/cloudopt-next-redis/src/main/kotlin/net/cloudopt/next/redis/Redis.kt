@@ -55,10 +55,10 @@ object Redis {
     fun setMainCache(cacheName: String) {
         var cacheName = cacheName
         if (cacheName.isBlank())
-            throw IllegalArgumentException("cacheName can not be blank")
+            Redis.mainCache = null
+            return
         cacheName = cacheName.trim { it <= ' ' }
         val cache = cacheMap[cacheName] ?: throw IllegalArgumentException("the cache not exists: " + cacheName)
-
         Redis.mainCache = cache
     }
 

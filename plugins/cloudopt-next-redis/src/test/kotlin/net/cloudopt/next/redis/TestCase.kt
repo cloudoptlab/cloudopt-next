@@ -15,16 +15,12 @@ class TestCase {
     @Before
     fun init() {
         RedisPlugin().start()
+        Redis.use()?.set("key", "value")
     }
 
     @After
     fun stop() {
         RedisPlugin().stop()
-    }
-
-    @Test
-    fun set() {
-        Redis.use()?.set("key", "value")
     }
 
     @Test

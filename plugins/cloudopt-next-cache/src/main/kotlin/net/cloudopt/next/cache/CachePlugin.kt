@@ -22,6 +22,8 @@ import net.cloudopt.next.web.config.ConfigManager
 import net.oschina.j2cache.CacheChannel
 import net.oschina.j2cache.J2CacheBuilder
 import net.oschina.j2cache.J2CacheConfig
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.hasAnnotation
 
 
 object CacheManager {
@@ -85,9 +87,9 @@ class CachePlugin : Plugin {
          */
         for (r in NextServer.resourceTables) {
             val method = r.clazzMethod
-            if (method.getDeclaredAnnotation(Cache::class.java) != null) {
-                val annotation: Cache = method.getDeclaredAnnotation(Cache::class.java)
-                CacheManager.cacheEnabledUrl["${PREFIX}:${r.httpMethod}:${r.url}"] = annotation.region
+            if (method.hasAnnotation<Cache>()) {
+                val annotation: Cache? = method.findAnnotation<Cache>()
+                CacheManager.cacheEnabledUrl["${PREFIX}:${r.httpMethod}:${r.url}"] = annotation?.region ?:"is Null"
             }
 
 
