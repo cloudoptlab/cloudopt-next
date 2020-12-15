@@ -15,4 +15,5 @@ include("plugins:cloudopt-next-quartz")
 include("plugins:cloudopt-next-auth")
 include("plugins:cloudopt-next-cache")
 include("plugins:cloudopt-next-encrypt")
+include("plugins:cloudopt-next-rocketmq")
 

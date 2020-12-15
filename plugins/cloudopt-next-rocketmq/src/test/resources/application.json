@@ -1,0 +1,14 @@
+{
+  "packageName": "net.cloudopt.next.rocketmq.test",
+  "port": 8888,
+  "rocketmq": {
+    "producer": {
+      "groupName": "test-group",
+      "namesrvAddr": "127.0.0.1:9876"
+    },
+    "consumer": {
+      "groupName": "test-group",
+      "namesrvAddr": "127.0.0.1:9876"
+    }
+  }
+}
