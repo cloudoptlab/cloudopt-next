@@ -18,16 +18,28 @@
 package net.cloudopt.next.rocketmq
 
 import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.utils.Maper
+import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
+import org.apache.rocketmq.acl.common.AclClientRPCHook
+import org.apache.rocketmq.acl.common.SessionCredentials
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus
+import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyStatus
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently
+import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly
 import org.apache.rocketmq.client.producer.DefaultMQProducer
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.findAnnotation
+
 
 object RocketMQManager {
 
-    private val logger = Logger.getLogger(RocketMQManager::class.java)
+    internal val logger = Logger.getLogger(RocketMQManager::class.java)
 
     @JvmStatic
     var producerConfig: ProducerConfig = ProducerConfig("", "")
@@ -41,13 +53,31 @@ object RocketMQManager {
     @JvmStatic
     lateinit var consumer: DefaultMQPushConsumer
 
+    /**
+     * Store the scanned listeners.
+     */
+    @JvmStatic
+    internal val listenerList: MutableMap<String, MutableSet<KClass<*>>> = hashMapOf()
+
     init {
         if (ConfigManager.init("rocketmq.producer").isNotEmpty()) {
             logger.info("Detects the existence of a producer profile and creates a producer for rocketmq.")
 
             producerConfig =
                 Maper.toObject(ConfigManager.init("rocketmq.producer"), ProducerConfig::class.java) as ProducerConfig
-            producer = DefaultMQProducer(producerConfig.groupName)
+            producer = if (producerConfig.accessKey.isBlank()) {
+                DefaultMQProducer(producerConfig.groupName)
+            } else {
+                DefaultMQProducer(
+                    producerConfig.groupName, AclClientRPCHook(
+                        SessionCredentials(
+                            producerConfig.accessKey,
+                            producerConfig.accessSecret
+                        )
+                    )
+                )
+            }
+
             producer.namesrvAddr = producerConfig.namesrvAddr
             producer.createTopicKey = producerConfig.createTopicKey
             producer.maxMessageSize = producerConfig.maxMessageSize
@@ -58,13 +88,26 @@ object RocketMQManager {
             producer.retryTimesWhenSendFailed = producerConfig.retryTimesWhenSendFailed
             producer.isRetryAnotherBrokerWhenNotStoreOK =
                 producerConfig.retryAnotherBrokerWhenNotStoreOK
+
         }
 
         if (ConfigManager.init("rocketmq.consumer").isNotEmpty()) {
             logger.info("Detects the existence of a consumer profile and creates a producer for rocketmq.")
             consumerConfig =
                 Maper.toObject(ConfigManager.init("rocketmq.consumer"), ConsumerConfig::class.java) as ConsumerConfig
-            consumer = DefaultMQPushConsumer(consumerConfig.groupName)
+            consumer = if (consumerConfig.accessKey.isBlank()) {
+                DefaultMQPushConsumer(consumerConfig.groupName)
+            } else {
+                DefaultMQPushConsumer(
+                    null,
+                    consumerConfig.groupName, AclClientRPCHook(
+                        SessionCredentials(
+                            producerConfig.accessKey,
+                            producerConfig.accessSecret
+                        )
+                    )
+                )
+            }
             consumer.namesrvAddr = consumerConfig.namesrvAddr
             consumer.messageModel = if (consumerConfig.messageModel == "CLUSTERING") {
                 MessageModel.CLUSTERING
@@ -112,10 +155,67 @@ class RocketMQPlugin : Plugin {
     private val logger = Logger.getLogger(RocketMQPlugin::class.java)
 
     override fun start(): Boolean {
+
+        /**
+         * Start scanning for annotations.
+         */
+        Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoRocketMQ::class)
+            .forEach { clazz ->
+                clazz.findAnnotation<AutoRocketMQ>()?.value?.split(",")?.forEach { topic ->
+                    var set = RocketMQManager.listenerList[topic] ?: mutableSetOf()
+                    set.add(clazz)
+                    RocketMQManager.listenerList[topic] = set
+                }
+            }
+
+
         if (ConfigManager.init("rocketmq.producer").isNotEmpty()) {
             RocketMQManager.producer.start()
         }
         if (ConfigManager.init("rocketmq.consumer").isNotEmpty()) {
+
+            /**
+             * Start auto subscribe.
+             */
+            RocketMQManager.listenerList.values.forEach { clazzSet ->
+                clazzSet.forEach { clazz ->
+                    val annotation = clazz.findAnnotation<AutoRocketMQ>()
+                    RocketMQManager.consumer.subscribe(annotation?.value, annotation?.subExpression)
+                    RocketMQManager.logger.info("[ROCKETMQ] Registered topic listener was success：topic = ${annotation?.value}, subExpression = ${annotation?.subExpression}")
+                }
+            }
+
+            /**
+             * Registering concurrent message listeners.
+             */
+            RocketMQManager.consumer.registerMessageListener(MessageListenerConcurrently { msgs, context ->
+                msgs.forEach { msg ->
+                    RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
+                        val instance = clazz.createInstance() as RocketMQListener
+                        instance.listener(msg)
+                    }
+                }
+
+                ConsumeConcurrentlyStatus.CONSUME_SUCCESS
+            })
+
+            /**
+             * Registering orderly message listeners.
+             */
+            RocketMQManager.consumer.registerMessageListener(MessageListenerOrderly { msgs, context ->
+                msgs.forEach { msg ->
+                    RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
+                        val instance = clazz.createInstance() as RocketMQListener
+                        instance.listener(msg)
+                    }
+                }
+
+                ConsumeOrderlyStatus.SUCCESS
+            })
+
+
+
+
             RocketMQManager.consumer.start()
         }
         return true

@@ -136,5 +136,9 @@ data class ConsumerConfig(
     /**
      * Maximum amount of time in minutes a message may block the consuming thread.
      */
-    var consumeTimeout: Long = 15
+    var consumeTimeout: Long = 15,
+
+    var accessKey: String = "",
+
+    var accessSecret: String = ""
 )

@@ -1,6 +1,7 @@
 dependencies {
     implementation project(':cloudopt-next-web')
     compileOnly 'org.apache.rocketmq:rocketmq-client:4.7.0'
+    compileOnly 'org.apache.rocketmq:rocketmq-acl:4.7.0'
     testImplementation 'org.apache.rocketmq:rocketmq-client:4.7.0'
 }
 

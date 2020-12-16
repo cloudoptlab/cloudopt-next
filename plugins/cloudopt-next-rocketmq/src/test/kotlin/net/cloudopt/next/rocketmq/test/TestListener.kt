@@ -13,19 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.rockmq.test
+package net.cloudopt.next.rocketmq.test
 
-import net.cloudopt.next.rocketmq.RocketMQPlugin
-import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.rocketmq.AutoRocketMQ
+import net.cloudopt.next.rocketmq.RocketMQListener
+import org.apache.rocketmq.common.message.MessageExt
 
 
 /*
  * @author: Cloudopt
- * @Time: 2018/2/6
+ * @Time: 2020/12/16
  * @Description: Test Case
  */
+@AutoRocketMQ("test-topic")
+class TestListener : RocketMQListener {
 
-fun main(args: Array<String>) {
-    NextServer.addPlugin(RocketMQPlugin())
-    NextServer.run()
+    override fun listener(msg: MessageExt) {
+        println("Receive New Messages: $msg")
+    }
+
+
 }

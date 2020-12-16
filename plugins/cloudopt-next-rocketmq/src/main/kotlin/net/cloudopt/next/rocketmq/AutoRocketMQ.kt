@@ -13,23 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.rockmq.test
-
-import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.route.API
-import net.cloudopt.next.web.route.GET
-
+package net.cloudopt.next.rocketmq
 
 /*
  * @author: Cloudopt
- * @Time: 2018/1/26
- * @Description: Test Controller
+ * @Time: 2020/12/16
+ * @Description: Used for automatic subscription to RocketMQ.
  */
-@API("/")
-class IndexController : Resource() {
-
-    @GET("event")
-    fun event() {
-        renderJson("Send Event!")
-    }
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
+@MustBeDocumented
+annotation class AutoRocketMQ(val value: String = "", val subExpression: String = "*")

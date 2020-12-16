@@ -3,11 +3,11 @@
   "port": 8888,
   "rocketmq": {
     "producer": {
-      "groupName": "test-group",
+      "groupName": "TEST_PRODUCER_GROUP",
       "namesrvAddr": "127.0.0.1:9876"
     },
     "consumer": {
-      "groupName": "test-group",
+      "groupName": "TEST_CONSUMER_GROUP",
       "namesrvAddr": "127.0.0.1:9876"
     }
   }

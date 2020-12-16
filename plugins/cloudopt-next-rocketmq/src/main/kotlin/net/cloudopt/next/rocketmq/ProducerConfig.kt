@@ -48,5 +48,9 @@ data class ProducerConfig(
     /**
      * Indicate whether to retry another broker on sending failure internally.
      */
-    var retryAnotherBrokerWhenNotStoreOK: Boolean = false
+    var retryAnotherBrokerWhenNotStoreOK: Boolean = false,
+
+    var accessKey: String = "",
+
+    var accessSecret: String = ""
 )
