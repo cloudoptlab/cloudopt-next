@@ -4,7 +4,7 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
 }
 
-def versionDefined = "3.0.0.0-DEBUG"
+def versionDefined = "3.0.0.0-DEBUG2"
 
 def kotlinVersion = "1.4.0"
 
