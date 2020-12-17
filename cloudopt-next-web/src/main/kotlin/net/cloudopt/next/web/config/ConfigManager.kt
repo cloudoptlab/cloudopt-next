@@ -56,7 +56,7 @@ object ConfigManager {
             logger.warn("[COFIG] Configuration we not found!")
         }
 
-        config = Maper.toObject(configMap, WebConfigBean::class.java) as WebConfigBean
+        config = Maper.toObject(configMap, WebConfigBean::class) as WebConfigBean
 
         if (config.env.isNotBlank()) {
             val newConfigFileName = "application-${config.env}.json"

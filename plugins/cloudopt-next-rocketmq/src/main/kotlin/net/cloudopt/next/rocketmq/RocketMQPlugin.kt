@@ -64,7 +64,7 @@ object RocketMQManager {
             logger.info("Detects the existence of a producer profile and creates a producer for rocketmq.")
 
             producerConfig =
-                Maper.toObject(ConfigManager.init("rocketmq.producer"), ProducerConfig::class.java) as ProducerConfig
+                Maper.toObject(ConfigManager.init("rocketmq.producer"), ProducerConfig::class) as ProducerConfig
             producer = if (producerConfig.accessKey.isBlank()) {
                 DefaultMQProducer(producerConfig.groupName)
             } else {
@@ -94,7 +94,7 @@ object RocketMQManager {
         if (ConfigManager.init("rocketmq.consumer").isNotEmpty()) {
             logger.info("Detects the existence of a consumer profile and creates a producer for rocketmq.")
             consumerConfig =
-                Maper.toObject(ConfigManager.init("rocketmq.consumer"), ConsumerConfig::class.java) as ConsumerConfig
+                Maper.toObject(ConfigManager.init("rocketmq.consumer"), ConsumerConfig::class) as ConsumerConfig
             consumer = if (consumerConfig.accessKey.isBlank()) {
                 DefaultMQPushConsumer(consumerConfig.groupName)
             } else {

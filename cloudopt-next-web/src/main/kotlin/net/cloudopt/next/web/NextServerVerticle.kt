@@ -93,6 +93,9 @@ class NextServerVerticle : AbstractVerticle() {
                          */
                         userWebSocketConnection.onSuccess {
                             var userWebSocketConnectionResult = userWebSocketConnection.result()
+
+                            controllerObj.onConnectionSuccess(userWebSocketConnectionResult)
+
                             userWebSocketConnectionResult.frameHandler { frame ->
                                 controllerObj.onFrameMessage(frame, userWebSocketConnectionResult)
                             }

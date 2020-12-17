@@ -108,7 +108,7 @@ open class Resource {
      * with the path parameters and only need to be obtained by getPara().
      * @param clazz The name
      */
-    fun <T> getAttrs(clazz: Class<T>): Any {
+    fun <T> getAttrs(clazz: KClass<*>): Any {
         var map = context.request().formAttributes()
         map.forEach {
             it
@@ -142,7 +142,7 @@ open class Resource {
      * Returns request parameters.
      * @return Parameters Object
      */
-    fun <T> getParams(clazz: Class<T>): Any {
+    fun <T> getParams(clazz: KClass<*>): Any {
         var map = mutableMapOf<String, Any>()
         request.params().forEach { e ->
             map[e.key] = Wafer.contentFilter(e.value) ?: ""

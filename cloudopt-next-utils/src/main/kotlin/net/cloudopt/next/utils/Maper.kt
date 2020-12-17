@@ -18,6 +18,8 @@ package net.cloudopt.next.utils
 import com.alibaba.fastjson.JSONObject
 import java.lang.reflect.Modifier
 import java.util.*
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 
 
 /*
@@ -33,8 +35,8 @@ object Maper {
      * @param beanClass The type after the conversion
      * @return The object after the conversion is completed
      */
-    fun toObject(map: MutableMap<String, Any>, beanClass: Class<*>): Any {
-        val obj = beanClass.newInstance()
+    fun toObject(map: MutableMap<String, Any>, beanClass: KClass<*>): Any {
+        val obj = beanClass.createInstance()
         val fields = obj.javaClass.declaredFields
         for (field in fields) {
             val mod: Int = field.modifiers
@@ -47,7 +49,7 @@ object Maper {
                     field.set(obj, map[field.name])
                 } catch (e: RuntimeException) {
                     var jsonObject: JSONObject = map[field.name] as JSONObject
-                    field.set(obj, toObject(jsonObject.toMutableMap(), field.type))
+                    field.set(obj, toObject(jsonObject.toMutableMap(), field.type.kotlin))
                 }
             }
         }
