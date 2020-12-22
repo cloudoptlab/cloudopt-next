@@ -83,44 +83,47 @@ class NextServerVerticle : AbstractVerticle() {
                 val websocketAnnotation: WebSocket? = clazz.findAnnotation<WebSocket>()
                 router.route(websocketAnnotation?.value).handler { context ->
                     try {
-                        val userWebSocketConnection = context.request().toWebSocket()
+
                         val controllerObj = clazz.createInstance<WebSocketResource>()
-                        userWebSocketConnection.onComplete {
-                            controllerObj.onConnectionComplete(userWebSocketConnection.result())
-                        }
-                        /**
-                         * Automatically register methods in websocket routing.
-                         */
-                        userWebSocketConnection.onSuccess {
-                            var userWebSocketConnectionResult = userWebSocketConnection.result()
+                        if (controllerObj.beforeConnection(Resource().init(context))) {
+                            val userWebSocketConnection = context.request().toWebSocket()
+                            userWebSocketConnection.onComplete {
+                                controllerObj.onConnectionComplete(userWebSocketConnection.result())
+                            }
+                            /**
+                             * Automatically register methods in websocket routing.
+                             */
+                            userWebSocketConnection.onSuccess {
+                                var userWebSocketConnectionResult = userWebSocketConnection.result()
+                                controllerObj.onConnectionSuccess(userWebSocketConnectionResult)
 
-                            controllerObj.onConnectionSuccess(userWebSocketConnectionResult)
+                                userWebSocketConnectionResult.frameHandler { frame ->
+                                    controllerObj.onFrameMessage(frame, userWebSocketConnectionResult)
+                                }
+                                userWebSocketConnectionResult.textMessageHandler { text ->
+                                    controllerObj.onTextMessage(text, userWebSocketConnectionResult)
+                                }
+                                userWebSocketConnectionResult.binaryMessageHandler { binary ->
+                                    controllerObj.onBinaryMessage(binary, userWebSocketConnectionResult)
+                                }
+                                userWebSocketConnectionResult.pongHandler { buffer ->
+                                    controllerObj.onPingPong(buffer, userWebSocketConnectionResult)
+                                }
+                                userWebSocketConnectionResult.exceptionHandler { throwable ->
+                                    controllerObj.onException(throwable, userWebSocketConnectionResult)
+                                }
+                                userWebSocketConnectionResult.drainHandler {
+                                    controllerObj.onDrain(userWebSocketConnectionResult)
+                                }
+                                userWebSocketConnectionResult.endHandler {
+                                    controllerObj.onEnd(userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnection.onFailure {
+                                controllerObj.onConnectionFailure(userWebSocketConnection.cause())
+                            }
+                        }
 
-                            userWebSocketConnectionResult.frameHandler { frame ->
-                                controllerObj.onFrameMessage(frame, userWebSocketConnectionResult)
-                            }
-                            userWebSocketConnectionResult.textMessageHandler { text ->
-                                controllerObj.onTextMessage(text, userWebSocketConnectionResult)
-                            }
-                            userWebSocketConnectionResult.binaryMessageHandler { binary ->
-                                controllerObj.onBinaryMessage(binary, userWebSocketConnectionResult)
-                            }
-                            userWebSocketConnectionResult.pongHandler { buffer ->
-                                controllerObj.onPingPong(buffer, userWebSocketConnectionResult)
-                            }
-                            userWebSocketConnectionResult.exceptionHandler { throwable ->
-                                controllerObj.onException(throwable, userWebSocketConnectionResult)
-                            }
-                            userWebSocketConnectionResult.drainHandler {
-                                controllerObj.onDrain(userWebSocketConnectionResult)
-                            }
-                            userWebSocketConnectionResult.endHandler {
-                                controllerObj.onEnd(userWebSocketConnectionResult)
-                            }
-                        }
-                        userWebSocketConnection.onFailure {
-                            controllerObj.onConnectionFailure(userWebSocketConnection.cause())
-                        }
                     } catch (e: InstantiationException) {
                         e.printStackTrace()
                         context.response().end()

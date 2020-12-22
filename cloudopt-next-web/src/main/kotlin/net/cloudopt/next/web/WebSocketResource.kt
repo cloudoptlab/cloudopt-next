@@ -27,6 +27,14 @@ import io.vertx.core.http.WebSocketFrame
 open interface WebSocketResource {
 
     /**
+     * Used for operations before websocket is established.
+     * @param resource Route resource
+     * @see Resource
+     * @return If false is returned, the websocket connection will be automatically interrupted
+     */
+    fun beforeConnection(resource: Resource): Boolean
+
+    /**
      * Add a handler to be notified of the connection succeeded result.
      * @param websocket Represents a server side WebSocket
      */

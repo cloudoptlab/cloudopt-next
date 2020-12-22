@@ -18,6 +18,7 @@ package net.cloudopt.next.web.test.controller
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.ServerWebSocket
 import io.vertx.core.http.WebSocketFrame
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.WebSocketResource
 import net.cloudopt.next.web.route.WebSocket
 
@@ -30,6 +31,13 @@ import net.cloudopt.next.web.route.WebSocket
 
 @WebSocket("/websocket")
 class WebSocketHandler : WebSocketResource {
+
+    override fun beforeConnection(resource: Resource): Boolean {
+        resource.request.response().statusCode = 400
+        resource.request.response().end()
+        return false
+    }
+
     override fun onConnectionSuccess(websocket: ServerWebSocket) {
         websocket.writeTextMessage("Connection successful!") {
             println("The event of after write.")
