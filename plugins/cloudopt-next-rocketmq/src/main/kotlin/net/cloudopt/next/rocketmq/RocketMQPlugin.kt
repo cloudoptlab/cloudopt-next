@@ -45,7 +45,7 @@ object RocketMQManager {
     var producerConfig: ProducerConfig = ProducerConfig("", "")
 
     @JvmStatic
-    var consumerConfig: ConsumerConfig = ConsumerConfig("")
+    var consumerConfig: ConsumerConfig = ConsumerConfig()
 
     @JvmStatic
     lateinit var producer: DefaultMQProducer
@@ -185,36 +185,35 @@ class RocketMQPlugin : Plugin {
                 }
             }
 
-            /**
-             * Registering concurrent message listeners.
-             */
-            RocketMQManager.consumer.registerMessageListener(MessageListenerConcurrently { msgs, context ->
-                msgs.forEach { msg ->
-                    RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
-                        val instance = clazz.createInstance() as RocketMQListener
-                        instance.listener(msg)
+            if (RocketMQManager.consumerConfig.orderly) {
+                /**
+                 * Registering orderly message listeners.
+                 */
+                RocketMQManager.consumer.registerMessageListener(MessageListenerOrderly { msgs, context ->
+                    msgs.forEach { msg ->
+                        RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
+                            val instance = clazz.createInstance() as RocketMQListener
+                            instance.listener(msg)
+                        }
                     }
-                }
 
-                ConsumeConcurrentlyStatus.CONSUME_SUCCESS
-            })
-
-            /**
-             * Registering orderly message listeners.
-             */
-            RocketMQManager.consumer.registerMessageListener(MessageListenerOrderly { msgs, context ->
-                msgs.forEach { msg ->
-                    RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
-                        val instance = clazz.createInstance() as RocketMQListener
-                        instance.listener(msg)
+                    ConsumeOrderlyStatus.SUCCESS
+                })
+            } else {
+                /**
+                 * Registering concurrent message listeners.
+                 */
+                RocketMQManager.consumer.registerMessageListener(MessageListenerConcurrently { msgs, context ->
+                    msgs.forEach { msg ->
+                        RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
+                            val instance = clazz.createInstance() as RocketMQListener
+                            instance.listener(msg)
+                        }
                     }
-                }
 
-                ConsumeOrderlyStatus.SUCCESS
-            })
-
-
-
+                    ConsumeConcurrentlyStatus.CONSUME_SUCCESS
+                })
+            }
 
             RocketMQManager.consumer.start()
         }

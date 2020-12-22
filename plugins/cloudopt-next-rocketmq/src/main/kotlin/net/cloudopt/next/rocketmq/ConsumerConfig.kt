@@ -4,6 +4,12 @@ import org.apache.rocketmq.common.UtilAll
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel
 
 data class ConsumerConfig(
+
+    /**
+     * Automatically changes to a orderly message queue when orderly = true.
+     */
+    var orderly: Boolean = false,
+
     /**
      * Producer group conceptually aggregates all producer instances of exactly same role, which is particularly
      * important when transactional messages are involved. For non-transactional messages, it does not matter as
