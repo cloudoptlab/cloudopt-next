@@ -43,7 +43,6 @@ class IndexController : Resource() {
             "TagA" /* Tag */,
             "Hello RocketMQ".toByteArray(charset = Charsets.UTF_8)
         )
-        val sendResult: SendResult = RocketMQManager.producer.send(msg)
         RocketMQManager.producer.send(msg)
         renderJson("Send Event!")
     }
