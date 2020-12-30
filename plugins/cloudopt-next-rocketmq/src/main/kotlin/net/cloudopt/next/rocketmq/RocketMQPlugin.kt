@@ -185,7 +185,6 @@ class RocketMQPlugin : Plugin {
                 }
             }
 
-
             if (RocketMQManager.consumerConfig.orderly) {
                 /**
                  * Registering orderly message listeners.
