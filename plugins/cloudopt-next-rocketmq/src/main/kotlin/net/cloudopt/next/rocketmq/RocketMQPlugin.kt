@@ -185,6 +185,7 @@ class RocketMQPlugin : Plugin {
                 }
             }
 
+
             if (RocketMQManager.consumerConfig.orderly) {
                 /**
                  * Registering orderly message listeners.
@@ -192,11 +193,13 @@ class RocketMQPlugin : Plugin {
                 RocketMQManager.consumer.registerMessageListener(MessageListenerOrderly { msgs, context ->
                     msgs.forEach { msg ->
                         RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
-                            val instance = clazz.createInstance() as RocketMQListener
-                            instance.listener(msg)
+                            val annotation = clazz.findAnnotation<AutoRocketMQ>()
+                            if(annotation?.subExpression == "*" || annotation?.subExpression?.split("||")?.contains(msg.tags) == true) {
+                                val instance = clazz.createInstance() as RocketMQListener
+                                instance.listener(msg)
+                            }
                         }
                     }
-
                     ConsumeOrderlyStatus.SUCCESS
                 })
             } else {
@@ -206,11 +209,13 @@ class RocketMQPlugin : Plugin {
                 RocketMQManager.consumer.registerMessageListener(MessageListenerConcurrently { msgs, context ->
                     msgs.forEach { msg ->
                         RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
-                            val instance = clazz.createInstance() as RocketMQListener
-                            instance.listener(msg)
+                            val annotation = clazz.findAnnotation<AutoRocketMQ>()
+                            if(annotation?.subExpression == "*" || annotation?.subExpression?.split("||")?.contains(msg.tags) == true) {
+                                val instance = clazz.createInstance() as RocketMQListener
+                                instance.listener(msg)
+                            }
                         }
                     }
-
                     ConsumeConcurrentlyStatus.CONSUME_SUCCESS
                 })
             }
