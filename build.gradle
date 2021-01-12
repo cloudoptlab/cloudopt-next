@@ -6,9 +6,11 @@ plugins {
 
 def versionDefined = "3.0.0.0-DEBUG4"
 
+def javaVersion = "11"
+
 def kotlinVersion = "1.4.0"
 
-def javaVersion = "11"
+def vertxVersion = "4.0.0"
 
 allprojects {
     group = "net.cloudopt.next"
@@ -46,6 +48,7 @@ subprojects {
     dependencies {
         implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinVersion"
         testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
         testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
