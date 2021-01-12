@@ -4,18 +4,10 @@ plugins {
     id "com.jfrog.bintray" version "1.8.4"
 }
 
-def versionDefined = "3.0.0.0-DEBUG4"
-
-def javaVersion = "11"
-
-def kotlinVersion = "1.4.0"
-
-def vertxVersion = "4.0.0"
-
 allprojects {
     group = "net.cloudopt.next"
-    version = "$versionDefined"
-    sourceCompatibility = 11
+    version = property("project_version")
+    sourceCompatibility = property("java_version") as Integer
     repositories {
         maven { url "http://maven.aliyun.com/nexus/content/repositories/central/" }
         mavenCentral()
@@ -30,9 +22,9 @@ subprojects {
             gradlePluginPortal()
         }
         dependencies {
-            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-            classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
-            classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${property('kotlin_version')}"
+            classpath "org.jetbrains.kotlin:kotlin-allopen:${property('kotlin_version')}"
+            classpath "org.jetbrains.kotlin:kotlin-noarg:${property('kotlin_version')}"
         }
 
     }
@@ -46,19 +38,19 @@ subprojects {
     apply plugin: "kotlin"
 
     dependencies {
-        implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-        implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinVersion"
-        testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib:${property('kotlin_version')}"
+        implementation "org.jetbrains.kotlin:kotlin-reflect:${property('kotlin_version')}"
+        implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${property('kotlin_version')}"
+        testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${property('kotlin_version')}"
         testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "$javaVersion"
+        kotlinOptions.jvmTarget =  rootProject.property("java_version") as String
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "$javaVersion"
+        kotlinOptions.jvmTarget =  rootProject.property("java_version") as String
     }
 
     task sourceJar(type: Jar, dependsOn: classes) { from sourceSets.main.allSource }
@@ -71,10 +63,8 @@ subprojects {
             Publication(MavenPublication) {
                 groupId 'net.cloudopt.next'
                 artifactId "$project.name"
-                version "$versionDefined" // This is defined on the subproject
-
+                version "${property('project_version')}" // This is defined on the subproject
                 from components.java
-
                 artifact sourceJar {
                     classifier "sources"
                 }
@@ -93,7 +83,7 @@ subprojects {
             licenses = ["Apache-2.0"]
             vcsUrl = "https://github.com/cloudoptlab/cloudopt-next.git"
             version {
-                name = "$versionDefined"
+                name = "${property('project_version')}"
             }
             publications = ['Publication']
             publish = true

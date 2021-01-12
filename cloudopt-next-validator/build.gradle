@@ -1,6 +1,6 @@
 dependencies {
-    api 'org.hibernate:hibernate-validator:6.1.2.Final'
-    api 'org.glassfish:jakarta.el:3.0.3'
+    api "org.hibernate:hibernate-validator:6.1.2.Final"
+    api "org.glassfish:jakarta.el:3.0.3"
 }
 
-description = 'Cloudopt Next Validator'
+description = "Cloudopt Next Validator"
