@@ -22,14 +22,14 @@ import org.apache.rocketmq.common.message.MessageExt
 
 /*
  * @author: Cloudopt
- * @Time: 2020/12/16
+ * @Time: 2021/01/13
  * @Description: Test Case
  */
-@AutoRocketMQ("test-topic")
-class TestListener : RocketMQListener {
+@AutoRocketMQ("test-topic",subExpression = "TagA||TagB")
+class TestTagAandBListener : RocketMQListener {
 
     override fun listener(msg: MessageExt) {
-        println("[*] Receive New Messages: $msg")
+        println("[TagA||TagB] Receive New Messages: $msg")
     }
 
 

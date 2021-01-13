@@ -117,9 +117,9 @@ class IndexController : Resource() {
 
     @GET("asyn")
     fun asyn() {
-        Worker.worker<Any>(Handler<Promise<Any>> {
+        Worker.worker<Any>({
             println("This is worker")
-        }, Handler<AsyncResult<Any>> {
+        }, {
 
         })
         renderText("success!")

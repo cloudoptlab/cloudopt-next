@@ -31,6 +31,7 @@ import org.apache.rocketmq.client.consumer.listener.ConsumeOrderlyStatus
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently
 import org.apache.rocketmq.client.consumer.listener.MessageListenerOrderly
 import org.apache.rocketmq.client.producer.DefaultMQProducer
+import org.apache.rocketmq.common.message.MessageExt
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -57,7 +58,7 @@ object RocketMQManager {
      * Store the scanned listeners.
      */
     @JvmStatic
-    internal val listenerList: MutableMap<String, MutableSet<KClass<*>>> = hashMapOf()
+    internal val listenerList: MutableMap<String, MutableMap<String, MutableSet<KClass<RocketMQListener>>>> = hashMapOf()
 
     init {
         if (ConfigManager.init("rocketmq.producer").isNotEmpty()) {
@@ -141,6 +142,27 @@ object RocketMQManager {
         }
     }
 
+    /**
+     * Distribute the received messages
+     * @param msg Message
+     */
+    fun messageListener(msg: MessageExt) {
+        val classSet = mutableSetOf<KClass<RocketMQListener>>()
+        /**
+         * First put the generic listener of this topic into the set collection.
+         */
+        classSet.addAll(listenerList[msg.topic]?.get("*") ?: mutableSetOf())
+        /**
+         * Second put the listeners of all the tags under this topic into the set collection.
+         */
+        msg.tags.split("||").forEach { tag->
+            classSet.addAll(listenerList[msg.topic]?.get(tag) ?: mutableSetOf())
+        }
+        classSet.forEach {clazz->
+            clazz.createInstance().listener(msg)
+        }
+    }
+
 }
 
 /**
@@ -162,9 +184,19 @@ class RocketMQPlugin : Plugin {
         Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoRocketMQ::class)
             .forEach { clazz ->
                 clazz.findAnnotation<AutoRocketMQ>()?.value?.split(",")?.forEach { topic ->
-                    var set = RocketMQManager.listenerList[topic] ?: mutableSetOf()
-                    set.add(clazz)
-                    RocketMQManager.listenerList[topic] = set
+                    val listenerMap = RocketMQManager.listenerList[topic] ?: mutableMapOf()
+
+                    /**
+                     * Split the tags and traverse the entire map
+                     */
+                    val tagList =
+                        clazz.findAnnotation<AutoRocketMQ>()?.subExpression?.split("||") ?: mutableListOf<String>()
+                    tagList.forEach { tag ->
+                        val clazzSet = listenerMap[tag] ?: mutableSetOf()
+                        clazzSet.add(clazz as KClass<RocketMQListener>)
+                        listenerMap[tag] = clazzSet
+                    }
+                    RocketMQManager.listenerList[topic] = listenerMap
                 }
             }
 
@@ -177,12 +209,21 @@ class RocketMQPlugin : Plugin {
             /**
              * Start auto subscribe.
              */
-            RocketMQManager.listenerList.values.forEach { clazzSet ->
-                clazzSet.forEach { clazz ->
-                    val annotation = clazz.findAnnotation<AutoRocketMQ>()
-                    RocketMQManager.consumer.subscribe(annotation?.value, annotation?.subExpression)
-                    RocketMQManager.logger.info("[ROCKETMQ] Registered topic listener was success：topic = ${annotation?.value}, subExpression = ${annotation?.subExpression}")
+            RocketMQManager.listenerList.keys.forEach { topicName ->
+                var subExpression = ""
+                if (RocketMQManager.listenerList[topicName]?.keys?.contains("*") == true) {
+                    subExpression = "*"
+                } else {
+                    RocketMQManager.listenerList[topicName]?.keys?.forEach { tag ->
+                        if (subExpression.isNotBlank()){
+                                subExpression = "$subExpression||$tag"
+                        }else{
+                            subExpression = tag
+                        }
+                    }
                 }
+                RocketMQManager.consumer.subscribe(topicName, subExpression)
+                logger.info("[ROCKETMQ] Registered topic listener was success：topic = ${topicName}, subExpression = ${subExpression}")
             }
 
             if (RocketMQManager.consumerConfig.orderly) {
@@ -191,13 +232,7 @@ class RocketMQPlugin : Plugin {
                  */
                 RocketMQManager.consumer.registerMessageListener(MessageListenerOrderly { msgs, context ->
                     msgs.forEach { msg ->
-                        RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
-                            val annotation = clazz.findAnnotation<AutoRocketMQ>()
-                            if(annotation?.subExpression == "*" || annotation?.subExpression?.split("||")?.contains(msg.tags) == true) {
-                                val instance = clazz.createInstance() as RocketMQListener
-                                instance.listener(msg)
-                            }
-                        }
+                        RocketMQManager.messageListener(msg)
                     }
                     ConsumeOrderlyStatus.SUCCESS
                 })
@@ -207,13 +242,7 @@ class RocketMQPlugin : Plugin {
                  */
                 RocketMQManager.consumer.registerMessageListener(MessageListenerConcurrently { msgs, context ->
                     msgs.forEach { msg ->
-                        RocketMQManager.listenerList[msg.topic]?.forEach { clazz ->
-                            val annotation = clazz.findAnnotation<AutoRocketMQ>()
-                            if(annotation?.subExpression == "*" || annotation?.subExpression?.split("||")?.contains(msg.tags) == true) {
-                                val instance = clazz.createInstance() as RocketMQListener
-                                instance.listener(msg)
-                            }
-                        }
+                        RocketMQManager.messageListener(msg)
                     }
                     ConsumeConcurrentlyStatus.CONSUME_SUCCESS
                 })

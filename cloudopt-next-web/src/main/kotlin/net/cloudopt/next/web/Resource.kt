@@ -142,7 +142,7 @@ open class Resource {
      * Returns request parameters.
      * @return Parameters Object
      */
-    fun <T> getParams(clazz: KClass<*>): Any {
+    fun getParams(clazz: KClass<*>): Any {
         var map = mutableMapOf<String, Any>()
         request.params().forEach { e ->
             map[e.key] = Wafer.contentFilter(e.value) ?: ""
