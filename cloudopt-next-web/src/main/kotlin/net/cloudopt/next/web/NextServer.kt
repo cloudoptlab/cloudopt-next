@@ -276,6 +276,11 @@ object NextServer {
         Banner.print()
         startPlugins()
         Worker.deploy("net.cloudopt.next.web.NextServerVerticle")
+        Runtime.getRuntime().addShutdownHook(object : Thread() {
+            override fun run() {
+                NextServer.stop()
+            }
+        })
     }
 
     /**
@@ -364,6 +369,7 @@ object NextServer {
         stopPlugins()
         vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
         vertx.close()
+        NextServer.logger.info("Next has exited.")
     }
 
 
