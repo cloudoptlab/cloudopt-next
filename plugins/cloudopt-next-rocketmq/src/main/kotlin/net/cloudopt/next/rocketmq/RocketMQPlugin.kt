@@ -149,15 +149,10 @@ object RocketMQManager {
     fun messageListener(msg: MessageExt) {
         val classSet = mutableSetOf<KClass<RocketMQListener>>()
         /**
-         * First put the generic listener of this topic into the set collection.
-         */
-        classSet.addAll(listenerList[msg.topic]?.get("*") ?: mutableSetOf())
-        /**
          * Second put the listeners of all the tags under this topic into the set collection.
          */
-        msg.tags.split("||").forEach { tag->
-            classSet.addAll(listenerList[msg.topic]?.get(tag) ?: mutableSetOf())
-        }
+        classSet.addAll(listenerList[msg.topic]?.get(msg.tags) ?: mutableSetOf())
+
         classSet.forEach {clazz->
             clazz.createInstance().listener(msg)
         }
