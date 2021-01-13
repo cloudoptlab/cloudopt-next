@@ -16,12 +16,12 @@
 package net.cloudopt.next.web
 
 import com.alibaba.fastjson.JSONObject
-import io.vertx.core.AbstractVerticle
 import io.vertx.core.http.HttpHeaders
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
+import io.vertx.kotlin.coroutines.CoroutineVerticle
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.web.config.ConfigManager
@@ -45,11 +45,11 @@ import kotlin.reflect.jvm.jvmName
  * @Time: 2018/1/17
  * @Description: Cloudopt Next Server Verticle
  */
-class NextServerVerticle : AbstractVerticle() {
+class NextServerVerticle : CoroutineVerticle() {
 
     val logger = Logger.getLogger(NextServerVerticle::class.java)
 
-    override fun start() {
+    override suspend fun start() {
 
         val server = NextServer.vertx.createHttpServer(ConfigManager.config.vertxHttpServer)
 
@@ -306,7 +306,7 @@ class NextServerVerticle : AbstractVerticle() {
         }
     }
 
-    override fun stop() {
+    override suspend fun stop() {
     }
 
     /**
