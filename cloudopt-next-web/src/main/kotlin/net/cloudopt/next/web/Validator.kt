@@ -22,8 +22,8 @@ package net.cloudopt.next.web
  */
 interface Validator {
 
-    fun validate(resource: Resource): Boolean
+    suspend fun validate(resource: Resource): Boolean
 
-    fun error(resource: Resource)
+    suspend fun error(resource: Resource)
 
 }

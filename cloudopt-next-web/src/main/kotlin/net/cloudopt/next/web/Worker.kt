@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.core.AsyncResult
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Handler
 import io.vertx.core.Promise
@@ -30,23 +29,6 @@ import net.cloudopt.next.web.config.ConfigManager
 object Worker {
 
     /**
-     * It’s done by calling executeBlocking specifying both
-     * the blocking code to execute and a result handler to
-     * be called back asynchronous when the blocking code has
-     * been executed.
-     *
-     * @param handler     Do something..
-     * @param queueResult After the completion of the callback
-     */
-    @JvmOverloads
-    fun <T> then(
-        handler: Handler<Promise<Any>>,
-        queueResult: Handler<AsyncResult<Any>>
-    ) {
-        NextServer.vertx.executeBlocking(handler, queueResult)
-    }
-
-    /**
      * By default, if executeBlocking is called several times from
      * the same context (e.g. the same verticle instance) then the
      * different executeBlocking are executed serially (i.e. one
@@ -55,12 +37,10 @@ object Worker {
      *
      * @param queueResult After the completion of the callback
      */
-    @JvmOverloads
-    fun <T> worker(
-        handler: Handler<Promise<Any>>,
-        queueResult: Handler<AsyncResult<Any>>
+    fun worker(
+        handler: Handler<Promise<Any>>
     ) {
-        NextServer.vertx.executeBlocking(handler, false, queueResult)
+        NextServer.vertx.executeBlocking(handler)
     }
 
     /**

@@ -22,6 +22,7 @@ import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
 import io.vertx.kotlin.coroutines.CoroutineVerticle
+import kotlinx.coroutines.launch
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.web.config.ConfigManager
@@ -33,9 +34,7 @@ import net.cloudopt.next.web.route.RequestBody
 import net.cloudopt.next.web.route.SocketJS
 import net.cloudopt.next.web.route.WebSocket
 import kotlin.reflect.KParameter
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.hasAnnotation
+import kotlin.reflect.full.*
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.jvmName
 
@@ -230,21 +229,23 @@ class NextServerVerticle : CoroutineVerticle() {
                 val validatorList = map[key]
                 validatorList?.forEach { validator ->
                     router.route(key, url).handler { context ->
-                        try {
-                            val v = validator.createInstance()
-                            val resource = Resource()
-                            resource.init(context)
-                            if (v.validate(resource)) {
-                                context.next()
-                            } else {
-                                v.error(resource)
+                        launch {
+                            try {
+                                val v = validator.createInstance()
+                                val resource = Resource()
+                                resource.init(context)
+                                if (v.validate(resource)) {
+                                    context.next()
+                                } else {
+                                    v.error(resource)
+                                }
+                            } catch (e: InstantiationException) {
+                                e.printStackTrace()
+                                context.response().end()
+                            } catch (e: IllegalAccessException) {
+                                e.printStackTrace()
+                                context.response().end()
                             }
-                        } catch (e: InstantiationException) {
-                            e.printStackTrace()
-                            context.response().end()
-                        } catch (e: IllegalAccessException) {
-                            e.printStackTrace()
-                            context.response().end()
                         }
                     }
                 }
@@ -270,11 +271,15 @@ class NextServerVerticle : CoroutineVerticle() {
         NextServer.resourceTables.forEach { resourceTable ->
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
-                    requestProcessing(resourceTable, context)
+                    launch {
+                        requestProcessing(resourceTable, context)
+                    }
                 }
             } else {
                 router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
-                    requestProcessing(resourceTable, context)
+                    launch {
+                        requestProcessing(resourceTable, context)
+                    }
                 }
             }
 
@@ -346,7 +351,7 @@ class NextServerVerticle : CoroutineVerticle() {
      * @see RoutingContext
      * @see AfterEvent
      */
-    private fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
+    private suspend fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
         try {
             val controllerObj = resourceTable.clazz.createInstance()
             controllerObj.init(context)
@@ -388,7 +393,12 @@ class NextServerVerticle : CoroutineVerticle() {
                 /**
                  * If there are no arguments, just execute the method
                  */
-                resourceTable.clazzMethod.call(controllerObj)
+                if (resourceTable.clazzMethod.isSuspend){
+                    resourceTable.clazzMethod.callSuspend(controllerObj)
+                }else{
+                    resourceTable.clazzMethod.call(controllerObj)
+                }
+
 
             } else {
                 val arr = mutableMapOf<KParameter, Any?>()
@@ -414,7 +424,12 @@ class NextServerVerticle : CoroutineVerticle() {
                     ValidatorTool.validateParameters(controllerObj, resourceTable.clazzMethod, arr)
                 if (validatorResult.result) {
                     arr[resourceTable.clazzMethod.parameters[0]] = controllerObj
-                    resourceTable.clazzMethod.callBy(arr)
+                    if (resourceTable.clazzMethod.isSuspend){
+                        resourceTable.clazzMethod.callSuspendBy(arr)
+                    }else{
+                        resourceTable.clazzMethod.callBy(arr)
+                    }
+
                 } else {
                     controllerObj.context.put("errorMessage", validatorResult.message)
                     controllerObj.fail(400)

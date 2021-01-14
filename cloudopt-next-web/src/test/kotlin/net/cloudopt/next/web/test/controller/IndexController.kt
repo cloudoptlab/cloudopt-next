@@ -15,9 +15,7 @@
  */
 package net.cloudopt.next.web.test.controller
 
-import io.vertx.core.AsyncResult
-import io.vertx.core.Handler
-import io.vertx.core.Promise
+import io.vertx.kotlin.coroutines.awaitEvent
 import net.cloudopt.next.validator.annotation.Chinese
 import net.cloudopt.next.web.NextServer.logger
 import net.cloudopt.next.web.Resource
@@ -28,6 +26,8 @@ import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.*
 import net.cloudopt.next.web.test.Student
 import net.cloudopt.next.web.test.interceptor.TestInterceptor1
+import net.cloudopt.next.web.test.validator.TestCoroutinesValidator
+import net.cloudopt.next.web.test.validator.TestValidator
 import javax.validation.constraints.Min
 
 /*
@@ -38,7 +38,7 @@ import javax.validation.constraints.Min
 @API(value = "/", interceptor = [TestInterceptor1::class])
 class IndexController : Resource() {
 
-    @GET
+    @GET(valid = [TestValidator::class, TestCoroutinesValidator::class])
     fun index() {
         setCookie("test", "cookie", "127.0.0.1", 360000, "/", false, false)
         renderHtml(view = "index")
@@ -117,12 +117,9 @@ class IndexController : Resource() {
 
     @GET("asyn")
     fun asyn() {
-        Worker.worker<Any>({
-            println("This is worker")
-        }, {
-
-        })
-        renderText("success!")
+        blocking {
+            renderText("success!")
+        }
     }
 
     @POST("file")
@@ -163,6 +160,14 @@ class IndexController : Resource() {
     @GET("socket")
     fun socketView() {
         renderHtml(view = "socket")
+    }
+
+    @GET("coroutines")
+    suspend fun coroutines() {
+        var timeId = awaitEvent<Long> { handler ->
+            Worker.setTimer(1000, false, handler)
+        }
+        renderText("Await event end! id=$timeId")
     }
 
     @GET("afterEvent")

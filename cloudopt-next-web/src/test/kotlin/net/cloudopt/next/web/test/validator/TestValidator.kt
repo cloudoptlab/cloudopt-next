@@ -29,12 +29,12 @@ class TestValidator : Validator {
 
     val logger = Logger.getLogger(this::class.java.simpleName)
 
-    override fun validate(resource: Resource): Boolean {
+    override suspend fun validate(resource: Resource): Boolean {
         logger.info("TestValidator")
         return true
     }
 
-    override fun error(resource: Resource) {
+    override suspend fun error(resource: Resource) {
 
     }
 

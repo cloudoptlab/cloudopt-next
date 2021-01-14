@@ -16,6 +16,8 @@
 package net.cloudopt.next.web
 
 import io.vertx.codegen.annotations.Nullable
+import io.vertx.core.Handler
+import io.vertx.core.Promise
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpServerRequest
@@ -461,6 +463,21 @@ open class Resource {
      */
     fun getFiles(): MutableSet<FileUpload> {
         return context.fileUploads()
+    }
+
+    /**
+     * By default, if executeBlocking is called several times from
+     * the same context (e.g. the same verticle instance) then the
+     * different executeBlocking are executed serially (i.e. one
+     * after another).If you don’t care about ordering you can call
+     * the function.
+     *
+     * @param queueResult After the completion of the callback
+     */
+    fun blocking(
+        handler: Handler<Promise<Any>>
+    ) {
+        Worker.worker(handler)
     }
 
 }

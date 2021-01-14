@@ -15,9 +15,11 @@
  */
 package net.cloudopt.next.web.test.validator
 
+import io.vertx.kotlin.coroutines.awaitEvent
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Validator
+import net.cloudopt.next.web.Worker
 
 
 /*
@@ -25,16 +27,17 @@ import net.cloudopt.next.web.Validator
  * @Time: 2018/2/28
  * @Description: Test Case
  */
-class Test2Validator : Validator {
+class TestCoroutinesValidator : Validator {
 
-    val logger = Logger.getLogger(this::class.java.simpleName)
-
-    override fun validate(resource: Resource): Boolean {
-        logger.info("Test2Validator")
+    override suspend fun validate(resource: Resource): Boolean {
+        var timeId = awaitEvent<Long> { handler ->
+            Worker.setTimer(100, false, handler)
+        }
+        print("[TestCoroutinesValidator] Await event end! id=$timeId")
         return true
     }
 
-    override fun error(resource: Resource) {
+    override suspend fun error(resource: Resource) {
 
     }
 
