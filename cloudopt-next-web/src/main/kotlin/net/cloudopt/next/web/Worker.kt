@@ -18,6 +18,7 @@ package net.cloudopt.next.web
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Handler
 import io.vertx.core.Promise
+import io.vertx.kotlin.coroutines.await
 import net.cloudopt.next.web.config.ConfigManager
 
 /*
@@ -35,12 +36,28 @@ object Worker {
      * after another).If you don’t care about ordering you can call
      * the function.
      *
-     * @param queueResult After the completion of the callback
+     * @param handler handler representing the blocking code to run
      */
     fun worker(
         handler: Handler<Promise<Any>>
     ) {
-        NextServer.vertx.executeBlocking(handler)
+        NextServer.vertx.executeBlocking<Any>(handler)
+    }
+
+    /**
+     * By default, if executeBlocking is called several times from
+     * the same context (e.g. the same verticle instance) then the
+     * different executeBlocking are executed serially (i.e. one
+     * after another).If you don’t care about ordering you can call
+     * the function.
+     *
+     * If using await, the call must be completed manually before
+     * it will end.
+     *
+     * @param handler handler representing the blocking code to run
+     */
+    suspend fun awaitWorker(handler: Handler<Promise<Any>>) {
+        NextServer.vertx.executeBlocking<Any>(handler).await()
     }
 
     /**

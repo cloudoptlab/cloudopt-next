@@ -17,6 +17,7 @@ package net.cloudopt.next.web.test.controller
 
 import io.vertx.kotlin.coroutines.awaitEvent
 import net.cloudopt.next.validator.annotation.Chinese
+import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.NextServer.logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Worker
@@ -115,11 +116,21 @@ class IndexController : Resource() {
         renderText(getLang())
     }
 
-    @GET("asyn")
-    fun asyn() {
+    @GET("worker")
+    fun worker() {
         blocking {
             renderText("success!")
         }
+    }
+
+    @GET("awaitWorker")
+    suspend fun awaitWorker() {
+        awaitBlocking{it->
+            println("in await")
+            it.complete()
+        }
+        println("in route")
+        renderText("success!")
     }
 
     @POST("file")

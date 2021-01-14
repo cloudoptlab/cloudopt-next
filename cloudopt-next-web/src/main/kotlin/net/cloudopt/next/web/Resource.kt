@@ -24,6 +24,7 @@ import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
+import io.vertx.kotlin.coroutines.await
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.web.render.RenderFactory
@@ -472,12 +473,28 @@ open class Resource {
      * after another).If you don’t care about ordering you can call
      * the function.
      *
-     * @param queueResult After the completion of the callback
+     * @param handler handler representing the blocking code to run
      */
     fun blocking(
         handler: Handler<Promise<Any>>
     ) {
         Worker.worker(handler)
+    }
+
+    /**
+     * By default, if executeBlocking is called several times from
+     * the same context (e.g. the same verticle instance) then the
+     * different executeBlocking are executed serially (i.e. one
+     * after another).If you don’t care about ordering you can call
+     * the function.
+     *
+     * If using await, the call must be completed manually before
+     * it will end.
+     *
+     * @param handler handler representing the blocking code to run
+     */
+    suspend fun awaitBlocking(handler: Handler<Promise<Any>>) {
+        Worker.awaitWorker(handler)
     }
 
 }
