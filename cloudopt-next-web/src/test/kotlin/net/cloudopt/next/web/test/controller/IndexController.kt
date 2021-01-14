@@ -162,11 +162,12 @@ class IndexController : Resource() {
         renderHtml(view = "socket")
     }
 
-    @GET("coroutines")
+    @GET("coroutines",valid = [TestCoroutinesValidator::class])
     suspend fun coroutines() {
         var timeId = awaitEvent<Long> { handler ->
             Worker.setTimer(1000, false, handler)
         }
+        println("Await event end! id=$timeId")
         renderText("Await event end! id=$timeId")
     }
 

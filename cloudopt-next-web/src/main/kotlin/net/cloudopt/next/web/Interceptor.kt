@@ -22,8 +22,8 @@ package net.cloudopt.next.web
  */
 interface Interceptor {
 
-    fun intercept(resource: Resource): Boolean
+    suspend fun intercept(resource: Resource): Boolean
 
-    fun response(resource: Resource): Resource
+    suspend fun response(resource: Resource): Resource
 
 }

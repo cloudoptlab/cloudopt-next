@@ -33,7 +33,7 @@ class TestCoroutinesValidator : Validator {
         var timeId = awaitEvent<Long> { handler ->
             Worker.setTimer(100, false, handler)
         }
-        print("[TestCoroutinesValidator] Await event end! id=$timeId")
+        println("[TestCoroutinesValidator] Await event end! id=$timeId")
         return true
     }
 

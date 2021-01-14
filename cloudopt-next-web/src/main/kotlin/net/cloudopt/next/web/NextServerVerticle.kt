@@ -202,21 +202,23 @@ class NextServerVerticle : CoroutineVerticle() {
          */
         NextServer.interceptors.forEach { (url, clazz) ->
             router.route(url).handler { context ->
-                val resource = Resource()
-                resource.init(context)
-                val interceptors = clazz.map { it.createInstance() }
+                launch {
+                    val resource = Resource()
+                    resource.init(context)
+                    val interceptors = clazz.map { it.createInstance() }
 
-                val interceptor = interceptors.firstOrNull {
-                    !it.intercept(resource)
-                }
-
-                if (interceptor != null) {
-                    if (!interceptor.response(resource).response.ended()) {
-                        resource.end()
+                    val interceptor = interceptors.firstOrNull {
+                        !it.intercept(resource)
                     }
 
-                } else {
-                    context.next()
+                    if (interceptor != null) {
+                        if (!interceptor.response(resource).response.ended()) {
+                            resource.end()
+                        }
+
+                    } else {
+                        context.next()
+                    }
                 }
             }
         }
