@@ -70,9 +70,6 @@ object NextServer {
     open val resourceTables = arrayListOf<ResourceTable>()
 
     @JvmStatic
-    open var vertx: Vertx = Vertx.vertx(ConfigManager.config.vertx)
-
-    @JvmStatic
     open var packageName = ""
 
     @JvmStatic
@@ -367,8 +364,8 @@ object NextServer {
     @JvmStatic
     fun stop() {
         stopPlugins()
-        vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
-        vertx.close()
+        Worker.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
+        Worker.close()
         NextServer.logger.info("Next has exited.")
     }
 

@@ -17,6 +17,7 @@ package net.cloudopt.next.web.event
 
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
+import net.cloudopt.next.web.Worker
 
 
 /*
@@ -27,7 +28,7 @@ import net.cloudopt.next.web.Plugin
 class EventPlugin : Plugin {
 
     override fun start(): Boolean {
-        EventManager.init(NextServer.vertx)
+        EventManager.init(Worker.vertx)
         return true
     }
 

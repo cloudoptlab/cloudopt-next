@@ -18,7 +18,11 @@ package net.cloudopt.next.web
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.Handler
 import io.vertx.core.Promise
+import io.vertx.core.Vertx
 import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.dispatcher
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import net.cloudopt.next.web.config.ConfigManager
 
 /*
@@ -28,6 +32,9 @@ import net.cloudopt.next.web.config.ConfigManager
  */
 
 object Worker {
+
+    @JvmStatic
+    open var vertx: Vertx = Vertx.vertx(ConfigManager.config.vertx)
 
     /**
      * By default, if executeBlocking is called several times from
@@ -41,7 +48,7 @@ object Worker {
     fun worker(
         handler: Handler<Promise<Any>>
     ) {
-        NextServer.vertx.executeBlocking<Any>(handler)
+        vertx.executeBlocking<Any>(handler)
     }
 
     /**
@@ -57,7 +64,7 @@ object Worker {
      * @param handler handler representing the blocking code to run
      */
     suspend fun awaitWorker(handler: Handler<Promise<Any>>) {
-        NextServer.vertx.executeBlocking<Any>(handler).await()
+        vertx.executeBlocking<Any>(handler).await()
     }
 
     /**
@@ -73,7 +80,7 @@ object Worker {
             options = DeploymentOptions(options)
             options.isWorker = worker
         }
-        NextServer.vertx.deployVerticle(verticle, options)
+        vertx.deployVerticle(verticle, options)
     }
 
 
@@ -81,8 +88,8 @@ object Worker {
      * Automatic undeployment in vertx.
      * @param verticle Package name
      */
-    fun unploy(verticle: String) {
-        NextServer.vertx.undeploy(verticle)
+    fun undeploy(verticle: String) {
+        vertx.undeploy(verticle)
     }
 
     /**
@@ -96,9 +103,9 @@ object Worker {
      */
     fun setTimer(delay: Long, periodic: Boolean, handler: Handler<Long>) {
         if (periodic) {
-            NextServer.vertx.setPeriodic(delay, handler)
+            vertx.setPeriodic(delay, handler)
         } else {
-            NextServer.vertx.setTimer(delay, handler)
+            vertx.setTimer(delay, handler)
         }
     }
 
@@ -109,7 +116,23 @@ object Worker {
      * @return true if the timer was successfully cancelled, or false if the timer does not exist.
      */
     fun cancelTimer(id: Long) {
-        NextServer.vertx.cancelTimer(id)
+        vertx.cancelTimer(id)
+    }
+
+    /**
+     * Returns a coroutine dispatcher for the current Vert.x context.
+     * It uses the Vert.x context event loop.
+     */
+    fun dispatcher(): CoroutineDispatcher {
+        return vertx.dispatcher()
+    }
+
+    /**
+     * Stop the the Vertx instance and release any resources held by it.
+     * The instance cannot be used after it has been closed.
+     */
+    fun close(){
+        vertx.close()
     }
 
 }

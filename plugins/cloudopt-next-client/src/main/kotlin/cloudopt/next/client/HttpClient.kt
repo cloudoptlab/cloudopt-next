@@ -20,6 +20,7 @@ import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.web.Worker
 
 
 /*
@@ -29,7 +30,7 @@ import net.cloudopt.next.web.NextServer
  */
 class HttpClient() {
 
-    private var client = WebClient.create(NextServer.vertx)
+    private var client = WebClient.create(Worker.vertx)
 
     private var host = ""
 
@@ -54,7 +55,7 @@ class HttpClient() {
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
         options.isKeepAlive = false
         options.isFollowRedirects = followRedirects
-        client = WebClient.create(NextServer.vertx, options)
+        client = WebClient.create(Worker.vertx, options)
     }
 
     /**

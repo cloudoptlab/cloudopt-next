@@ -50,16 +50,16 @@ class NextServerVerticle : CoroutineVerticle() {
 
     override suspend fun start() {
 
-        val server = NextServer.vertx.createHttpServer(ConfigManager.config.vertxHttpServer)
+        val server = Worker.vertx.createHttpServer(ConfigManager.config.vertxHttpServer)
 
-        val router = Router.router(NextServer.vertx)
+        val router = Router.router(Worker.vertx)
 
 
         /**
          * Register sockJS
          */
         if (NextServer.sockJSes.size > 0) {
-            val sockJSHandler = SockJSHandler.create(NextServer.vertx, ConfigManager.config.socket)
+            val sockJSHandler = SockJSHandler.create(Worker.vertx, ConfigManager.config.socket)
             NextServer.sockJSes.forEach { clazz ->
                 val socketAnnotation: SocketJS? = clazz.findAnnotation<SocketJS>()
                 sockJSHandler.socketHandler { sockJSHandler ->
