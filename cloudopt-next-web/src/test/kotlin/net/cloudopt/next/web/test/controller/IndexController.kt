@@ -17,7 +17,6 @@ package net.cloudopt.next.web.test.controller
 
 import io.vertx.kotlin.coroutines.awaitEvent
 import net.cloudopt.next.validator.annotation.Chinese
-import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.NextServer.logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Worker
@@ -125,12 +124,14 @@ class IndexController : Resource() {
 
     @GET("awaitWorker")
     suspend fun awaitWorker() {
-        awaitBlocking{it->
+        var id = 0
+        awaitBlocking { it ->
             println("in await")
+            id = 1
             it.complete()
         }
         println("in route")
-        renderText("success!")
+        renderText("success! $id")
     }
 
     @POST("file")
@@ -173,7 +174,7 @@ class IndexController : Resource() {
         renderHtml(view = "socket")
     }
 
-    @GET("coroutines",valid = [TestCoroutinesValidator::class])
+    @GET("coroutines", valid = [TestCoroutinesValidator::class])
     suspend fun coroutines() {
         var timeId = awaitEvent<Long> { handler ->
             Worker.setTimer(1000, false, handler)

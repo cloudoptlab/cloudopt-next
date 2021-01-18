@@ -1,0 +1,6 @@
+{
+  "redis": {
+    "cluster": true,
+    "uri": "redis://root@localhost:6379/0"
+  }
+}

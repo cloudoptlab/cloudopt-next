@@ -13,129 +13,80 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package net.cloudopt.next.redis
 
-import net.cloudopt.next.redis.serializer.FstSerializer
-import net.cloudopt.next.redis.serializer.ISerializer
+import io.lettuce.core.RedisClient
+import io.lettuce.core.cluster.RedisClusterClient
+import io.lettuce.core.resource.ClientResources
+import io.lettuce.core.resource.DefaultClientResources
 import net.cloudopt.next.web.Plugin
+import net.cloudopt.next.web.Worker
 import net.cloudopt.next.web.config.ConfigManager
-import redis.clients.jedis.JedisPool
-import redis.clients.jedis.JedisPoolConfig
 
 
-/**
- * @author: Cloudopt
- * @Time: 2018/2/8
- * @Description: RedisPlugin.
- * RedisPlugin supports multiple Redis servers，
- * just create multiple RedisPlugin objects.
- * corresponding to these multiple different Redis server can be.
- * Multiple RedisPlugin objects can correspond to different Databases in the same Redis service.
+/*
+ * Lettuce is a scalable Redis client for building non-blocking Reactive applications.
+ * Next will automatically read the configuration file and initialize the lettuce,
+ * and will modify the default EventLoop of the lettuce to be the EventLoop of the vertx.
+ *
  */
-class RedisPlugin() : Plugin {
-
-    private var map = ConfigManager.init("redis")
-    var cacheName: String = "default"
-    var host: String = "localhost"
-    var port: Int = 6379
-    var timeout: Int = 5000
-    var password: String? = null
-    var database: Int? = null
-    var clientName: String? = null
-    var serializer: ISerializer = FstSerializer()
-    var keyNamingPolicy = IKeyNamingPolicy.defaultKeyNamingPolicy
-
-    init {
-        if (map.get("name") != null) {
-            cacheName = map.get("name") as String
-        }
-
-        if (map.get("host") != null) {
-            host = map.get("host") as String
-        }
-
-        if (map.get("port") != null) {
-            port = map.get("port").toString().toInt()
-        }
-
-        if (map.get("timeout") != null) {
-            timeout = map.get("timeout").toString().toInt()
-        }
-
-        if (map.get("password") != null) {
-            password = map.get("password") as String
-        }
-
-        if (map.get("database") != null) {
-            database = map.get("database").toString().toInt()
-        }
-
-
-        if (map.get("clientName") != null) {
-            clientName = map.get("clientName") as String
-        }
-
-    }
-
-    /**
-     * When the setting properties provided by RedisPlugin still can not meet the demand,
-     * this method can obtain the JedisPoolConfig object,
-     * through which the Redis can be more carefully configured.
-     */
-    var jedisPoolConfig = JedisPoolConfig()
-        protected set
+class RedisPlugin : Plugin {
 
     override fun start(): Boolean {
-            val jedisPool: JedisPool
-            if (port != null && timeout != null && !password.isNullOrBlank() && database != null && !clientName.isNullOrBlank())
-                jedisPool = JedisPool(jedisPoolConfig, host, port, timeout, password, database!!, clientName)
-            else if (port != null && timeout != null && !password.isNullOrBlank() && database != null)
-                jedisPool = JedisPool(jedisPoolConfig, host, port, timeout, password, database!!)
-            else if (port != null && timeout != null && !password.isNullOrBlank())
-                jedisPool = JedisPool(jedisPoolConfig, host, port, timeout, password)
-            else if (port != null && timeout != null)
-                jedisPool = JedisPool(jedisPoolConfig, host, port, timeout)
-            else if (port != null)
-                jedisPool = JedisPool(jedisPoolConfig, host, port)
-            else
-                jedisPool = JedisPool(jedisPoolConfig, host)
+        val redisConfig = ConfigManager.init("redis")
+        val uri: String = if ((redisConfig["uri"] as String).isNotBlank()) {
+            redisConfig["uri"] as String
+        } else {
+            "redis://localhost"
+        }
 
-            val cache = Cache(cacheName, jedisPool, serializer, keyNamingPolicy)
-            Redis.addCache(cache)
+        /**
+         * Modify the default EventLoop of the lettuce to be the EventLoop of the vertx.
+         */
+        val res: ClientResources = DefaultClientResources.builder()
+            .eventExecutorGroup(Worker.vertx.nettyEventLoopGroup())
+            .build()
+        if (redisConfig["cluster"] != null && redisConfig["cluster"] as Boolean) {
+            startCluster(res, uri, redisConfig)
+        } else {
+            startAlone(res, uri, redisConfig)
+        }
         return true
     }
 
     override fun stop(): Boolean {
-        val cache = Redis.removeCache(cacheName)
-        try {
-            if (cache == Redis.mainCache)
-                Redis.setMainCache("")
-            cache.jedisPool.destroy()
-        } catch (e: KotlinNullPointerException) {
-
+        if (RedisManager.cluster) {
+            RedisManager.clusterConnection.close()
+            RedisManager.clusterClient.shutdown()
+        } else {
+            RedisManager.connection.close()
+            RedisManager.client.shutdown()
         }
-
         return true
     }
 
-
-    fun setTestWhileIdle(testWhileIdle: Boolean) {
-        jedisPoolConfig.testWhileIdle = testWhileIdle
+    private fun startAlone(res: ClientResources, uri: String, redisConfig: MutableMap<String, Any>) {
+        RedisManager.cluster = false
+        RedisManager.client = RedisClient.create(res, uri)
+        RedisManager.connection = RedisManager.client.connect()
+        if (redisConfig["publish"] != null && redisConfig["publish"] as Boolean) {
+            RedisManager.publishConnection = RedisManager.client.connectPubSub()
+        }
+        if (redisConfig["subscribe"] != null && redisConfig["subscribe"] as Boolean) {
+            RedisManager.subscribeConnection = RedisManager.client.connectPubSub()
+        }
     }
 
-    fun setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis: Int) {
-        jedisPoolConfig.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis.toLong()
+    private fun startCluster(res: ClientResources, uri: String, redisConfig: MutableMap<String, Any>) {
+        RedisManager.cluster = true
+        RedisManager.clusterClient = RedisClusterClient.create(res, uri)
+        RedisManager.clusterConnection = RedisManager.clusterClient.connect()
+        if (redisConfig["publish"] != null && redisConfig["publish"] as Boolean) {
+            RedisManager.clusterPublishConnection = RedisManager.clusterClient.connectPubSub()
+        }
+        if (redisConfig["subscribe"] != null && redisConfig["subscribe"] as Boolean) {
+            RedisManager.clusterSubscribeConnection = RedisManager.clusterClient.connectPubSub()
+        }
     }
 
-    fun setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis: Int) {
-        jedisPoolConfig.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis.toLong()
-    }
-
-    fun setNumTestsPerEvictionRun(numTestsPerEvictionRun: Int) {
-        jedisPoolConfig.numTestsPerEvictionRun = numTestsPerEvictionRun
-    }
 }
-
-
