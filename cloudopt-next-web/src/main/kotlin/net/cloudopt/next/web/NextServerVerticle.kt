@@ -158,7 +158,7 @@ class NextServerVerticle : CoroutineVerticle() {
         /**
          * Register failure handler
          */
-        NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${NextServer.errorHandler::class.java.name}")
+        NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${ConfigManager.config.errorHandler}")
 
         router.route("/*").failureHandler { context ->
             errorProcessing(context)
@@ -395,9 +395,9 @@ class NextServerVerticle : CoroutineVerticle() {
                 /**
                  * If there are no arguments, just execute the method
                  */
-                if (resourceTable.clazzMethod.isSuspend){
+                if (resourceTable.clazzMethod.isSuspend) {
                     resourceTable.clazzMethod.callSuspend(controllerObj)
-                }else{
+                } else {
                     resourceTable.clazzMethod.call(controllerObj)
                 }
 
@@ -426,9 +426,9 @@ class NextServerVerticle : CoroutineVerticle() {
                     ValidatorTool.validateParameters(controllerObj, resourceTable.clazzMethod, arr)
                 if (validatorResult.result) {
                     arr[resourceTable.clazzMethod.parameters[0]] = controllerObj
-                    if (resourceTable.clazzMethod.isSuspend){
+                    if (resourceTable.clazzMethod.isSuspend) {
                         resourceTable.clazzMethod.callSuspendBy(arr)
-                    }else{
+                    } else {
                         resourceTable.clazzMethod.callBy(arr)
                     }
 
