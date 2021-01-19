@@ -28,17 +28,17 @@ object RedisManager {
 
     open lateinit var clusterClient: RedisClusterClient
 
-    lateinit var connection: StatefulRedisConnection<String, String>
+    open lateinit var connection: StatefulRedisConnection<String, String>
 
-    lateinit var publishConnection: StatefulRedisPubSubConnection<String, String>
+    open lateinit var publishConnection: StatefulRedisPubSubConnection<String, String>
 
-    lateinit var subscribeConnection: StatefulRedisPubSubConnection<String, String>
+    open lateinit var subscribeConnection: StatefulRedisPubSubConnection<String, String>
 
-    lateinit var clusterConnection: StatefulRedisClusterConnection<String, String>
+    open lateinit var clusterConnection: StatefulRedisClusterConnection<String, String>
 
-    lateinit var clusterPublishConnection: StatefulRedisClusterPubSubConnection<String, String>
+    open lateinit var clusterPublishConnection: StatefulRedisClusterPubSubConnection<String, String>
 
-    lateinit var clusterSubscribeConnection: StatefulRedisClusterPubSubConnection<String, String>
+    open lateinit var clusterSubscribeConnection: StatefulRedisClusterPubSubConnection<String, String>
 
     /**
      * Extension for StatefulRedisConnection to create RedisCoroutinesCommands
