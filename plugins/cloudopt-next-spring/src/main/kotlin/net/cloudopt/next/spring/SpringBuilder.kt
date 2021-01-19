@@ -28,7 +28,7 @@ import org.springframework.context.ConfigurableApplicationContext
 
 object SpringBuilder {
 
-    private val logger = Logger.getLogger(SpringBuilder::class.java)
+    private val logger = Logger.getLogger(SpringBuilder::class)
 
     @JvmStatic
     private var context: ConfigurableApplicationContext? = null

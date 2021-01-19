@@ -40,7 +40,7 @@ import kotlin.reflect.full.findAnnotation
 
 object RocketMQManager {
 
-    internal val logger = Logger.getLogger(RocketMQManager::class.java)
+    private val logger = Logger.getLogger(RocketMQManager::class)
 
     @JvmStatic
     var producerConfig: ProducerConfig = ProducerConfig("", "")
@@ -174,7 +174,7 @@ object RocketMQManager {
  */
 class RocketMQPlugin : Plugin {
 
-    private val logger = Logger.getLogger(RocketMQPlugin::class.java)
+    private val logger = Logger.getLogger(RocketMQPlugin::class)
 
     override fun start(): Boolean {
 

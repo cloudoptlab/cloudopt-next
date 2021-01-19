@@ -34,7 +34,7 @@ import kotlin.reflect.KClass
  */
 object KafkaManager {
 
-    val logger = Logger.getLogger(KafkaManager::class.java)
+    val logger = Logger.getLogger(KafkaManager::class)
 
     @JvmStatic
     internal val kafkaList: MutableMap<String, MutableSet<KClass<*>>> = hashMapOf()
