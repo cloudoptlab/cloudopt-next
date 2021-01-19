@@ -14,6 +14,7 @@ package net.cloudopt.next.logging.provider
 import net.cloudopt.next.logging.Colorer
 import net.cloudopt.next.logging.Format
 import net.cloudopt.next.logging.Logger
+import kotlin.reflect.KClass
 
 
 /*
@@ -25,8 +26,8 @@ class Slf4jLoggerProvider : LoggerProvider {
 
     private val format = Format("{", "}")
 
-    override fun getLogger(clazz: Class<*>): Logger {
-        return Slf4JLogger(org.slf4j.LoggerFactory.getLogger(clazz))
+    override fun getLogger(clazz: KClass<*>): Logger {
+        return Slf4JLogger(org.slf4j.LoggerFactory.getLogger(clazz::class.java))
     }
 
     override fun getLogger(clazzName: String): Logger {
@@ -36,42 +37,34 @@ class Slf4jLoggerProvider : LoggerProvider {
 
     inner class Slf4JLogger internal constructor(private val logger: org.slf4j.Logger) : Logger() {
 
-        @JvmOverloads
         override fun debug(message: String, vararg args: Any) {
             logger.debug("${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}", *args)
         }
 
-        @JvmOverloads
         override fun debug(message: String, t: Throwable, vararg args: Any) {
             logger.debug("${Colorer.green(Logger.configuration.debugPrefix)} ${format.format(message, *args)}", t)
         }
 
-        @JvmOverloads
         override fun info(message: String, vararg args: Any) {
             logger.info("${Colorer.blue(Logger.configuration.infoPrefix)} ${format.format(message, *args)}", *args)
         }
 
-        @JvmOverloads
         override fun info(message: String, t: Throwable, vararg args: Any) {
             logger.info("${Colorer.blue(Logger.configuration.infoPrefix)} ${format.format(message, *args)}", t)
         }
 
-        @JvmOverloads
         override fun warn(message: String, vararg args: Any) {
             logger.warn("${Colorer.yellow(Logger.configuration.warnPrefix)} ${format.format(message, *args)}", *args)
         }
 
-        @JvmOverloads
         override fun warn(message: String, t: Throwable, vararg args: Any) {
             logger.warn("${Colorer.yellow(Logger.configuration.warnPrefix)} ${format.format(message, *args)}", t)
         }
 
-        @JvmOverloads
         override fun error(message: String, vararg args: Any) {
             logger.error("${Colorer.red(Logger.configuration.errorPrefix)} ${format.format(message, *args)}", *args)
         }
 
-        @JvmOverloads
         override fun error(message: String, t: Throwable, vararg args: Any) {
             logger.error("${Colorer.red(Logger.configuration.errorPrefix)} ${format.format(message, *args)}", t)
         }

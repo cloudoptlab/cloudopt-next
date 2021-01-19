@@ -12,6 +12,7 @@
 package net.cloudopt.next.logging.provider
 
 import net.cloudopt.next.logging.Logger
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
@@ -20,7 +21,7 @@ import net.cloudopt.next.logging.Logger
  */
 interface LoggerProvider {
 
-    fun getLogger(clazz: Class<*>): Logger
+    fun getLogger(clazz: KClass<*>): Logger
 
     fun getLogger(clazzName: String): Logger
 

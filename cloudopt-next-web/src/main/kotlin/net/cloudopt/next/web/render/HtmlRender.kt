@@ -35,7 +35,7 @@ class HtmlRender : Render {
     companion object {
         @JvmStatic
         private val templates = mutableMapOf<String, String?>()
-        val logger = Logger.getLogger(HtmlRender.javaClass)
+        val logger = Logger.getLogger(HtmlRender::class)
     }
 
     override fun render(resource: Resource, result: Any) {

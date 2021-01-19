@@ -43,7 +43,7 @@ object NextServer {
     @JvmStatic
     open var verticleID = "net.cloudopt.next.web"
 
-    val logger = Logger.getLogger(NextServer.javaClass)
+    val logger = Logger.getLogger(NextServer::class)
 
     @JvmStatic
     open val resources: MutableList<KClass<Resource>> = arrayListOf()

@@ -69,6 +69,6 @@ class ShowRouteHandler : Handler {
     }
 
     companion object {
-        private val logger = Logger.getLogger(ShowRouteHandler::class.java)
+        private val logger = Logger.getLogger(ShowRouteHandler::class)
     }
 }

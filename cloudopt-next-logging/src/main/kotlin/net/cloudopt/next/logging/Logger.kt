@@ -11,6 +11,8 @@
  */
 package net.cloudopt.next.logging
 
+import kotlin.reflect.KClass
+
 /*
  * @author: Cloudopt
  * @Time: 2018/10/18
@@ -49,7 +51,7 @@ abstract class Logger {
         open var configuration = LoggerConfiguration()
 
         @JvmStatic
-        fun getLogger(clazz: Class<*>): Logger {
+        fun getLogger(clazz: KClass<*>): Logger {
             return configuration.loggerProvider.getLogger(clazz)
         }
 

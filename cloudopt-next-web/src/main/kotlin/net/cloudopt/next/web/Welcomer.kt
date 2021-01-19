@@ -27,7 +27,7 @@ import java.io.InputStreamReader
  */
 object Welcomer {
 
-    private val logger = Logger.getLogger(NextServer.javaClass)
+    private val logger = Logger.getLogger(NextServer::class)
 
     @JvmStatic
     fun html(fileName: String): String {

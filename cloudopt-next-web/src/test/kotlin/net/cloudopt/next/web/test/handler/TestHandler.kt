@@ -28,7 +28,7 @@ import net.cloudopt.next.web.handler.Handler
 class TestHandler : Handler {
 
     companion object {
-        val logger = Logger.getLogger(TestHandler::class.java)
+        val logger = Logger.getLogger(TestHandler::class)
     }
 
     override fun preHandle(resource: Resource): Boolean {

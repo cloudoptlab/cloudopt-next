@@ -24,7 +24,7 @@ import org.junit.Test
  */
 class TestCase {
 
-    private val logger = Logger.getLogger(TestCase::class.java)
+    private val logger = Logger.getLogger(TestCase::class)
 
     @Test
     fun test() {

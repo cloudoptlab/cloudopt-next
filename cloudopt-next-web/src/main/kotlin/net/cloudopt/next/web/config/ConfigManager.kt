@@ -36,7 +36,7 @@ object ConfigManager {
     // Init web config
     var configMap: MutableMap<String, Any> = mutableMapOf()
 
-    val logger = Logger.getLogger(ConfigManager::class.java)
+    val logger = Logger.getLogger(ConfigManager::class)
 
     init {
 

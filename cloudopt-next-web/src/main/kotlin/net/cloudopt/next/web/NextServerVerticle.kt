@@ -46,7 +46,7 @@ import kotlin.reflect.jvm.jvmName
  */
 class NextServerVerticle : CoroutineVerticle() {
 
-    val logger = Logger.getLogger(NextServerVerticle::class.java)
+    val logger = Logger.getLogger(NextServerVerticle::class)
 
     override suspend fun start() {
 

@@ -31,7 +31,7 @@ import java.time.format.DateTimeFormatter
  */
 object Banner {
 
-    private val logger = Logger.getLogger(NextServer.javaClass)
+    private val logger = Logger.getLogger(NextServer::class)
 
     @JvmStatic
     fun print() {

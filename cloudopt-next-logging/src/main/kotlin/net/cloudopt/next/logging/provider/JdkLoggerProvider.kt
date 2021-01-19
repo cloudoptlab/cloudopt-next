@@ -20,6 +20,7 @@ import net.cloudopt.next.logging.Colorer
 import net.cloudopt.next.logging.Format
 import net.cloudopt.next.logging.Logger
 import java.util.logging.Level
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
@@ -31,8 +32,8 @@ class JdkLoggerProvider : LoggerProvider {
 
     private val format = Format("{", "}")
 
-    override fun getLogger(clazz: Class<*>): Logger {
-        return JdkLogger(java.util.logging.Logger.getLogger(clazz.name))
+    override fun getLogger(clazz: KClass<*>): Logger {
+        return JdkLogger(java.util.logging.Logger.getLogger(clazz::class.java.name))
     }
 
     override fun getLogger(clazzName: String): Logger {
@@ -43,8 +44,6 @@ class JdkLoggerProvider : LoggerProvider {
     inner class JdkLogger internal constructor(private val logger: java.util.logging.Logger) : Logger() {
         private val clazzName: String? = null
 
-
-        @JvmOverloads
         override fun debug(message: String, vararg args: Any) {
             logger.logp(
                 Level.FINE,
@@ -54,7 +53,6 @@ class JdkLoggerProvider : LoggerProvider {
             )
         }
 
-        @JvmOverloads
         override fun debug(message: String, t: Throwable, vararg args: Any) {
             logger.logp(
                 Level.FINE,
@@ -64,7 +62,6 @@ class JdkLoggerProvider : LoggerProvider {
             )
         }
 
-        @JvmOverloads
         override fun info(message: String, vararg args: Any) {
             logger.logp(
                 Level.INFO,
@@ -74,7 +71,6 @@ class JdkLoggerProvider : LoggerProvider {
             )
         }
 
-        @JvmOverloads
         override fun info(message: String, t: Throwable, vararg args: Any) {
             logger.logp(
                 Level.INFO,
@@ -84,7 +80,6 @@ class JdkLoggerProvider : LoggerProvider {
             )
         }
 
-        @JvmOverloads
         override fun warn(message: String, vararg args: Any) {
             logger.logp(
                 Level.WARNING,
@@ -94,7 +89,6 @@ class JdkLoggerProvider : LoggerProvider {
             )
         }
 
-        @JvmOverloads
         override fun warn(message: String, t: Throwable, vararg args: Any) {
             logger.logp(
                 Level.WARNING,
@@ -104,7 +98,6 @@ class JdkLoggerProvider : LoggerProvider {
             )
         }
 
-        @JvmOverloads
         override fun error(message: String, vararg args: Any) {
             logger.logp(
                 Level.SEVERE,
@@ -114,7 +107,6 @@ class JdkLoggerProvider : LoggerProvider {
             )
         }
 
-        @JvmOverloads
         override fun error(message: String, t: Throwable, vararg args: Any) {
             logger.logp(
                 Level.SEVERE,

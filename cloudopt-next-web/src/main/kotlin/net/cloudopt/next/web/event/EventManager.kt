@@ -43,7 +43,7 @@ object EventManager {
     @JvmStatic
     val eventList: MutableMap<String, KClass<*>> = hashMapOf()
 
-    private val logger = Logger.getLogger(EventManager::class.java)
+    private val logger = Logger.getLogger(EventManager::class)
 
     fun init(vertx: Vertx) {
         /**
