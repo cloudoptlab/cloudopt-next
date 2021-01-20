@@ -43,24 +43,12 @@ object RedisManager {
 
     open lateinit var clusterClient: RedisClusterClient
 
-    open lateinit var connection: StatefulRedisConnection<String, String>
-
-    open lateinit var publishConnection: StatefulRedisPubSubConnection<String, String>
-
-    open lateinit var subscribeConnection: StatefulRedisPubSubConnection<String, String>
-
-    open lateinit var clusterConnection: StatefulRedisClusterConnection<String, String>
-
-    open lateinit var clusterPublishConnection: StatefulRedisClusterPubSubConnection<String, String>
-
-    open lateinit var clusterSubscribeConnection: StatefulRedisClusterPubSubConnection<String, String>
-
     /**
      * Extension for StatefulRedisConnection to create RedisCoroutinesCommands
      */
     @ExperimentalLettuceCoroutinesApi
     fun coroutines(): RedisCoroutinesCommands<String, String> {
-        return connection.coroutines()
+        return client.connect().coroutines()
     }
 
     /**
@@ -68,35 +56,35 @@ object RedisManager {
      */
     @ExperimentalLettuceCoroutinesApi
     fun clusterCoroutines(): RedisClusterCoroutinesCommands<String, String> {
-        return clusterConnection.coroutines()
+        return clusterClient.connect().coroutines()
     }
 
     /**
      * Returns the RedisCommands API for the current connection. Does not create a new connection.
      */
     fun sync(): RedisCommands<String, String> {
-        return connection.sync()
+        return client.connect().sync()
     }
 
     /**
      * Returns the RedisAdvancedClusterCommands API for the current connection. Does not create a new connection.
      */
     fun clusterSync(): RedisAdvancedClusterCommands<String, String> {
-        return clusterConnection.sync()
+        return clusterClient.connect().sync()
     }
 
     /**
      * Returns the RedisAsyncCommands API for the current connection. Does not create a new connection.
      */
     fun asyn(): RedisAsyncCommands<String, String> {
-        return connection.async()
+        return client.connect().async()
     }
 
     /**
      * Returns the RedisAdvancedClusterAsyncCommands API for the current connection. Does not create a new connection.
      */
     fun clusterAsync(): RedisAdvancedClusterAsyncCommands<String, String> {
-        return clusterConnection.async()
+        return clusterClient.connect().async()
     }
 
     /**
@@ -105,9 +93,9 @@ object RedisManager {
     @ExperimentalLettuceCoroutinesApi
     suspend fun publish(channel: String, message: String): Long? {
         if (cluster) {
-            return clusterPublishConnection.coroutines().publish(channel, message)
+            return clusterClient.connect().coroutines().publish(channel, message)
         }
-        return publishConnection.coroutines().publish(channel, message)
+        return client.connect().coroutines().publish(channel, message)
     }
 
     /**
@@ -116,9 +104,9 @@ object RedisManager {
      */
     fun subscribe(vararg channels: String) {
         if (cluster) {
-            return clusterSubscribeConnection.sync().subscribe(*channels)
+            return clusterClient.connectPubSub().sync().subscribe(*channels)
         }
-        return subscribeConnection.sync().subscribe(*channels)
+        return client.connectPubSub().sync().subscribe(*channels)
     }
 
     /**
@@ -127,9 +115,9 @@ object RedisManager {
      */
     fun addListener(listener: PushListener) {
         if (cluster) {
-            return clusterSubscribeConnection.addListener(listener)
+            return clusterClient.connectPubSub().addListener(listener)
         }
-        subscribeConnection.addListener(listener)
+        client.connectPubSub().addListener(listener)
     }
 
 }
