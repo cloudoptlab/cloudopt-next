@@ -27,7 +27,7 @@ class Slf4jLoggerProvider : LoggerProvider {
     private val format = Format("{", "}")
 
     override fun getLogger(clazz: KClass<*>): Logger {
-        return Slf4JLogger(org.slf4j.LoggerFactory.getLogger(clazz::class.java))
+        return Slf4JLogger(org.slf4j.LoggerFactory.getLogger(clazz.java))
     }
 
     override fun getLogger(clazzName: String): Logger {

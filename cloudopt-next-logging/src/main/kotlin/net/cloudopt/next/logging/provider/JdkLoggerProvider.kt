@@ -33,7 +33,7 @@ class JdkLoggerProvider : LoggerProvider {
     private val format = Format("{", "}")
 
     override fun getLogger(clazz: KClass<*>): Logger {
-        return JdkLogger(java.util.logging.Logger.getLogger(clazz::class.java.name))
+        return JdkLogger(java.util.logging.Logger.getLogger(clazz.java.name))
     }
 
     override fun getLogger(clazzName: String): Logger {
