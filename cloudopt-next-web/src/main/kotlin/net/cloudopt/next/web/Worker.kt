@@ -99,8 +99,8 @@ object Worker {
      * @param handler  the handler that will be called with the timer ID when the timer fires
      * @return the unique ID of the timer
      */
-    fun setTimer(delay: Long, periodic: Boolean, handler: Handler<Long>) {
-        if (periodic) {
+    fun setTimer(delay: Long, periodic: Boolean, handler: Handler<Long>): Long {
+        return if (periodic) {
             vertx.setPeriodic(delay, handler)
         } else {
             vertx.setTimer(delay, handler)
@@ -113,8 +113,8 @@ object Worker {
      * @param id  The id of the timer to cancel
      * @return true if the timer was successfully cancelled, or false if the timer does not exist.
      */
-    fun cancelTimer(id: Long) {
-        vertx.cancelTimer(id)
+    fun cancelTimer(id: Long): Boolean {
+        return vertx.cancelTimer(id)
     }
 
     /**
