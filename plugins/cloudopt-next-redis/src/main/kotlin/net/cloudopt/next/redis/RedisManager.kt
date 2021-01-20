@@ -17,11 +17,11 @@ package net.cloudopt.next.redis
 
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import io.lettuce.core.RedisClient
+import io.lettuce.core.RedisFuture
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.api.async.RedisAsyncCommands
 import io.lettuce.core.api.coroutines
 import io.lettuce.core.api.coroutines.RedisCoroutinesCommands
-import io.lettuce.core.api.push.PushListener
 import io.lettuce.core.api.sync.RedisCommands
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
@@ -30,6 +30,7 @@ import io.lettuce.core.cluster.api.coroutines
 import io.lettuce.core.cluster.api.coroutines.RedisClusterCoroutinesCommands
 import io.lettuce.core.cluster.api.sync.RedisAdvancedClusterCommands
 import io.lettuce.core.cluster.pubsub.StatefulRedisClusterPubSubConnection
+import io.lettuce.core.pubsub.RedisPubSubListener
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
 
 /*
@@ -37,18 +38,30 @@ import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
  */
 object RedisManager {
 
-    var cluster = false
+    internal var cluster = false
 
     open lateinit var client: RedisClient
 
     open lateinit var clusterClient: RedisClusterClient
+
+    lateinit var connection: StatefulRedisConnection<String, String>
+
+    lateinit var publishConnection: StatefulRedisPubSubConnection<String, String>
+
+    lateinit var subscribeConnection: StatefulRedisPubSubConnection<String, String>
+
+    lateinit var clusterConnection: StatefulRedisClusterConnection<String, String>
+
+    lateinit var clusterPublishConnection: StatefulRedisClusterPubSubConnection<String, String>
+
+    lateinit var clusterSubscribeConnection: StatefulRedisClusterPubSubConnection<String, String>
 
     /**
      * Extension for StatefulRedisConnection to create RedisCoroutinesCommands
      */
     @ExperimentalLettuceCoroutinesApi
     fun coroutines(): RedisCoroutinesCommands<String, String> {
-        return client.connect().coroutines()
+        return connection.coroutines()
     }
 
     /**
@@ -56,46 +69,78 @@ object RedisManager {
      */
     @ExperimentalLettuceCoroutinesApi
     fun clusterCoroutines(): RedisClusterCoroutinesCommands<String, String> {
-        return clusterClient.connect().coroutines()
+        return clusterConnection.coroutines()
     }
 
     /**
      * Returns the RedisCommands API for the current connection. Does not create a new connection.
      */
     fun sync(): RedisCommands<String, String> {
-        return client.connect().sync()
+        return connection.sync()
     }
 
     /**
      * Returns the RedisAdvancedClusterCommands API for the current connection. Does not create a new connection.
      */
     fun clusterSync(): RedisAdvancedClusterCommands<String, String> {
-        return clusterClient.connect().sync()
+        return clusterConnection.sync()
     }
 
     /**
      * Returns the RedisAsyncCommands API for the current connection. Does not create a new connection.
      */
     fun asyn(): RedisAsyncCommands<String, String> {
-        return client.connect().async()
+        return connection.async()
     }
 
     /**
      * Returns the RedisAdvancedClusterAsyncCommands API for the current connection. Does not create a new connection.
      */
     fun clusterAsync(): RedisAdvancedClusterAsyncCommands<String, String> {
-        return clusterClient.connect().async()
+        return clusterConnection.async()
     }
 
     /**
-     * Extension for StatefulRedisConnection to create RedisCoroutinesCommands
+     * Post a message to a channel.
+     *
+     * @param channel the channel type: key.
+     * @param message the message type: value.
+     * @return Long integer-reply the number of clients that received the message.
      */
     @ExperimentalLettuceCoroutinesApi
     suspend fun publish(channel: String, message: String): Long? {
         if (cluster) {
-            return clusterClient.connect().coroutines().publish(channel, message)
+            return clusterPublishConnection.coroutines().publish(channel, message)
         }
-        return client.connect().coroutines().publish(channel, message)
+        return publishConnection.coroutines().publish(channel, message)
+    }
+
+    /**
+     * Post a message to a channel.
+     *
+     * @param channel the channel type: key.
+     * @param message the message type: value.
+     * @return Long integer-reply the number of clients that received the message.
+     */
+    fun publishSync(channel: String, message: String): Long? {
+        if (cluster) {
+            return clusterPublishConnection.sync().publish(channel, message)
+        }
+        return publishConnection.sync().publish(channel, message)
+    }
+
+    /**
+     * Post a message to a channel.
+     *
+     * @param channel the channel type: key.
+     * @param message the message type: value.
+     * @return Long integer-reply the number of clients that received the message.
+     */
+    fun publishAsync(channel: String, message: String): RedisFuture<Long>? {
+        if (cluster) {
+            return clusterPublishConnection.async().publish(channel, message)
+        }
+        return publishConnection.async().publish(channel, message)
     }
 
     /**
@@ -104,20 +149,20 @@ object RedisManager {
      */
     fun subscribe(vararg channels: String) {
         if (cluster) {
-            return clusterClient.connectPubSub().sync().subscribe(*channels)
+            return clusterSubscribeConnection.sync().subscribe(*channels)
         }
-        return client.connectPubSub().sync().subscribe(*channels)
+        return subscribeConnection.sync().subscribe(*channels)
     }
 
     /**
      * Add a new listener to consume push messages.
      * @param listener the listener, must not be null.
      */
-    fun addListener(listener: PushListener) {
+    fun addListener(listener: RedisPubSubListener<String, String>) {
         if (cluster) {
-            return clusterClient.connectPubSub().addListener(listener)
+            return clusterSubscribeConnection.addListener(listener)
         }
-        client.connectPubSub().addListener(listener)
+        subscribeConnection.addListener(listener)
     }
 
 }

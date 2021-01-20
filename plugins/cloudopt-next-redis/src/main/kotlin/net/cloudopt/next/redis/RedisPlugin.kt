@@ -66,11 +66,25 @@ class RedisPlugin : Plugin {
     private fun startAlone(res: ClientResources, uri: String, redisConfig: MutableMap<String, Any>) {
         RedisManager.cluster = false
         RedisManager.client = RedisClient.create(res, uri)
+        RedisManager.connection = RedisManager.client.connect()
+        if (redisConfig["publish"] != null && redisConfig["publish"] as Boolean) {
+            RedisManager.publishConnection = RedisManager.client.connectPubSub()
+        }
+        if (redisConfig["subscribe"] != null && redisConfig["subscribe"] as Boolean) {
+            RedisManager.subscribeConnection = RedisManager.client.connectPubSub()
+        }
     }
 
     private fun startCluster(res: ClientResources, uri: String, redisConfig: MutableMap<String, Any>) {
         RedisManager.cluster = true
         RedisManager.clusterClient = RedisClusterClient.create(res, uri)
+        RedisManager.clusterConnection = RedisManager.clusterClient.connect()
+        if (redisConfig["publish"] != null && redisConfig["publish"] as Boolean) {
+            RedisManager.clusterPublishConnection = RedisManager.clusterClient.connectPubSub()
+        }
+        if (redisConfig["subscribe"] != null && redisConfig["subscribe"] as Boolean) {
+            RedisManager.clusterSubscribeConnection = RedisManager.clusterClient.connectPubSub()
+        }
     }
 
 }

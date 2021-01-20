@@ -1,6 +1,8 @@
 {
   "redis": {
     "cluster": true,
+    "publish": true,
+    "subscribe": true,
     "uri": "redis://root@localhost:6379/0"
   }
 }

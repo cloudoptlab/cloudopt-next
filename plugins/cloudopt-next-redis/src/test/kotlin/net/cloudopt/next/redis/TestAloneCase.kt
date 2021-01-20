@@ -41,9 +41,7 @@ class TestAloneCase {
     @ExperimentalLettuceCoroutinesApi
     @Test
     fun testPubSub(): Unit = runBlocking {
-        RedisManager.addListener { message ->
-            println(message.content)
-        }
+        RedisManager.addListener(TestEventListener())
         RedisManager.subscribe("testMQ")
         val id = RedisManager.publish("testMQ", "New　Message") ?: -1
         assert(id > -1)

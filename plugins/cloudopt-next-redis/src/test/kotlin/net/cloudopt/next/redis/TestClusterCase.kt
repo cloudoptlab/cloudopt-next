@@ -1,4 +1,5 @@
 package net.cloudopt.next.redis
+
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,9 +34,9 @@ class TestClusterCase {
     @ExperimentalLettuceCoroutinesApi
     @Test
     fun getAndSet() = runBlocking {
-        var value = RedisManager.clusterCoroutines().getset("testAloneGetSet","success")
-        if (value.isNullOrBlank()){
-            value = RedisManager.clusterCoroutines().getset("testAloneGetSet","success")
+        var value = RedisManager.clusterCoroutines().getset("testAloneGetSet", "success")
+        if (value.isNullOrBlank()) {
+            value = RedisManager.clusterCoroutines().getset("testAloneGetSet", "success")
         }
         assert(value == "success")
     }
