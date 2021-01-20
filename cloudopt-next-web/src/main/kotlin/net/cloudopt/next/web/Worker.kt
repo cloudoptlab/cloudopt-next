@@ -19,6 +19,9 @@ import io.vertx.core.*
 import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.cloudopt.next.web.config.ConfigManager
 
 /*
@@ -123,6 +126,17 @@ object Worker {
      */
     fun dispatcher(): CoroutineDispatcher {
         return vertx.dispatcher()
+    }
+
+    /**
+     * Launches a new coroutine without blocking the current thread and returns a reference to the coroutine as a Job.
+     * The coroutine is cancelled when the resulting job is cancelled.
+     * @param handler [@kotlin.ExtensionFunctionType] SuspendFunction1<CoroutineScope, Unit>
+     */
+    fun global(handler: suspend CoroutineScope.() -> Unit) {
+        GlobalScope.launch(dispatcher()) {
+            handler.invoke(this)
+        }
     }
 
     /**
