@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.cache.test
+package net.cloudopt.next.cache
 
-import net.cloudopt.next.cache.Cache
-import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.route.API
-import net.cloudopt.next.web.route.GET
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/26
- * @Description: Test Controller
- */
-@API(value = "/")
-class IndexController : Resource() {
-
-    @Cache("default")
-    @GET
-    fun index() {
-        renderText("This is Text")
-    }
-}
+data class CacheConfig(
+    val cluster: Boolean = false,
+    val serializer: String = "net.cloudopt.next.cache.serializer.FastJsonSerializer",
+    val regions: MutableList<RegionConfig> = mutableListOf()
+)

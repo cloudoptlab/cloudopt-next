@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,4 @@
  */
 package net.cloudopt.next.cache
 
-import java.lang.annotation.Documented
-
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
-@Documented
-annotation class Cache(
-    val region: String = "default"
-)
+data class CacheEventMessage(val event: String = "DELETE_CACHE", val regionName: String = "", val key: String = "")

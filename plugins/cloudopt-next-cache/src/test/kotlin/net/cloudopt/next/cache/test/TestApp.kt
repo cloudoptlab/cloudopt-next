@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,39 +15,12 @@
  */
 package net.cloudopt.next.cache.test
 
-import net.cloudopt.next.cache.CacheManager
 import net.cloudopt.next.cache.CachePlugin
-import net.oschina.j2cache.CacheChannel
-import kotlin.test.BeforeTest
-import kotlin.test.Test
+import net.cloudopt.next.redis.RedisPlugin
+import net.cloudopt.next.web.NextServer
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/2/7
- * @Description: Test Case
- */
-
-class TestPluginCase {
-
-    lateinit var cache: CacheChannel
-
-    @BeforeTest
-    fun start() {
-        var plugin = CachePlugin()
-        plugin.start()
-        cache = CacheManager.channel
-    }
-
-
-    @Test
-    fun set() {
-        cache.set("default", "key", "value")
-    }
-
-    @Test
-    fun get() {
-        println(cache.get("default", "key"))
-    }
-
+fun main() {
+    NextServer.addPlugin(RedisPlugin())
+    NextServer.addPlugin(CachePlugin())
+    NextServer.run()
 }
