@@ -15,14 +15,10 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.core.DeploymentOptions
-import io.vertx.core.Handler
-import io.vertx.core.Promise
-import io.vertx.core.Vertx
+import io.vertx.core.*
 import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import net.cloudopt.next.web.config.ConfigManager
 
 /*
@@ -44,11 +40,13 @@ object Worker {
      * the function.
      *
      * @param handler handler representing the blocking code to run
+     * @param resultHandler handler that will be called when the blocking code is complete
      */
-    fun worker(
-        handler: Handler<Promise<Any>>
+    @JvmOverloads
+    fun <T> worker(
+        handler: Handler<Promise<T>>, resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
     ) {
-        vertx.executeBlocking<Any>(handler)
+        vertx.executeBlocking(handler, resultHandler)
     }
 
     /**
@@ -63,8 +61,8 @@ object Worker {
      *
      * @param handler handler representing the blocking code to run
      */
-    suspend fun awaitWorker(handler: Handler<Promise<Any>>) {
-        vertx.executeBlocking<Any>(handler).await()
+    suspend fun <T> awaitWorker(handler: Handler<Promise<T>>): T {
+        return vertx.executeBlocking(handler).await()
     }
 
     /**
@@ -131,7 +129,7 @@ object Worker {
      * Stop the the Vertx instance and release any resources held by it.
      * The instance cannot be used after it has been closed.
      */
-    fun close(){
+    fun close() {
         vertx.close()
     }
 

@@ -16,6 +16,7 @@
 package net.cloudopt.next.web
 
 import io.vertx.codegen.annotations.Nullable
+import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.core.Promise
 import io.vertx.core.buffer.Buffer
@@ -24,7 +25,6 @@ import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
-import io.vertx.kotlin.coroutines.await
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.web.render.RenderFactory
@@ -479,6 +479,22 @@ open class Resource {
         handler: Handler<Promise<Any>>
     ) {
         Worker.worker(handler)
+    }
+
+    /**
+     * By default, if executeBlocking is called several times from
+     * the same context (e.g. the same verticle instance) then the
+     * different executeBlocking are executed serially (i.e. one
+     * after another).If you don’t care about ordering you can call
+     * the function.
+     *
+     * @param handler handler representing the blocking code to run
+     * @param resultHandler handler that will be called when the blocking code is complete
+     */
+    fun <T> blocking(
+        handler: Handler<Promise<T>>, resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
+    ) {
+        Worker.worker(handler, resultHandler)
     }
 
     /**
