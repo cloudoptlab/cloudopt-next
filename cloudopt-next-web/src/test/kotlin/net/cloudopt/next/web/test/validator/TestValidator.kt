@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ class TestValidator : Validator {
 
     val logger = Logger.getLogger(this::class.java.simpleName)
 
-    override fun validate(resource: Resource): Boolean {
+    override suspend fun validate(resource: Resource): Boolean {
         logger.info("TestValidator")
         return true
     }
 
-    override fun error(resource: Resource) {
+    override suspend fun error(resource: Resource) {
 
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import net.cloudopt.next.auth.bean.Role
 import net.cloudopt.next.auth.bean.User
 import net.cloudopt.next.web.config.ConfigManager
 
-var config: PermissionTree = ConfigManager.initObject("auth", PermissionTree::class.java) as PermissionTree
+var config: PermissionTree = ConfigManager.initObject("auth", PermissionTree::class) as PermissionTree
 
 class JsonAuth(cache: Boolean = true) : Auth(cache) {
 

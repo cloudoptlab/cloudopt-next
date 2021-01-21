@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
  */
 package net.cloudopt.next.web.event
 
-import io.vertx.core.eventbus.impl.CodecManager
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
+import net.cloudopt.next.web.Worker
 
 
 /*
@@ -28,15 +28,14 @@ import net.cloudopt.next.web.Plugin
 class EventPlugin : Plugin {
 
     override fun start(): Boolean {
-        EventManager.init(NextServer.vertx)
+        EventManager.init(Worker.vertx)
         return true
     }
 
     override fun stop(): Boolean {
-        EventManager.eventBus.close { result ->
-            if (result.failed()) {
-                println(result.cause())
-            }
+        EventManager.eventList.keys.forEach { key ->
+            EventManager.eventBus.unregisterCodec(key)
+
         }
         return true
     }

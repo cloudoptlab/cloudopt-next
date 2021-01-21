@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ class HtmlRender : Render {
     companion object {
         @JvmStatic
         private val templates = mutableMapOf<String, String?>()
-        val logger = Logger.getLogger(HtmlRender.javaClass)
+        val logger = Logger.getLogger(HtmlRender::class)
     }
 
     override fun render(resource: Resource, result: Any) {

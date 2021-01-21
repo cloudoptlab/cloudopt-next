@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package net.cloudopt.next.web.config
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Maper
+import kotlin.reflect.KClass
 
 
 /*
@@ -35,19 +36,9 @@ object ConfigManager {
     // Init web config
     var configMap: MutableMap<String, Any> = mutableMapOf()
 
-    val logger = Logger.getLogger(ConfigManager::class.java)
+    val logger = Logger.getLogger(ConfigManager::class)
 
     init {
-
-        config.vertx.maxWorkerExecuteTime = 60L * 1000 * 1000000
-
-        config.vertx.fileSystemOptions.isFileCachingEnabled = false
-
-        config.vertx.blockedThreadCheckInterval = 1000
-
-        config.vertx.maxEventLoopExecuteTime = 2L * 1000 * 1000000
-
-        config.vertx.warningExceptionTime = 5L * 1000 * 1000000
 
         try {
             configMap = Jsoner.read(CONFIG_JSON_FILENAME)
@@ -55,7 +46,7 @@ object ConfigManager {
             logger.warn("[COFIG] Configuration we not found!")
         }
 
-        config = Maper.toObject(configMap, WebConfigBean::class.java) as WebConfigBean
+        config = Maper.toObject(configMap, WebConfigBean::class) as WebConfigBean
 
         if (config.env.isNotBlank()) {
             val newConfigFileName = "application-${config.env}.json"
@@ -73,9 +64,9 @@ object ConfigManager {
     open fun init(prefix: String): MutableMap<String, Any> {
         var newMap = configMap.toMutableMap()
         for (key in prefix.split(".")) {
-            if(newMap[key] != null){
+            if (newMap[key] != null) {
                 newMap = newMap[key] as MutableMap<String, Any>
-            }else{
+            } else {
                 return mutableMapOf()
             }
         }
@@ -89,7 +80,7 @@ object ConfigManager {
      * @return MutableMap<String, Any>
      */
     @JvmStatic
-    open fun initObject(prefix: String, clazz: Class<*>): Any {
+    open fun initObject(prefix: String, clazz: KClass<*>): Any {
         return Jsoner.toObject(Jsoner.toJsonString(init(prefix)), clazz)
     }
 }

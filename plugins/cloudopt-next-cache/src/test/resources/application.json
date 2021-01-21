@@ -1,13 +1,5 @@
 {
-  "packageName": "net.cloudopt.next.cache.test",
-  "cache": {
-    "broadcast": true,
-    "l1":true,
-    "serialization": "fastjson",
-    "hosts": "127.0.0.1:6379",
-    "password": "root",
-    "regions": {
-      "default": "1000,30m"
-    }
-  }
+  "debug": true,
+  "env": "alone",
+  "packageName": "net.cloudopt.next.cache.test"
 }

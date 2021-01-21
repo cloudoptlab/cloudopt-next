@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.io.InputStreamReader
  */
 object Welcomer {
 
-    private val logger = Logger.getLogger(NextServer.javaClass)
+    private val logger = Logger.getLogger(NextServer::class)
 
     @JvmStatic
     fun html(fileName: String): String {

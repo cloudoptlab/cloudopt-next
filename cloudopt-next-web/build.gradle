@@ -1,16 +1,21 @@
 dependencies {
-    api 'io.vertx:vertx-web:3.8.5'
-    api project(':cloudopt-next-waf')
-    api project(':cloudopt-next-logging')
-    api project(':cloudopt-next-utils')
-    api project(':cloudopt-next-json')
-    implementation project(':cloudopt-next-validator')
-    implementation 'io.vertx:vertx-codegen:3.8.5'
-    testImplementation 'io.vertx:vertx-unit:3.8.5'
-    implementation 'com.github.jknack:handlebars:4.0.6'
-    testImplementation 'com.github.jknack:handlebars:4.1.2'
-    implementation 'org.freemarker:freemarker:2.3.30'
-    testImplementation 'org.freemarker:freemarker:2.3.30'
+    api "io.vertx:vertx-web:${rootProject.property('vertx_version')}"
+    api "io.vertx:vertx-lang-kotlin:${rootProject.property('vertx_version')}"
+    api "io.vertx:vertx-lang-kotlin-coroutines:${rootProject.property('vertx_version')}"
+    implementation "io.netty:netty-all:4.1.56.Final"
+    api project(":cloudopt-next-waf")
+    api project(":cloudopt-next-logging")
+    api project(":cloudopt-next-utils")
+    api project(":cloudopt-next-json")
+    implementation project(":cloudopt-next-validator")
+    api project(":cloudopt-next-json")
+    implementation project(":cloudopt-next-validator")
+    implementation "io.vertx:vertx-codegen:${rootProject.property('vertx_version')}"
+    testImplementation "io.vertx:vertx-unit:${rootProject.property('vertx_version')}"
+    compileOnly "com.github.jknack:handlebars:4.0.6"
+    testImplementation "com.github.jknack:handlebars:4.1.2"
+    compileOnly "org.freemarker:freemarker:2.3.30"
+    testImplementation "org.freemarker:freemarker:2.3.30"
 }
 
-description = 'Cloudopt Next Web'
+description = "Cloudopt Next Web"

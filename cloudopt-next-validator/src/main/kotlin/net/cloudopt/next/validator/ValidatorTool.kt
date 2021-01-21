@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,12 @@
 package net.cloudopt.next.validator
 
 import org.hibernate.validator.HibernateValidator
-import java.lang.reflect.Method
 import java.util.*
 import javax.validation.ConstraintViolation
 import javax.validation.Validation
-import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.jvm.javaMethod
 
 /*
  * @author: Cloudopt
@@ -84,7 +85,7 @@ object ValidatorTool {
      *         during the validation process
      */
     fun validateGroup(obj: Any, vararg groups: Class<*>): ValidatorResult {
-        val violations = validator.validate(obj,*groups)
+        val violations = validator.validate(obj, *groups)
         return if (violations.isEmpty()) {
             ValidatorResult(true, "")
         } else {
@@ -104,8 +105,13 @@ object ValidatorTool {
      * @throws IllegalArgumentException if {@code null} is passed for any of the parameters
      *         or if parameters don't match with each other
      */
-    fun validateParameters(any: Any, method: Method, parameterValues: Array<Any>): ValidatorResult {
-        val violations = executableValidator.validateParameters(any, method, parameterValues)
+    fun validateParameters(
+        any: Any,
+        method: KFunction<*>,
+        parameterValues: MutableMap<KParameter, Any?>
+    ): ValidatorResult {
+        val violations =
+            executableValidator.validateParameters(any, method.javaMethod, parameterValues.values.toTypedArray())
         return if (violations.isEmpty()) {
             ValidatorResult(true, "")
         } else {

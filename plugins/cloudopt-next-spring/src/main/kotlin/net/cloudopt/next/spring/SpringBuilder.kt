@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.springframework.context.ConfigurableApplicationContext
 
 object SpringBuilder {
 
-    private val logger = Logger.getLogger(SpringBuilder::class.java)
+    private val logger = Logger.getLogger(SpringBuilder::class)
 
     @JvmStatic
     private var context: ConfigurableApplicationContext? = null

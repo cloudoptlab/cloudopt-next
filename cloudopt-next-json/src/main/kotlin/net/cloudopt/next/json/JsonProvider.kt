@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package net.cloudopt.next.json
+
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
@@ -42,7 +44,7 @@ interface JsonProvider {
      * @param clazz Java class
      * @return Json object
      */
-    fun toObject(jsonString: String, clazz: Class<*>): Any
+    fun toObject(jsonString: String, clazz: KClass<*>): Any
 
     /**
      * Output json map list.
@@ -57,7 +59,7 @@ interface JsonProvider {
      * @param clazz Java class
      * @return MutableList<Any>
      */
-    fun toObjectList(jsonString: String, clazz: Class<*>): MutableList<Any>
+    fun toObjectList(jsonString: String, clazz: KClass<*>): MutableList<Any>
 
     /**
      * Output any list.
@@ -90,6 +92,6 @@ interface JsonProvider {
      * @param clazz Class name
      * @return Object
      */
-    fun <T> read(filePath: String, prefix: String, clazz: Class<T>): Any
+    fun read(filePath: String, prefix: String, clazz: KClass<*>): Any
 
 }

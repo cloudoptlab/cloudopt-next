@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.web.Worker
 
 
 /*
@@ -29,9 +30,7 @@ import net.cloudopt.next.web.NextServer
  */
 class HttpClient() {
 
-    val options = WebClientOptions()
-
-    private var client = WebClient.create(NextServer.vertx)
+    private var client = WebClient.create(Worker.vertx)
 
     private var host = ""
 
@@ -44,9 +43,9 @@ class HttpClient() {
     private var followRedirects: Boolean = true
 
 
-    constructor(host: String) : this() {
+    constructor(host: String, options: WebClientOptions = WebClientOptions()) : this() {
         if (host.startsWith("https://")) {
-            options.setSsl(true)
+            options.isSsl = true
             this.port = 443
         }
         this.host = host
@@ -54,9 +53,9 @@ class HttpClient() {
         this.host = this.host.replace("https://", "")
         options.userAgent =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
-        options.setKeepAlive(false)
-        options.setFollowRedirects(followRedirects)
-        client = WebClient.create(NextServer.vertx, options)
+        options.isKeepAlive = false
+        options.isFollowRedirects = followRedirects
+        client = WebClient.create(Worker.vertx, options)
     }
 
     /**

@@ -1,9 +1,0 @@
-{
-  "redis": {
-    "host": "localhost",
-    "port": 6379,
-    "timeout": 3000,
-    "password": "",
-    "database": 0
-  }
-}

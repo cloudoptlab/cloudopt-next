@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,16 @@ package net.cloudopt.next.kafka
 import io.vertx.kafka.client.consumer.KafkaConsumer
 import io.vertx.kafka.client.consumer.KafkaConsumerRecord
 import io.vertx.kafka.client.producer.KafkaProducer
-import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
+import net.cloudopt.next.web.Worker
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsConfig
 import java.util.*
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.findAnnotation
 
 
 /*
@@ -38,21 +40,21 @@ class KafkaPlugin : Plugin {
 
     override fun start(): Boolean {
         KafkaManager.consumer =
-            KafkaConsumer.create<Any, Any>(NextServer.vertx, KafkaManager.config)?.exceptionHandler { e ->
+            KafkaConsumer.create<Any, Any>(Worker.vertx, KafkaManager.config)?.exceptionHandler { e ->
                 KafkaManager.logger.error("[KAFKA] Consumer was error： ${e.message}")
             }
         KafkaManager.producer =
-            KafkaProducer.create<Any, Any>(NextServer.vertx, KafkaManager.config)?.exceptionHandler { e ->
+            KafkaProducer.create<Any, Any>(Worker.vertx, KafkaManager.config)?.exceptionHandler { e ->
                 KafkaManager.logger.error("[KAFKA] Producer was error： ${e.message}")
             }
 
 
-        Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoKafka::class.java)
+        Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoKafka::class)
             .forEach { clazz ->
-                clazz.getDeclaredAnnotation(AutoKafka::class.java).value.split(",").forEach { topic ->
-                    var set = KafkaManager.kafkaList.get(topic) ?: mutableSetOf()
+                clazz.findAnnotation<AutoKafka>()?.value?.split(",")?.forEach { topic ->
+                    var set = KafkaManager.kafkaList[topic] ?: mutableSetOf()
                     set.add(clazz)
-                    KafkaManager.kafkaList.set(topic, set)
+                    KafkaManager.kafkaList[topic] = set
                 }
             }
 
@@ -64,9 +66,9 @@ class KafkaPlugin : Plugin {
                     KafkaManager.logger.error("[KAFKA] Registered topic listener was error：${KafkaManager.kafkaList.keys}")
                 }
             }?.handler { record ->
-                if (record.topic().isNotBlank() && KafkaManager.kafkaList.get(record.topic())?.size ?: 0 > 0) {
-                    KafkaManager.kafkaList.get(record.topic())?.forEach { clazz ->
-                        var obj = Beaner.newInstance<KafkaListener>(clazz)
+                if (record.topic().isNotBlank() && KafkaManager.kafkaList[record.topic()]?.size ?: 0 > 0) {
+                    KafkaManager.kafkaList[record.topic()]?.forEach { clazz ->
+                        var obj = clazz.createInstance() as KafkaListener
                         obj.listener(record as KafkaConsumerRecord<String, Any>)
                     }
                 }

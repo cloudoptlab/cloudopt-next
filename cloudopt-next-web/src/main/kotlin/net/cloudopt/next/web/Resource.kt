@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 package net.cloudopt.next.web
 
 import io.vertx.codegen.annotations.Nullable
+import io.vertx.core.AsyncResult
+import io.vertx.core.Handler
+import io.vertx.core.Promise
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.Cookie
 import io.vertx.core.http.HttpServerRequest
@@ -27,6 +30,7 @@ import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.View
 import java.util.*
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
@@ -107,7 +111,7 @@ open class Resource {
      * with the path parameters and only need to be obtained by getPara().
      * @param clazz The name
      */
-    fun <T> getAttrs(clazz: Class<T>): Any {
+    fun <T> getAttrs(clazz: KClass<*>): Any {
         var map = context.request().formAttributes()
         map.forEach {
             it
@@ -141,7 +145,7 @@ open class Resource {
      * Returns request parameters.
      * @return Parameters Object
      */
-    fun <T> getParams(clazz: Class<T>): Any {
+    fun getParams(clazz: KClass<*>): Any {
         var map = mutableMapOf<String, Any>()
         request.params().forEach { e ->
             map[e.key] = Wafer.contentFilter(e.value) ?: ""
@@ -181,8 +185,13 @@ open class Resource {
      */
     @JvmOverloads
     fun setCookie(
-            key: String, value: String, domain: String = "", age: Long = 0, path: String = ""
-            , httpOnly: Boolean = false, cookieSecureFlag: Boolean = false
+        key: String,
+        value: String,
+        domain: String = "",
+        age: Long = 0,
+        path: String = "",
+        httpOnly: Boolean = false,
+        cookieSecureFlag: Boolean = false
     ) {
         val cookie = Cookie.cookie(key, value)
         if (domain.isNotBlank()) {
@@ -398,7 +407,7 @@ open class Resource {
      */
     fun getLang(): String {
         return if (context.preferredLanguage().tag().isNullOrEmpty() || context.preferredLanguage().subtag()
-                        .isNullOrEmpty()
+                .isNullOrEmpty()
         ) {
             "en_US"
         } else {
@@ -424,28 +433,28 @@ open class Resource {
     /**
      * @return  the entire HTTP request body as a json object, assuming UTF-8 encoding.
      */
-    fun getBodyJson(): Any? {
+    fun getBodyJson(): Any {
         return Jsoner.toJsonMap(context.bodyAsJson.toString())
     }
 
     /**
      * @return  the entire HTTP request body as a json and convert object, assuming UTF-8 encoding.
      */
-    fun getBodyJson(clazz: Class<*>): Any? {
+    fun getBodyJson(clazz: KClass<*>): Any {
         return Jsoner.toObject(context.bodyAsJson.toString(), clazz)
     }
 
     /**
      * @return  the entire HTTP request body as a json array, assuming UTF-8 encoding.
      */
-    fun getBodyJsonArray(): Any? {
+    fun getBodyJsonArray(): Any {
         return Jsoner.toJsonMapList(context.bodyAsJson.toString())
     }
 
     /**
      * @return  the entire HTTP request body as a json and convert object array, assuming UTF-8 encoding.
      */
-    fun getBodyJsonArray(clazz: Class<*>): Any? {
+    fun getBodyJsonArray(clazz: KClass<*>): Any {
         return Jsoner.toObjectList(context.bodyAsJson.toString(), clazz)
     }
 
@@ -455,6 +464,21 @@ open class Resource {
      */
     fun getFiles(): MutableSet<FileUpload> {
         return context.fileUploads()
+    }
+
+    /**
+     * By default, if executeBlocking is called several times from
+     * the same context (e.g. the same verticle instance) then the
+     * different executeBlocking are executed serially (i.e. one
+     * after another).If you don’t care about ordering you can call
+     * the function.
+     *
+     * @param handler handler representing the blocking code to run
+     */
+    fun blocking(
+        handler: Handler<Promise<Any>>
+    ) {
+        Worker.worker(handler)
     }
 
 }

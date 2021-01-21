@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,12 @@ class DefaultErrorHandler : ErrorHandler() {
             context.response().end(Welcomer.systemError())
             return
         }
-        val errorMessage = if(context.data().containsKey("errorMessage")){
+        val errorMessage = if (context.data().containsKey("errorMessage")) {
             context.data()["errorMessage"].toString()
-        }else{
+        } else {
             "This is a bad http request, please check if the parameters match the requirements."
         }
-        renderJson(restult(errorStatusCode.toString(),errorMessage))
+        renderJson(restult(errorStatusCode.toString(), errorMessage))
     }
 
     private fun restult(error: String, errorMessage: String): HashMap<String, String> {

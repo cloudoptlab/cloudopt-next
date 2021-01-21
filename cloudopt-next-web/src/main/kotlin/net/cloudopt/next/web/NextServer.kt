@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,21 @@ package net.cloudopt.next.web
 
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
+import net.cloudopt.next.json.JsonProvider
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.handler.AutoHandler
+import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.route.*
 import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.functions
 
 /*
  * @author: Cloudopt
@@ -39,16 +43,16 @@ object NextServer {
     @JvmStatic
     open var verticleID = "net.cloudopt.next.web"
 
-    val logger = Logger.getLogger(NextServer.javaClass)
+    val logger = Logger.getLogger(NextServer::class)
 
     @JvmStatic
-    open val resources: MutableList<Class<Resource>> = arrayListOf()
+    open val resources: MutableList<KClass<Resource>> = arrayListOf()
 
     @JvmStatic
-    open val sockJSes: MutableList<Class<SockJSResource>> = arrayListOf()
+    open val sockJSes: MutableList<KClass<SockJSResource>> = arrayListOf()
 
     @JvmStatic
-    open val webSockets: MutableList<Class<WebSocketResource>> = arrayListOf()
+    open val webSockets: MutableList<KClass<WebSocketResource>> = arrayListOf()
 
     @JvmStatic
     open val handlers = arrayListOf<Handler>()
@@ -66,35 +70,33 @@ object NextServer {
     open val resourceTables = arrayListOf<ResourceTable>()
 
     @JvmStatic
-    open var vertx: Vertx = Vertx.vertx(ConfigManager.config.vertx)
-
-    @JvmStatic
     open var packageName = ""
 
     @JvmStatic
-    open var errorHandler = Classer.loadClass(ConfigManager.config.errorHandler)
+    open var errorHandler: KClass<ErrorHandler> =
+        Classer.loadClass(ConfigManager.config.errorHandler) as KClass<ErrorHandler>
 
     init {
         /**
          * Set json provider
          */
-        Jsoner.jsonProvider = Beaner.newInstance(Classer.loadClass(ConfigManager.config.jsonProvider))
+        Jsoner.jsonProvider = Classer.loadClass(ConfigManager.config.jsonProvider).createInstance() as JsonProvider
     }
 
     /**
      * Scan by annotation and register as a route.
      */
-    fun scan() {
+    private fun scan() {
         ConfigManager.config.vertxDeployment.workerPoolName = verticleID
 
         //Set log color
         Logger.configuration.color = ConfigManager.config.logColor
 
         //Scan cloudopt handler
-        Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class.java)
-                .forEach { clazz ->
-                    handlers.add(Beaner.newInstance(clazz))
-                }
+        Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class)
+            .forEach { clazz ->
+                handlers.add(clazz.createInstance() as Handler)
+            }
 
         packageName = if (ConfigManager.config.packageName.isNotBlank()) {
             ConfigManager.config.packageName
@@ -103,33 +105,33 @@ object NextServer {
         }
 
         //Scan custom handler
-        Classer.scanPackageByAnnotation(packageName, true, AutoHandler::class.java)
-                .forEach { clazz ->
-                    handlers.add(Beaner.newInstance(clazz))
-                }
+        Classer.scanPackageByAnnotation(packageName, true, AutoHandler::class)
+            .forEach { clazz ->
+                handlers.add(clazz.createInstance() as Handler)
+            }
 
         //Scan sockJS
-        Classer.scanPackageByAnnotation(packageName, true, SocketJS::class.java)
-                .forEach { clazz ->
-                    sockJSes.add(clazz as Class<SockJSResource>)
-                }
+        Classer.scanPackageByAnnotation(packageName, true, SocketJS::class)
+            .forEach { clazz ->
+                sockJSes.add(clazz as KClass<SockJSResource>)
+            }
 
         //Scan webSocket
-        Classer.scanPackageByAnnotation(packageName, true, WebSocket::class.java)
-                .forEach { clazz ->
-                    webSockets.add(clazz as Class<WebSocketResource>)
-                }
+        Classer.scanPackageByAnnotation(packageName, true, WebSocket::class)
+            .forEach { clazz ->
+                webSockets.add(clazz as KClass<WebSocketResource>)
+            }
 
         //Scan resources
-        Classer.scanPackageByAnnotation(packageName, true, API::class.java)
-                .forEach { clazz ->
-                    resources.add(clazz as Class<Resource>)
-                }
+        Classer.scanPackageByAnnotation(packageName, true, API::class)
+            .forEach { clazz ->
+                resources.add(clazz as KClass<Resource>)
+            }
 
         for (clazz in resources) {
 
             // Get api annotation
-            val annotation: API? = clazz.getDeclaredAnnotation(API::class.java)
+            val annotation: API? = clazz.findAnnotation<API>()
 
             //Register interceptor
             annotation?.interceptor?.forEach { inClass ->
@@ -148,11 +150,11 @@ object NextServer {
             }
 
             //Get methods annotation
-            var methods = clazz.methods
+            var functions = clazz.functions
 
-            methods.forEach { method ->
+            functions.forEach { function ->
 
-                var methodAnnotations = method.annotations
+                var functionsAnnotations = function.annotations
 
                 var resourceUrl = ""
 
@@ -162,33 +164,37 @@ object NextServer {
 
                 var blocking = false
 
-                methodAnnotations.forEach { methodAnnotation ->
-
-                    when (methodAnnotation) {
+                functionsAnnotations.forEach { functionAnnotation ->
+                    when (functionAnnotation) {
                         is GET -> {
-                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
-                            httpMethod = methodAnnotation.httpMethod
-                            valids = methodAnnotation.valid
+                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            httpMethod = HttpMethod(functionAnnotation.method)
+                            valids = functionAnnotation.valid
                         }
                         is POST -> {
-                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
-                            httpMethod = methodAnnotation.httpMethod
-                            valids = methodAnnotation.valid
+                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            httpMethod = HttpMethod(functionAnnotation.method)
+                            valids = functionAnnotation.valid
                         }
                         is PUT -> {
-                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
-                            httpMethod = methodAnnotation.httpMethod
-                            valids = methodAnnotation.valid
+                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            httpMethod = HttpMethod(functionAnnotation.method)
+                            valids = functionAnnotation.valid
                         }
                         is DELETE -> {
-                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
-                            httpMethod = methodAnnotation.httpMethod
-                            valids = methodAnnotation.valid
+                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            httpMethod = HttpMethod(functionAnnotation.method)
+                            valids = functionAnnotation.valid
                         }
                         is PATCH -> {
-                            resourceUrl = "${annotation?.value}${methodAnnotation.value}"
-                            httpMethod = methodAnnotation.httpMethod
-                            valids = methodAnnotation.valid
+                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            httpMethod = HttpMethod(functionAnnotation.method)
+                            valids = functionAnnotation.valid
+                        }
+                        is net.cloudopt.next.web.route.HttpMethod -> {
+                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            httpMethod = HttpMethod(functionAnnotation.method)
+                            valids = functionAnnotation.valid
                         }
                         is Blocking -> {
                             blocking = true
@@ -209,13 +215,13 @@ object NextServer {
 
                 if (resourceUrl.isNotBlank()) {
                     var resourceTable = ResourceTable(
-                            resourceUrl,
-                            httpMethod,
-                            clazz,
-                            method.name,
-                            blocking,
-                            method,
-                            method.parameterTypes
+                        resourceUrl,
+                        httpMethod,
+                        clazz,
+                        function.name,
+                        blocking,
+                        function,
+                        function.typeParameters
                     )
                     resourceTables.add(resourceTable)
                 }
@@ -267,6 +273,11 @@ object NextServer {
         Banner.print()
         startPlugins()
         Worker.deploy("net.cloudopt.next.web.NextServerVerticle")
+        Runtime.getRuntime().addShutdownHook(object : Thread() {
+            override fun run() {
+                NextServer.stop()
+            }
+        })
     }
 
     /**
@@ -353,8 +364,9 @@ object NextServer {
     @JvmStatic
     fun stop() {
         stopPlugins()
-        vertx.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
-        vertx.close()
+        Worker.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
+        Worker.close()
+        NextServer.logger.info("Next has exited.")
     }
 
 

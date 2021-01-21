@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,89 +15,63 @@
  */
 package net.cloudopt.next.cache
 
-import net.cloudopt.next.cache.CacheManager.PREFIX
-import net.cloudopt.next.web.NextServer
+import io.lettuce.core.codec.ByteArrayCodec
+import net.cloudopt.next.cache.serializer.Serializer
+import net.cloudopt.next.redis.RedisManager
+import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.Plugin
-import net.cloudopt.next.web.config.ConfigManager
-import net.oschina.j2cache.CacheChannel
-import net.oschina.j2cache.J2CacheBuilder
-import net.oschina.j2cache.J2CacheConfig
-
-
-object CacheManager {
-
-    internal const val PREFIX = "NEXT-CACHE-ROUTE-"
-
-    internal val config = ConfigManager.init("cache")
-
-    @JvmStatic
-    internal val cacheEnabledUrl = mutableMapOf<String, String>()
-
-    @JvmStatic
-    lateinit var channel: CacheChannel
-}
+import kotlin.reflect.full.createInstance
 
 
 class CachePlugin : Plugin {
     override fun start(): Boolean {
-        /**
-         * Initializing J2Cache configuration
-         */
-        val j2config = J2CacheConfig()
-        j2config.broadcast = "none"
-        if (CacheManager.config["broadcast"] != null && CacheManager.config["broadcast"] as Boolean? == true) {
-            j2config.broadcast = "lettuce"
-        }
-        j2config.l1CacheName = "none"
-        if (CacheManager.config["l1"] != null && CacheManager.config["l1"] as Boolean? == true) {
-            j2config.l1CacheName = "caffeine"
-            val regions = CacheManager.config["regions"] as MutableMap<String, String>
-            if (regions.isEmpty()) {
-                j2config.l1CacheProperties["region.default"] = "1000, 30m"
-            }
-            for (key in regions.keys) {
-                j2config.l1CacheProperties["region.$key"] = regions[key]
-            }
-
-        }
-        j2config.l2CacheName = "lettuce"
-        j2config.isDefaultCacheNullObject = false
-        j2config.serialization = CacheManager.config["serialization"] as String? ?: "fastjson"
-        j2config.l2CacheProperties["namespace"] = CacheManager.config["namespace"] ?: ""
-        j2config.l2CacheProperties["storage"] = CacheManager.config["storage"] ?: "hash"
-        j2config.l2CacheProperties["channel"] = CacheManager.config["channel"] ?: "cloudopt-cache"
-        j2config.broadcastProperties["channel"] = "cloudopt-cache-mq"
-        j2config.l2CacheProperties["scheme"] = CacheManager.config["scheme"] ?: "redis"
-        j2config.l2CacheProperties["hosts"] = CacheManager.config["hosts"] ?: "127.0.0.1:6379"
-        j2config.l2CacheProperties["password"] = CacheManager.config["password"] ?: ""
-        j2config.l2CacheProperties["database"] = CacheManager.config["database"] ?: 0
-        j2config.l2CacheProperties["timeout"] = CacheManager.config["timeout"] ?: 10000
-        j2config.l2CacheProperties["clusterTopologyRefresh"] = CacheManager.config["clusterTopologyRefresh"]
-                ?: 3000
-
-        val builder = J2CacheBuilder.init(j2config)
-        CacheManager.channel = builder.channel
-
 
         /**
-         * Scanning for routes with annotations
-         * @see Cache
+         * After get configuration of the cache, the corresponding caffeine object is generated
          */
-        for (r in NextServer.resourceTables) {
-            val method = r.clazzMethod
-            if (method.getDeclaredAnnotation(Cache::class.java) != null) {
-                val annotation: Cache = method.getDeclaredAnnotation(Cache::class.java)
-                CacheManager.cacheEnabledUrl["${PREFIX}:${r.httpMethod}:${r.url}"] = annotation.region
-            }
 
+        CacheManager.serializer = Classer.loadClass(CacheManager.config.serializer).createInstance() as Serializer
 
+        val regionsList: MutableList<RegionConfig> = CacheManager.config.regions
+
+        if (regionsList.isEmpty()) {
+            regionsList.add(RegionConfig(name = "default"))
         }
+
+        regionsList.forEach { region ->
+            CacheManager.creatRegion(region.name, parseTime(region.expire), region.maxSize)
+        }
+
+        if (RedisManager.cluster) {
+            CacheManager.redisClusterConnect = RedisManager.clusterClient.connect(ByteArrayCodec.INSTANCE)
+        } else {
+            CacheManager.redisConnect = RedisManager.client.connect(ByteArrayCodec.INSTANCE)
+        }
+
+        if (CacheManager.config.cluster) {
+            RedisManager.addListener(CacheEventListener())
+            RedisManager.subscribe(CacheManager.CHANNELS)
+        }
+
         return true
     }
 
     override fun stop(): Boolean {
-        CacheManager.channel.close()
         CacheManager.cacheEnabledUrl.clear()
         return true
+    }
+
+    private fun parseTime(expiredString: String): Long {
+        val unit: Char = Character.toLowerCase(expiredString[expiredString.length - 1])
+        var expire = expiredString.substring(0, expiredString.length - 1).toLong()
+        when (unit) {
+            's' -> {
+            }
+            'm' -> expire *= 60
+            'h' -> expire *= 3600
+            'd' -> expire *= 86400
+            else -> throw IllegalArgumentException("Unknown expire unit:$unit")
+        }
+        return expire
     }
 }

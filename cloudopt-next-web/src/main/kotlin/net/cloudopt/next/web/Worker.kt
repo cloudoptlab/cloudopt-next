@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,15 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.core.AsyncResult
-import io.vertx.core.DeploymentOptions
-import io.vertx.core.Handler
-import io.vertx.core.Promise
+import io.vertx.core.*
+import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.dispatcher
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.cloudopt.next.web.config.ConfigManager
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
@@ -27,23 +31,50 @@ import net.cloudopt.next.web.config.ConfigManager
  * @Description: Vertx tool class
  */
 
+@JvmOverloads
+fun <T> Class<Any>.worker(
+    handler: Handler<Promise<T>>,
+    resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
+) {
+    Worker.worker(handler, resultHandler)
+}
+
+suspend fun <T> Class<Any>.await(handler: Handler<Promise<T>>): T {
+    return Worker.await(handler)
+}
+
+@JvmOverloads
+fun <T> KClass<Any>.worker(
+    handler: Handler<Promise<T>>,
+    resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
+) {
+    Worker.worker(handler, resultHandler)
+}
+
+suspend fun <T> KClass<Any>.await(handler: Handler<Promise<T>>): T {
+    return Worker.await(handler)
+}
+
 object Worker {
 
+    @JvmStatic
+    open var vertx: Vertx = Vertx.vertx(ConfigManager.config.vertx)
+
     /**
-     * It’s done by calling executeBlocking specifying both
-     * the blocking code to execute and a result handler to
-     * be called back asynchronous when the blocking code has
-     * been executed.
+     * By default, if executeBlocking is called several times from
+     * the same context (e.g. the same verticle instance) then the
+     * different executeBlocking are executed serially (i.e. one
+     * after another).If you don’t care about ordering you can call
+     * the function.
      *
-     * @param handler     Do something..
-     * @param queueResult After the completion of the callback
+     * @param handler handler representing the blocking code to run
+     * @param resultHandler handler that will be called when the blocking code is complete
      */
     @JvmOverloads
-    fun <T> then(
-            handler: Handler<Promise<Any>>,
-            queueResult: Handler<AsyncResult<Any>>
+    fun <T> worker(
+        handler: Handler<Promise<T>>, resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
     ) {
-        NextServer.vertx.executeBlocking(handler, queueResult)
+        vertx.executeBlocking(handler, resultHandler)
     }
 
     /**
@@ -53,14 +84,13 @@ object Worker {
      * after another).If you don’t care about ordering you can call
      * the function.
      *
-     * @param queueResult After the completion of the callback
+     * If using await, the call must be completed manually before
+     * it will end.
+     *
+     * @param handler handler representing the blocking code to run
      */
-    @JvmOverloads
-    fun <T> worker(
-            handler: Handler<Promise<Any>>,
-            queueResult: Handler<AsyncResult<Any>>
-    ) {
-        NextServer.vertx.executeBlocking(handler, false, queueResult)
+    suspend fun <T> await(handler: Handler<Promise<T>>): T {
+        return vertx.executeBlocking(handler).await()
     }
 
     /**
@@ -76,7 +106,7 @@ object Worker {
             options = DeploymentOptions(options)
             options.isWorker = worker
         }
-        NextServer.vertx.deployVerticle(verticle, options)
+        vertx.deployVerticle(verticle, options)
     }
 
 
@@ -84,8 +114,8 @@ object Worker {
      * Automatic undeployment in vertx.
      * @param verticle Package name
      */
-    fun unploy(verticle: String) {
-        NextServer.vertx.undeploy(verticle)
+    fun undeploy(verticle: String) {
+        vertx.undeploy(verticle)
     }
 
     /**
@@ -97,11 +127,11 @@ object Worker {
      * @param handler  the handler that will be called with the timer ID when the timer fires
      * @return the unique ID of the timer
      */
-    fun setTimer(delay: Long, periodic: Boolean, handler: Handler<Long>) {
-        if(periodic){
-            NextServer.vertx.setPeriodic(delay, handler)
-        }else{
-            NextServer.vertx.setTimer(delay, handler)
+    fun setTimer(delay: Long, periodic: Boolean, handler: Handler<Long>): Long {
+        return if (periodic) {
+            vertx.setPeriodic(delay, handler)
+        } else {
+            vertx.setTimer(delay, handler)
         }
     }
 
@@ -111,8 +141,35 @@ object Worker {
      * @param id  The id of the timer to cancel
      * @return true if the timer was successfully cancelled, or false if the timer does not exist.
      */
-    fun cancelTimer(id: Long) {
-        NextServer.vertx.cancelTimer(id)
+    fun cancelTimer(id: Long): Boolean {
+        return vertx.cancelTimer(id)
+    }
+
+    /**
+     * Returns a coroutine dispatcher for the current Vert.x context.
+     * It uses the Vert.x context event loop.
+     */
+    fun dispatcher(): CoroutineDispatcher {
+        return vertx.dispatcher()
+    }
+
+    /**
+     * Launches a new coroutine without blocking the current thread and returns a reference to the coroutine as a Job.
+     * The coroutine is cancelled when the resulting job is cancelled.
+     * @param handler [@kotlin.ExtensionFunctionType] SuspendFunction1<CoroutineScope, Unit>
+     */
+    fun global(handler: suspend CoroutineScope.() -> Unit) {
+        GlobalScope.launch(dispatcher()) {
+            handler.invoke(this)
+        }
+    }
+
+    /**
+     * Stop the the Vertx instance and release any resources held by it.
+     * The instance cannot be used after it has been closed.
+     */
+    fun close() {
+        vertx.close()
     }
 
 }

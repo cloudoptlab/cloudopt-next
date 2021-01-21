@@ -1,0 +1,17 @@
+{
+  "redis": {
+    "publish": true,
+    "subscribe": true,
+    "uri": "redis://root@localhost:6379/0"
+  },
+  "cache": {
+    "cluster": true,
+    "regions": [
+      {
+        "name": "testRegion",
+        "expire": "10m",
+        "maxSize": 10000
+      }
+    ]
+  }
+}

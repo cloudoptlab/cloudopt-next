@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package net.cloudopt.next.jooq
 
 import net.cloudopt.next.jooq.pool.ConnectionPool
 import net.cloudopt.next.jooq.pool.HikariCPPool
-import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
@@ -26,6 +25,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DataSourceConnectionProvider
 import org.jooq.impl.DefaultTransactionProvider
 import java.sql.SQLException
+import kotlin.reflect.full.createInstance
 
 
 /*
@@ -42,7 +42,7 @@ class JooqPlugin : Plugin {
             var pool: ConnectionPool = HikariCPPool()
 
             if (map.get("pool") != null) {
-                pool = Beaner.newInstance(Classer.loadClass(map.get("pool") as String))
+                pool = Classer.loadClass(map.get("pool") as String).createInstance() as ConnectionPool
             }
 
             var sqlDialect = when (map.get("database")) {
@@ -56,14 +56,14 @@ class JooqPlugin : Plugin {
                     SQLDialect.MYSQL
                 }
             }
-            Jooqer.connection = pool.getConnection()
-            Jooqer.connectionProvider = DataSourceConnectionProvider(pool.getDatasource())
-            Jooqer.transactionProvider = DefaultTransactionProvider(Jooqer.connectionProvider)
-            Jooqer.configuration.set(Jooqer.connectionProvider)
-                .set(Jooqer.transactionProvider)
+            JooqManager.connection = pool.getConnection()
+            JooqManager.connectionProvider = DataSourceConnectionProvider(pool.getDatasource())
+            JooqManager.transactionProvider = DefaultTransactionProvider(JooqManager.connectionProvider)
+            JooqManager.configuration.set(JooqManager.connectionProvider)
+                .set(JooqManager.transactionProvider)
                 .set(sqlDialect)
-                .set(Jooqer.settings)
-            Jooqer.dsl = DSL.using(Jooqer.configuration)
+                .set(JooqManager.settings)
+            JooqManager.dsl = DSL.using(JooqManager.configuration)
             return true
         } catch (e: SQLException) {
             e.printStackTrace()
@@ -74,7 +74,7 @@ class JooqPlugin : Plugin {
 
     override fun stop(): Boolean {
         try {
-            Jooqer.connection?.close()
+            JooqManager.connection?.close()
             return true
         } catch (e: SQLException) {
             e.printStackTrace()

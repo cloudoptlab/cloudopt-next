@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,10 @@ object Beaner {
      * @param clazz class
      * @return objects
      */
+    @kotlin.Deprecated(
+        "This method will be removed soon, please use kotlin native syntax.",
+        ReplaceWith("clazz.createInstance() as T")
+    )
     @Throws(InstantiationException::class, IllegalAccessException::class)
     fun <T> newInstance(clazz: Class<*>): T {
         return clazz.newInstance() as T

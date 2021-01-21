@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  */
 package net.cloudopt.next.json
 
-import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 
 
 /*
@@ -28,7 +29,8 @@ import net.cloudopt.next.utils.Classer
 object Jsoner {
 
     @JvmStatic
-    var jsonProvider: JsonProvider = Beaner.newInstance(Classer.loadClass("net.cloudopt.next.json.DefaultJSONProvider"))
+    var jsonProvider: JsonProvider = Classer.loadClass("net.cloudopt.next.json.DefaultJSONProvider")
+        .createInstance() as JsonProvider
 
     /**
      * Output json string.
@@ -54,7 +56,7 @@ object Jsoner {
      * @param clazz Java class
      * @return Json object
      */
-    fun toObject(jsonString: String, clazz: Class<*>): Any {
+    fun toObject(jsonString: String, clazz: KClass<*>): Any {
         return jsonProvider.toObject(jsonString, clazz)
     }
 
@@ -73,7 +75,7 @@ object Jsoner {
      * @param clazz Java class
      * @return MutableList<Any>
      */
-    fun toObjectList(jsonString: String, clazz: Class<*>): MutableList<Any> {
+    fun toObjectList(jsonString: String, clazz: KClass<*>): MutableList<Any> {
         return jsonProvider.toObjectList(jsonString, clazz)
     }
 
@@ -112,7 +114,7 @@ object Jsoner {
      * @param clazz Class name
      * @return Object
      */
-    fun <T> read(filePath: String, prefix: String, clazz: Class<T>): Any {
+    fun read(filePath: String, prefix: String, clazz: KClass<*>): Any {
         return jsonProvider.read(filePath, prefix, clazz)
     }
 

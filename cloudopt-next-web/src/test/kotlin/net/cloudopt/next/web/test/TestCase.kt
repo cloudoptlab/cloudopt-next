@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ fun main(args: Array<String>) {
 //    CloudoptServer.addHandler(TestHandler())
     NextServer.addPlugin(TestPlugin())
     NextServer.addPlugin(EventPlugin())
-    NextServer.run()
-    Worker.setTimer(1000,false, Handler{ id ->
-        println("And one second later taht is printed")
+    NextServer.run(Student::class)
+    Worker.setTimer(1000, false, Handler { id ->
+        println("And one second later that is printed")
     })
     Worker.cancelTimer(1)
 }

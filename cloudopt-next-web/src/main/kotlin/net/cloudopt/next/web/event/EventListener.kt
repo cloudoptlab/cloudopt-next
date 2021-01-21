@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,5 @@ import io.vertx.core.eventbus.Message
  * @Description: Used to automatically register listeners to the event bus of vertx.
  */
 interface EventListener {
-
     fun listener(message: Message<Any>)
-
 }

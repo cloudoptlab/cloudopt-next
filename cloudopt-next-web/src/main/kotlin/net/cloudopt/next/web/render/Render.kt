@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ interface Render {
      */
     fun end(resource: Resource, text: String) {
         NextServer.handlers.forEach { handler ->
-            if(!handler.afterRender(resource, text)){
+            if (!handler.afterRender(resource, text)) {
                 if (!resource.context.response().ended()) {
                     resource.context.response().end()
                 }

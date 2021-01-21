@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package net.cloudopt.next.spring
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
 
 /*
@@ -35,7 +34,7 @@ class SpringPlugin : Plugin {
 
     constructor() {
         this.configFiles = arrayOf("classpath:applicationContext.xml")
-        if (map.get("xml") != null && map.get("xml").toString().isNotBlank()) {
+        if (map["xml"] != null && map["xml"].toString().isNotBlank()) {
             var s = map.get("xml").toString()
             configFiles = s.split(",").toTypedArray()
         }

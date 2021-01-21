@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ class TestCase {
 
     @Test
     fun testReadToObj() {
-        println(Jsoner.read("test1.json", "", Student::class.java))
+        println(Jsoner.read("test1.json", "", Student::class))
     }
 
     @Test
@@ -52,11 +52,21 @@ class TestCase {
     }
 
     @Test
+    fun toObject() {
+        println(
+            Jsoner.toObject(
+                "{\"name\":\"Andy\",\"sex\":1}",
+                Student::class
+            )
+        )
+    }
+
+    @Test
     fun toObjectList() {
         println(
             Jsoner.toObjectList(
                 "[{\"name\":\"Andy\",\"sex\":1},{\"name\":\"Andy\",\"sex\":1}]",
-                Student::class.java
+                Student::class
             )
         )
     }

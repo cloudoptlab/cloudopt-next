@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.junit.Test
  */
 class TestCase {
 
-    private val logger = Logger.getLogger(TestCase::class.java)
+    private val logger = Logger.getLogger(TestCase::class)
 
     @Test
     fun test() {
@@ -34,15 +34,15 @@ class TestCase {
         logger.warn("warn")
         logger.error("error")
 
-        logger.debug("Hello {}","World")
-        logger.info("Hello {}","World")
-        logger.warn("Hello {}","World")
-        logger.error("Hello {}","World")
+        logger.debug("Hello {}", "World")
+        logger.info("Hello {}", "World")
+        logger.warn("Hello {}", "World")
+        logger.error("Hello {}", "World")
 
-        logger.debug("Loading {}","100%")
-        logger.info("Loading {}","100%")
-        logger.warn("Loading {}","100%")
-        logger.error("Loading {}","100%")
+        logger.debug("Loading {}", "100%")
+        logger.info("Loading {}", "100%")
+        logger.warn("Loading {}", "100%")
+        logger.error("Loading {}", "100%")
     }
 
 }

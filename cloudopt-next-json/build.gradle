@@ -1,6 +1,6 @@
 dependencies {
-    implementation project(':cloudopt-next-utils')
-    implementation project(':cloudopt-next-logging')
+    implementation project(":cloudopt-next-utils")
+    implementation project(":cloudopt-next-logging")
 }
 
-description = 'Cloudopt Next Json'
+description = "Cloudopt Next Json"

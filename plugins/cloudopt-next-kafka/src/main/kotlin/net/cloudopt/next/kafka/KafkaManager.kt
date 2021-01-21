@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.config.ConfigManager
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.Topology
+import kotlin.reflect.KClass
 
 
 /*
@@ -33,10 +34,10 @@ import org.apache.kafka.streams.Topology
  */
 object KafkaManager {
 
-    val logger = Logger.getLogger(KafkaManager::class.java)
+    val logger = Logger.getLogger(KafkaManager::class)
 
     @JvmStatic
-    internal val kafkaList: MutableMap<String, MutableSet<Class<*>>> = hashMapOf()
+    internal val kafkaList: MutableMap<String, MutableSet<KClass<*>>> = hashMapOf()
 
     @JvmStatic
     var consumer: KafkaConsumer<Any, Any>? = null
@@ -56,11 +57,11 @@ object KafkaManager {
 
     @JvmOverloads
     fun send(
-            topic: String,
-            key: String,
-            value: String,
-            partition: Int = -1,
-            callback: Handler<AsyncResult<Void>>? = null
+        topic: String,
+        key: String,
+        value: String,
+        partition: Int = -1,
+        callback: Handler<AsyncResult<Void>>? = null
     ) {
         var record = if (partition < 0) {
             KafkaProducerRecord.create<Any, String>(topic, key, value)

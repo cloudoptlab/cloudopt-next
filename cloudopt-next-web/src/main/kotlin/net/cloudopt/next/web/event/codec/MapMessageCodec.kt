@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,14 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.eventbus.MessageCodec
 
 
-class MapMessageCodec : MessageCodec<Map<String,Any>, Map<String,Any>> {
-    override fun encodeToWire(buffer: Buffer, map: Map<String,Any>) {
+class MapMessageCodec : MessageCodec<Map<String, Any>, Map<String, Any>> {
+    override fun encodeToWire(buffer: Buffer, map: Map<String, Any>) {
         var byteArray = JSON.toJSONString(map).toByteArray(CharsetUtil.UTF_8)
         buffer.appendInt(byteArray.size)
         buffer.appendBytes(byteArray)
     }
 
-    override fun decodeFromWire(pos: Int, buffer: Buffer): Map<String,Any> {
+    override fun decodeFromWire(pos: Int, buffer: Buffer): Map<String, Any> {
         var pos = pos
         val length = buffer.getInt(pos)
         pos += 4
@@ -36,7 +36,7 @@ class MapMessageCodec : MessageCodec<Map<String,Any>, Map<String,Any>> {
         return JSON.parseObject(String(bytes)).toMap()
     }
 
-    override fun transform(map: Map<String,Any>): Map<String, Any> {
+    override fun transform(map: Map<String, Any>): Map<String, Any> {
         return map
     }
 

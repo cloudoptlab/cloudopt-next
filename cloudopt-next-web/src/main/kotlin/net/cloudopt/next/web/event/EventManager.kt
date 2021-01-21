@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,14 @@ import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.EventBus
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Beaner
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.event.codec.MapMessageCodec
 import net.cloudopt.next.web.event.codec.ObjectMessageCodec
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.jvm.jvmName
 
 
 /*
@@ -38,9 +41,9 @@ object EventManager {
     lateinit var eventBus: EventBus
 
     @JvmStatic
-    private val eventList: MutableMap<String, Class<*>> = hashMapOf()
+    val eventList: MutableMap<String, KClass<*>> = hashMapOf()
 
-    private val logger = Logger.getLogger(EventManager::class.java)
+    private val logger = Logger.getLogger(EventManager::class)
 
     fun init(vertx: Vertx) {
         /**
@@ -50,21 +53,21 @@ object EventManager {
         eventBus.registerCodec(MapMessageCodec())
         eventBus.registerCodec(ObjectMessageCodec())
 
-        Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoEvent::class.java)
-                .forEach { clazz ->
-                    eventList[clazz.getDeclaredAnnotation(AutoEvent::class.java).value] = clazz
-                }
+        Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoEvent::class)
+            .forEach { clazz ->
+                eventList[clazz.findAnnotation<AutoEvent>()?.value!!] = clazz
+            }
 
         eventList.keys.forEach { key ->
             eventBus.consumer<Any>(key) { message ->
                 eventList[key]?.let {
-                    Beaner.newInstance<EventListener>(it)
+                    it.createInstance() as EventListener
                 }?.listener(message)
             }?.completionHandler { res ->
                 if (res.succeeded()) {
-                    logger.info("[EVENT] Registered event listener：[$key] on ${eventList.get(key)?.name}")
+                    logger.info("[EVENT] Registered event listener：[$key] on ${eventList?.get(key)?.jvmName}")
                 } else {
-                    logger.error("[EVENT] Registered event listener was error： ${eventList.get(key)?.name}")
+                    logger.error("[EVENT] Registered event listener was error： ${eventList?.get(key)?.jvmName}")
                 }
             }
         }
@@ -144,7 +147,7 @@ object EventManager {
      * @param name the topic to send it to
      * @param body the message, may be {@code null}
      */
-    fun publishObject(name: String, body: Any){
+    fun publishObject(name: String, body: Any) {
         publishObject(name, body, "object")
     }
 
@@ -156,7 +159,7 @@ object EventManager {
      * @param codecName When sending or publishing a message a codec name can be provided. This must correspond with a previously registered
      * message codec. This allows you to send arbitrary objects on the event bus (e.g. POJOs).
      */
-    fun publishObject(name: String, body: Any, codecName: String){
+    fun publishObject(name: String, body: Any, codecName: String) {
         var options = DeliveryOptions()
         options.codecName = codecName
         eventBus.publish(name, body, options)

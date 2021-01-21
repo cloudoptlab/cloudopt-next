@@ -1,8 +1,8 @@
 dependencies {
-    implementation project(':cloudopt-next-web')
-    implementation 'de.ruedigermoeller:fst:2.29'
-    implementation 'redis.clients:jedis:3.2.0'
-    implementation 'io.vertx:vertx-redis-client:3.8.5'
+    implementation project(":cloudopt-next-web")
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${property('kotlin_version')}"
+    compileOnly "io.lettuce:lettuce-core:6.0.2.RELEASE"
+    testImplementation "io.lettuce:lettuce-core:6.0.2.RELEASE"
 }
 
-description = 'Cloudopt Next Redis'
+description = "Cloudopt Next Redis"

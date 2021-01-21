@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import io.vertx.core.eventbus.MessageCodec
 
 
 class ObjectMessageCodec : MessageCodec<Any, Any> {
-    override fun encodeToWire(buffer: Buffer, any:Any) {
+    override fun encodeToWire(buffer: Buffer, any: Any) {
         var byteArray = JSON.toJSONString(any).toByteArray(CharsetUtil.UTF_8)
         buffer.appendInt(byteArray.size)
         buffer.appendBytes(byteArray)

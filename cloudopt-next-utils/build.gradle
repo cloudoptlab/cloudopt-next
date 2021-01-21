@@ -1,5 +1,5 @@
 dependencies {
-    api 'com.alibaba:fastjson:1.2.73'
+    api "com.alibaba:fastjson:1.2.75"
 }
 
-description = 'Cloudopt Next Utils'
+description = "Cloudopt Next Utils"

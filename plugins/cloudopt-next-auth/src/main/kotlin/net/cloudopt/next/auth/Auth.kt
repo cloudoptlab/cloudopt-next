@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ abstract class Auth {
                 for (groupId in user.groupsIdList) {
                     getGroup(groupId)?.rules?.let { tempRuleMap.addAll(it) }
                 }
-                cacheMap.put(user.uniqueTag, tempRuleMap)
+                cacheMap[user.uniqueTag] = tempRuleMap
             }
         }
     }

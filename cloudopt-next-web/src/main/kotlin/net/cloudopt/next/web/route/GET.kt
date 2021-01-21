@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.route
 
-import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.web.Validator
 import java.lang.annotation.Documented
 import kotlin.reflect.KClass
@@ -30,6 +29,6 @@ import kotlin.reflect.KClass
 @Documented
 annotation class GET(
     val value: String = "",
-    val valid: Array<KClass<out Validator>> = arrayOf(),
-    val httpMethod: HttpMethod = HttpMethod.GET
+    val valid: Array<KClass<out Validator>> = [],
+    val method: String = "GET"
 )

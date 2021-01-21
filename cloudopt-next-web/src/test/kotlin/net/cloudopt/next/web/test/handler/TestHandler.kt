@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,22 +25,29 @@ import net.cloudopt.next.web.handler.Handler
  * @Time: 2018/1/26
  * @Description: Test Handler
  */
-class TestHandler : Handler() {
+class TestHandler : Handler {
 
     companion object {
-        val logger = Logger.getLogger(TestHandler::class.java)
+        val logger = Logger.getLogger(TestHandler::class)
     }
 
-    override fun preHandle(resource: Resource) {
+    override fun preHandle(resource: Resource): Boolean {
         logger.info(resource.request.absoluteURI() + "-preHandle")
+        return true
     }
 
-    override fun postHandle(resource: Resource) {
+    override fun postHandle(resource: Resource): Boolean {
         logger.info(resource.request.absoluteURI() + "-postHandle")
+        return true
     }
 
-    override fun afterCompletion(resource: Resource) {
+    override fun afterRender(resource: Resource, bodyString: String): Boolean {
+        return true
+    }
+
+    override fun afterCompletion(resource: Resource): Boolean {
         logger.info(resource.request.absoluteURI() + "-afterCompletion")
+        return true
     }
 
 

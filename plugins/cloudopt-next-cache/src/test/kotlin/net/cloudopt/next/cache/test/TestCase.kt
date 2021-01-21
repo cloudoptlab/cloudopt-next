@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 original authors
+ * Copyright 2017-2021 Cloudopt
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,65 @@
  */
 package net.cloudopt.next.cache.test
 
-import net.cloudopt.next.cache.CacheHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import net.cloudopt.next.cache.CacheManager
 import net.cloudopt.next.cache.CachePlugin
-import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.redis.RedisPlugin
+import net.cloudopt.next.web.Worker
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 
-/*
- * @author: Cloudopt
- * @Time: 2020/07/29
- * @Description: Test Case
- */
-fun main(args: Array<String>) {
-    NextServer.addPlugin(CachePlugin())
-    NextServer.addHandler(CacheHandler())
-    NextServer.run()
+class TestCase {
+
+    private val redisPlugin = RedisPlugin()
+
+    private val cachePlugin = CachePlugin()
+
+    private val regionName = "testRegion"
+
+    @ExperimentalCoroutinesApi
+    @Before
+    fun init() {
+        redisPlugin.start()
+        cachePlugin.start()
+        Dispatchers.setMain(Worker.dispatcher())
+    }
+
+    @ExperimentalCoroutinesApi
+    @After
+    fun clear() {
+        redisPlugin.stop()
+        cachePlugin.stop()
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun setAndGet() = runBlocking {
+        CacheManager.set(regionName,"testCache","success")
+        val value:String = CacheManager.get(regionName, "testCache") as String
+        assert(value == "success")
+    }
+
+    @Test
+    fun getNull() = runBlocking {
+        val value = CacheManager.get(regionName, "testNullCache")
+        assert(value == null)
+    }
+
+    @Test
+    fun delete() = runBlocking {
+        CacheManager.set(regionName,"testDeleteCache","success")
+        CacheManager.delete(regionName, "testDeleteCache")
+        assert(CacheManager.get(regionName, "testDeleteCache") == null)
+    }
+
+
+
+
+
 }
