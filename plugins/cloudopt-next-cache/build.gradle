@@ -3,7 +3,8 @@ dependencies {
     api project(":plugins:cloudopt-next-redis")
     compileOnly "io.lettuce:lettuce-core:6.0.2.RELEASE"
     testImplementation "io.lettuce:lettuce-core:6.0.2.RELEASE"
-    implementation "com.github.ben-manes.caffeine:caffeine:2.8.8"
+    compileOnly "com.github.ben-manes.caffeine:caffeine:2.8.8"
+    testImplementation "com.github.ben-manes.caffeine:caffeine:2.8.8"
 }
 
 description = "Cloudopt Next Cache"

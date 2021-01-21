@@ -1,11 +1,13 @@
 dependencies {
     implementation project(":cloudopt-next-web")
     implementation project(":cloudopt-next-utils")
-    implementation "org.jooq:jooq:3.13.1"
-    implementation "com.zaxxer:HikariCP:3.4.2"
-    testImplementation "mysql:mysql-connector-java:8.0.18"
-    compileOnly "org.jooq:jooq-meta:3.13.1"
-    compileOnly "org.jooq:jooq-codegen:3.13.1"
+    compileOnly "org.jooq:jooq:3.14.4"
+    compileOnly "com.zaxxer:HikariCP:3.4.5"
+    testImplementation "org.jooq:jooq:3.14.4"
+    testImplementation "com.zaxxer:HikariCP:3.4.5"
+    testImplementation "mysql:mysql-connector-java:8.0.23"
+    compileOnly "org.jooq:jooq-meta:3.14.4"
+    compileOnly "org.jooq:jooq-codegen:3.14.4"
 }
 
 description = "Cloudopt Next Jooq"
