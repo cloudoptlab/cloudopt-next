@@ -30,7 +30,7 @@ import java.sql.Connection
  * @Time: 2018/2/6
  * @Description: Connection pool manager
  */
-object Jooqer {
+object JooqManager {
 
     @JvmStatic
     var connection: Connection? = null
