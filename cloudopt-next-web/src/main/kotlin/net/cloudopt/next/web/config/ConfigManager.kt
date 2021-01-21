@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web.config
 
+import io.vertx.tracing.opentracing.OpenTracingOptions
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Maper
@@ -39,16 +40,6 @@ object ConfigManager {
     val logger = Logger.getLogger(ConfigManager::class)
 
     init {
-
-        config.vertx.maxWorkerExecuteTime = 60L * 1000 * 1000000
-
-        config.vertx.fileSystemOptions.isFileCachingEnabled = false
-
-        config.vertx.blockedThreadCheckInterval = 1000
-
-        config.vertx.maxEventLoopExecuteTime = 2L * 1000 * 1000000
-
-        config.vertx.warningExceptionTime = 5L * 1000 * 1000000
 
         try {
             configMap = Jsoner.read(CONFIG_JSON_FILENAME)
