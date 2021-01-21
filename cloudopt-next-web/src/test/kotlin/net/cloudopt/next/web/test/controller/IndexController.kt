@@ -20,6 +20,7 @@ import net.cloudopt.next.validator.annotation.Chinese
 import net.cloudopt.next.web.NextServer.logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Worker
+import net.cloudopt.next.web.Worker.await
 import net.cloudopt.next.web.event.AfterEvent
 import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.render.View
@@ -124,19 +125,18 @@ class IndexController : Resource() {
 
     @GET("awaitWorker")
     suspend fun awaitWorker() {
-        var id = 0
-        awaitBlocking { it ->
+        var id = -1
+        id = await { future ->
             println("in await")
             id = 1
-            it.complete()
+            future.complete(id)
         }
-        println("in route")
         renderText("success! $id")
     }
 
     @POST("file")
     fun file() {
-        var files = getFiles()
+        val files = getFiles()
         files.forEach { file ->
             println("-------------------------------------")
             println("FileName: ${file.fileName()}")

@@ -23,12 +23,37 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.cloudopt.next.web.config.ConfigManager
+import kotlin.reflect.KClass
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/16
  * @Description: Vertx tool class
  */
+
+@JvmOverloads
+fun <T> Class<Any>.worker(
+    handler: Handler<Promise<T>>,
+    resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
+) {
+    Worker.worker(handler, resultHandler)
+}
+
+suspend fun <T> Class<Any>.await(handler: Handler<Promise<T>>): T {
+    return Worker.await(handler)
+}
+
+@JvmOverloads
+fun <T> KClass<Any>.worker(
+    handler: Handler<Promise<T>>,
+    resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
+) {
+    Worker.worker(handler, resultHandler)
+}
+
+suspend fun <T> KClass<Any>.await(handler: Handler<Promise<T>>): T {
+    return Worker.await(handler)
+}
 
 object Worker {
 
@@ -64,7 +89,7 @@ object Worker {
      *
      * @param handler handler representing the blocking code to run
      */
-    suspend fun <T> awaitWorker(handler: Handler<Promise<T>>): T {
+    suspend fun <T> await(handler: Handler<Promise<T>>): T {
         return vertx.executeBlocking(handler).await()
     }
 

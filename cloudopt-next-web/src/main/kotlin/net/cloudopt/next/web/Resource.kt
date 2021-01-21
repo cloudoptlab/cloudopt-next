@@ -481,36 +481,4 @@ open class Resource {
         Worker.worker(handler)
     }
 
-    /**
-     * By default, if executeBlocking is called several times from
-     * the same context (e.g. the same verticle instance) then the
-     * different executeBlocking are executed serially (i.e. one
-     * after another).If you don’t care about ordering you can call
-     * the function.
-     *
-     * @param handler handler representing the blocking code to run
-     * @param resultHandler handler that will be called when the blocking code is complete
-     */
-    fun <T> blocking(
-        handler: Handler<Promise<T>>, resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
-    ) {
-        Worker.worker(handler, resultHandler)
-    }
-
-    /**
-     * By default, if executeBlocking is called several times from
-     * the same context (e.g. the same verticle instance) then the
-     * different executeBlocking are executed serially (i.e. one
-     * after another).If you don’t care about ordering you can call
-     * the function.
-     *
-     * If using await, the call must be completed manually before
-     * it will end.
-     *
-     * @param handler handler representing the blocking code to run
-     */
-    suspend fun awaitBlocking(handler: Handler<Promise<Any>>) {
-        Worker.awaitWorker(handler)
-    }
-
 }
