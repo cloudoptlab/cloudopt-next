@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.config
 
-import io.vertx.tracing.opentracing.OpenTracingOptions
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Maper
