@@ -56,14 +56,14 @@ class JooqPlugin : Plugin {
                     SQLDialect.MYSQL
                 }
             }
-            Jooqer.connection = pool.getConnection()
-            Jooqer.connectionProvider = DataSourceConnectionProvider(pool.getDatasource())
-            Jooqer.transactionProvider = DefaultTransactionProvider(Jooqer.connectionProvider)
-            Jooqer.configuration.set(Jooqer.connectionProvider)
-                .set(Jooqer.transactionProvider)
+            JooqManager.connection = pool.getConnection()
+            JooqManager.connectionProvider = DataSourceConnectionProvider(pool.getDatasource())
+            JooqManager.transactionProvider = DefaultTransactionProvider(JooqManager.connectionProvider)
+            JooqManager.configuration.set(JooqManager.connectionProvider)
+                .set(JooqManager.transactionProvider)
                 .set(sqlDialect)
-                .set(Jooqer.settings)
-            Jooqer.dsl = DSL.using(Jooqer.configuration)
+                .set(JooqManager.settings)
+            JooqManager.dsl = DSL.using(JooqManager.configuration)
             return true
         } catch (e: SQLException) {
             e.printStackTrace()
@@ -74,7 +74,7 @@ class JooqPlugin : Plugin {
 
     override fun stop(): Boolean {
         try {
-            Jooqer.connection?.close()
+            JooqManager.connection?.close()
             return true
         } catch (e: SQLException) {
             e.printStackTrace()
