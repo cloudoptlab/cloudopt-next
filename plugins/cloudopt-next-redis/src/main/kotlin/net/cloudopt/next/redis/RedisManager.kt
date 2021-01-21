@@ -38,7 +38,7 @@ import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
  */
 object RedisManager {
 
-    internal var cluster = false
+    var cluster = false
 
     open lateinit var client: RedisClient
 

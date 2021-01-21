@@ -18,13 +18,15 @@ package net.cloudopt.next.cache
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
+import io.lettuce.core.api.StatefulRedisConnection
+import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
 import io.lettuce.core.codec.ByteArrayCodec
 import net.cloudopt.next.cache.serializer.FastJsonSerializer
 import net.cloudopt.next.cache.serializer.Serializer
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.redis.RedisManager
-import net.cloudopt.next.web.Worker
+import net.cloudopt.next.web.Worker.await
 import net.cloudopt.next.web.config.ConfigManager
 import java.util.concurrent.TimeUnit
 
@@ -49,6 +51,12 @@ object CacheManager {
 
     @JvmStatic
     internal val config = ConfigManager.initObject("cache", CacheConfig::class) as CacheConfig
+
+    @JvmStatic
+    internal lateinit var redisConnect: StatefulRedisConnection<ByteArray, ByteArray>
+
+    @JvmStatic
+    internal lateinit var redisClusterConnect: StatefulRedisClusterConnection<ByteArray, ByteArray>
 
     /**
      * Create cache region by name.
@@ -93,7 +101,7 @@ object CacheManager {
      * @return the value of key, or null when key does not exist
      */
     suspend fun get(regionName: String, key: String): Any? {
-        return Worker.awaitWorker<Any> { future ->
+        return await<Any> { future ->
             var value = regions[regionName]?.getIfPresent(key)
             if (value == null) {
                 value = RedisManager.client.connect(ByteArrayCodec.INSTANCE).sync().get(key.toByteArray())
@@ -121,16 +129,20 @@ object CacheManager {
      * @return String simple-string-reply
      */
     suspend fun set(regionName: String, key: String, value: Any): String? {
-        return Worker.awaitWorker<String> { future ->
+        return await<String> { future ->
             if (regions[regionName] == null) {
                 future.complete(null)
             }
             regions[regionName]?.put(key, serializer.serialize(value))
-            val replyString = RedisManager.client.connect(ByteArrayCodec.INSTANCE).sync()
-                .setex(key.toByteArray(), expireMap[regionName] ?: 500, serializer.serialize(value))
+            val replyString = if (RedisManager.cluster) {
+                redisClusterConnect.sync()
+                    .setex(key.toByteArray(), expireMap[regionName] ?: 500, serializer.serialize(value))
+            } else {
+                redisConnect.sync()
+                    .setex(key.toByteArray(), expireMap[regionName] ?: 500, serializer.serialize(value))
+            }
             future.complete(replyString)
         }
-
     }
 
     /**
@@ -143,10 +155,14 @@ object CacheManager {
      */
     @JvmOverloads
     suspend fun delete(regionName: String, key: String, publish: Boolean = true): Long? {
-        return Worker.awaitWorker<Long> { future ->
+        return await<Long> { future ->
             regions[regionName]?.invalidate(key)
-            val row = RedisManager.client.connect(ByteArrayCodec.INSTANCE).sync().del(key.toByteArray())
-            if (config.cluster && publish){
+            val row = if (RedisManager.cluster) {
+                redisClusterConnect.sync().del(key.toByteArray())
+            } else {
+                redisConnect.sync().del(key.toByteArray())
+            }
+            if (config.cluster && publish) {
                 RedisManager.publishSync(
                     CHANNELS,
                     Jsoner.toJsonString(CacheEventMessage(regionName = regionName, key = key))
