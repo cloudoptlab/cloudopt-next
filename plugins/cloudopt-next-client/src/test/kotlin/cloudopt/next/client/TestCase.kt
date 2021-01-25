@@ -15,6 +15,8 @@
  */
 package cloudopt.next.client
 
+import io.vertx.ext.web.client.WebClientOptions
+
 
 /*
  * @author: Cloudopt
@@ -26,6 +28,7 @@ package cloudopt.next.client
 fun main(args: Array<String>) {
 
     var client = HttpClient("https://www.cloudopt.net").setPort(443)
+
 
     client.get("/api/v1/grade/website/www.baidu.com").send().onSuccess { response->
         print(response.bodyAsString())
