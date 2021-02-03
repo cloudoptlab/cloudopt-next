@@ -25,12 +25,6 @@ import kotlinx.coroutines.launch
 import net.cloudopt.next.web.config.ConfigManager
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/16
- * @Description: Vertx tool class
- */
-
 @JvmOverloads
 fun <T> Class<Any>.worker(
     handler: Handler<Promise<T>>,
@@ -53,6 +47,10 @@ fun <T> KClass<Any>.worker(
 
 suspend fun <T> KClass<Any>.await(handler: Handler<Promise<T>>): T {
     return Worker.await(handler)
+}
+
+fun KClass<Any>.then(handler: Handler<Void>) {
+    return Worker.then(handler)
 }
 
 object Worker {
@@ -87,6 +85,16 @@ object Worker {
      */
     suspend fun <T> await(handler: Handler<Promise<T>>): T {
         return vertx.executeBlocking(handler).await()
+    }
+
+    /**
+     * Puts the handler on the event queue for the current context so it will be run asynchronously ASAP after all
+     * preceeding events have been handled.
+     *
+     * @param action - a handler representing the action to execute
+     */
+    fun then(action: Handler<Void>) {
+        vertx.runOnContext(action)
     }
 
     /**
