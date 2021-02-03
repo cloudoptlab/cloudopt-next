@@ -110,8 +110,12 @@ object ValidatorTool {
         method: KFunction<*>,
         parameterValues: MutableMap<KParameter, Any?>
     ): ValidatorResult {
+        var args = parameterValues.values.toTypedArray()
+        if (method.isSuspend) {
+            args = args.plus(null)
+        }
         val violations =
-            executableValidator.validateParameters(any, method.javaMethod, parameterValues.values.toTypedArray())
+            executableValidator.validateParameters(any, method.javaMethod, args)
         return if (violations.isEmpty()) {
             ValidatorResult(true, "")
         } else {
