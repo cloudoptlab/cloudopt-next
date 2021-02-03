@@ -391,9 +391,10 @@ open class Resource {
 
     /**
      * Fail the context with the specified status code.
-     * This will cause the router to route the context to any matching failure handlers for the request. If no failure handlers
-     * match It will trigger the error handler matching the status code. You can define such error handler with
-     * {@link Router#errorHandler(int, Handler)}. If no error handler is not defined, It will send a default failure response with provided status code.
+     * This will cause the router to route the context to any matching failure handlers for the request. If no failure
+     * handlers match It will trigger the error handler matching the status code. You can define such error handler with
+     * {@link Router#errorHandler(int, Handler)}. If no error handler is not defined, It will send a default failure
+     * response with provided status code.
      *
      * @param code  the HTTP status code
      */
@@ -467,11 +468,9 @@ open class Resource {
     }
 
     /**
-     * By default, if executeBlocking is called several times from
-     * the same context (e.g. the same verticle instance) then the
-     * different executeBlocking are executed serially (i.e. one
-     * after another).If you don’t care about ordering you can call
-     * the function.
+     * By default, if executeBlocking is called several times from the same context (e.g. the same verticle instance)
+     * then the different executeBlocking are executed serially (i.e. one after another).If you don’t care about
+     * ordering you can call the function.
      *
      * @param handler handler representing the blocking code to run
      */

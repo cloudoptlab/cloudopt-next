@@ -66,4 +66,11 @@ class TestCase {
         var s = e.encrypt("hello")
         println(s)
     }
+
+    @Test
+    fun testSha256() {
+        var e = SHA256Encrypt()
+        var s = e.encrypt("hello")
+        println(s)
+    }
 }

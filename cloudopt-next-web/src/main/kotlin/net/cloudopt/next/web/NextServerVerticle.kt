@@ -395,11 +395,7 @@ class NextServerVerticle : CoroutineVerticle() {
                 /**
                  * If there are no arguments, just execute the method
                  */
-                if (resourceTable.clazzMethod.isSuspend) {
-                    resourceTable.clazzMethod.callSuspend(controllerObj)
-                } else {
-                    resourceTable.clazzMethod.call(controllerObj)
-                }
+                resourceTable.clazzMethod.callSuspend(controllerObj)
 
 
             } else {
@@ -407,15 +403,10 @@ class NextServerVerticle : CoroutineVerticle() {
                 val jsonObject: JSONObject = JSONObject.toJSON(controllerObj.getParams()) as JSONObject
                 for (para in resourceTable.clazzMethod.parameters) {
                     if (para.kind.name == "VALUE" && para.hasAnnotation<Parameter>()) {
-                        getParaByType(para.findAnnotation<Parameter>()?.value, para, jsonObject)?.let {
-                            arr.put(
-                                para,
-                                it
-                            )
-                        }
+                        arr[para] = getParaByType(para.findAnnotation<Parameter>()?.value, para, jsonObject)
                     }
                     if (para.hasAnnotation<RequestBody>()) {
-                        controllerObj.getBodyJson(para.type.jvmErasure)?.let { arr.put(para, it) }
+                        arr[para] = controllerObj.getBodyJson(para.type.jvmErasure)
                     }
                 }
                 /**
@@ -426,12 +417,7 @@ class NextServerVerticle : CoroutineVerticle() {
                     ValidatorTool.validateParameters(controllerObj, resourceTable.clazzMethod, arr)
                 if (validatorResult.result) {
                     arr[resourceTable.clazzMethod.parameters[0]] = controllerObj
-                    if (resourceTable.clazzMethod.isSuspend) {
-                        resourceTable.clazzMethod.callSuspendBy(arr)
-                    } else {
-                        resourceTable.clazzMethod.callBy(arr)
-                    }
-
+                    resourceTable.clazzMethod.callSuspendBy(arr)
                 } else {
                     controllerObj.context.put("errorMessage", validatorResult.message)
                     controllerObj.fail(400)

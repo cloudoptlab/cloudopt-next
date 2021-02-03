@@ -25,12 +25,6 @@ import kotlinx.coroutines.launch
 import net.cloudopt.next.web.config.ConfigManager
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/16
- * @Description: Vertx tool class
- */
-
 @JvmOverloads
 fun <T> Class<Any>.worker(
     handler: Handler<Promise<T>>,
@@ -55,17 +49,19 @@ suspend fun <T> KClass<Any>.await(handler: Handler<Promise<T>>): T {
     return Worker.await(handler)
 }
 
+fun KClass<Any>.then(handler: Handler<Void>) {
+    return Worker.then(handler)
+}
+
 object Worker {
 
     @JvmStatic
     open var vertx: Vertx = Vertx.vertx(ConfigManager.config.vertx)
 
     /**
-     * By default, if executeBlocking is called several times from
-     * the same context (e.g. the same verticle instance) then the
-     * different executeBlocking are executed serially (i.e. one
-     * after another).If you don’t care about ordering you can call
-     * the function.
+     * By default, if executeBlocking is called several times from the same context (e.g. the same verticle instance)
+     * then the different executeBlocking are executed serially (i.e. one after another).If you don’t care about
+     * ordering you can call the function.
      *
      * @param handler handler representing the blocking code to run
      * @param resultHandler handler that will be called when the blocking code is complete
@@ -78,11 +74,9 @@ object Worker {
     }
 
     /**
-     * By default, if executeBlocking is called several times from
-     * the same context (e.g. the same verticle instance) then the
-     * different executeBlocking are executed serially (i.e. one
-     * after another).If you don’t care about ordering you can call
-     * the function.
+     * By default, if executeBlocking is called several times from the same context (e.g. the same verticle instance)
+     * then the different executeBlocking are executed serially (i.e. one after another).If you don’t care about
+     * ordering you can call the function.
      *
      * If using await, the call must be completed manually before
      * it will end.
@@ -91,6 +85,16 @@ object Worker {
      */
     suspend fun <T> await(handler: Handler<Promise<T>>): T {
         return vertx.executeBlocking(handler).await()
+    }
+
+    /**
+     * Puts the handler on the event queue for the current context so it will be run asynchronously ASAP after all
+     * preceeding events have been handled.
+     *
+     * @param action - a handler representing the action to execute
+     */
+    fun then(action: Handler<Void>) {
+        vertx.runOnContext(action)
     }
 
     /**
@@ -145,10 +149,7 @@ object Worker {
         return vertx.cancelTimer(id)
     }
 
-    /**
-     * Returns a coroutine dispatcher for the current Vert.x context.
-     * It uses the Vert.x context event loop.
-     */
+    /** Returns a coroutine dispatcher for the current Vert.x context. It uses the Vert.x context event loop. */
     fun dispatcher(): CoroutineDispatcher {
         return vertx.dispatcher()
     }
@@ -165,8 +166,8 @@ object Worker {
     }
 
     /**
-     * Stop the the Vertx instance and release any resources held by it.
-     * The instance cannot be used after it has been closed.
+     * Stop the the Vertx instance and release any resources held by it. The instance cannot be used after it has been
+     * closed.
      */
     fun close() {
         vertx.close()

@@ -36,6 +36,9 @@ import kotlin.reflect.full.createInstance
 class JooqPlugin : Plugin {
 
     override fun start(): Boolean {
+
+        System.getProperties().setProperty("org.jooq.no-logo", "true")
+
         try {
             var map = ConfigManager.init("jooq")
 
