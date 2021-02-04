@@ -26,7 +26,7 @@ import org.junit.Test
  */
 class TestCase {
 
-    val logger = Logger.getLogger(TestCase::class.java)
+    val logger = Logger.getLogger(TestCase::class)
 
     @Test
     fun getDefaultLocale() {

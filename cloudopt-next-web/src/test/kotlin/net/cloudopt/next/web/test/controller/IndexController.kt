@@ -69,7 +69,6 @@ class IndexController : Resource() {
         age: Int
     ) {
         var map = hashMapOf<String, Any>()
-        renderJson(map)
         renderJson {
             template {
                 parameters["name"] = name
