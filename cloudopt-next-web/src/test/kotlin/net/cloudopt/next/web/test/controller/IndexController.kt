@@ -16,20 +16,20 @@
 package net.cloudopt.next.web.test.controller
 
 import io.vertx.kotlin.coroutines.awaitEvent
-import net.cloudopt.next.validator.annotation.Chinese
 import net.cloudopt.next.web.NextServer.logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Worker
 import net.cloudopt.next.web.Worker.await
+import net.cloudopt.next.web.Worker.then
 import net.cloudopt.next.web.event.AfterEvent
 import net.cloudopt.next.web.event.EventManager
-import net.cloudopt.next.web.render.View
 import net.cloudopt.next.web.route.*
 import net.cloudopt.next.web.test.Student
 import net.cloudopt.next.web.test.interceptor.TestInterceptor1
 import net.cloudopt.next.web.test.validator.TestCoroutinesValidator
 import net.cloudopt.next.web.test.validator.TestValidator
 import javax.validation.constraints.Min
+import javax.validation.constraints.NotBlank
 
 /*
  * @author: Cloudopt
@@ -42,28 +42,40 @@ class IndexController : Resource() {
     @GET(valid = [TestValidator::class, TestCoroutinesValidator::class])
     fun index() {
         setCookie("test", "cookie", "127.0.0.1", 360000, "/", false, false)
-        renderHtml(view = "index")
+        renderHtml {
+            template {
+                name = "index"
+            }
+        }
     }
 
     @GET("delete")
     fun delete() {
         delCookie("test")
-        renderHtml(view = "index")
+        renderHtml {
+            template {
+                name = "index"
+            }
+        }
     }
 
     @GET("args")
-    fun argsController(
-        @Chinese(false)
-        @Parameter("name", defaultValue = "Peter")
+    suspend fun argsController(
+        @NotBlank
+        @Parameter
         name: String,
         @Min(18)
-        @Parameter()
+        @Parameter
         age: Int
     ) {
         var map = hashMapOf<String, Any>()
-        map["name"] = name
-        map["age"] = age
         renderJson(map)
+        renderJson {
+            template {
+                parameters["name"] = name
+                parameters["age"] = age
+            }
+        }
     }
 
     @POST("body")
@@ -78,26 +90,32 @@ class IndexController : Resource() {
 
     @GET("free")
     fun free() {
-        var view = View()
-        view.view = "index"
-        view.parameters.put("name", "free")
-        renderFree(view)
+        renderFree {
+            template {
+                name = "index"
+                parameters["name"] = "free"
+            }
+        }
     }
 
     @GET("hbs")
     fun hbs() {
-        var view = View()
-        view.view = "index"
-        view.parameters.put("name", "hbs")
-        renderHbs(view)
+        renderHbs {
+            template {
+                name = "index"
+                parameters["name"] = "hbs"
+            }
+        }
     }
 
     @GET("json")
     fun json() {
-        var map = hashMapOf<String, Any>()
-        map.put("a", 1)
-        map.put("b", 2)
-        renderJson(map)
+        val student = Student(name = "andy", sex = 1)
+        renderJson {
+            template {
+                parameters["result"] = student
+            }
+        }
     }
 
     @GET("event")
@@ -154,7 +172,7 @@ class IndexController : Resource() {
         try {
             val sleep = Math.max(1L, (Math.random() * 3).toLong())
             this.setCookie("hello", getParam("index") ?: "-1")
-            context.vertx().setTimer(sleep * 1000L) {
+            Worker.setTimer(sleep * 1000L) {
                 renderText(getCookie("hello") ?: "Can't find the cookie!")
             }
         } catch (e: Exception) {
@@ -171,7 +189,11 @@ class IndexController : Resource() {
 
     @GET("socket")
     fun socketView() {
-        renderHtml(view = "socket")
+        renderHtml {
+            template {
+                name = "socket"
+            }
+        }
     }
 
     @GET("coroutines", valid = [TestCoroutinesValidator::class])
@@ -188,6 +210,18 @@ class IndexController : Resource() {
     fun afterEvent() {
         this.context.data().put("key", "value")
         renderText("AfterEvent is success!")
+    }
+
+    @GET("then")
+    fun thenGet() {
+        then {
+            println(1)
+        }
+
+        then {
+            println(2)
+        }
+        renderText("Then action is success!")
     }
 
 }

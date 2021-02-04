@@ -15,11 +15,10 @@
  */
 package net.cloudopt.next.web.render
 
-import java.util.*
+class Template {
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: View Object
- */
-data class View(var parameters: HashMap<String, Any> = hashMapOf<String, Any>(), var view: String = "")
+    var name :String = ""
+
+    var parameters: MutableMap<String, Any> = mutableMapOf()
+
+}
