@@ -39,26 +39,26 @@ class HtmlRender : Render {
     }
 
     override fun render(resource: Resource, result: Any) {
-        val view = result as View
+        val nextTemplate = result as Template
 
-        if (view.view.indexOf(".") < 0) {
-            view.view = view.view + ".html"
+        if (nextTemplate.name.indexOf(".") < 0) {
+            nextTemplate.name = nextTemplate.name + ".html"
         }
 
         try {
             resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
-            if (templates.get(view.view) != null) {
-                end(resource, templates.get(view.view) ?: "")
+            if (templates.get(nextTemplate.name) != null) {
+                end(resource, templates[nextTemplate.name] ?: "")
             } else {
-                var inputStream = Resourcer.getFileInputStream(ConfigManager.config.templates + "/" + view.view)
-                var bufferedReader = BufferedReader(InputStreamReader(inputStream))
-                var stringBuilder = StringBuilder()
+                val inputStream = Resourcer.getFileInputStream(ConfigManager.config.templates + "/" + nextTemplate.name)
+                val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+                val stringBuilder = StringBuilder()
                 bufferedReader.forEachLine { content ->
                     if (content.isNotBlank()) {
                         stringBuilder.append(content)
                     }
                 }
-                templates.put(view.view, stringBuilder.toString())
+                templates[nextTemplate.name] = stringBuilder.toString()
                 end(resource, stringBuilder.toString())
             }
 

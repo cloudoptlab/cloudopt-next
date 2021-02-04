@@ -16,7 +16,6 @@
 package net.cloudopt.next.web
 
 import io.vertx.codegen.annotations.Nullable
-import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
 import io.vertx.core.Promise
 import io.vertx.core.buffer.Buffer
@@ -28,7 +27,7 @@ import io.vertx.ext.web.RoutingContext
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.web.render.RenderFactory
-import net.cloudopt.next.web.render.View
+import net.cloudopt.next.web.render.Template
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -203,8 +202,8 @@ open class Resource {
         if (path.isNotBlank()) {
             cookie.path = path
         }
-        cookie.setHttpOnly(httpOnly)
-        cookie.setSecure(cookieSecureFlag)
+        cookie.isHttpOnly = httpOnly
+        cookie.isSecure = cookieSecureFlag
         setCookie(cookie)
     }
 
@@ -276,6 +275,14 @@ open class Resource {
     }
 
     /**
+     * Using the json render, render the Template.parameters and write it to response.
+     * @param block
+     */
+    fun renderJson(block: () -> Template) {
+        render(RenderFactory.JSON, block.invoke().parameters)
+    }
+
+    /**
      * Using the json render, render the data and write it to response.
      * @param result Any object,
      */
@@ -293,59 +300,30 @@ open class Resource {
 
     /**
      * Using the html render, render the data and write it to response.
-     * @see View
-     * @param view view object
+     * @see Template
+     * @param block
      */
-    fun renderHtml(view: View) {
-        render(RenderFactory.HTML, view)
-    }
-
-    /**
-     * Using the html render, render the data and write it to response.
-     * @see View
-     * @param parameters data to be rendered
-     * @param view template file name
-     */
-    fun renderHtml(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
-        render(RenderFactory.HTML, View(parameters, view))
+    fun renderHtml(block: () -> Template) {
+        render(RenderFactory.HTML, block.invoke())
     }
 
     /**
      * Using the hbs render, render the data and write it to response.
-     * @see View
-     * @param view view object
+     * @see Template
+     * @param block
      */
-    fun renderHbs(view: View) {
-        render(RenderFactory.HBS, view)
-    }
+    fun renderHbs(block: () -> Template) {
 
-    /**
-     * Using the hbs render, render the data and write it to response.
-     * @see View
-     * @param parameters data to be rendered
-     * @param view template file name
-     */
-    fun renderHbs(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
-        render(RenderFactory.HBS, View(parameters, view))
+        render(RenderFactory.HBS, block.invoke())
     }
 
     /**
      * Using the freemarker render, render the data and write it to response.
-     * @see View
-     * @param view view object
+     * @see Template
+     * @param block
      */
-    fun renderFree(view: View) {
-        render(RenderFactory.FREE, view)
-    }
-
-    /**
-     * Using the html render, render the data and write it to response.
-     * @see View
-     * @param parameters data to be rendered
-     * @param view template file name
-     */
-    fun renderFree(parameters: HashMap<String, Any> = hashMapOf<String, Any>(), view: String = "") {
-        render(RenderFactory.FREE, View(parameters, view))
+    fun renderFree(block: () -> Template) {
+        render(RenderFactory.FREE, block.invoke())
     }
 
     /**
@@ -478,6 +456,17 @@ open class Resource {
         handler: Handler<Promise<Any>>
     ) {
         Worker.worker(handler)
+    }
+
+    /**
+     * Generating view objects by kotlin dsl.
+     * @param block [@kotlin.ExtensionFunctionType] Function1<View, Unit>
+     * @return View
+     */
+    fun template(block: Template.() -> Unit): Template {
+        val template = Template()
+        template.block()
+        return template
     }
 
 }

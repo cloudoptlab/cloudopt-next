@@ -36,7 +36,7 @@ class HbsRender : Render {
 
     override fun render(resource: Resource, obj: Any) {
 
-        var view: View = obj as View
+        var nextTemplate: net.cloudopt.next.web.render.Template = obj as net.cloudopt.next.web.render.Template
 
         val handlebars = Handlebars()
 
@@ -45,14 +45,14 @@ class HbsRender : Render {
         var html = ""
 
         try {
-            template = if (templates.get(view.view) != null) {
-                templates.get(view.view)
+            template = if (templates[nextTemplate.name] != null) {
+                templates[nextTemplate.name]
             } else {
-                templates.put(view.view, handlebars.compile(ConfigManager.config.templates + "/" + view.view))
-                templates.get(view.view)
+                templates[nextTemplate.name] = handlebars.compile(ConfigManager.config.templates + "/" + nextTemplate.name)
+                templates[nextTemplate.name]
             }
 
-            html = template!!.apply(view.parameters)
+            html = template!!.apply(nextTemplate.parameters)
         } catch (e: IOException) {
             e.printStackTrace()
             end(resource)

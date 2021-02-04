@@ -75,22 +75,22 @@ class FreemarkerRender : Render {
 
     override fun render(resource: Resource, obj: Any) {
 
-        var view: View = obj as View
+        val nextTemplate: net.cloudopt.next.web.render.Template = obj as net.cloudopt.next.web.render.Template
 
-        if (view.view.indexOf(".") < 0) {
-            view.view = view.view + ".ftl"
+        if (nextTemplate.name.indexOf(".") < 0) {
+            nextTemplate.name = nextTemplate.name + ".ftl"
         }
 
-        var temp = if (templates.get(view.view) != null) {
-            templates.get(view.view)
+        var temp = if (templates[nextTemplate.name] != null) {
+            templates[nextTemplate.name]
         } else {
-            templates.put(view.view, config?.getTemplate(view.view))
-            templates.get(view.view)
+            templates[nextTemplate.name] = config?.getTemplate(nextTemplate.name)
+            templates[nextTemplate.name]
         }
 
         var writer = StringWriter()
 
-        temp?.process(view.parameters, writer)
+        temp?.process(nextTemplate.parameters, writer)
 
         resource.response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
 

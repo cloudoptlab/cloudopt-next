@@ -131,7 +131,7 @@ object Worker {
      * @param handler  the handler that will be called with the timer ID when the timer fires
      * @return the unique ID of the timer
      */
-    fun setTimer(delay: Long, periodic: Boolean, handler: Handler<Long>): Long {
+    fun setTimer(delay: Long, periodic: Boolean = false, handler: Handler<Long>): Long {
         return if (periodic) {
             vertx.setPeriodic(delay, handler)
         } else {
