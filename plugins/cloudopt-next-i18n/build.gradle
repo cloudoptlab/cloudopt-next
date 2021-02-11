@@ -1,6 +1,6 @@
 dependencies {
-    implementation project(":cloudopt-next-utils")
-    implementation project(":cloudopt-next-json")
+    api project(":cloudopt-next-utils")
+    api project(":cloudopt-next-json")
     testImplementation project(':cloudopt-next-logging')
 }
 

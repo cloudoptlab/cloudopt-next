@@ -1,5 +1,5 @@
 dependencies {
-    implementation project(":cloudopt-next-web")
+    api project(":cloudopt-next-web")
     compileOnly "org.springframework:spring-context:5.2.4.RELEASE"
     testImplementation "org.springframework:spring-context:5.2.4.RELEASE"
 }

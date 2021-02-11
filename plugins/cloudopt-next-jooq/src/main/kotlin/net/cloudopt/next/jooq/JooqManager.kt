@@ -33,16 +33,16 @@ import java.sql.Connection
 object JooqManager {
 
     @JvmStatic
-    var connection: Connection? = null
+    lateinit var connection: Connection
 
     @JvmStatic
-    var dsl: DSLContext? = null
+    lateinit var dsl: DSLContext
 
     @JvmStatic
-    var transactionProvider: TransactionProvider? = null
+    lateinit var transactionProvider: TransactionProvider
 
     @JvmStatic
-    var connectionProvider: ConnectionProvider? = null
+    lateinit var connectionProvider: ConnectionProvider
 
     @JvmStatic
     var settings: Settings = SettingsTools.defaultSettings()

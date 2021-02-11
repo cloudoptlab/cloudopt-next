@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cloudopt.next.client
+package net.cloudopt.next.client
 
 import io.vertx.core.buffer.Buffer
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
-import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Worker
 
 
