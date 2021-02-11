@@ -1,6 +1,6 @@
 dependencies {
-    implementation project(":cloudopt-next-web")
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${property('kotlin_version')}"
+    api project(":cloudopt-next-web")
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${property('kotlin_version')}"
     compileOnly "io.lettuce:lettuce-core:6.0.2.RELEASE"
     testImplementation "io.lettuce:lettuce-core:6.0.2.RELEASE"
 }

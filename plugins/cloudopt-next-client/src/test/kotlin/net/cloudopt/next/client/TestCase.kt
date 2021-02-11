@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cloudopt.next.client
-
-import io.vertx.ext.web.client.WebClientOptions
+package net.cloudopt.next.client
 
 
 /*
@@ -30,9 +28,9 @@ fun main(args: Array<String>) {
     var client = HttpClient("https://www.cloudopt.net").setPort(443)
 
 
-    client.get("/api/v1/grade/website/www.baidu.com").send().onSuccess { response->
+    client.get("/api/v2/grade/website/www.baidu.com").send().onSuccess { response ->
         print(response.bodyAsString())
-    }.onFailure{err->
+    }.onFailure { err ->
         println("Connection failure!")
     }
 }
