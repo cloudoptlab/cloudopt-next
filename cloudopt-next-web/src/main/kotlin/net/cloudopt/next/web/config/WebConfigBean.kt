@@ -15,6 +15,8 @@
  */
 package net.cloudopt.next.web.config
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.vertx.core.DeploymentOptions
 import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpServerOptions
@@ -25,6 +27,8 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
  * @Time: 2018/1/9
  * @Description: Cloudopt Next Web configuration file
  */
+@JsonAutoDetect(fieldVisibility  = JsonAutoDetect.Visibility.PUBLIC_ONLY)
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class WebConfigBean(
     var env: String = "",
     var debug: Boolean = true,

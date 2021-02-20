@@ -25,7 +25,9 @@ import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
 import net.cloudopt.next.json.Jsoner
-import net.cloudopt.next.utils.Maper
+import net.cloudopt.next.json.Jsoner.jsonToObjectList
+import net.cloudopt.next.json.Jsoner.toJsonArray
+import net.cloudopt.next.utils.Maper.toObject
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.Template
 import java.util.*
@@ -116,7 +118,7 @@ open class Resource {
             it
             map[it.key] = Wafer.contentFilter(it.value)
         }
-        return Maper.toObject(context.request().formAttributes() as MutableMap<String, Any>, clazz)
+        return (context.request().formAttributes() as MutableMap<String, Any>).toObject(clazz)
     }
 
     /**
@@ -149,7 +151,7 @@ open class Resource {
         request.params().forEach { e ->
             map[e.key] = Wafer.contentFilter(e.value) ?: ""
         }
-        return Maper.toObject(map, clazz)
+        return map.toObject(clazz)
     }
 
     /**
@@ -413,28 +415,28 @@ open class Resource {
      * @return  the entire HTTP request body as a json object, assuming UTF-8 encoding.
      */
     fun getBodyJson(): Any {
-        return Jsoner.toJsonMap(context.bodyAsJson.toString())
+        return context.bodyAsJson
     }
 
     /**
      * @return  the entire HTTP request body as a json and convert object, assuming UTF-8 encoding.
      */
     fun getBodyJson(clazz: KClass<*>): Any {
-        return Jsoner.toObject(context.bodyAsJson.toString(), clazz)
+        return context.bodyAsJson.mapTo(clazz.java)
     }
 
     /**
      * @return  the entire HTTP request body as a json array, assuming UTF-8 encoding.
      */
     fun getBodyJsonArray(): Any {
-        return Jsoner.toJsonMapList(context.bodyAsJson.toString())
+        return context.bodyAsJson.toString().toJsonArray()
     }
 
     /**
      * @return  the entire HTTP request body as a json and convert object array, assuming UTF-8 encoding.
      */
     fun getBodyJsonArray(clazz: KClass<*>): Any {
-        return Jsoner.toObjectList(context.bodyAsJson.toString(), clazz)
+        return context.bodyAsJson.toString().jsonToObjectList(clazz)
     }
 
     /**

@@ -15,9 +15,9 @@
  */
 package net.cloudopt.next.web.config
 
-import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Maper
+import net.cloudopt.next.utils.Maper.toObject
+import net.cloudopt.next.utils.Resourcer
 import kotlin.reflect.KClass
 
 
@@ -41,17 +41,17 @@ object ConfigManager {
     init {
 
         try {
-            configMap = Jsoner.read(CONFIG_JSON_FILENAME)
+            configMap = Resourcer.read(CONFIG_JSON_FILENAME)
         } catch (e: RuntimeException) {
             logger.warn("[COFIG] Configuration we not found!")
         }
 
-        config = Maper.toObject(configMap, WebConfigBean::class) as WebConfigBean
-
-        if (config.env.isNotBlank()) {
-            val newConfigFileName = "application-${config.env}.json"
-            configMap.putAll(Jsoner.read(newConfigFileName))
+        if (configMap["env"] != null) {
+            val secondConfigMap = Resourcer.read("application-${configMap["env"]}.json")
+            configMap.putAll(secondConfigMap)
         }
+
+        config = configMap.toObject(WebConfigBean::class) as WebConfigBean
 
     }
 
@@ -81,6 +81,6 @@ object ConfigManager {
      */
     @JvmStatic
     open fun initObject(prefix: String, clazz: KClass<*>): Any {
-        return Jsoner.toObject(Jsoner.toJsonString(init(prefix)), clazz)
+        return init(prefix).toObject(clazz)
     }
 }

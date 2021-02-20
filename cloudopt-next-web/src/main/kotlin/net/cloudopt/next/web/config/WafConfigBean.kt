@@ -15,12 +15,15 @@
  */
 package net.cloudopt.next.web.config
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/10
  * @Description: Cloudopt Next Waf configuration file
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class WafConfigBean(
     var plus: Boolean = false,
     var csrf: Boolean = false,

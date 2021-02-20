@@ -19,6 +19,7 @@ import io.vertx.core.Vertx
 import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.EventBus
 import net.cloudopt.next.json.Jsoner
+import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.web.NextServer
@@ -82,7 +83,7 @@ object EventManager {
      * @param obj the message, may be {@code null}
      */
     fun send(name: String, obj: Any) {
-        send(name, Jsoner.toJsonString(obj))
+        send(name, obj.toJsonString())
     }
 
     /**
@@ -127,7 +128,7 @@ object EventManager {
      *
      */
     fun publish(name: String, obj: Any) {
-        publish(name, Jsoner.toJsonString(obj))
+        publish(name, obj.toJsonString())
     }
 
     /**

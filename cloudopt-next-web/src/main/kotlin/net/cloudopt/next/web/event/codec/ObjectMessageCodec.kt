@@ -15,15 +15,16 @@
  */
 package net.cloudopt.next.web.event.codec
 
-import com.alibaba.fastjson.JSON
 import io.netty.util.CharsetUtil
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.eventbus.MessageCodec
+import net.cloudopt.next.json.Jsoner.toJsonObject
+import net.cloudopt.next.json.Jsoner.toJsonString
 
 
 class ObjectMessageCodec : MessageCodec<Any, Any> {
     override fun encodeToWire(buffer: Buffer, any: Any) {
-        var byteArray = JSON.toJSONString(any).toByteArray(CharsetUtil.UTF_8)
+        var byteArray = any.toJsonString().toByteArray(CharsetUtil.UTF_8)
         buffer.appendInt(byteArray.size)
         buffer.appendBytes(byteArray)
     }
@@ -33,14 +34,14 @@ class ObjectMessageCodec : MessageCodec<Any, Any> {
         val length = buffer.getInt(pos)
         pos += 4
         val bytes = buffer.getBytes(pos, pos + length)
-        return JSON.parse(String(bytes))
+        return String(bytes).toJsonObject()
     }
 
     override fun transform(any: Any): Any {
         return any
     }
 
-    override fun name(): String? {
+    override fun name(): String {
         return "object"
     }
 

@@ -1,8 +1,8 @@
 {
-  "env": "dev",
   "packageName": "net.cloudopt.next.web.test",
   "cookieCors": true,
-  "port": 9001,
+  "logColor": false,
+  "port": 8080,
   "waf": {
     "plus": true,
     "csrf": false,

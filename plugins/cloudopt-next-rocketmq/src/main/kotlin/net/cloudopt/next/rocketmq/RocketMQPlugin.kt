@@ -20,6 +20,7 @@ package net.cloudopt.next.rocketmq
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Classer
 import net.cloudopt.next.utils.Maper
+import net.cloudopt.next.utils.Maper.toObject
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.config.ConfigManager
@@ -65,7 +66,7 @@ object RocketMQManager {
             logger.info("Detects the existence of a producer profile and creates a producer for rocketmq.")
 
             producerConfig =
-                Maper.toObject(ConfigManager.init("rocketmq.producer"), ProducerConfig::class) as ProducerConfig
+                ConfigManager.init("rocketmq.producer").toObject(ProducerConfig::class) as ProducerConfig
             producer = if (producerConfig.accessKey.isBlank()) {
                 DefaultMQProducer(producerConfig.groupName)
             } else {
@@ -95,7 +96,7 @@ object RocketMQManager {
         if (ConfigManager.init("rocketmq.consumer").isNotEmpty()) {
             logger.info("Detects the existence of a consumer profile and creates a producer for rocketmq.")
             consumerConfig =
-                Maper.toObject(ConfigManager.init("rocketmq.consumer"), ConsumerConfig::class) as ConsumerConfig
+                ConfigManager.init("rocketmq.consumer").toObject(ConsumerConfig::class) as ConsumerConfig
             consumer = if (consumerConfig.accessKey.isBlank()) {
                 DefaultMQPushConsumer(consumerConfig.groupName)
             } else {
