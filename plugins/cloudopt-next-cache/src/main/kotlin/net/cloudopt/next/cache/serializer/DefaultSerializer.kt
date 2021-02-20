@@ -15,20 +15,15 @@
  */
 package net.cloudopt.next.cache.serializer
 
-import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.parser.Feature
-import com.alibaba.fastjson.serializer.SerializerFeature
-
 /**
- * Using fastjsonto serialize objects in JSON format
+ * Using default serialize objects in JSON format
  */
-class FastJsonSerializer : Serializer {
-
+class DefaultSerializer : Serializer {
     override fun serialize(any: Any): ByteArray {
-        return JSON.toJSONString(any, SerializerFeature.WriteClassName).toByteArray()
+        return Kryoer.writeToByteArray(any)
     }
 
     override fun deserialize(bytes: ByteArray): Any {
-        return JSON.parse(String(bytes), Feature.SupportAutoType)
+        return Kryoer.readFromByteArray(bytes)
     }
 }

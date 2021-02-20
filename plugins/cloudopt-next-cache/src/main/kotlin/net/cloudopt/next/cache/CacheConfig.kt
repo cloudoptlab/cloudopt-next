@@ -17,6 +17,6 @@ package net.cloudopt.next.cache
 
 data class CacheConfig(
     val cluster: Boolean = false,
-    val serializer: String = "net.cloudopt.next.cache.serializer.FastJsonSerializer",
+    val serializer: String = "net.cloudopt.next.cache.serializer.DefaultSerializer",
     val regions: MutableList<RegionConfig> = mutableListOf()
 )
