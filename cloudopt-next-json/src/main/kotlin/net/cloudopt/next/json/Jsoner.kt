@@ -15,108 +15,81 @@
  */
 package net.cloudopt.next.json
 
-import net.cloudopt.next.utils.Classer
+import io.vertx.core.json.JsonArray
+import io.vertx.core.json.JsonObject
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
-
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: Json's tool class.
- */
 
 object Jsoner {
 
     @JvmStatic
-    var jsonProvider: JsonProvider = Classer.loadClass("net.cloudopt.next.json.DefaultJSONProvider")
-        .createInstance() as JsonProvider
+    var jsonProvider: JsonProvider = DefaultJSONProvider()
 
     /**
      * Output json string.
-     * @param obj Json Object
      * @return Json string
      */
-    fun toJsonString(obj: Any): String {
-        return jsonProvider.toJsonString(obj)
+    fun Any.toJsonString(): String {
+        return jsonProvider.toJsonString(this)
     }
 
     /**
      * Output MutableMap
-     * @param jsonString Json string
      * @return MutableMap
      */
-    fun toJsonMap(jsonString: String): MutableMap<String, Any> {
-        return jsonProvider.toJsonMap(jsonString)
+    fun String.jsontoMutableMap(): MutableMap<String, Any> {
+        return jsonProvider.toJsonMap(this)
     }
 
     /**
      * Output json object.
-     * @param jsonString Json string
      * @param clazz Java class
      * @return Json object
      */
-    fun toObject(jsonString: String, clazz: KClass<*>): Any {
-        return jsonProvider.toObject(jsonString, clazz)
+    fun String.jsonToObject(clazz: KClass<*>): Any {
+        return jsonProvider.toObject(this, clazz)
     }
 
     /**
      * Output json map list.
-     * @param jsonString Json string
      * @return MutableList<MutableMap<String,Any>>
      */
-    fun toJsonMapList(jsonString: String): MutableList<MutableMap<String, Any>> {
-        return jsonProvider.toJsonMapList(jsonString)
+    fun String.jsontoMutableMapList(): MutableList<MutableMap<String, Any>> {
+        return jsonProvider.toJsonMapList(this)
     }
 
     /**
      * Output obj array.
-     * @param jsonString Json string
      * @param clazz Java class
      * @return MutableList<Any>
      */
-    fun toObjectList(jsonString: String, clazz: KClass<*>): MutableList<Any> {
-        return jsonProvider.toObjectList(jsonString, clazz)
+    fun String.jsonToObjectList(clazz: KClass<*>): MutableList<Any> {
+        return jsonProvider.toObjectList(this, clazz)
     }
 
     /**
      * Output any list.
-     * @param jsonString Json string
      * @return MutableList<Any>
      */
-    fun toList(jsonString: String): MutableList<Any> {
-        return jsonProvider.toList(jsonString)
+    fun String.jsontoObjectList(): MutableList<Any> {
+        return jsonProvider.toList(this)
     }
 
     /**
-     * Read Json file to json string
-     * @param filePath File path
-     * @return MutableMap<String,Any>
+     * Decode a given JSON string to JSON Object.
+     * @see JsonObject
+     * @return JsonObject
      */
-    fun read(filePath: String): MutableMap<String, Any> {
-        return jsonProvider.read(filePath)
+    fun String.toJsonObject(): JsonObject {
+        return jsonProvider.toJsonObject(this)
     }
 
     /**
-     * Read Json file to Map
-     * @param filePath File path
-     * @param prefix Attribute prefix in json file
-     * @return map
+     * Decode a given JSON string to JSON Array.
+     * @see JsonArray
+     * @return JsonArray
      */
-    fun read(filePath: String, prefix: String): MutableMap<String, Any> {
-        return jsonProvider.read(filePath, prefix)
+    fun String.toJsonArray(): JsonArray {
+        return jsonProvider.toJsonArray(this)
     }
-
-    /**
-     * Read Json file into a specific instance of the object
-     * @param filePath File path
-     * @param prefix Attribute prefix in json file
-     * @param clazz Class name
-     * @return Object
-     */
-    fun read(filePath: String, prefix: String, clazz: KClass<*>): Any {
-        return jsonProvider.read(filePath, prefix, clazz)
-    }
-
 
 }
