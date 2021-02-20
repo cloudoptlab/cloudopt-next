@@ -4,6 +4,7 @@ dependencies {
     api "com.fasterxml.jackson.core:jackson-databind:${rootProject.property('jackson_version')}"
     api "com.fasterxml.jackson.core:jackson-annotations:${rootProject.property('jackson_version')}"
     api "com.fasterxml.jackson.module:jackson-module-kotlin:${rootProject.property('jackson_version')}"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${rootProject.property('jackson_version')}"
 }
 
 description = "Cloudopt Next Json"

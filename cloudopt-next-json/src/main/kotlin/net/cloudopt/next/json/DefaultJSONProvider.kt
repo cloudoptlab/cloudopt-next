@@ -21,11 +21,15 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import kotlin.reflect.KClass
 import com.fasterxml.jackson.databind.ObjectMapper
-
-
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import io.vertx.core.json.jackson.DatabindCodec
 
 
 class DefaultJSONProvider : JsonProvider {
+
+    init {
+        DatabindCodec.mapper().registerModule(JavaTimeModule())
+    }
 
     override fun toJsonString(obj: Any): String {
         return Json.encode(obj)
