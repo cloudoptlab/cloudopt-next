@@ -15,16 +15,15 @@
  */
 package net.cloudopt.next.utils
 
+import net.cloudopt.next.json.Jsoner.jsonToObject
+import net.cloudopt.next.json.Jsoner.jsontoMutableMap
+import net.cloudopt.next.json.Jsoner.toJsonObject
+import net.cloudopt.next.json.Jsoner.toJsonString
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import kotlin.reflect.KClass
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/5/22
- * @Description: Help get resource files
- */
 object Resourcer {
 
     private var rootPath: String = ""
@@ -92,6 +91,34 @@ object Resourcer {
         }
 
         return sb.toString()
+    }
+
+    fun read(filePath: String, prefix: String, clazz: KClass<*>): Any {
+        val map = read(filePath, prefix)
+        return map.toJsonString().jsonToObject(clazz)
+    }
+
+    fun read(filePath: String): MutableMap<String, Any> {
+        var jsonString = inputStreamToString(getFileInputStream(filePath))
+        jsonString = cleanText(jsonString)
+        return jsonString.jsontoMutableMap()
+    }
+
+    fun read(filePath: String, prefix: String): MutableMap<String, Any> {
+        var jsonString = inputStreamToString(getFileInputStream(filePath))
+        jsonString = cleanText(jsonString)
+        var jsonObj = jsonString.toJsonObject()
+        var list = prefix.split(".")
+        for (key in list) {
+            if (jsonObj.getJsonObject(key) != null) {
+                jsonObj = jsonObj.getJsonObject(key)
+            }
+        }
+        return jsonObj.map.toMutableMap()
+    }
+
+    private fun cleanText(jsonString: String): String {
+        return jsonString.replace("/n", "")
     }
 
 }

@@ -24,12 +24,6 @@ import java.util.*
 import java.util.jar.JarFile
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/4
- * @Description: This is for scanning tools class
- */
-
 object Classer {
 
     private val CLASS_EXT = ".class"

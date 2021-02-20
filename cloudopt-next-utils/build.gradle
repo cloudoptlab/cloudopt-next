@@ -1,5 +1,5 @@
 dependencies {
-    api "com.alibaba:fastjson:1.2.75"
+    api project(":cloudopt-next-json")
 }
 
 description = "Cloudopt Next Utils"

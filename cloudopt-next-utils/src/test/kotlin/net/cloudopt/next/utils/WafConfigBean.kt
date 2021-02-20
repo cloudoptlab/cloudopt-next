@@ -15,18 +15,17 @@
  */
 package net.cloudopt.next.utils
 
-object Beaner {
-    /**
-     * instantiate objects
-     * @param clazz class
-     * @return objects
-     */
-    @kotlin.Deprecated(
-        "This method will be removed soon, please use kotlin native syntax.",
-        ReplaceWith("clazz.createInstance() as T")
-    )
-    @Throws(InstantiationException::class, IllegalAccessException::class)
-    fun <T> newInstance(clazz: Class<*>): T {
-        return clazz.newInstance() as T
-    }
-}
+
+/*
+ * @author: Cloudopt
+ * @Time: 2018/1/10
+ * @Description: Cloudopt Next Waf configuration file
+ */
+data class WafConfigBean(
+    var plus: Boolean = false,
+    var csrf: Boolean = false,
+    var encryption: String = "",
+    var xss: Boolean = false,
+    var sql: Boolean = false,
+    var mongodb: Boolean = false
+)
