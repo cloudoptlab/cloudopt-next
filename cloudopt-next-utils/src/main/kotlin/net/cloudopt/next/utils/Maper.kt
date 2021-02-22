@@ -18,6 +18,7 @@ package net.cloudopt.next.utils
 import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
+import java.util.*
 import kotlin.reflect.KClass
 
 object Maper {
@@ -37,6 +38,17 @@ object Maper {
      */
     fun Any.toMap(): MutableMap<String, Any> {
         return this.toJsonString().toJsonObject().map
+    }
+
+    /**
+     * It will convert MutableMap to Properties
+     * @receiver MutableMap<String,Any>
+     * @return Properties
+     */
+    fun MutableMap<String,Any>.toProperties(): Properties {
+        val properties = Properties()
+        properties.putAll(this)
+        return properties
     }
 
 }

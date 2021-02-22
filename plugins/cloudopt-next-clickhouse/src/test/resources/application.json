@@ -1,0 +1,5 @@
+{
+  "clickhouse": {
+    "jdbcUrl": "jdbc:clickhouse://localhost:8123/default"
+  }
+}

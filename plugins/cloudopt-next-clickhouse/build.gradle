@@ -1,0 +1,9 @@
+dependencies {
+    api project(":cloudopt-next-web")
+    compileOnly "ru.yandex.clickhouse:clickhouse-jdbc:0.2.6"
+    compileOnly "com.zaxxer:HikariCP:3.4.5"
+    testImplementation "ru.yandex.clickhouse:clickhouse-jdbc:0.2.6"
+    testImplementation "com.zaxxer:HikariCP:3.4.5"
+}
+
+description = "Cloudopt Next ClickHouse"
