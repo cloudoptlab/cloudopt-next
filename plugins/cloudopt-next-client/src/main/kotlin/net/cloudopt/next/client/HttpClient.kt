@@ -108,6 +108,7 @@ class HttpClient() {
     @JvmOverloads
     fun get(url: String = ""): HttpRequest<Buffer> {
         this.request = client.get(port, host, url)
+        this.request?.timeout(this.timeout)
         return this.request!!
     }
 
@@ -119,6 +120,7 @@ class HttpClient() {
     @JvmOverloads
     fun post(url: String = ""): HttpRequest<Buffer> {
         this.request = client.post(port, host, url)
+        this.request?.timeout(this.timeout)
         return this.request!!
     }
 
@@ -130,6 +132,7 @@ class HttpClient() {
     @JvmOverloads
     fun put(url: String = ""): HttpRequest<Buffer> {
         this.request = client.put(port, host, url)
+        this.request?.timeout(this.timeout)
         return this.request!!
     }
 
@@ -141,6 +144,7 @@ class HttpClient() {
     @JvmOverloads
     fun delete(url: String = ""): HttpRequest<Buffer> {
         this.request = client.delete(port, host, url)
+        this.request?.timeout(this.timeout)
         return this.request!!
     }
 
@@ -152,6 +156,7 @@ class HttpClient() {
     @JvmOverloads
     fun patch(url: String = ""): HttpClient {
         this.request = client.patch(port, host, url)
+        this.request?.timeout(this.timeout)
         return this
     }
 
