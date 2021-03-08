@@ -22,23 +22,33 @@ import net.cloudopt.next.json.Jsoner.toJsonString
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.net.URLDecoder
 import kotlin.reflect.KClass
 
 object Resourcer {
 
     private var rootPath: String = ""
 
+    /**
+     * Get the file input stream
+     * @param fileName Specify the file name
+     * @return File
+     */
+    fun getFile(fileName: String): File? {
+        return if (File(getRootClassPath() + "/" + fileName).exists()) {
+            File(URLDecoder.decode(getRootClassPath() + "/" + fileName), "UTF-8")
+        } else {
+            File(URLDecoder.decode(Resourcer::class.java.getResource("/$fileName").file, "UTF-8"))
+        }
+    }
 
     /**
      * Get the file input stream
+     * @param fileName Specify the file name
      * @return FileInputStream
      */
     fun getFileInputStream(fileName: String): InputStream? {
-        return try {
-            File(getRootClassPath() + "/" + fileName).inputStream()
-        } catch (e: Exception) {
-            Resourcer::class.java.getResourceAsStream("/$fileName")
-        }
+        return getFile(fileName)?.inputStream()
     }
 
     fun getFileString(fileName: String, isJson: Boolean = false): String {

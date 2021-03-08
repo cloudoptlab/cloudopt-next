@@ -17,4 +17,5 @@ include("plugins:cloudopt-next-cache")
 include("plugins:cloudopt-next-encrypt")
 include("plugins:cloudopt-next-rocketmq")
 include("plugins:cloudopt-next-clickhouse")
+include('plugins:cloudopt-next-polyglot')
 
