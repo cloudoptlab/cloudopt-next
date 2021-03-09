@@ -1,0 +1,6 @@
+dependencies {
+    api project(":cloudopt-next-utils")
+    testImplementation project(":cloudopt-next-web")
+}
+
+description = "Cloudopt Next Polyglot"

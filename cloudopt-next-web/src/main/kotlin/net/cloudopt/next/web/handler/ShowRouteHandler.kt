@@ -16,6 +16,7 @@
 package net.cloudopt.next.web.handler
 
 import net.cloudopt.next.json.Jsoner
+import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.config.ConfigManager
@@ -47,8 +48,8 @@ class ShowRouteHandler : Handler {
                     params.add(entry.key, entry.value)
                 }
             }
-            logger.info("Params       : ${Jsoner.toJsonString(params?.entries() ?: "[]")}")
-            logger.info("Cookie       : ${Jsoner.toJsonString(resource.request.getHeader("Cookie") ?: "")}")
+            logger.info("Params       : ${(params?.entries() ?: "[]").toJsonString()}")
+            logger.info("Cookie       : ${(resource.request.getHeader("Cookie") ?: "").toJsonString()}")
             logger.info(
                 "--------------------------------------------------------------------------------"
             )

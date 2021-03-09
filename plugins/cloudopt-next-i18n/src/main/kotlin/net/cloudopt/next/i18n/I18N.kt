@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.i18n
 
-import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.utils.Resourcer
 import java.util.*
 import kotlin.collections.HashMap
@@ -33,7 +32,7 @@ object I18N {
     /**
      * The default filename prefix.
      */
-    var baseName: String = ""
+    private var baseName: String = ""
         set(value) {
             if (value.isBlank()) {
                 throw IllegalArgumentException("BaseName can not be blank.")
@@ -45,7 +44,7 @@ object I18N {
      * The default language name. When the specified language file cannot be obtained,
      * the file with the default language name will be obtained.
      */
-    var defaultLocale: String = Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry()
+    private var defaultLocale: String = Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry()
         set(value) {
             if (value.isBlank()) {
                 throw IllegalArgumentException("DefaultLocale can not be blank.")
@@ -56,7 +55,7 @@ object I18N {
     /**
      * The default folder name.
      */
-    var defaultFolder: String = "_locales"
+    private var defaultFolder: String = "_locales"
         set(value) {
             if (value.isBlank()) {
                 throw IllegalArgumentException("DefaultFolder can not be blank.")
@@ -77,10 +76,10 @@ object I18N {
             val fileName = if (baseName.isNotBlank()) {
                 defaultFolder + "/" + baseName + "_" + locale + ".json"
             } else {
-                defaultFolder + "/" + locale + ".json"
+                "$defaultFolder/$locale.json"
             }
             if (Resourcer.exist(fileName)) {
-                val json = Jsoner.read(fileName)
+                val json = Resourcer.read(fileName)
                 i18nCache[locale] = json
                 return json
             } else {

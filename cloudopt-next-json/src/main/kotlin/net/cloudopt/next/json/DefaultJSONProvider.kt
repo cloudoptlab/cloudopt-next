@@ -15,75 +15,62 @@
  */
 package net.cloudopt.next.json
 
-import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.JSONObject
-import com.alibaba.fastjson.parser.ParserConfig
-import net.cloudopt.next.utils.Resourcer
+import com.fasterxml.jackson.databind.MapperFeature
+import io.vertx.core.json.Json
+import io.vertx.core.json.JsonArray
+import io.vertx.core.json.JsonObject
 import kotlin.reflect.KClass
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import io.vertx.core.json.jackson.DatabindCodec
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: Default JsonProvider.
- */
+
 class DefaultJSONProvider : JsonProvider {
 
     init {
-        val cfg = ParserConfig.getGlobalInstance()
-        cfg.addAccept("net.cloudopt.next.")
+        DatabindCodec.mapper().registerModule(JavaTimeModule())
     }
 
     override fun toJsonString(obj: Any): String {
-        return JSON.toJSONString(obj)
+        return Json.encode(obj)
     }
 
     override fun toJsonMap(jsonString: String): MutableMap<String, Any> {
-        return JSON.parseObject(jsonString).toMutableMap()
+        return (Json.decodeValue(jsonString) as JsonObject).map.toMutableMap()
     }
 
     override fun toObject(jsonString: String, clazz: KClass<*>): Any {
-        return JSON.parseObject(jsonString, clazz.java)
+        return Json.decodeValue(jsonString, clazz.java)
     }
 
-    override fun toJsonMapList(s: String): MutableList<MutableMap<String, Any>> {
-        return JSON.parseArray(s).toMutableList() as MutableList<MutableMap<String, Any>>
+    override fun toJsonMapList(jsonString: String): MutableList<MutableMap<String, Any>> {
+        val value = Json.decodeValue(jsonString) as JsonArray
+        val mapList = mutableListOf<MutableMap<String, Any>>()
+        for (it in value.withIndex()) {
+            mapList.add(value.getJsonObject(it.index).map)
+        }
+        return mapList
     }
 
-    override fun toObjectList(jsonString: String, clazz: KClass<*>): MutableList<Any> {
-        return JSON.parseArray(jsonString, clazz.java).toMutableList()
+    override fun <T> toObjectList(jsonString: String, clazz: KClass<*>): MutableList<T> {
+        val value = Json.decodeValue(jsonString) as JsonArray
+        val list = mutableListOf<T>()
+        for (it in value.withIndex()) {
+            list.add(value.getJsonObject(it.index).mapTo(clazz.java) as T)
+        }
+        return list
     }
 
     override fun toList(jsonString: String): MutableList<Any> {
-        return JSON.parseArray(jsonString).toMutableList()
+        return (Json.decodeValue(jsonString) as JsonArray).toMutableList()
     }
 
-    override fun read(filePath: String): MutableMap<String, Any> {
-        var jsonString = Resourcer.inputStreamToString(Resourcer.getFileInputStream(filePath))
-        jsonString = cleanText(jsonString)
-        return toJsonMap(jsonString)
+    override fun toJsonObject(jsonString: String): JsonObject {
+        return Json.decodeValue(jsonString) as JsonObject
     }
 
-    override fun read(filePath: String, prefix: String): MutableMap<String, Any> {
-        var jsonString = Resourcer.inputStreamToString(Resourcer.getFileInputStream(filePath))
-        jsonString = cleanText(jsonString)
-        var jsonObj = JSON.parseObject(jsonString)
-        var list = prefix.split(".")
-        for (key in list) {
-            if (jsonObj.getJSONObject(key) != null) {
-                jsonObj = jsonObj.getJSONObject(key)
-            }
-        }
-        return jsonObj.toMutableMap()
+    override fun toJsonArray(jsonString: String): JsonArray {
+        return Json.decodeValue(jsonString) as JsonArray
     }
-
-    override fun read(filePath: String, prefix: String, clazz: KClass<*>): Any {
-        var jsonObj = read(filePath, prefix)
-        return JSONObject(jsonObj).toJavaObject(clazz.java)!!
-    }
-
-    private fun cleanText(jsonString: String): String {
-        return jsonString.replace("/n", "")
-    }
-
 
 }

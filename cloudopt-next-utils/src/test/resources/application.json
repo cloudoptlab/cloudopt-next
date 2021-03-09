@@ -1,0 +1,15 @@
+{
+  "packageName": "net.cloudopt.next.web.test",
+  "cookieCors": true,
+  "port": 9001,
+  "waf": {
+    "plus": true,
+    "csrf": false,
+    "xss": true,
+    "sql": true,
+    "mongodb": true
+  },
+  "vertx": {
+    "eventLoopPoolSize": 4
+  }
+}

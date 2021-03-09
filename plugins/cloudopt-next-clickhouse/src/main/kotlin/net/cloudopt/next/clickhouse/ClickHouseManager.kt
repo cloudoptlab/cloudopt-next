@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.cache.serializer
+package net.cloudopt.next.clickhouse
 
-import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.parser.Feature
-import com.alibaba.fastjson.serializer.SerializerFeature
+import com.zaxxer.hikari.HikariDataSource
+import ru.yandex.clickhouse.ClickHouseDataSource
 
-/**
- * Using fastjsonto serialize objects in JSON format
- */
-class FastJsonSerializer : Serializer {
+object ClickHouseManager {
 
-    override fun serialize(any: Any): ByteArray {
-        return JSON.toJSONString(any, SerializerFeature.WriteClassName).toByteArray()
-    }
+    lateinit var clickHouseDataSource: ClickHouseDataSource
 
-    override fun deserialize(bytes: ByteArray): Any {
-        return JSON.parse(String(bytes), Feature.SupportAutoType)
-    }
+    lateinit var hikariDataSource: HikariDataSource
+
 }

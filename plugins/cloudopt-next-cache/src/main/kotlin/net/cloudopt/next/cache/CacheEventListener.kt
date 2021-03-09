@@ -16,7 +16,7 @@
 package net.cloudopt.next.cache
 
 import io.lettuce.core.pubsub.RedisPubSubAdapter
-import net.cloudopt.next.json.Jsoner
+import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Worker
 
@@ -30,7 +30,7 @@ class CacheEventListener : RedisPubSubAdapter<String, String>() {
     override fun message(channel: String?, message: String?) {
         if (channel == CacheManager.CHANNELS) {
             logger.debug("Receive delete cache event message. $message")
-            val messageObject: CacheEventMessage = Jsoner.toObject(message ?: "", CacheEventMessage::class)
+            val messageObject: CacheEventMessage = message?.jsonToObject(CacheEventMessage::class)
                     as CacheEventMessage
             if (messageObject.regionName.isBlank() && messageObject.key.isBlank()) {
                 logger.error("Region's name or cache key must not be null or blank!")

@@ -21,9 +21,9 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
 import io.lettuce.core.codec.ByteArrayCodec
-import net.cloudopt.next.cache.serializer.FastJsonSerializer
+import net.cloudopt.next.cache.serializer.DefaultSerializer
 import net.cloudopt.next.cache.serializer.Serializer
-import net.cloudopt.next.json.Jsoner
+import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.redis.RedisManager
 import net.cloudopt.next.web.Worker.await
@@ -47,7 +47,7 @@ object CacheManager {
 
     private val logger: Logger = Logger.getLogger(CacheManager::class)
 
-    internal var serializer: Serializer = FastJsonSerializer()
+    internal var serializer: Serializer = DefaultSerializer()
 
     @JvmStatic
     internal val config = ConfigManager.initObject("cache", CacheConfig::class) as CacheConfig
@@ -165,7 +165,7 @@ object CacheManager {
             if (config.cluster && publish) {
                 RedisManager.publishSync(
                     CHANNELS,
-                    Jsoner.toJsonString(CacheEventMessage(regionName = regionName, key = key))
+                    CacheEventMessage(regionName = regionName, key = key).toJsonString()
                 )
             }
             future.complete(row)

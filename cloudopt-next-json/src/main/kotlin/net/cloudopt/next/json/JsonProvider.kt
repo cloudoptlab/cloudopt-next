@@ -15,13 +15,10 @@
  */
 package net.cloudopt.next.json
 
+import io.vertx.core.json.JsonArray
+import io.vertx.core.json.JsonObject
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: JsonProvider Interface.
- */
 interface JsonProvider {
 
     /**
@@ -59,7 +56,7 @@ interface JsonProvider {
      * @param clazz Java class
      * @return MutableList<Any>
      */
-    fun toObjectList(jsonString: String, clazz: KClass<*>): MutableList<Any>
+    fun<T> toObjectList(jsonString: String, clazz: KClass<*>): MutableList<T>
 
     /**
      * Output any list.
@@ -68,30 +65,20 @@ interface JsonProvider {
      */
     fun toList(jsonString: String): MutableList<Any>
 
+    /**
+     * Decode a given JSON string to JSON Object.
+     * @see JsonObject
+     * @param jsonString String
+     * @return JsonObject
+     */
+    fun toJsonObject(jsonString: String):JsonObject
 
     /**
-     * Read Json file to json string
-     * @param filePath File path
-     * @return MutableMap<String,Any>
+     * Decode a given JSON string to JSON Array.
+     * @see JsonArray
+     * @param jsonString String
+     * @return JsonArray
      */
-    fun read(filePath: String): MutableMap<String, Any>
-
-    /**
-     * Read Json file to Map
-     * @param filePath File path
-     * @param prefix Attribute prefix in json file
-     * @return map
-     */
-    fun read(filePath: String, prefix: String): MutableMap<String, Any>
-
-
-    /**
-     * Read Json file into a specific instance of the object
-     * @param filePath File path
-     * @param prefix Attribute prefix in json file
-     * @param clazz Class name
-     * @return Object
-     */
-    fun read(filePath: String, prefix: String, clazz: KClass<*>): Any
+    fun toJsonArray(jsonString: String):JsonArray
 
 }

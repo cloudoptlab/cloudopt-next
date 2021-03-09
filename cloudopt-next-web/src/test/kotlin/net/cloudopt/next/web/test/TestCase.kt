@@ -16,8 +16,10 @@
 package net.cloudopt.next.web.test
 
 import io.vertx.core.Handler
+import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Worker
+import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.event.EventPlugin
 import net.cloudopt.next.web.test.plugin.TestPlugin
 
@@ -27,7 +29,7 @@ import net.cloudopt.next.web.test.plugin.TestPlugin
  * @Description: Test Case
  */
 fun main(args: Array<String>) {
-//    CloudoptServer.addHandler(TestHandler())
+    println(ConfigManager.config.toJsonString())
     NextServer.addPlugin(TestPlugin())
     NextServer.addPlugin(EventPlugin())
     NextServer.run(Student::class)

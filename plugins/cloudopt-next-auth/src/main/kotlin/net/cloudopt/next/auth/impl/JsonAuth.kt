@@ -22,9 +22,11 @@ import net.cloudopt.next.auth.bean.Role
 import net.cloudopt.next.auth.bean.User
 import net.cloudopt.next.web.config.ConfigManager
 
-var config: PermissionTree = ConfigManager.initObject("auth", PermissionTree::class) as PermissionTree
-
 class JsonAuth(cache: Boolean = true) : Auth(cache) {
+
+    companion object {
+        var config: PermissionTree = ConfigManager.initObject("auth", PermissionTree::class) as PermissionTree
+    }
 
     override fun getRoles(): MutableList<Role> {
         return config.roles

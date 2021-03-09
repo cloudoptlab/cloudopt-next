@@ -15,11 +15,6 @@
  */
 package net.cloudopt.next.utils
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/4
- * @Description: This is for instantiating objects
- */
 object Beaner {
     /**
      * instantiate objects

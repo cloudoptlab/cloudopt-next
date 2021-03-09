@@ -15,14 +15,17 @@
  */
 package net.cloudopt.next.web
 
-import com.alibaba.fastjson.JSONObject
 import io.vertx.core.http.HttpHeaders
+import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
+import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.coroutines.launch
+import net.cloudopt.next.json.Jsoner.toJsonObject
+import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.web.config.ConfigManager
@@ -33,6 +36,11 @@ import net.cloudopt.next.web.route.Parameter
 import net.cloudopt.next.web.route.RequestBody
 import net.cloudopt.next.web.route.SocketJS
 import net.cloudopt.next.web.route.WebSocket
+import java.sql.Timestamp
+import java.text.DateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.*
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.jvmErasure
@@ -400,7 +408,7 @@ class NextServerVerticle : CoroutineVerticle() {
 
             } else {
                 val arr = mutableMapOf<KParameter, Any?>()
-                val jsonObject: JSONObject = JSONObject.toJSON(controllerObj.getParams()) as JSONObject
+                val jsonObject = controllerObj.getParams().toJsonString().toJsonObject()
                 for (para in resourceTable.clazzMethod.parameters) {
                     if (para.kind.name == "VALUE" && para.hasAnnotation<Parameter>()) {
                         arr[para] = getParaByType(para.findAnnotation<Parameter>()?.value, para, jsonObject)
@@ -442,29 +450,31 @@ class NextServerVerticle : CoroutineVerticle() {
     private fun getParaByType(
         paraName: String?,
         para: KParameter,
-        jsonObject: JSONObject
+        jsonObject: JsonObject
     ): Any? {
         var finalParaName = if (paraName.isNullOrBlank()) {
             para.name
         } else {
             paraName
         }
-        if (jsonObject[finalParaName] == null && para.findAnnotation<Parameter>()?.defaultValue?.isNotBlank() == true
+        if (!jsonObject.containsKey(finalParaName) && para.findAnnotation<Parameter>()?.defaultValue?.isNotBlank() == true
         ) {
-            jsonObject[finalParaName] = para.findAnnotation<Parameter>()?.defaultValue
+            jsonObject.put(finalParaName, para.findAnnotation<Parameter>()?.defaultValue)
         }
         when (para.type.jvmErasure.jvmName) {
             "java.lang.String" -> return jsonObject.getString(finalParaName)
             "kotlin.String" -> return jsonObject.getString(finalParaName)
-            "int" -> return jsonObject.getIntValue(finalParaName)
-            "double" -> return jsonObject.getDoubleValue(finalParaName)
-            "float" -> return jsonObject.getFloatValue(finalParaName)
-            "long" -> return jsonObject.getLongValue(finalParaName)
-            "short" -> return jsonObject.getShort(finalParaName)
-            "java.math.BigDecimal" -> return jsonObject.getBigDecimal(finalParaName)
-            "java.math.BigInteger" -> return jsonObject.getBigInteger(finalParaName)
-            "java.util.Date" -> return jsonObject.getDate(finalParaName)
-            "java.sql.Timestamp" -> return jsonObject.getTimestamp(finalParaName)
+            "int" -> return jsonObject.getInteger(finalParaName)
+            "double" -> return jsonObject.getDouble(finalParaName)
+            "float" -> return jsonObject.getFloat(finalParaName)
+            "long" -> return jsonObject.getLong(finalParaName)
+            "java.math.BigDecimal" -> return jsonObject.getString(finalParaName).toBigDecimal()
+            "java.math.BigInteger" -> return jsonObject.getString(finalParaName).toBigInteger()
+            "short" -> return jsonObject.getString(finalParaName).toShort()
+            "java.util.Date" -> return DateFormat.getDateInstance().parse(jsonObject.getString(finalParaName))
+            "java.sql.Timestamp" -> return Timestamp.valueOf(jsonObject.getString(finalParaName))
+            "java.time.LocalDateTime" -> return LocalDateTime.parse(jsonObject.getString(finalParaName))
+            "java.time.LocalDate" -> return LocalDate.parse(jsonObject.getString(finalParaName))
         }
         return null
     }

@@ -1,6 +1,10 @@
 dependencies {
-    implementation project(":cloudopt-next-utils")
-    implementation project(":cloudopt-next-logging")
+    api "io.vertx:vertx-core:${rootProject.property('vertx_version')}"
+    api "com.fasterxml.jackson.core:jackson-core:${rootProject.property('jackson_version')}"
+    api "com.fasterxml.jackson.core:jackson-databind:${rootProject.property('jackson_version')}"
+    api "com.fasterxml.jackson.core:jackson-annotations:${rootProject.property('jackson_version')}"
+    api "com.fasterxml.jackson.module:jackson-module-kotlin:${rootProject.property('jackson_version')}"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${rootProject.property('jackson_version')}"
 }
 
 description = "Cloudopt Next Json"
