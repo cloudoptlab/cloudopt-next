@@ -33,7 +33,7 @@ data class WebConfigBean(
     var env: String = "",
     var debug: Boolean = true,
     var banner: Boolean = true,
-    var bannerName: String = "banner.txt",
+    var bannerName: String = "",
     var showRoute: Boolean = true,
     var cors: Boolean = true,
     var packageName: String = "",

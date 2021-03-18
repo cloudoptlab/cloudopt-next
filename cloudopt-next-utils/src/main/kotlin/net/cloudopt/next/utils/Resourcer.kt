@@ -36,7 +36,7 @@ object Resourcer {
      */
     fun getFile(fileName: String): File? {
         return if (File(getRootClassPath() + "/" + fileName).exists()) {
-            File(URLDecoder.decode(getRootClassPath() + "/" + fileName), "UTF-8")
+            File(URLDecoder.decode(getRootClassPath() + "/" + fileName, "UTF-8"))
         } else {
             File(URLDecoder.decode(Resourcer::class.java.getResource("/$fileName").file, "UTF-8"))
         }

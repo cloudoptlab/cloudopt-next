@@ -7,9 +7,9 @@ plugins {
 allprojects {
     group = "net.cloudopt.next"
     version = property("project_version")
-    sourceCompatibility = property("java_version") as Integer
+    sourceCompatibility = property("java_version")
     repositories {
-        maven { url "http://maven.aliyun.com/nexus/content/repositories/central/" }
+        maven { url "https://maven.aliyun.com/nexus/content/repositories/central/" }
         mavenCentral()
         jcenter()
     }
@@ -48,10 +48,10 @@ subprojects {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget =  rootProject.property("java_version") as String
+        kotlinOptions.jvmTarget =  rootProject.property("java_version")
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget =  rootProject.property("java_version") as String
+        kotlinOptions.jvmTarget =  rootProject.property("java_version")
     }
 
     task sourceJar(type: Jar, dependsOn: classes) { from sourceSets.main.allSource }
