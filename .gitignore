@@ -83,7 +83,6 @@ file-uploads/
 /*/build
 /plugins/*/build/**
 /captures
-*.iml
 *.apk
 *.ap_
 *.dex
@@ -91,4 +90,4 @@ file-uploads/
 bin/
 gen/
 proguard/
-*.log
+/venv

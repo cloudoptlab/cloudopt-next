@@ -49,9 +49,11 @@ subprojects {
 
     compileKotlin {
         kotlinOptions.jvmTarget =  rootProject.property("java_version")
+        kotlinOptions.useIR = true
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget =  rootProject.property("java_version")
+        kotlinOptions.useIR = true
     }
 
     task sourceJar(type: Jar, dependsOn: classes) { from sourceSets.main.allSource }
