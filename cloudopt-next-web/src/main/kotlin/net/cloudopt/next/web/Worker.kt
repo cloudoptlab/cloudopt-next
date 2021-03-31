@@ -25,34 +25,6 @@ import kotlinx.coroutines.launch
 import net.cloudopt.next.web.config.ConfigManager
 import kotlin.reflect.KClass
 
-@JvmOverloads
-fun <T> Class<Any>.worker(
-    handler: Handler<Promise<T>>,
-    resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
-) {
-    Worker.worker(handler, resultHandler)
-}
-
-suspend fun <T> Class<Any>.await(handler: Handler<Promise<T>>): T {
-    return Worker.await(handler)
-}
-
-@JvmOverloads
-fun <T> KClass<Any>.worker(
-    handler: Handler<Promise<T>>,
-    resultHandler: Handler<AsyncResult<T>> = Handler<AsyncResult<T>> {}
-) {
-    Worker.worker(handler, resultHandler)
-}
-
-suspend fun <T> KClass<Any>.await(handler: Handler<Promise<T>>): T {
-    return Worker.await(handler)
-}
-
-fun KClass<Any>.then(handler: Handler<Void>) {
-    return Worker.then(handler)
-}
-
 object Worker {
 
     @JvmStatic

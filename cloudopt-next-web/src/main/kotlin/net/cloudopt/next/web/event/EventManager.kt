@@ -18,7 +18,6 @@ package net.cloudopt.next.web.event
 import io.vertx.core.Vertx
 import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.EventBus
-import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Classer
@@ -115,7 +114,7 @@ object EventManager {
      * message codec. This allows you to send arbitrary objects on the event bus (e.g. POJOs).
      */
     fun sendObject(name: String, body: Any, codecName: String) {
-        var options = DeliveryOptions()
+        val options = DeliveryOptions()
         options.codecName = codecName
         eventBus.send(name, body, options)
     }
@@ -161,7 +160,7 @@ object EventManager {
      * message codec. This allows you to send arbitrary objects on the event bus (e.g. POJOs).
      */
     fun publishObject(name: String, body: Any, codecName: String) {
-        var options = DeliveryOptions()
+        val options = DeliveryOptions()
         options.codecName = codecName
         eventBus.publish(name, body, options)
     }

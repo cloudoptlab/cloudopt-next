@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.handler
 
-import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Resource

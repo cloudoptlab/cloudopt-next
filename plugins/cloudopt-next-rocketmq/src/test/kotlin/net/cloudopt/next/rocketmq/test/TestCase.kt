@@ -15,11 +15,8 @@
  */
 package net.cloudopt.next.rocketmq.test
 
-import net.cloudopt.next.rocketmq.RocketMQManager
 import net.cloudopt.next.rocketmq.RocketMQPlugin
 import net.cloudopt.next.web.NextServer
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently
 
 /*
  * @author: Cloudopt
@@ -27,7 +24,7 @@ import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently
  * @Description: Test Case
  */
 
-fun main(args: Array<String>) {
+fun main() {
     NextServer.addPlugin(RocketMQPlugin())
     NextServer.run()
 }

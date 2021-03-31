@@ -21,7 +21,6 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
-import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.coroutines.launch
 import net.cloudopt.next.json.Jsoner.toJsonObject
@@ -40,7 +39,14 @@ import java.sql.Timestamp
 import java.text.DateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.firstOrNull
+import kotlin.collections.forEach
+import kotlin.collections.isNotEmpty
+import kotlin.collections.map
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.jvmErasure
@@ -69,9 +75,9 @@ class NextServerVerticle : CoroutineVerticle() {
         if (NextServer.sockJSes.size > 0) {
             val sockJSHandler = SockJSHandler.create(Worker.vertx, ConfigManager.config.socket)
             NextServer.sockJSes.forEach { clazz ->
-                val socketAnnotation: SocketJS? = clazz.findAnnotation<SocketJS>()
+                val socketAnnotation: SocketJS? = clazz.findAnnotation()
                 sockJSHandler.socketHandler { sockJSHandler ->
-                    val handler = clazz.createInstance<SockJSResource>()
+                    val handler = clazz.createInstance()
                     handler.handler(sockJSHandler)
                 }
                 if (!socketAnnotation?.value?.endsWith("/*")!!) {
@@ -87,11 +93,11 @@ class NextServerVerticle : CoroutineVerticle() {
          */
         if (NextServer.webSockets.size > 0) {
             NextServer.webSockets.forEach { clazz ->
-                val websocketAnnotation: WebSocket? = clazz.findAnnotation<WebSocket>()
+                val websocketAnnotation: WebSocket? = clazz.findAnnotation()
                 router.route(websocketAnnotation?.value).handler { context ->
                     try {
 
-                        val controllerObj = clazz.createInstance<WebSocketResource>()
+                        val controllerObj = clazz.createInstance()
                         if (controllerObj.beforeConnection(Resource().init(context))) {
                             val userWebSocketConnection = context.request().toWebSocket()
                             userWebSocketConnection.onComplete {
@@ -101,7 +107,7 @@ class NextServerVerticle : CoroutineVerticle() {
                              * Automatically register methods in websocket routing.
                              */
                             userWebSocketConnection.onSuccess {
-                                var userWebSocketConnectionResult = userWebSocketConnection.result()
+                                val userWebSocketConnectionResult = userWebSocketConnection.result()
                                 controllerObj.onConnectionSuccess(userWebSocketConnectionResult)
 
                                 userWebSocketConnectionResult.frameHandler { frame ->
@@ -452,7 +458,7 @@ class NextServerVerticle : CoroutineVerticle() {
         para: KParameter,
         jsonObject: JsonObject
     ): Any? {
-        var finalParaName = if (paraName.isNullOrBlank()) {
+        val finalParaName = if (paraName.isNullOrBlank()) {
             para.name
         } else {
             paraName

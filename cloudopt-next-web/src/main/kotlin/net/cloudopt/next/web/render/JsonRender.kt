@@ -16,7 +16,6 @@
 package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
-import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.web.Resource
 
@@ -29,7 +28,7 @@ class JsonRender : Render {
 
     override fun render(resource: Resource, obj: Any) {
 
-        var json = obj.toJsonString()
+        val json = obj.toJsonString()
 
         resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
 

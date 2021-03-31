@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.json.JsonProvider
 import net.cloudopt.next.json.Jsoner
@@ -137,24 +136,24 @@ object NextServer {
             annotation?.interceptor?.forEach { inClass ->
                 var url = annotation.value
                 if (url.endsWith("/")) {
-                    url = url + "*"
+                    url = "$url*"
                 } else {
-                    url = url + "/*"
+                    url = "$url/*"
                 }
                 if (interceptors.containsKey(url)) {
-                    interceptors.get(url)!!.add(inClass)
+                    interceptors[url]!!.add(inClass)
                 } else {
-                    interceptors.put(url, mutableListOf(inClass))
+                    interceptors[url] = mutableListOf(inClass)
                 }
 
             }
 
             //Get methods annotation
-            var functions = clazz.functions
+            val functions = clazz.functions
 
             functions.forEach { function ->
 
-                var functionsAnnotations = function.annotations
+                val functionsAnnotations = function.annotations
 
                 var resourceUrl = ""
 
@@ -202,19 +201,19 @@ object NextServer {
                     }
 
                     if (resourceUrl.isNotBlank()) {
-                        var temp = mutableMapOf<HttpMethod, Array<KClass<out Validator>>>()
-                        temp.put(httpMethod, valids)
+                        val temp = mutableMapOf<HttpMethod, Array<KClass<out Validator>>>()
+                        temp[httpMethod] = valids
                         if (validators.containsKey(resourceUrl)) {
-                            validators.get(resourceUrl)?.putAll(temp)
+                            validators[resourceUrl]?.putAll(temp)
                         } else {
-                            validators.put(resourceUrl, temp)
+                            validators[resourceUrl] = temp
                         }
                     }
 
                 }
 
                 if (resourceUrl.isNotBlank()) {
-                    var resourceTable = ResourceTable(
+                    val resourceTable = ResourceTable(
                         resourceUrl,
                         httpMethod,
                         clazz,
@@ -333,11 +332,11 @@ object NextServer {
      */
     @JvmStatic
     fun startPlugins() {
-        NextServer.plugins.forEach { plugin ->
+        plugins.forEach { plugin ->
             if (plugin.start()) {
-                NextServer.logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
+                logger.info("[PLUGIN] Registered plugin：" + plugin.javaClass.name)
             } else {
-                NextServer.logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
+                logger.info("[PLUGIN] Started plugin was error：" + plugin.javaClass.name)
             }
         }
     }
@@ -347,9 +346,9 @@ object NextServer {
      */
     @JvmStatic
     fun stopPlugins() {
-        NextServer.plugins.forEach { plugin ->
+        plugins.forEach { plugin ->
             if (!plugin.stop()) {
-                NextServer.logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")
+                logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")
             }
         }
     }
@@ -366,7 +365,7 @@ object NextServer {
         stopPlugins()
         Worker.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
         Worker.close()
-        NextServer.logger.info("Next has exited.")
+        logger.info("Next has exited.")
     }
 
 
