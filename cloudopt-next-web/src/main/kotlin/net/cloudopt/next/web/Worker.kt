@@ -77,7 +77,7 @@ object Worker {
      */
     @JvmOverloads
     fun deploy(verticle: String, worker: Boolean = false) {
-        var options = ConfigManager.config.vertxDeployment
+        var options = ConfigManager.config.deploymentOptions
         if (worker) {
             options = DeploymentOptions(options)
             options.isWorker = worker

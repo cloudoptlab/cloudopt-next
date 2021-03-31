@@ -49,7 +49,7 @@ data class WebConfigBean(
     var timeout: Long = 2L * 60 * 1000,
     var waf: WafConfigBean = WafConfigBean(),
     var vertx: VertxOptions = VertxOptions(),
-    var vertxHttpServer: HttpServerOptions = HttpServerOptions(),
-    var vertxDeployment: DeploymentOptions = DeploymentOptions(),
+    var httpServerOptions: HttpServerOptions = HttpServerOptions(),
+    var deploymentOptions: DeploymentOptions = DeploymentOptions(),
     var socket: SockJSHandlerOptions = SockJSHandlerOptions()
 )

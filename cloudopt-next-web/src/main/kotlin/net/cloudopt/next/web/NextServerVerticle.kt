@@ -64,7 +64,7 @@ class NextServerVerticle : CoroutineVerticle() {
 
     override suspend fun start() {
 
-        val server = Worker.vertx.createHttpServer(ConfigManager.config.vertxHttpServer)
+        val server = Worker.vertx.createHttpServer(ConfigManager.config.httpServerOptions)
 
         val router = Router.router(Worker.vertx)
 
@@ -310,7 +310,11 @@ class NextServerVerticle : CoroutineVerticle() {
                     "=========================================================================================================="
                 )
                 NextServer.logger.info("\uD83D\uDC0B Cloudopt Next started success!")
-                NextServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
+                if (ConfigManager.config.httpServerOptions.isSsl){
+                    NextServer.logger.info("https://127.0.0.1:${ConfigManager.config.port}")
+                }else{
+                    NextServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
+                }
                 NextServer.logger.info(
                     "=========================================================================================================="
                 )

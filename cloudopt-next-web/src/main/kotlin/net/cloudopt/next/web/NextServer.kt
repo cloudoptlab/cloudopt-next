@@ -86,7 +86,7 @@ object NextServer {
      * Scan by annotation and register as a route.
      */
     private fun scan() {
-        ConfigManager.config.vertxDeployment.workerPoolName = verticleID
+        ConfigManager.config.deploymentOptions.workerPoolName = verticleID
 
         //Set log color
         Logger.configuration.color = ConfigManager.config.logColor
