@@ -19,8 +19,10 @@ import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.Worker.await
+import net.cloudopt.next.web.Worker.global
 import net.cloudopt.next.web.config.ConfigManager
-import java.io.IOException
+import java.io.FileNotFoundException
 
 /*
  * @author: Cloudopt
@@ -31,7 +33,7 @@ class HbsRender : Render {
 
     companion object {
         @JvmStatic
-        private val templates = mutableMapOf<String, Template?>()
+        private val templates = mutableMapOf<String, Template>()
     }
 
     override fun render(resource: Resource, obj: Any) {
@@ -40,27 +42,29 @@ class HbsRender : Render {
 
         val handlebars = Handlebars()
 
-        var template: Template? = null
-
-        var html = ""
-
-        try {
-            template = if (templates[nextTemplate.name] != null) {
-                templates[nextTemplate.name]
-            } else {
-                templates[nextTemplate.name] = handlebars.compile(ConfigManager.config.templates + "/" + nextTemplate.name)
-                templates[nextTemplate.name]
+        global {
+            var html = await<String> { promise ->
+                val template = if (templates.containsKey(nextTemplate.name)) {
+                    templates[nextTemplate.name]
+                } else {
+                    try {
+                        handlebars.compile(ConfigManager.config.templates + "/" + nextTemplate.name)
+                    } catch (e: FileNotFoundException) {
+                        promise.fail("The specified page file could not be found: ${nextTemplate.name}!")
+                        end(resource, "The specified page file could not be found: ${nextTemplate.name}!")
+                        return@await
+                    } catch (e: Exception) {
+                        promise.fail(e)
+                        end(resource, "")
+                        return@await
+                    }
+                }
+                promise.complete(template?.apply(nextTemplate.parameters))
             }
-
-            html = template!!.apply(nextTemplate.parameters)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            end(resource)
+            resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+            end(resource, html)
         }
 
-        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
-
-        end(resource, html)
 
     }
 }

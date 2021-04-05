@@ -20,6 +20,8 @@ import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.Worker.await
+import net.cloudopt.next.web.Worker.global
 import net.cloudopt.next.web.config.ConfigManager
 import java.io.StringWriter
 
@@ -81,20 +83,29 @@ class FreemarkerRender : Render {
             nextTemplate.name = nextTemplate.name + ".ftl"
         }
 
-        var temp = if (templates[nextTemplate.name] != null) {
-            templates[nextTemplate.name]
-        } else {
-            templates[nextTemplate.name] = config?.getTemplate(nextTemplate.name)
-            templates[nextTemplate.name]
+        global {
+            val html = await<String> { promise ->
+                try {
+                    var temp = if (templates.containsKey(nextTemplate.name)) {
+                        templates[nextTemplate.name]
+                    } else {
+                        templates[nextTemplate.name] = config?.getTemplate(nextTemplate.name)
+                        templates[nextTemplate.name]
+                    }
+                    var writer = StringWriter()
+                    temp?.process(nextTemplate.parameters, writer)
+                    resource.response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
+                    promise.complete(writer.toString())
+                } catch (e: Exception) {
+                    promise.fail(e)
+                    end(resource)
+                    return@await
+                }
+            }
+            end(resource, html)
         }
 
-        var writer = StringWriter()
 
-        temp?.process(nextTemplate.parameters, writer)
-
-        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
-
-        end(resource, writer.toString())
     }
 
 }
