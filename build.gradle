@@ -1,7 +1,6 @@
 plugins {
     id "java"
     id "org.jetbrains.kotlin.jvm" version "1.4.0"
-    id "com.jfrog.bintray" version "1.8.4"
 }
 
 allprojects {
@@ -10,8 +9,8 @@ allprojects {
     sourceCompatibility = property("java_version")
     repositories {
         maven { url "https://maven.aliyun.com/nexus/content/repositories/central/" }
+        maven { url "https://maven.aliyun.com/nexus/content/groups/public" }
         mavenCentral()
-        jcenter()
     }
 }
 
@@ -19,6 +18,7 @@ subprojects {
 
     buildscript {
         repositories {
+            maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
             gradlePluginPortal()
         }
         dependencies {
@@ -34,8 +34,9 @@ subprojects {
     }
 
     apply plugin: "java"
-    apply plugin: "maven-publish"
     apply plugin: "kotlin"
+    apply plugin: "maven-publish"
+    apply plugin: 'signing'
 
     dependencies {
         implementation "org.jetbrains.kotlin:kotlin-stdlib:${property('kotlinx_version')}"
@@ -48,50 +49,80 @@ subprojects {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget =  rootProject.property("java_version")
+        kotlinOptions.jvmTarget = rootProject.property("java_version")
         kotlinOptions.useIR = true
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget =  rootProject.property("java_version")
+        kotlinOptions.jvmTarget = rootProject.property("java_version")
         kotlinOptions.useIR = true
     }
 
     task sourceJar(type: Jar, dependsOn: classes) { from sourceSets.main.allSource }
 
-    apply plugin: "maven-publish"
-    apply plugin: "com.jfrog.bintray"
 
-    publishing {
-        publications {
-            Publication(MavenPublication) {
-                groupId 'net.cloudopt.next'
-                artifactId "$project.name"
-                version "${property('project_version')}" // This is defined on the subproject
-                from components.java
-                artifact sourceJar {
-                    classifier "sources"
+    apply plugin: 'maven-publish'
+
+    System.out.println(System.getenv("SONATYPE_USERNAME"))
+
+    plugins.withId("maven-publish") {
+        publishing {
+            publications {
+                maven(MavenPublication) {
+                    // from components.java
+
+                    pom {
+                        name = project.group + ":" + project.name
+                        url = 'https://github.com/grpc/grpc-kotlin'
+                        afterEvaluate {
+                            // description is not available until evaluated.
+                            description = project.description
+                        }
+
+                        scm {
+                            connection = "scm:git:https://github.com/cloudoptlab/cloudopt-next.git"
+                            developerConnection = "scm:git:git@github.com:cloudoptlab/cloudopt-next.git"
+                            url = "https://github.com/cloudoptlab/cloudopt-next"
+                        }
+
+                        licenses {
+                            license {
+                                name = "Apache 2.0"
+                                url = "https://opensource.org/licenses/Apache-2.0"
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id = "cloudopt.net"
+                                name = "Cloudopt"
+                                email = "support@cloudopt.net"
+                                url = "https://www.cloudopt.net/"
+                                organization = "Cloudopt"
+                                organizationUrl = "https://www.cloudopt.net/"
+                            }
+                        }
+                    }
+                }
+            }
+            repositories {
+                maven {
+                    def releaseUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                    def snapshotUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                    url = version.endsWith('SNAPSHOT') ? snapshotUrl : releaseUrl
+                    credentials {
+                        username System.getenv("SONATYPE_USERNAME") ?: ""
+                        password System.getenv("SONATYPE_PASSWORD") ?: ""
+                    }
                 }
             }
         }
     }
 
-
-    bintray {
-        user = System.getenv("BINTRAY_USER")
-        key = System.getenv("BINTRAY_KEY")
-        pkg {
-            repo = "maven"
-            name = project.name
-            userOrg = "cloudopt"
-            licenses = ["Apache-2.0"]
-            vcsUrl = "https://github.com/cloudoptlab/cloudopt-next.git"
-            version {
-                name = "${property('project_version')}"
-            }
-            publications = ['Publication']
-            publish = true
+    if (project.hasProperty("signing.keyId")) {
+        apply plugin: 'signing'
+        signing {
+            sign publishing.publications
         }
     }
-
 
 }
