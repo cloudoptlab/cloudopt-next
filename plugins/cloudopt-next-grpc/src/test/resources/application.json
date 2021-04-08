@@ -1,0 +1,7 @@
+{
+  "packageName": "net.cloudopt.next.grpc.test",
+  "grpc": {
+    "port": 9090,
+    "ssl": false
+  }
+}

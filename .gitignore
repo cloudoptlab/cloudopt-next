@@ -91,3 +91,4 @@ bin/
 gen/
 proguard/
 /venv
+/*/generated/

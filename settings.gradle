@@ -1,21 +1,21 @@
 rootProject.name = "cloudopt-next"
-include(":cloudopt-next-logging")
-include(":cloudopt-next-json")
-include(":cloudopt-next-utils")
-include(":cloudopt-next-validator")
-include(":cloudopt-next-waf")
-include(":cloudopt-next-web")
-include("plugins:cloudopt-next-client")
-include("plugins:cloudopt-next-jooq")
-include("plugins:cloudopt-next-spring")
-include("plugins:cloudopt-next-redis")
-include("plugins:cloudopt-next-kafka")
-include("plugins:cloudopt-next-i18n")
-include("plugins:cloudopt-next-quartz")
-include("plugins:cloudopt-next-auth")
-include("plugins:cloudopt-next-cache")
-include("plugins:cloudopt-next-encrypt")
-include("plugins:cloudopt-next-rocketmq")
-include("plugins:cloudopt-next-clickhouse")
-include('plugins:cloudopt-next-polyglot')
-
+include ":cloudopt-next-logging"
+include ":cloudopt-next-json"
+include ":cloudopt-next-utils"
+include ":cloudopt-next-validator"
+include ":cloudopt-next-waf"
+include ":cloudopt-next-web"
+include "plugins:cloudopt-next-client"
+include "plugins:cloudopt-next-jooq"
+include "plugins:cloudopt-next-spring"
+include "plugins:cloudopt-next-redis"
+include "plugins:cloudopt-next-kafka"
+include "plugins:cloudopt-next-i18n"
+include "plugins:cloudopt-next-quartz"
+include "plugins:cloudopt-next-auth"
+include "plugins:cloudopt-next-cache"
+include "plugins:cloudopt-next-encrypt"
+include "plugins:cloudopt-next-rocketmq"
+include "plugins:cloudopt-next-clickhouse"
+include "plugins:cloudopt-next-polyglot"
+include "plugins:cloudopt-next-grpc"
