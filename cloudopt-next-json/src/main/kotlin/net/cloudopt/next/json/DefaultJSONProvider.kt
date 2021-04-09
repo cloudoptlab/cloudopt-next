@@ -15,14 +15,12 @@
  */
 package net.cloudopt.next.json
 
-import com.fasterxml.jackson.databind.MapperFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.vertx.core.json.Json
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
-import kotlin.reflect.KClass
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.vertx.core.json.jackson.DatabindCodec
+import kotlin.reflect.KClass
 
 
 class DefaultJSONProvider : JsonProvider {

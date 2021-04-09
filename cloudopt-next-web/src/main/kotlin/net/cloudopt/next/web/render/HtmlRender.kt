@@ -19,10 +19,10 @@ import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Resourcer
 import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.Worker.await
+import net.cloudopt.next.web.Worker.global
 import net.cloudopt.next.web.config.ConfigManager
 import java.io.BufferedReader
-import java.io.FileNotFoundException
-import java.io.IOException
 import java.io.InputStreamReader
 
 /*
@@ -39,37 +39,41 @@ class HtmlRender : Render {
     }
 
     override fun render(resource: Resource, result: Any) {
-        val nextTemplate = result as Template
+        global {
+            val nextTemplate = result as Template
 
-        if (nextTemplate.name.indexOf(".") < 0) {
-            nextTemplate.name = nextTemplate.name + ".html"
-        }
-
-        try {
+            if (nextTemplate.name.indexOf(".") < 0) {
+                nextTemplate.name = nextTemplate.name + ".html"
+            }
             resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
-            if (templates.get(nextTemplate.name) != null) {
+            if (templates.containsKey(nextTemplate.name)) {
                 end(resource, templates[nextTemplate.name] ?: "")
             } else {
-                val inputStream = Resourcer.getFileInputStream(ConfigManager.config.templates + "/" + nextTemplate.name)
-                val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-                val stringBuilder = StringBuilder()
-                bufferedReader.forEachLine { content ->
-                    if (content.isNotBlank()) {
-                        stringBuilder.append(content)
+                val html = await<String> { promise ->
+                    val inputStream = try {
+                        Resourcer.getFileInputStream(ConfigManager.config.templates + "/" + nextTemplate.name)
+                    } catch (e: NullPointerException) {
+                        promise.fail("The specified page file could not be found: ${nextTemplate.name}!")
+                        end(resource, "The specified page file could not be found: ${nextTemplate.name}!")
+                        return@await
+                    } catch (e: Exception) {
+                        promise.fail(e)
+                        end(resource, "")
+                        return@await
                     }
+                    val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+                    val stringBuilder = StringBuilder()
+                    bufferedReader.forEachLine { content ->
+                        if (content.isNotBlank()) {
+                            stringBuilder.append(content)
+                        }
+                    }
+                    templates[nextTemplate.name] = stringBuilder.toString()
+                    promise.complete(stringBuilder.toString())
                 }
-                templates[nextTemplate.name] = stringBuilder.toString()
-                end(resource, stringBuilder.toString())
+
+                end(resource, html)
             }
-
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-            end(resource)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            end(resource)
         }
-
-
     }
 }

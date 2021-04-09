@@ -1,7 +1,6 @@
 package net.cloudopt.next.rocketmq
 
 import org.apache.rocketmq.common.UtilAll
-import org.apache.rocketmq.common.protocol.heartbeat.MessageModel
 
 data class ConsumerConfig(
 

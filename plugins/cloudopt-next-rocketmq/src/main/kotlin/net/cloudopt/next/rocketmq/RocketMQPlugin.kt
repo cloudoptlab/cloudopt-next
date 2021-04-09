@@ -19,7 +19,6 @@ package net.cloudopt.next.rocketmq
 
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.utils.Classer
-import net.cloudopt.next.utils.Maper
 import net.cloudopt.next.utils.Maper.toObject
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin

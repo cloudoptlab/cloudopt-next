@@ -78,12 +78,12 @@ object I18N {
             } else {
                 "$defaultFolder/$locale.json"
             }
-            if (Resourcer.exist(fileName)) {
+            try {
                 val json = Resourcer.read(fileName)
                 i18nCache[locale] = json
                 return json
-            } else {
-                throw IllegalArgumentException("$fileName is not found!")
+            } catch (e: NullPointerException) {
+                throw NullPointerException("$fileName is not found!")
             }
         } else {
             return i18nCache[locale] ?: HashMap<String, Any>()

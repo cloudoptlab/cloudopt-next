@@ -16,7 +16,6 @@
 package net.cloudopt.next.web.test.validator
 
 import io.vertx.kotlin.coroutines.awaitEvent
-import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Validator
 import net.cloudopt.next.web.Worker
@@ -30,7 +29,7 @@ import net.cloudopt.next.web.Worker
 class TestCoroutinesValidator : Validator {
 
     override suspend fun validate(resource: Resource): Boolean {
-        var timeId = awaitEvent<Long> { handler ->
+        val timeId = awaitEvent<Long> { handler ->
             Worker.setTimer(100, false, handler)
         }
         println("[TestCoroutinesValidator] Await event end! id=$timeId")

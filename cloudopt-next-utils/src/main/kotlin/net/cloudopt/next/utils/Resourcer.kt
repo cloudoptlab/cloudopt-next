@@ -34,9 +34,9 @@ object Resourcer {
      * @param fileName Specify the file name
      * @return File
      */
-    fun getFile(fileName: String): File? {
+    fun getFile(fileName: String): File {
         return if (File(getRootClassPath() + "/" + fileName).exists()) {
-            File(URLDecoder.decode(getRootClassPath() + "/" + fileName), "UTF-8")
+            File(URLDecoder.decode(getRootClassPath() + "/" + fileName, "UTF-8"))
         } else {
             File(URLDecoder.decode(Resourcer::class.java.getResource("/$fileName").file, "UTF-8"))
         }
@@ -47,16 +47,12 @@ object Resourcer {
      * @param fileName Specify the file name
      * @return FileInputStream
      */
-    fun getFileInputStream(fileName: String): InputStream? {
-        return getFile(fileName)?.inputStream()
+    fun getFileInputStream(fileName: String): InputStream {
+        return getFile(fileName).inputStream()
     }
 
     fun getFileString(fileName: String, isJson: Boolean = false): String {
-        return inputStreamToString(getFileInputStream(fileName)!!, isJson)
-    }
-
-    fun exist(fileName: String): Boolean {
-        return getFileInputStream(fileName) != null
+        return inputStreamToString(getFileInputStream(fileName), isJson)
     }
 
     /**

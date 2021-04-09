@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.rocketmq.test
+package net.cloudopt.next.grpc
 
-import net.cloudopt.next.rocketmq.RocketMQPlugin
-import net.cloudopt.next.web.NextServer
+import io.grpc.ServerInterceptor
+import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2020/12/16
- * @Description: Test Case
+/**
+ * You can use @GrpcService to mark a specific class, and the grpc
+ * plugin will automatically scan for and register classes that
+ * have declared the @GrpcService annotation when it starts.
+ * @property interceptors Array<KClass<out ServerInterceptor>>
+ * @constructor
  */
-
-fun main() {
-    NextServer.addPlugin(RocketMQPlugin())
-    NextServer.run()
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
+@MustBeDocumented
+annotation class GrpcService(val interceptors: Array<KClass<out ServerInterceptor>> = [])

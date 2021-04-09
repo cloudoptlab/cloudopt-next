@@ -24,7 +24,6 @@ import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
-import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.json.Jsoner.jsonToObjectList
 import net.cloudopt.next.json.Jsoner.toJsonArray
 import net.cloudopt.next.utils.Maper.toObject
@@ -80,7 +79,7 @@ open class Resource {
 
     /**
      * Put an HTTP header
-     * @param name  the header name
+     * @param key  the header name
      * @param value  the header value.
      * @return a reference to this, so the API can be used fluently
      */
@@ -113,7 +112,7 @@ open class Resource {
      * @param clazz The name
      */
     fun <T> getAttrs(clazz: KClass<*>): Any {
-        var map = context.request().formAttributes()
+        val map = context.request().formAttributes()
         map.forEach {
             it
             map[it.key] = Wafer.contentFilter(it.value)
@@ -177,7 +176,7 @@ open class Resource {
 
     /**
      * Set Cookie
-     * @param name cookie name
+     * @param key cookie name
      * @param value cookie value
      * @param domain website domain
      * @param age -1: clear cookie when close browser. 0: clear cookie immediately.  n>0 : max age in n seconds.

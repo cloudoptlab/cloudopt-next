@@ -6,8 +6,8 @@ object NextLauncher {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        var args: Array<String> = arrayOf("run", "--redeploy=**/*.class", "--launcher-class=${args[0]}")
-        Launcher().dispatch(args)
+        val inputs: Array<String> = arrayOf("run", "--redeploy=**/*.class", "--launcher-class=${args[0]}")
+        Launcher().dispatch(inputs)
     }
 
 }

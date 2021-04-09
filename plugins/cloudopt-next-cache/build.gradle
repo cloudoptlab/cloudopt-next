@@ -1,7 +1,6 @@
 dependencies {
     api project(":cloudopt-next-web")
     api project(":plugins:cloudopt-next-redis")
-    api project(":plugins:cloudopt-next-encrypt")
     api "com.esotericsoftware:kryo:5.0.3"
     compileOnly "io.lettuce:lettuce-core:6.0.2.RELEASE"
     testImplementation "io.lettuce:lettuce-core:6.0.2.RELEASE"

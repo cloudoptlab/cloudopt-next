@@ -19,13 +19,7 @@ import net.cloudopt.next.rocketmq.RocketMQManager
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.route.API
 import net.cloudopt.next.web.route.GET
-import org.apache.rocketmq.client.producer.SendResult
 import org.apache.rocketmq.common.message.Message
-
-import org.apache.rocketmq.remoting.common.RemotingHelper
-
-
-
 
 
 /*

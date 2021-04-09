@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.web.event
 
-import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Plugin
 import net.cloudopt.next.web.Worker
 
