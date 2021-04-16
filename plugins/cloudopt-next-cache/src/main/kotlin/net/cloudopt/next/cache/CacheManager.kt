@@ -98,13 +98,22 @@ object CacheManager {
      * and if the cache of the specified key does not exist in the L2 level cache either, it will return null.
      * @param regionName region name
      * @param key the key whose associated value is to be returned
+     * @param l2 if L2 is true, it will also get the cache in the L2 cache
      * @return the value of key, or null when key does not exist
      */
-    suspend fun get(regionName: String, key: String): Any? {
-        return await<Any> { future ->
+    suspend fun get(regionName: String, key: String, l2: Boolean = true): Any? {
+        return await { future ->
+            if (!regions.containsKey(regionName)) {
+                future.complete(null)
+            }
             var value = regions[regionName]?.getIfPresent(key)
-            if (value == null) {
-                value = RedisManager.client.connect(ByteArrayCodec.INSTANCE).sync().get(key.toByteArray())
+            if (value == null && l2) {
+                value = if (RedisManager.cluster) {
+                    RedisManager.clusterClient.connect(ByteArrayCodec.INSTANCE).sync().get(key.toByteArray())
+                } else {
+                    RedisManager.client.connect(ByteArrayCodec.INSTANCE).sync().get(key.toByteArray())
+                }
+
                 if (value != null) {
                     regions[regionName]?.put(key, value)
                     logger.debug("From L2: $key")
@@ -117,7 +126,13 @@ object CacheManager {
                 logger.debug("From L1: $key")
             }
 
-            future.complete(serializer.deserialize(value as ByteArray))
+            if (value == null) {
+                future.complete(null)
+            } else {
+                future.complete(serializer.deserialize(value as ByteArray))
+            }
+
+
         }
     }
 
@@ -126,20 +141,26 @@ object CacheManager {
      * @param regionName region name
      * @param key the key whose associated value
      * @param value the value
-     * @return String simple-string-reply
+     * @param l2 if L2 is true, it will also add the cache in the L2 cache
+     * @return String simple-string-reply in L2, If only the L1 cache was manipulated and not the L2 cache,
+     * the empty string is returned.
      */
-    suspend fun set(regionName: String, key: String, value: Any): String? {
-        return await<String> { future ->
-            if (regions[regionName] == null) {
+    suspend fun set(regionName: String, key: String, value: Any, l2: Boolean = true): String? {
+        return await { future ->
+            if (!regions.containsKey(regionName)) {
                 future.complete(null)
             }
             regions[regionName]?.put(key, serializer.serialize(value))
-            val replyString = if (RedisManager.cluster) {
-                redisClusterConnect.sync()
-                    .setex(key.toByteArray(), expireMap[regionName] ?: 500, serializer.serialize(value))
+            val replyString = if (l2) {
+                if (RedisManager.cluster) {
+                    redisClusterConnect.sync()
+                        .setex(key.toByteArray(), expireMap[regionName] ?: 500, serializer.serialize(value))
+                } else {
+                    redisConnect.sync()
+                        .setex(key.toByteArray(), expireMap[regionName] ?: 500, serializer.serialize(value))
+                }
             } else {
-                redisConnect.sync()
-                    .setex(key.toByteArray(), expireMap[regionName] ?: 500, serializer.serialize(value))
+                ""
             }
             future.complete(replyString)
         }
@@ -151,16 +172,25 @@ object CacheManager {
      * @param key the key whose associated value
      * @param publish if cluster is true and publish is true, it will post a message to a channel and then all services
      * will be automatically deleting the cache.
-     * @return Long integer-reply The number of keys that were removed
+     * @param l2 if L2 is true, it will also delete the cache in the L2 cache
+     * @return Long integer-reply The number of keys that were removed in L2, Returns 0 if only the L1 cache was
+     * manipulated and not the L2 cache.
      */
     @JvmOverloads
-    suspend fun delete(regionName: String, key: String, publish: Boolean = true): Long? {
-        return await<Long> { future ->
+    suspend fun delete(regionName: String, key: String, publish: Boolean = true, l2: Boolean = true): Long? {
+        return await { future ->
+            if (!regions.containsKey(regionName)) {
+                future.complete(null)
+            }
             regions[regionName]?.invalidate(key)
-            val row = if (RedisManager.cluster) {
-                redisClusterConnect.sync().del(key.toByteArray())
+            val row = if (l2) {
+                if (RedisManager.cluster) {
+                    redisClusterConnect.sync().del(key.toByteArray())
+                } else {
+                    redisConnect.sync().del(key.toByteArray())
+                }
             } else {
-                redisConnect.sync().del(key.toByteArray())
+                0
             }
             if (config.cluster && publish) {
                 RedisManager.publishSync(
