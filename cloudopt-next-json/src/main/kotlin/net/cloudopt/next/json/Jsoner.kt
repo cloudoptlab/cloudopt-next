@@ -92,4 +92,26 @@ object Jsoner {
         return jsonProvider.toJsonArray(this)
     }
 
+    /**
+     * Returns a new read-only map with the specified contents, given as a list of JsonObject
+     * where the first value is the key and the second is the value.
+     *
+     * If multiple pairs have the same key, the resulting map will contain the value from the last of those pairs.
+     * @param pairs Array<out Pair<String, Any>>
+     * @return JsonObject
+     * @see JsonObject
+     */
+    fun json(vararg pairs: Pair<String, Any>): JsonObject {
+        return JsonObject(pairs.toMap())
+    }
+
+    /**
+     * Returns an JsonArray containing the specified elements.
+     * @param elements Array<out Any>
+     * @return JsonArray
+     */
+    fun jsonArray(vararg elements: Any): JsonArray {
+        return JsonArray(elements.toList())
+    }
+
 }

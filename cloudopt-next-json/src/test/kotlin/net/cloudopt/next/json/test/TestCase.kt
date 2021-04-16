@@ -15,6 +15,9 @@
  */
 package net.cloudopt.next.json.test
 
+import com.fasterxml.jackson.module.kotlin.jsonMapper
+import net.cloudopt.next.json.Jsoner.json
+import net.cloudopt.next.json.Jsoner.jsonArray
 import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.json.Jsoner.jsonToObjectList
 import net.cloudopt.next.json.Jsoner.jsontoMutableMap
@@ -77,6 +80,21 @@ class TestCase {
         )
     }
 
+    @Test
+    fun creatJsonByDSL() {
+        val a = json(
+            "a" to "1",
+            "b" to json(
+                "c" to "2"
+            ),
+            "c" to jsonArray(
+                json(
+                    "d" to "3"
+                )
+            ),
+        )
+        println(a.toJsonString())
+    }
 }
 
 

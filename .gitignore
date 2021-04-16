@@ -92,3 +92,4 @@ gen/
 proguard/
 /venv
 /*/generated/
+/javadoc
