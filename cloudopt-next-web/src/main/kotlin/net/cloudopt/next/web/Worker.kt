@@ -18,12 +18,8 @@ package net.cloudopt.next.web
 import io.vertx.core.*
 import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.dispatcher
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.cloudopt.next.web.config.ConfigManager
-import kotlin.reflect.KClass
 
 object Worker {
 
@@ -53,20 +49,51 @@ object Worker {
      * If using await, the call must be completed manually before
      * it will end.
      *
-     * @param handler handler representing the blocking code to run
+     * @param block handler representing the blocking code to run
      */
-    suspend fun <T> await(handler: Handler<Promise<T>>): T {
-        return vertx.executeBlocking(handler).await()
+    suspend fun <T> await(block: Handler<Promise<T>>): T {
+        return vertx.executeBlocking(block).await()
+    }
+
+    /**
+     * By default, if executeBlocking is called several times from the same context (e.g. the same verticle instance)
+     * then the different executeBlocking are executed serially (i.e. one after another).If you don’t care about
+     * ordering you can call the function.
+     *
+     * If using await, the call must be completed manually before
+     * it will end.
+     *
+     * @param block handler representing the blocking code to run
+     */
+    suspend fun <T> await(block: () -> T): T {
+        return await{promise->
+            promise.complete(block.invoke())
+        }
+    }
+
+    /**
+     * Runs a new coroutine and blocks the current thread interruptibly until its completion. This function should not
+     * be used from a coroutine. It is designed to bridge regular blocking code to libraries that are written in
+     * suspending style, to be used in main functions and in tests.
+     * @param block [@kotlin.ExtensionFunctionType] SuspendFunction1<CoroutineScope, T>
+     * @return T
+     */
+     fun <T> async(block: suspend CoroutineScope.() -> T): T {
+        return runBlocking {
+            return@runBlocking withContext(dispatcher()) {
+                return@withContext block.invoke(this)
+            }
+        }
     }
 
     /**
      * Puts the handler on the event queue for the current context so it will be run asynchronously ASAP after all
      * preceeding events have been handled.
      *
-     * @param action - a handler representing the action to execute
+     * @param block - a handler representing the action to execute
      */
-    fun then(action: Handler<Void>) {
-        vertx.runOnContext(action)
+    fun then(block: Handler<Void>) {
+        vertx.runOnContext(block)
     }
 
     /**
@@ -129,11 +156,11 @@ object Worker {
     /**
      * Launches a new coroutine without blocking the current thread and returns a reference to the coroutine as a Job.
      * The coroutine is cancelled when the resulting job is cancelled.
-     * @param handler [@kotlin.ExtensionFunctionType] SuspendFunction1<CoroutineScope, Unit>
+     * @param block [@kotlin.ExtensionFunctionType] SuspendFunction1<CoroutineScope, Unit>
      */
-    fun global(handler: suspend CoroutineScope.() -> Unit) {
+    fun <T> global(block: suspend CoroutineScope.() -> T) {
         GlobalScope.launch(dispatcher()) {
-            handler.invoke(this)
+            block.invoke(this)
         }
     }
 
