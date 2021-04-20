@@ -41,6 +41,9 @@ class CacheEventListener : RedisPubSubAdapter<String, String>() {
                     "DELETE_CACHE" -> {
                         CacheManager.delete(messageObject.regionName, messageObject.key, false)
                     }
+                    else -> {
+
+                    }
                 }
             }
         }

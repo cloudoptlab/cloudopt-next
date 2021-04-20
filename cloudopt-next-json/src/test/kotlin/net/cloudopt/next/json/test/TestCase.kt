@@ -92,6 +92,7 @@ class TestCase {
                     "d" to "3"
                 )
             ),
+            "student" to Student(name = "next",sex = 1)
         )
         println(a.toJsonString())
     }

@@ -44,7 +44,6 @@ class ClickHousePlugin : Plugin {
                 hikariConfig.dataSource = ClickHouseManager.clickHouseDataSource
                 ClickHouseManager.hikariDataSource = HikariDataSource(hikariConfig)
             } catch (e: ClassNotFoundException) {
-
             }
 
             true

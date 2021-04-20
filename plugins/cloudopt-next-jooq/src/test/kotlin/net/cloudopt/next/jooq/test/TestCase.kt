@@ -13,19 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.cache.test
+package net.cloudopt.next.jooq.test
 
-import net.cloudopt.next.cache.CacheHealthIndicator
-import net.cloudopt.next.cache.CachePlugin
-import net.cloudopt.next.redis.RedisPlugin
+import net.cloudopt.next.jooq.DBHealthIndicator
+import net.cloudopt.next.jooq.JooqPlugin
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.health.HealthChecksManager
 import net.cloudopt.next.web.health.HealthChecksPlugin
+import org.junit.Test
+
+
+/*
+ * @author: Cloudopt
+ * @Time: 2018/1/9
+ * @Description: Test Case
+ */
 
 fun main() {
-    NextServer.addPlugin(RedisPlugin())
-    NextServer.addPlugin(CachePlugin())
-    HealthChecksManager.register("cache", CacheHealthIndicator())
+    NextServer.addPlugin(JooqPlugin())
+    HealthChecksManager.register("db",DBHealthIndicator())
     NextServer.addPlugin(HealthChecksPlugin())
     NextServer.run()
 }
+
+//class TestCase {
+//
+//    @Test
+//    fun testConnection() {
+//        var plugin = JooqPlugin()
+//        plugin.start()
+//
+//    }
+//
+//}

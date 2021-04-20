@@ -21,6 +21,11 @@ import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Worker
 import net.cloudopt.next.web.config.ConfigManager
 import net.cloudopt.next.web.event.EventPlugin
+import net.cloudopt.next.web.health.HealthChecksManager
+import net.cloudopt.next.web.health.HealthChecksPlugin
+import net.cloudopt.next.web.health.hooks.LoggerHook
+import net.cloudopt.next.web.health.indicators.DiskSpaceHealthIndicator
+import net.cloudopt.next.web.health.indicators.JvmHealthIndicator
 import net.cloudopt.next.web.test.plugin.TestPlugin
 
 /*
@@ -32,9 +37,13 @@ fun main(args: Array<String>) {
     println(ConfigManager.config.toJsonString())
     NextServer.addPlugin(TestPlugin())
     NextServer.addPlugin(EventPlugin())
+    HealthChecksManager.register("disk",DiskSpaceHealthIndicator())
+    HealthChecksManager.register("jvm",JvmHealthIndicator())
+    HealthChecksManager.registerHook("logger",LoggerHook())
+    NextServer.addPlugin(HealthChecksPlugin())
     NextServer.run(Student::class)
-    Worker.setTimer(1000, false, Handler { id ->
-        println("And one second later that is printed")
+    Worker.setTimer(1000, true, Handler { id ->
+        println("And one second later that is printed: $id")
     })
     Worker.cancelTimer(1)
 }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import net.cloudopt.next.json.Jsoner
+import net.cloudopt.next.utils.Resourcer
 import net.cloudopt.next.web.Worker
 import net.cloudopt.next.web.config.ConfigManager
 import org.junit.After
@@ -20,7 +20,7 @@ class TestClusterCase {
     fun init() {
         ConfigManager.config.env = "cluster"
         val newConfigFileName = "application-${ConfigManager.config.env}.json"
-        ConfigManager.configMap.putAll(Jsoner.read(newConfigFileName))
+        ConfigManager.configMap.putAll(Resourcer.read(newConfigFileName))
         RedisPlugin().start()
         Dispatchers.setMain(Worker.dispatcher())
     }

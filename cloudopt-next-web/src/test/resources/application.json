@@ -12,5 +12,9 @@
   },
   "vertx": {
     "eventLoopPoolSize": 4
+  },
+  "healthChecks": {
+    "applicationName": "Next Tests",
+    "password": "1234"
   }
 }
