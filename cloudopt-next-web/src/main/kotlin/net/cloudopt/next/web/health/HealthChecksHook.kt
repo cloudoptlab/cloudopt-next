@@ -23,5 +23,5 @@ interface HealthChecksHook {
      * For specific execution codes, you can send reports to slack, email, etc.
      * @param healthChecksReport MutableMap<String, Any>
      */
-    fun hook(healthChecksReport: MutableMap<String, Any>)
+    suspend fun hook(healthChecksReport: MutableMap<String, Any>)
 }

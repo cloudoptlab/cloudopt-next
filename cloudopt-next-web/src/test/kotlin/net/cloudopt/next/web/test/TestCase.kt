@@ -26,6 +26,7 @@ import net.cloudopt.next.web.health.HealthChecksPlugin
 import net.cloudopt.next.web.health.hooks.LoggerHook
 import net.cloudopt.next.web.health.indicators.DiskSpaceHealthIndicator
 import net.cloudopt.next.web.health.indicators.JvmHealthIndicator
+import net.cloudopt.next.web.health.indicators.SystemIndicator
 import net.cloudopt.next.web.test.plugin.TestPlugin
 
 /*
@@ -39,6 +40,7 @@ fun main(args: Array<String>) {
     NextServer.addPlugin(EventPlugin())
     HealthChecksManager.register("disk",DiskSpaceHealthIndicator())
     HealthChecksManager.register("jvm",JvmHealthIndicator())
+    HealthChecksManager.register("system",SystemIndicator())
     HealthChecksManager.registerHook("logger",LoggerHook())
     NextServer.addPlugin(HealthChecksPlugin())
     NextServer.run(Student::class)

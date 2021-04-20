@@ -25,7 +25,7 @@ import net.cloudopt.next.web.health.HealthChecksHook
  */
 class LoggerHook : HealthChecksHook {
     val logger = Logger.Companion.getLogger(this::class)
-    override fun hook(healthChecksReport: MutableMap<String, Any>) {
+    override suspend fun hook(healthChecksReport: MutableMap<String, Any>) {
         logger.info(healthChecksReport.toJsonString())
     }
 }
