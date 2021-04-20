@@ -22,7 +22,9 @@ import net.cloudopt.next.json.Jsoner.toJsonString
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.net.URL
 import java.net.URLDecoder
+import java.util.*
 import kotlin.reflect.KClass
 
 object Resourcer {
@@ -31,24 +33,33 @@ object Resourcer {
 
     /**
      * Get the file input stream
-     * @param fileName Specify the file name
+     * @param fileName String specify the file name
      * @return File
      */
     fun getFile(fileName: String): File {
-        return if (File(getRootClassPath() + "/" + fileName).exists()) {
+        return if (File(URLDecoder.decode(getRootClassPath() + "/" + fileName, "UTF-8")).exists()) {
             File(URLDecoder.decode(getRootClassPath() + "/" + fileName, "UTF-8"))
         } else {
-            File(URLDecoder.decode(Resourcer::class.java.getResource("/$fileName").file, "UTF-8"))
+            File(URLDecoder.decode(Resourcer::class.java.getResource("/$fileName")?.file, "UTF-8"))
         }
     }
 
     /**
+     * Get the file url
+     * @param fileName String specify the file name
+     * @return URL?
+     */
+    fun getUrl(fileName: String): URL? {
+        return Resourcer::class.java.classLoader.getResource(fileName)
+    }
+
+    /**
      * Get the file input stream
-     * @param fileName Specify the file name
+     * @param fileName String specify the file name
      * @return FileInputStream
      */
-    fun getFileInputStream(fileName: String): InputStream {
-        return getFile(fileName).inputStream()
+    fun getFileInputStream(fileName: String): InputStream? {
+        return Resourcer::class.java.classLoader.getResourceAsStream(fileName)
     }
 
     fun getFileString(fileName: String, isJson: Boolean = false): String {
@@ -61,18 +72,17 @@ object Resourcer {
      */
     fun getRootClassPath(): String {
         val loader = ClassLoader.getSystemClassLoader()
-        return if (rootPath.isBlank()) {
+        return rootPath.ifBlank {
             val path = loader.getResource("")?.path
-            rootPath = File(path).absolutePath
-            rootPath
-        } else {
+            rootPath = File(path?:"").absolutePath
             rootPath
         }
     }
 
     /**
      * Turn the input stream into a string
-     * @param inputStream The input stream to be processed
+     * @param inputStream InputStream the input stream to be processed
+     * @param isJson Boolean
      * @return String
      */
     fun inputStreamToString(inputStream: InputStream?, isJson: Boolean = false): String {
@@ -99,19 +109,38 @@ object Resourcer {
         return sb.toString()
     }
 
-    fun read(filePath: String, prefix: String, clazz: KClass<*>): Any {
-        val map = read(filePath, prefix)
+    /**
+     * Get the configuration in the json file by the specified filename and prefix, and deserialize it to the specified
+     * object.
+     * @param fileName String specify the file name
+     * @param prefix String specify the prefix
+     * @param clazz KClass<*> specify the class
+     * @return Any
+     */
+    fun read(fileName: String, prefix: String, clazz: KClass<*>): Any {
+        val map = read(fileName, prefix)
         return map.toJsonString().jsonToObject(clazz)
     }
 
-    fun read(filePath: String): MutableMap<String, Any> {
-        var jsonString = inputStreamToString(getFileInputStream(filePath))
+    /**
+     * Get the configuration in the json file.
+     * @param fileName String specify the file name
+     * @return MutableMap<String, Any>
+     */
+    fun read(fileName: String): MutableMap<String, Any> {
+        var jsonString = inputStreamToString(getFileInputStream(fileName))
         jsonString = cleanText(jsonString)
         return jsonString.jsontoMutableMap()
     }
 
-    fun read(filePath: String, prefix: String): MutableMap<String, Any> {
-        var jsonString = inputStreamToString(getFileInputStream(filePath))
+    /**
+     * Get the configuration in the json file by the specified filename and prefix, and deserialize it to map.
+     * @param fileName String specify the file name
+     * @param prefix String specify the prefix
+     * @return MutableMap<String, Any>
+     */
+    fun read(fileName: String, prefix: String): MutableMap<String, Any> {
+        var jsonString = inputStreamToString(getFileInputStream(fileName))
         jsonString = cleanText(jsonString)
         var jsonObj = jsonString.toJsonObject()
         var list = prefix.split(".")
@@ -123,6 +152,11 @@ object Resourcer {
         return jsonObj.map.toMutableMap()
     }
 
+    /**
+     * Clear out the extra carriage return characters.
+     * @param jsonString String
+     * @return String
+     */
     private fun cleanText(jsonString: String): String {
         return jsonString.replace("/n", "")
     }
