@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jooq.pool.test
+package net.cloudopt.next.web.health
 
-import net.cloudopt.next.jooq.JooqPlugin
-import org.junit.Test
-
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: Test Case
+/**
+ * For notification after each completed health check
  */
-class TestCase {
-
-    @Test
-    fun testConnection() {
-        var plugin = JooqPlugin()
-        plugin.start()
-
-    }
-
+interface HealthChecksHook {
+    /**
+     * For specific execution codes, you can send reports to slack, email, etc.
+     * @param healthChecksReport MutableMap<String, Any>
+     */
+    fun hook(healthChecksReport: MutableMap<String, Any>)
 }

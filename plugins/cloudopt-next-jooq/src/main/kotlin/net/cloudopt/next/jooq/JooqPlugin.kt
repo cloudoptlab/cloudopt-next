@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.jooq
 
+import net.cloudopt.next.jooq.JooqManager.pool
 import net.cloudopt.next.jooq.pool.ConnectionPool
 import net.cloudopt.next.jooq.pool.HikariCPPool
 import net.cloudopt.next.utils.Classer
@@ -42,13 +43,13 @@ class JooqPlugin : Plugin {
         try {
             var map = ConfigManager.init("jooq")
 
-            var pool: ConnectionPool = HikariCPPool()
+            pool = HikariCPPool()
 
-            if (map.get("pool") != null) {
-                pool = Classer.loadClass(map.get("pool") as String).createInstance() as ConnectionPool
+            if (map["pool"] != null) {
+                pool = Classer.loadClass(map["pool"] as String).createInstance() as ConnectionPool
             }
 
-            var sqlDialect = when (map.get("database")) {
+            var sqlDialect = when (map["database"]) {
                 "mysql" -> SQLDialect.MYSQL
                 "derby" -> SQLDialect.DERBY
                 "firebird" -> SQLDialect.FIREBIRD
@@ -76,12 +77,12 @@ class JooqPlugin : Plugin {
     }
 
     override fun stop(): Boolean {
-        try {
-            JooqManager.connection?.close()
-            return true
+        return try {
+            JooqManager.connection.close()
+            true
         } catch (e: SQLException) {
             e.printStackTrace()
-            return false
+            false
         }
 
     }
