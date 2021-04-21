@@ -41,10 +41,10 @@ fun main(args: Array<String>) {
     HealthChecksManager.register("disk",DiskSpaceHealthIndicator())
     HealthChecksManager.register("jvm",JvmHealthIndicator())
     HealthChecksManager.register("system",SystemIndicator())
-    HealthChecksManager.registerHook("logger",LoggerHook())
+//    HealthChecksManager.registerHook("logger",LoggerHook())
     NextServer.addPlugin(HealthChecksPlugin())
     NextServer.run(Student::class)
-    Worker.setTimer(1000, true, Handler { id ->
+    Worker.setTimer(1000, false, Handler { id ->
         println("And one second later that is printed: $id")
     })
     Worker.cancelTimer(1)

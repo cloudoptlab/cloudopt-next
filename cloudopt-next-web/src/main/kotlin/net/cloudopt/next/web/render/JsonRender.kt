@@ -35,11 +35,12 @@ class JsonRender : Render {
                     promise.complete(obj.toJsonString())
                 } catch (e: Exception) {
                     promise.fail(e)
-                    end(resource)
+                    e.printStackTrace()
+                    resource.fail(500)
+                    return@await
                 }
             }
             resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
-
             end(resource, json)
         }
     }

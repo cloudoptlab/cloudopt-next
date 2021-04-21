@@ -98,7 +98,7 @@ class FreemarkerRender : Render {
                     promise.complete(writer.toString())
                 } catch (e: Exception) {
                     promise.fail(e)
-                    end(resource)
+                    resource.fail(500)
                     return@await
                 }
             }

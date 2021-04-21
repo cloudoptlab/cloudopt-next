@@ -24,8 +24,10 @@ import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
+import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.json.Jsoner.jsonToObjectList
 import net.cloudopt.next.json.Jsoner.toJsonArray
+import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.utils.Maper.toObject
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.Template
@@ -133,10 +135,10 @@ open class Resource {
      * Returns request parameters.
      * @return Parameters map
      */
-    fun getParams(): MutableMap<String, Any> {
-        var map = mutableMapOf<String, Any>()
+    fun getParams(): MutableMap<String, Any?> {
+        var map = mutableMapOf<String, Any?>()
         request.params().forEach { e ->
-            map[e.key] = Wafer.contentFilter(e.value) ?: ""
+            map[e.key] = Wafer.contentFilter(e.value)
         }
         return map
     }
@@ -146,11 +148,11 @@ open class Resource {
      * @return Parameters Object
      */
     fun getParams(clazz: KClass<*>): Any {
-        var map = mutableMapOf<String, Any>()
+        var map = mutableMapOf<String, Any?>()
         request.params().forEach { e ->
-            map[e.key] = Wafer.contentFilter(e.value) ?: ""
+            map[e.key] = Wafer.contentFilter(e.value)
         }
-        return map.toObject(clazz)
+        return map.toJsonString().jsonToObject(clazz)
     }
 
     /**
@@ -471,3 +473,5 @@ open class Resource {
     }
 
 }
+
+

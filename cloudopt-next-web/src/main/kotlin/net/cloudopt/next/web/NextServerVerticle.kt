@@ -21,6 +21,7 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
+import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.coroutines.launch
 import net.cloudopt.next.json.Jsoner.toJsonObject
@@ -35,6 +36,7 @@ import net.cloudopt.next.web.route.Parameter
 import net.cloudopt.next.web.route.RequestBody
 import net.cloudopt.next.web.route.SocketJS
 import net.cloudopt.next.web.route.WebSocket
+import java.lang.IllegalArgumentException
 import java.sql.Timestamp
 import java.text.DateFormat
 import java.time.LocalDate
@@ -310,9 +312,9 @@ class NextServerVerticle : CoroutineVerticle() {
                     "=========================================================================================================="
                 )
                 NextServer.logger.info("\uD83D\uDC0B Cloudopt Next started success!")
-                if (ConfigManager.config.httpServerOptions.isSsl){
+                if (ConfigManager.config.httpServerOptions.isSsl) {
                     NextServer.logger.info("https://127.0.0.1:${ConfigManager.config.port}")
-                }else{
+                } else {
                     NextServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
                 }
                 NextServer.logger.info(
@@ -354,9 +356,6 @@ class NextServerVerticle : CoroutineVerticle() {
         if (context.failure() != null) {
             context.failure().printStackTrace()
             logger.error(context.failure().toString())
-        }
-        if (!errorHandler.response.ended()) {
-            errorHandler.end()
         }
     }
 
@@ -421,7 +420,14 @@ class NextServerVerticle : CoroutineVerticle() {
                 val jsonObject = controllerObj.getParams().toJsonString().toJsonObject()
                 for (para in resourceTable.clazzMethod.parameters) {
                     if (para.kind.name == "VALUE" && para.hasAnnotation<Parameter>()) {
-                        arr[para] = getParaByType(para.findAnnotation<Parameter>()?.value, para, jsonObject)
+                        try {
+                            arr[para] = getParaByType(para.findAnnotation<Parameter>()?.value ?: "", para, jsonObject)
+                        }catch (e: IllegalArgumentException){
+                            controllerObj.fail(400)
+                            e.printStackTrace()
+                            return
+                        }
+
                     }
                     if (para.hasAnnotation<RequestBody>()) {
                         arr[para] = controllerObj.getBodyJson(para.type.jvmErasure)
@@ -439,6 +445,7 @@ class NextServerVerticle : CoroutineVerticle() {
                 } else {
                     controllerObj.context.put("errorMessage", validatorResult.message)
                     controllerObj.fail(400)
+                    return
                 }
             }
         } catch (e: Exception) {
@@ -458,33 +465,76 @@ class NextServerVerticle : CoroutineVerticle() {
      * @return Any?
      */
     private fun getParaByType(
-        paraName: String?,
+        paraName: String,
         para: KParameter,
         jsonObject: JsonObject
     ): Any? {
-        val finalParaName = if (paraName.isNullOrBlank()) {
+        val finalParaName = paraName.ifBlank {
             para.name
-        } else {
-            paraName
         }
-        if (!jsonObject.containsKey(finalParaName) && para.findAnnotation<Parameter>()?.defaultValue?.isNotBlank() == true
-        ) {
-            jsonObject.put(finalParaName, para.findAnnotation<Parameter>()?.defaultValue)
-        }
-        when (para.type.jvmErasure.jvmName) {
-            "java.lang.String" -> return jsonObject.getString(finalParaName)
-            "kotlin.String" -> return jsonObject.getString(finalParaName)
-            "int" -> return jsonObject.getInteger(finalParaName)
-            "double" -> return jsonObject.getDouble(finalParaName)
-            "float" -> return jsonObject.getFloat(finalParaName)
-            "long" -> return jsonObject.getLong(finalParaName)
-            "java.math.BigDecimal" -> return jsonObject.getString(finalParaName).toBigDecimal()
-            "java.math.BigInteger" -> return jsonObject.getString(finalParaName).toBigInteger()
-            "short" -> return jsonObject.getString(finalParaName).toShort()
-            "java.util.Date" -> return DateFormat.getDateInstance().parse(jsonObject.getString(finalParaName))
-            "java.sql.Timestamp" -> return Timestamp.valueOf(jsonObject.getString(finalParaName))
-            "java.time.LocalDateTime" -> return LocalDateTime.parse(jsonObject.getString(finalParaName))
-            "java.time.LocalDate" -> return LocalDate.parse(jsonObject.getString(finalParaName))
+        if (jsonObject.containsKey(finalParaName) && jsonObject.getString(finalParaName ?: "").isNotBlank()) {
+            when (para.type.jvmErasure) {
+                String::class ->
+                    return jsonObject.getString(finalParaName)
+                String::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName)
+
+                Int::class ->
+                    return jsonObject.getString(finalParaName).toInt()
+                Int::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toIntOrNull()
+
+                Double::class ->
+                    return jsonObject.getString(finalParaName).toDouble()
+                Double::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toDoubleOrNull()
+
+                Float::class ->
+                    return jsonObject.getString(finalParaName).toFloat()
+                Float::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toFloatOrNull()
+
+                Short::class ->
+                    return jsonObject.getString(finalParaName).toShortOrNull()
+                Short::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toShortOrNull()
+
+                Long::class ->
+                    return jsonObject.getString(finalParaName).toLong()
+                Long::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toLongOrNull()
+
+                java.math.BigDecimal::class ->
+                    return jsonObject.getString(finalParaName).toBigDecimal()
+                java.math.BigDecimal::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toBigDecimalOrNull()
+
+                java.math.BigInteger::class ->
+                    return jsonObject.getString(finalParaName).toBigInteger()
+                java.math.BigInteger::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toBigIntegerOrNull()
+
+                java.util.Date::class ->
+                    return DateFormat.getDateInstance().parse(jsonObject.getString(finalParaName))
+                java.util.Date::class.starProjectedType.withNullability(true) ->
+                    return DateFormat.getDateInstance().parse(jsonObject.getString(finalParaName))
+
+                java.sql.Timestamp::class ->
+                    return Timestamp.valueOf(jsonObject.getString(finalParaName))
+                java.sql.Timestamp::class.starProjectedType.withNullability(true) ->
+                    return Timestamp.valueOf(jsonObject.getString(finalParaName))
+
+                java.time.LocalDateTime::class ->
+                    return LocalDateTime.parse(jsonObject.getString(finalParaName))
+                java.time.LocalDateTime::class.starProjectedType.withNullability(true) ->
+                    return LocalDateTime.parse(jsonObject.getString(finalParaName))
+
+                java.time.LocalDate::class ->
+                    return LocalDate.parse(jsonObject.getString(finalParaName))
+                java.time.LocalDate::class.starProjectedType.withNullability(true) ->
+                    return LocalDate.parse(jsonObject.getString(finalParaName))
+
+            }
         }
         return null
     }

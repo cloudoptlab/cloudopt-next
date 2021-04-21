@@ -30,6 +30,7 @@ import net.cloudopt.next.web.test.validator.TestCoroutinesValidator
 import net.cloudopt.next.web.test.validator.TestValidator
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
+import javax.validation.constraints.NotNull
 
 /*
  * @author: Cloudopt
@@ -65,14 +66,16 @@ class IndexController : Resource() {
         @Parameter
         name: String,
         @Min(18)
+        @NotNull
         @Parameter
-        age: Int
+        age: Int?
     ) {
+        String
         var map = hashMapOf<String, Any>()
         renderJson {
             template {
                 parameters["name"] = name
-                parameters["age"] = age
+                parameters["age"] = age?:3
             }
         }
     }

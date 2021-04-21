@@ -15,8 +15,6 @@
  */
 package net.cloudopt.next.web.route
 
-import java.lang.annotation.Documented
-
 /*
  * @author: Cloudopt
  * @Time: 2020/4/1
@@ -24,5 +22,5 @@ import java.lang.annotation.Documented
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.VALUE_PARAMETER)
-@Documented
-annotation class Parameter(val value: String = "", val defaultValue: String = "")
+@MustBeDocumented
+annotation class Parameter(val value: String = "")

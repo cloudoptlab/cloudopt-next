@@ -58,7 +58,7 @@ class HtmlRender : Render {
                         return@await
                     } catch (e: Exception) {
                         promise.fail(e)
-                        end(resource, "")
+                        resource.fail(500)
                         return@await
                     }
                     val bufferedReader = BufferedReader(InputStreamReader(inputStream))
