@@ -36,7 +36,7 @@ object Jsoner {
      * Output MutableMap
      * @return MutableMap
      */
-    fun String.jsontoMutableMap(): MutableMap<String, Any> {
+    fun String.jsonToMutableMap(): MutableMap<String, Any> {
         return jsonProvider.toJsonMap(this)
     }
 
@@ -45,7 +45,7 @@ object Jsoner {
      * @param clazz Java class
      * @return Json object
      */
-    fun String.jsonToObject(clazz: KClass<*>): Any {
+    fun <T> String.jsonToObject(clazz: KClass<*>): T {
         return jsonProvider.toObject(this, clazz)
     }
 
@@ -53,7 +53,7 @@ object Jsoner {
      * Output json map list.
      * @return MutableList<MutableMap<String,Any>>
      */
-    fun String.jsontoMutableMapList(): MutableList<MutableMap<String, Any>> {
+    fun String.jsonToMutableMapList(): MutableList<MutableMap<String, Any>> {
         return jsonProvider.toJsonMapList(this)
     }
 
@@ -62,7 +62,7 @@ object Jsoner {
      * @param clazz Java class
      * @return MutableList<Any>
      */
-    fun String.jsonToObjectList(clazz: KClass<*>): MutableList<Any> {
+    fun <T> String.jsonToObjectList(clazz: KClass<*>): MutableList<T> {
         return jsonProvider.toObjectList(this, clazz)
     }
 
@@ -70,7 +70,7 @@ object Jsoner {
      * Output any list.
      * @return MutableList<Any>
      */
-    fun String.jsontoObjectList(): MutableList<Any> {
+    fun String.jsonToObjectList(): MutableList<Any> {
         return jsonProvider.toList(this)
     }
 

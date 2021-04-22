@@ -37,8 +37,8 @@ class DefaultJSONProvider : JsonProvider {
         return (Json.decodeValue(jsonString) as JsonObject).map.toMutableMap()
     }
 
-    override fun toObject(jsonString: String, clazz: KClass<*>): Any {
-        return Json.decodeValue(jsonString, clazz.java)
+    override fun <T> toObject(jsonString: String, clazz: KClass<*>): T {
+        return Json.decodeValue(jsonString, clazz.java) as T
     }
 
     override fun toJsonMapList(jsonString: String): MutableList<MutableMap<String, Any>> {
@@ -59,8 +59,8 @@ class DefaultJSONProvider : JsonProvider {
         return list
     }
 
-    override fun toList(jsonString: String): MutableList<Any> {
-        return (Json.decodeValue(jsonString) as JsonArray).toMutableList()
+    override fun <T> toList(jsonString: String): MutableList<T> {
+        return (Json.decodeValue(jsonString) as JsonArray).toMutableList() as MutableList<T>
     }
 
     override fun toJsonObject(jsonString: String): JsonObject {

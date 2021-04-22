@@ -422,7 +422,7 @@ class NextServerVerticle : CoroutineVerticle() {
                     if (para.kind.name == "VALUE" && para.hasAnnotation<Parameter>()) {
                         try {
                             arr[para] = getParaByType(para.findAnnotation<Parameter>()?.value ?: "", para, jsonObject)
-                        }catch (e: IllegalArgumentException){
+                        } catch (e: IllegalArgumentException) {
                             controllerObj.fail(400)
                             e.printStackTrace()
                             return
@@ -430,7 +430,17 @@ class NextServerVerticle : CoroutineVerticle() {
 
                     }
                     if (para.hasAnnotation<RequestBody>()) {
-                        arr[para] = controllerObj.getBodyJson(para.type.jvmErasure)
+                        try {
+                            arr[para] = controllerObj.getBodyJson(para.type.jvmErasure)
+                        } catch (e: NullPointerException) {
+                            controllerObj.fail(400)
+                            e.printStackTrace()
+                            return
+                        } catch (e: IllegalArgumentException) {
+                            controllerObj.fail(400)
+                            e.printStackTrace()
+                            return
+                        }
                     }
                 }
                 /**

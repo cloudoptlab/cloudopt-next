@@ -15,8 +15,8 @@
  */
 package net.cloudopt.next.utils
 
+import net.cloudopt.next.json.Jsoner.jsonToMutableMap
 import net.cloudopt.next.json.Jsoner.jsonToObject
-import net.cloudopt.next.json.Jsoner.jsontoMutableMap
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
 import java.io.File
@@ -130,7 +130,7 @@ object Resourcer {
     fun read(fileName: String): MutableMap<String, Any> {
         var jsonString = inputStreamToString(getFileInputStream(fileName))
         jsonString = cleanText(jsonString)
-        return jsonString.jsontoMutableMap()
+        return jsonString.jsonToMutableMap()
     }
 
     /**

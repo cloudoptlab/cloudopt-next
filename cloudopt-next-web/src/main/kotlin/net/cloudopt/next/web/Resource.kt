@@ -436,7 +436,7 @@ open class Resource {
     /**
      * @return  the entire HTTP request body as a json and convert object array, assuming UTF-8 encoding.
      */
-    fun getBodyJsonArray(clazz: KClass<*>): Any {
+    fun <T> getBodyJsonArray(clazz: KClass<*>): MutableList<T> {
         return context.bodyAsJson.toString().jsonToObjectList(clazz)
     }
 

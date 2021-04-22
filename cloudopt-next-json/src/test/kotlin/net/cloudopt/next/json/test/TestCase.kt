@@ -15,14 +15,12 @@
  */
 package net.cloudopt.next.json.test
 
-import com.fasterxml.jackson.module.kotlin.jsonMapper
 import net.cloudopt.next.json.Jsoner.json
 import net.cloudopt.next.json.Jsoner.jsonArray
+import net.cloudopt.next.json.Jsoner.jsonToMutableMapList
 import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.json.Jsoner.jsonToObjectList
-import net.cloudopt.next.json.Jsoner.jsontoMutableMap
-import net.cloudopt.next.json.Jsoner.jsontoMutableMapList
-import net.cloudopt.next.json.Jsoner.jsontoObjectList
+import net.cloudopt.next.json.Jsoner.jsonToMutableMap
 import net.cloudopt.next.json.Jsoner.toJsonArray
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
@@ -30,18 +28,18 @@ import org.junit.Test
 
 class TestCase {
 
-    val testJsonArrayString = "[{\"name\":\"Andy\",\"sex\":1},{\"name\":\"GitHub\",\"sex\":2}]"
+    private val testJsonArrayString = "[{\"name\":\"Andy\",\"sex\":1},{\"name\":\"GitHub\",\"sex\":2}]"
 
-    val testJsonString = "{\"name\":\"Andy\",\"sex\":1}"
+    private val testJsonString = "{\"name\":\"Andy\",\"sex\":1}"
 
     @Test
     fun toJsonMap() {
-        println(testJsonString.jsontoMutableMap())
+        println(testJsonString.jsonToMutableMap())
     }
 
     @Test
     fun toJsonMapList() {
-        println(testJsonArrayString.jsontoMutableMapList())
+        println(testJsonArrayString.jsonToMutableMapList())
     }
 
     @Test
@@ -61,23 +59,19 @@ class TestCase {
 
     @Test
     fun toObject() {
-        println(
-            testJsonString.jsonToObject(Student::class)
-        )
+        val student: Student = testJsonString.jsonToObject(Student::class)
+        println(student)
     }
 
     @Test
     fun toObjectList() {
-        println(
-            testJsonArrayString.jsonToObjectList(Student::class)
-        )
+        val student: List<Student> = testJsonArrayString.jsonToObjectList(Student::class)
+        println(student)
     }
 
     @Test
     fun toList() {
-        println(
-            testJsonArrayString.jsontoObjectList()
-        )
+        println(testJsonArrayString.jsonToObjectList())
     }
 
     @Test
@@ -92,10 +86,11 @@ class TestCase {
                     "d" to "3"
                 )
             ),
-            "student" to Student(name = "next",sex = 1)
+            "student" to Student(name = "next", sex = 1)
         )
         println(a.toJsonString())
     }
+
 }
 
 
