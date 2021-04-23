@@ -4,8 +4,8 @@ import io.grpc.ServerInterceptor
 import io.grpc.ServerInterceptors
 import io.vertx.grpc.VertxServerBuilder
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.web.Worker
+import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.core.Worker
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.jvmName

@@ -18,9 +18,9 @@ package net.cloudopt.next.web.test.controller
 import io.vertx.kotlin.coroutines.awaitEvent
 import net.cloudopt.next.web.NextServer.logger
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.Worker
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.Worker.then
+import net.cloudopt.next.core.Worker
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.core.Worker.then
 import net.cloudopt.next.web.event.AfterEvent
 import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.route.*

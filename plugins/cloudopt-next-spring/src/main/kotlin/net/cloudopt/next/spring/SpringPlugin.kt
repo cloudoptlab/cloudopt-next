@@ -15,8 +15,8 @@
  */
 package net.cloudopt.next.spring
 
-import net.cloudopt.next.web.Plugin
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.Plugin
+import net.cloudopt.next.core.ConfigManager
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.context.support.ClassPathXmlApplicationContext
 

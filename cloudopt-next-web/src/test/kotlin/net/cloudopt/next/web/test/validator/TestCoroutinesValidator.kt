@@ -18,7 +18,7 @@ package net.cloudopt.next.web.test.validator
 import io.vertx.kotlin.coroutines.awaitEvent
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Validator
-import net.cloudopt.next.web.Worker
+import net.cloudopt.next.core.Worker
 
 
 /*

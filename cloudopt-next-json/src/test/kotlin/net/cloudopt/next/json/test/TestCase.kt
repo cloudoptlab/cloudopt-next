@@ -15,16 +15,18 @@
  */
 package net.cloudopt.next.json.test
 
+import io.vertx.core.json.JsonObject
 import net.cloudopt.next.json.Jsoner.json
 import net.cloudopt.next.json.Jsoner.jsonArray
+import net.cloudopt.next.json.Jsoner.jsonToMutableMap
 import net.cloudopt.next.json.Jsoner.jsonToMutableMapList
 import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.json.Jsoner.jsonToObjectList
-import net.cloudopt.next.json.Jsoner.jsonToMutableMap
 import net.cloudopt.next.json.Jsoner.toJsonArray
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
 import org.junit.Test
+import kotlin.test.assertTrue
 
 class TestCase {
 
@@ -34,44 +36,58 @@ class TestCase {
 
     @Test
     fun toJsonMap() {
-        println(testJsonString.jsonToMutableMap())
+        assertTrue {
+            testJsonString.jsonToMutableMap()["name"]?.equals("Andy") ?: false
+        }
     }
 
     @Test
     fun toJsonMapList() {
-        println(testJsonArrayString.jsonToMutableMapList())
+        assertTrue {
+            testJsonArrayString.jsonToMutableMapList()[0]["name"]?.equals("Andy") ?: false
+        }
     }
 
     @Test
     fun toJsonString() {
-        println(Student("Andy", 1).toJsonString())
+        assertTrue { Student("Andy", 1).toJsonString() == testJsonString }
     }
 
     @Test
     fun toJsonObject() {
-        println(testJsonString.toJsonObject())
+        assertTrue {
+            testJsonString.toJsonObject().getString("name") == "Andy"
+        }
     }
 
     @Test
     fun toJsonArray() {
-        println(testJsonArrayString.toJsonArray())
+        assertTrue {
+            testJsonArrayString.toJsonArray().getJsonObject(0).getString("name") == "Andy"
+        }
     }
 
     @Test
     fun toObject() {
         val student: Student = testJsonString.jsonToObject(Student::class)
-        println(student)
+        assertTrue {
+            student.name == "Andy"
+        }
     }
 
     @Test
     fun toObjectList() {
         val student: List<Student> = testJsonArrayString.jsonToObjectList(Student::class)
-        println(student)
+        assertTrue {
+            student[0].name == "Andy"
+        }
     }
 
     @Test
     fun toList() {
-        println(testJsonArrayString.jsonToObjectList())
+        assertTrue {
+            (testJsonArrayString.jsonToObjectList()[0] as JsonObject).getString("name") == "Andy"
+        }
     }
 
     @Test
@@ -88,7 +104,9 @@ class TestCase {
             ),
             "student" to Student(name = "next", sex = 1)
         )
-        println(a.toJsonString())
+        assert(
+            a.toJsonString().isNotBlank()
+        )
     }
 
 }

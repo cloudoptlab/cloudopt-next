@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.web.test.handler
 
-import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.handler.Handler
 

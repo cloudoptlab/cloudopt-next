@@ -15,8 +15,8 @@
  */
 package net.cloudopt.next.redis
 
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.web.health.HealthChecksResult
 import net.cloudopt.next.web.health.HealthChecksStatusEnum
 import net.cloudopt.next.web.health.HealthIndicator

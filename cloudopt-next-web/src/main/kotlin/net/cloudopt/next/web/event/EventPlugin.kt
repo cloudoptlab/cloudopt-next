@@ -15,8 +15,8 @@
  */
 package net.cloudopt.next.web.event
 
-import net.cloudopt.next.web.Plugin
-import net.cloudopt.next.web.Worker
+import net.cloudopt.next.core.Plugin
+import net.cloudopt.next.core.Worker
 
 
 /*

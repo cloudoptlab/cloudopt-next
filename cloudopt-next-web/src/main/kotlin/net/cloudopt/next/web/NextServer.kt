@@ -16,11 +16,11 @@
 package net.cloudopt.next.web
 
 import io.vertx.core.http.HttpMethod
+import net.cloudopt.next.core.*
 import net.cloudopt.next.json.JsonProvider
 import net.cloudopt.next.json.Jsoner
-import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Classer
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.web.config.WebConfigBean
 import net.cloudopt.next.web.handler.AutoHandler
 import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.handler.Handler
@@ -38,6 +38,9 @@ import kotlin.reflect.full.functions
  * @Description: Cloudopt Next Server
  */
 object NextServer {
+
+    @JvmStatic
+    open var webConfig: WebConfigBean = ConfigManager.configMap.toObject(WebConfigBean::class)
 
     @JvmStatic
     open var verticleID = "net.cloudopt.next.web"
@@ -73,23 +76,22 @@ object NextServer {
 
     @JvmStatic
     open var errorHandler: KClass<ErrorHandler> =
-        Classer.loadClass(ConfigManager.config.errorHandler) as KClass<ErrorHandler>
+        Classer.loadClass(webConfig.errorHandler) as KClass<ErrorHandler>
 
     init {
         /**
          * Set json provider
          */
-        Jsoner.jsonProvider = Classer.loadClass(ConfigManager.config.jsonProvider).createInstance() as JsonProvider
+        Jsoner.jsonProvider = Classer.loadClass(webConfig.jsonProvider).createInstance() as JsonProvider
     }
 
     /**
      * Scan by annotation and register as a route.
      */
     private fun scan() {
-        ConfigManager.config.deploymentOptions.workerPoolName = verticleID
 
         //Set log color
-        Logger.configuration.color = ConfigManager.config.logColor
+        Logger.configuration.color = webConfig.logColor
 
         //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class)
@@ -97,8 +99,8 @@ object NextServer {
                 handlers.add(clazz.createInstance() as Handler)
             }
 
-        packageName = if (ConfigManager.config.packageName.isNotBlank()) {
-            ConfigManager.config.packageName
+        packageName = if (webConfig.packageName.isNotBlank()) {
+            webConfig.packageName
         } else {
             throw RuntimeException("Package name must not be null!")
         }
@@ -236,7 +238,7 @@ object NextServer {
      */
     @JvmStatic
     fun run(clazz: Class<*>) {
-        ConfigManager.config.packageName = clazz.`package`.name
+        webConfig.packageName = clazz.`package`.name
         run()
     }
 
@@ -246,7 +248,7 @@ object NextServer {
      */
     @JvmStatic
     fun run(clazz: KClass<*>) {
-        ConfigManager.config.packageName = clazz.java.`package`.name
+        webConfig.packageName = clazz.java.`package`.name
         run()
     }
 
@@ -256,7 +258,7 @@ object NextServer {
      */
     @JvmStatic
     fun run(pageName: String) {
-        ConfigManager.config.packageName = pageName
+        webConfig.packageName = pageName
         run()
     }
 
@@ -271,7 +273,7 @@ object NextServer {
          */
         Banner.print()
         startPlugins()
-        Worker.deploy("net.cloudopt.next.web.NextServerVerticle")
+        Worker.deploy("net.cloudopt.next.web.NextServerVerticle",workerPoolName = "net.cloudopt.next.http")
         Runtime.getRuntime().addShutdownHook(object : Thread() {
             override fun run() {
                 NextServer.stop()

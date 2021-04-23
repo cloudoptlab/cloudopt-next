@@ -1,0 +1,8 @@
+dependencies {
+    api project(":cloudopt-next-json")
+    api project(":cloudopt-next-logging")
+    api "io.vertx:vertx-lang-kotlin:${rootProject.property('vertx_version')}"
+    api "io.vertx:vertx-lang-kotlin-coroutines:${rootProject.property('vertx_version')}"
+}
+
+description = "cloudopt-next-core is a collection of generic modules and tools for cloudopt-next."

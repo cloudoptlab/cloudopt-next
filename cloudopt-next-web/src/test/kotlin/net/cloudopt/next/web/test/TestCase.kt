@@ -16,14 +16,13 @@
 package net.cloudopt.next.web.test
 
 import io.vertx.core.Handler
-import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.web.NextServer
-import net.cloudopt.next.web.Worker
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.Worker
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.web.event.EventPlugin
 import net.cloudopt.next.web.health.HealthChecksManager
 import net.cloudopt.next.web.health.HealthChecksPlugin
-import net.cloudopt.next.web.health.hooks.LoggerHook
 import net.cloudopt.next.web.health.indicators.DiskSpaceHealthIndicator
 import net.cloudopt.next.web.health.indicators.JvmHealthIndicator
 import net.cloudopt.next.web.health.indicators.SystemIndicator
@@ -35,7 +34,7 @@ import net.cloudopt.next.web.test.plugin.TestPlugin
  * @Description: Test Case
  */
 fun main(args: Array<String>) {
-    println(ConfigManager.config.toJsonString())
+    println(NextServer.webConfig.toJsonString())
     NextServer.addPlugin(TestPlugin())
     NextServer.addPlugin(EventPlugin())
     HealthChecksManager.register("disk",DiskSpaceHealthIndicator())

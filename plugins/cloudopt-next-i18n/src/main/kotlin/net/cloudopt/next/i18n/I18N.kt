@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.i18n
 
-import net.cloudopt.next.utils.Resourcer
+import net.cloudopt.next.core.Resourcer
 import java.util.*
 import kotlin.collections.HashMap
 

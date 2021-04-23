@@ -23,7 +23,7 @@ import kotlinx.coroutines.test.setMain
 import net.cloudopt.next.cache.CacheManager
 import net.cloudopt.next.cache.CachePlugin
 import net.cloudopt.next.redis.RedisPlugin
-import net.cloudopt.next.web.Worker
+import net.cloudopt.next.core.Worker
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

@@ -19,9 +19,10 @@ import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.Worker.global
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.core.Worker.global
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.web.NextServer
 import java.io.FileNotFoundException
 
 /*
@@ -48,7 +49,7 @@ class HbsRender : Render {
                     templates[nextTemplate.name]
                 } else {
                     try {
-                        handlebars.compile(ConfigManager.config.templates + "/" + nextTemplate.name)
+                        handlebars.compile(NextServer.webConfig.templates + "/" + nextTemplate.name)
                     } catch (e: FileNotFoundException) {
                         promise.fail("The specified page file could not be found: ${nextTemplate.name}!")
                         end(resource, "The specified page file could not be found: ${nextTemplate.name}!")

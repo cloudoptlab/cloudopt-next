@@ -19,9 +19,9 @@ import io.lettuce.core.RedisClient
 import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.resource.ClientResources
 import io.lettuce.core.resource.DefaultClientResources
-import net.cloudopt.next.web.Plugin
-import net.cloudopt.next.web.Worker
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.Plugin
+import net.cloudopt.next.core.Worker
+import net.cloudopt.next.core.ConfigManager
 
 
 /*

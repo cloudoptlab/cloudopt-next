@@ -17,10 +17,10 @@ package net.cloudopt.next.web.health
 
 import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.web.NextServer
-import net.cloudopt.next.web.Plugin
+import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.ResourceTable
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.ConfigManager
 import kotlin.reflect.KClass
 import kotlin.reflect.full.functions
 

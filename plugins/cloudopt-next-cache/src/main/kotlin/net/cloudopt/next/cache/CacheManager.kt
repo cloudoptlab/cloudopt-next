@@ -24,10 +24,10 @@ import io.lettuce.core.codec.ByteArrayCodec
 import net.cloudopt.next.cache.serializer.DefaultSerializer
 import net.cloudopt.next.cache.serializer.Serializer
 import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.redis.RedisManager
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.core.ConfigManager
 import java.util.concurrent.TimeUnit
 
 object CacheManager {

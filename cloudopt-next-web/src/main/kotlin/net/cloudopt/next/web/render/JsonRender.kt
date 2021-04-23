@@ -18,8 +18,8 @@ package net.cloudopt.next.web.render
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.Worker.global
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.core.Worker.global
 
 /*
  * @author: Cloudopt

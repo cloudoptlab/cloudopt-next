@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.quartz;
 
-import net.cloudopt.next.web.Plugin;
+import net.cloudopt.next.core.Plugin;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 

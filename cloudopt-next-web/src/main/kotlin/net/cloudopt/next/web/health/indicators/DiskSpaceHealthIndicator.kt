@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.web.health.indicators
 
-import net.cloudopt.next.web.Worker.await
+import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.web.health.HealthChecksResult
 import net.cloudopt.next.web.health.HealthIndicator
 import java.io.File

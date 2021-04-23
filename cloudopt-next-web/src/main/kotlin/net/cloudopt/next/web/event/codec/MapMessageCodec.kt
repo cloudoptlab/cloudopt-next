@@ -18,9 +18,9 @@ package net.cloudopt.next.web.event.codec
 import io.netty.util.CharsetUtil
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.eventbus.MessageCodec
+import net.cloudopt.next.core.toMap
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.utils.Maper.toMap
 
 
 class MapMessageCodec : MessageCodec<Map<String, Any>, Map<String, Any>> {

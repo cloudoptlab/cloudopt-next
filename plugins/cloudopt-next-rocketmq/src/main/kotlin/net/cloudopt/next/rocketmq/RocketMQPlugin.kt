@@ -17,12 +17,12 @@
 
 package net.cloudopt.next.rocketmq
 
-import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Classer
-import net.cloudopt.next.utils.Maper.toObject
+import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.core.Classer
 import net.cloudopt.next.web.NextServer
-import net.cloudopt.next.web.Plugin
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.Plugin
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.core.toObject
 import org.apache.rocketmq.acl.common.AclClientRPCHook
 import org.apache.rocketmq.acl.common.SessionCredentials
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer

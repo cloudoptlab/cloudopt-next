@@ -21,14 +21,15 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
-import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.coroutines.launch
+import net.cloudopt.next.core.Worker
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.validator.ValidatorTool
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.waf.Wafer
 import net.cloudopt.next.web.event.AfterEvent
 import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.handler.ErrorHandler
@@ -66,7 +67,7 @@ class NextServerVerticle : CoroutineVerticle() {
 
     override suspend fun start() {
 
-        val server = Worker.vertx.createHttpServer(ConfigManager.config.httpServerOptions)
+        val server = Worker.vertx.createHttpServer(NextServer.webConfig.httpServerOptions)
 
         val router = Router.router(Worker.vertx)
 
@@ -75,7 +76,7 @@ class NextServerVerticle : CoroutineVerticle() {
          * Register sockJS
          */
         if (NextServer.sockJSes.size > 0) {
-            val sockJSHandler = SockJSHandler.create(Worker.vertx, ConfigManager.config.socket)
+            val sockJSHandler = SockJSHandler.create(Worker.vertx, NextServer.webConfig.socket)
             NextServer.sockJSes.forEach { clazz ->
                 val socketAnnotation: SocketJS? = clazz.findAnnotation()
                 sockJSHandler.socketHandler { sockJSHandler ->
@@ -157,24 +158,24 @@ class NextServerVerticle : CoroutineVerticle() {
          */
         router.route("/*").handler(ResponseContentTypeHandler.create())
 
-        router.route("/*").handler(BodyHandler.create().setBodyLimit(ConfigManager.config.bodyLimit))
+        router.route("/*").handler(BodyHandler.create().setBodyLimit(NextServer.webConfig.bodyLimit))
 
         /**
          * Set timeout
          */
-        router.route("/*").handler(TimeoutHandler.create(ConfigManager.config.timeout))
+        router.route("/*").handler(TimeoutHandler.create(NextServer.webConfig.timeout))
 
         /**
          * Set csrf
          */
-        if (ConfigManager.config.waf.csrf) {
-            router.route("/*").handler(CSRFHandler.create(vertx, ConfigManager.config.waf.encryption))
+        if (Wafer.config.csrf) {
+            router.route("/*").handler(CSRFHandler.create(vertx, Wafer.config.encryption))
         }
 
         /**
          * Register failure handler
          */
-        NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${ConfigManager.config.errorHandler}")
+        NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${NextServer.webConfig.errorHandler}")
 
         router.route("/*").failureHandler { context ->
             errorProcessing(context)
@@ -208,9 +209,9 @@ class NextServerVerticle : CoroutineVerticle() {
             }
         }
 
-        router.route("/" + ConfigManager.config.staticPackage + "/*").handler(
-            StaticHandler.create().setIndexPage(ConfigManager.config.indexPage)
-                .setIncludeHidden(false).setWebRoot(ConfigManager.config.staticPackage)
+        router.route("/" + NextServer.webConfig.staticPackage + "/*").handler(
+            StaticHandler.create().setIndexPage(NextServer.webConfig.indexPage)
+                .setIncludeHidden(false).setWebRoot(NextServer.webConfig.staticPackage)
         )
 
         /**
@@ -306,16 +307,16 @@ class NextServerVerticle : CoroutineVerticle() {
             )
         }
 
-        server.requestHandler(router).listen(ConfigManager.config.port) { result ->
+        server.requestHandler(router).listen(NextServer.webConfig.port) { result ->
             if (result.succeeded()) {
                 NextServer.logger.info(
                     "=========================================================================================================="
                 )
                 NextServer.logger.info("\uD83D\uDC0B Cloudopt Next started success!")
-                if (ConfigManager.config.httpServerOptions.isSsl) {
-                    NextServer.logger.info("https://127.0.0.1:${ConfigManager.config.port}")
+                if (NextServer.webConfig.httpServerOptions.isSsl) {
+                    NextServer.logger.info("https://127.0.0.1:${NextServer.webConfig.port}")
                 } else {
-                    NextServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
+                    NextServer.logger.info("http://127.0.0.1:${NextServer.webConfig.port}")
                 }
                 NextServer.logger.info(
                     "=========================================================================================================="

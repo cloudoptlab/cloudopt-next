@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.web
 
-import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.logging.test.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 

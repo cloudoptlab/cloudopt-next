@@ -18,8 +18,8 @@ package net.cloudopt.next.cache
 import io.lettuce.core.codec.ByteArrayCodec
 import net.cloudopt.next.cache.serializer.Serializer
 import net.cloudopt.next.redis.RedisManager
-import net.cloudopt.next.utils.Classer
-import net.cloudopt.next.web.Plugin
+import net.cloudopt.next.core.Classer
+import net.cloudopt.next.core.Plugin
 import kotlin.reflect.full.createInstance
 
 

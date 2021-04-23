@@ -17,10 +17,9 @@ package net.cloudopt.next.web.config
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import io.vertx.core.DeploymentOptions
-import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
+import net.cloudopt.next.waf.WafConfigBean
 
 /*
  * @author: Cloudopt
@@ -47,9 +46,6 @@ data class WebConfigBean(
     var bodyLimit: Long = 50L * 1024 * 1024,
     var logColor: Boolean = true,
     var timeout: Long = 2L * 60 * 1000,
-    var waf: WafConfigBean = WafConfigBean(),
-    var vertx: VertxOptions = VertxOptions(),
     var httpServerOptions: HttpServerOptions = HttpServerOptions(),
-    var deploymentOptions: DeploymentOptions = DeploymentOptions(),
     var socket: SockJSHandlerOptions = SockJSHandlerOptions()
 )

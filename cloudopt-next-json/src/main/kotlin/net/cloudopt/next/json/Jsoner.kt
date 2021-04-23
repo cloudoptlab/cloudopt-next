@@ -67,7 +67,8 @@ object Jsoner {
     }
 
     /**
-     * Output any list.
+     * Output any list. Returns the json object used by the default json package, such as the JsonObject that comes
+     * with vert.x.
      * @return MutableList<Any>
      */
     fun String.jsonToObjectList(): MutableList<Any> {

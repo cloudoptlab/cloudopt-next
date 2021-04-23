@@ -19,8 +19,8 @@ import io.vertx.core.Vertx
 import io.vertx.core.eventbus.DeliveryOptions
 import io.vertx.core.eventbus.EventBus
 import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Classer
+import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.core.Classer
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.event.codec.MapMessageCodec
 import net.cloudopt.next.web.event.codec.ObjectMessageCodec

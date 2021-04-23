@@ -1,6 +1,6 @@
 package net.cloudopt.next.polyglot
 
-import net.cloudopt.next.utils.Resourcer
+import net.cloudopt.next.core.Resourcer
 import org.graalvm.polyglot.*
 
 /**

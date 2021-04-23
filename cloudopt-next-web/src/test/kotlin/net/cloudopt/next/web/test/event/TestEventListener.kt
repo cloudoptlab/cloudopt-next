@@ -16,7 +16,7 @@
 package net.cloudopt.next.web.test.event
 
 import io.vertx.core.eventbus.Message
-import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.web.event.AutoEvent
 import net.cloudopt.next.web.event.EventListener
 

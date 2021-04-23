@@ -20,9 +20,10 @@ import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.Worker.global
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.core.Worker.global
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.web.NextServer
 import java.io.StringWriter
 
 /*
@@ -66,7 +67,7 @@ class FreemarkerRender : Render {
 
                 config?.dateTimeFormat = "yyyy-MM-dd HH:mm:ss"
 
-                config?.setClassForTemplateLoading(FreemarkerRender::class.java, "/" + ConfigManager.config.templates)
+                config?.setClassForTemplateLoading(FreemarkerRender::class.java, "/" + NextServer.webConfig.templates)
 
             }
         } catch (e: Exception) {

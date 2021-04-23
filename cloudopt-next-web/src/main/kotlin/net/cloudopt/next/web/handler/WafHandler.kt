@@ -15,20 +15,14 @@
  */
 package net.cloudopt.next.web.handler
 
+import net.cloudopt.next.waf.Wafer
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.config.ConfigManager
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/26
- * @Description: Used to block common network attacks
- */
 
 @AutoHandler
 class WafHandler : Handler {
 
     override fun preHandle(resource: Resource): Boolean {
-        if (ConfigManager.config.waf.plus) {
+        if (Wafer.config.plus) {
             resource.setHeader("X-Content-Type-Options", "nosniff")
             resource.setHeader("X-Download-Options", "noopen")
             resource.setHeader("X-XSS-Protection", "1; mode=block")

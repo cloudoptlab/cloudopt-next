@@ -16,9 +16,10 @@
 package net.cloudopt.next.web.handler
 
 import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.web.NextServer
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,7 +32,7 @@ import java.util.*
 class ShowRouteHandler : Handler {
 
     override fun preHandle(resource: Resource): Boolean {
-        if (ConfigManager.config.showRoute) {
+        if (NextServer.webConfig.showRoute) {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             logger.info(
                 "Match route ----------------- " + df.format(Date())

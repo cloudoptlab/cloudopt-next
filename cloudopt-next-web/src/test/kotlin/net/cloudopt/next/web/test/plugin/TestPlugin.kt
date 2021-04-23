@@ -15,8 +15,8 @@
  */
 package net.cloudopt.next.web.test.plugin
 
-import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.web.Plugin
+import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.core.Plugin
 
 
 /*

@@ -4,7 +4,7 @@ import io.grpc.BindableService
 import io.vertx.core.Handler
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.grpc.VertxServer
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.ConfigManager
 import kotlin.reflect.KClass
 
 /**

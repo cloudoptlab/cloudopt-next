@@ -6,9 +6,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import net.cloudopt.next.utils.Resourcer
-import net.cloudopt.next.web.Worker
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.Resourcer
+import net.cloudopt.next.core.Worker
+import net.cloudopt.next.core.ConfigManager
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

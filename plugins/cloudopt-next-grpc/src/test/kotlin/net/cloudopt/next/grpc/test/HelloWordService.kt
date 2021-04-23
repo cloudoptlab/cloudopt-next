@@ -9,8 +9,8 @@ import net.cloudopt.next.grpc.GrpcService
 import net.cloudopt.next.grpc.test.example.HelloReply
 import net.cloudopt.next.grpc.test.example.HelloRequest
 import net.cloudopt.next.grpc.test.example.VertxGreeterGrpc
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.Worker.global
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.core.Worker.global
 
 class MyInterceptor : ServerInterceptor {
     override fun <ReqT : Any, RespT : Any> interceptCall(

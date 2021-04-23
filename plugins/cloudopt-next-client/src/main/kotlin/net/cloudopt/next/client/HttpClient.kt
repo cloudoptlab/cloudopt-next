@@ -19,7 +19,7 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.ext.web.client.HttpRequest
 import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
-import net.cloudopt.next.web.Worker
+import net.cloudopt.next.core.Worker
 
 
 /*

@@ -1,1 +1,5 @@
+dependencies {
+    api project(":cloudopt-next-core")
+}
+
 description = "Cloudopt Next Waf"

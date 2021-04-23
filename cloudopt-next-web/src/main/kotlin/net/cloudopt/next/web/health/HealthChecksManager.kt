@@ -15,8 +15,8 @@
  */
 package net.cloudopt.next.web.health
 
-import net.cloudopt.next.web.Worker
-import net.cloudopt.next.web.Worker.global
+import net.cloudopt.next.core.Worker
+import net.cloudopt.next.core.Worker.global
 
 object HealthChecksManager {
 

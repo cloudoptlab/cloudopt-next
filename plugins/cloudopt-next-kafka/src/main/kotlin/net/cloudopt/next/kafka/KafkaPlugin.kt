@@ -18,10 +18,10 @@ package net.cloudopt.next.kafka
 import io.vertx.kafka.client.consumer.KafkaConsumer
 import io.vertx.kafka.client.consumer.KafkaConsumerRecord
 import io.vertx.kafka.client.producer.KafkaProducer
-import net.cloudopt.next.utils.Classer
+import net.cloudopt.next.core.Classer
 import net.cloudopt.next.web.NextServer
-import net.cloudopt.next.web.Plugin
-import net.cloudopt.next.web.Worker
+import net.cloudopt.next.core.Plugin
+import net.cloudopt.next.core.Worker
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsConfig

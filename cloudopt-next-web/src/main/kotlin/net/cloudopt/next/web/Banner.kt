@@ -15,9 +15,9 @@
  */
 package net.cloudopt.next.web
 
-import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.utils.Resourcer
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.core.Resourcer
+import net.cloudopt.next.core.ConfigManager
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.time.ZonedDateTime
@@ -36,15 +36,15 @@ object Banner {
     @JvmStatic
     fun print() {
 
-        if (!ConfigManager.config.banner) {
+        if (!NextServer.webConfig.banner) {
             return
         }
-        var input = Banner.javaClass.getClassLoader().getResourceAsStream("banner.txt")
+        var input = Banner.javaClass.classLoader.getResourceAsStream("banner.txt")
 
         var buffer = BufferedReader(InputStreamReader(input))
 
-        if (ConfigManager.config.bannerName.isNotBlank()) {
-            input = Resourcer.getFileInputStream(ConfigManager.config.bannerName)
+        if (NextServer.webConfig.bannerName.isNotBlank()) {
+            input = Resourcer.getFileInputStream(NextServer.webConfig.bannerName)
             buffer = BufferedReader(InputStreamReader(input))
         }
 
@@ -55,7 +55,7 @@ object Banner {
             text = text.replace("\${os}", System.getProperty("os.name"))
             text =
                 text.replace("\${time}", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-            text = text.replace("\${port}", ConfigManager.config.port.toString())
+            text = text.replace("\${port}", NextServer.webConfig.port.toString())
             logger.info(text)
             text = buffer.readLine()
         }

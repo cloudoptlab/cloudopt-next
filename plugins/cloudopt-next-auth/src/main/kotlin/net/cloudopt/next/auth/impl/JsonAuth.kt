@@ -20,7 +20,7 @@ import net.cloudopt.next.auth.bean.Group
 import net.cloudopt.next.auth.bean.PermissionTree
 import net.cloudopt.next.auth.bean.Role
 import net.cloudopt.next.auth.bean.User
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.ConfigManager
 
 class JsonAuth(cache: Boolean = true) : Auth(cache) {
 

@@ -16,7 +16,7 @@
 package net.cloudopt.next.example.ymal
 
 import net.cloudopt.next.i18n.I18N
-import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.logging.test.Logger
 import org.junit.Test
 
 /*
