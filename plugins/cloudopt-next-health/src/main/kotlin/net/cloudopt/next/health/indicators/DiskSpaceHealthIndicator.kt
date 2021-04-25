@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.health.indicators
+package net.cloudopt.next.health.indicators
 
 import net.cloudopt.next.core.Worker.await
-import net.cloudopt.next.web.health.HealthChecksResult
-import net.cloudopt.next.web.health.HealthIndicator
+import net.cloudopt.next.health.HealthChecksResult
+import net.cloudopt.next.health.HealthIndicator
 import java.io.File
 
 /**

@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.health
+package net.cloudopt.next.health.hooks
 
-import net.cloudopt.next.web.Resource
+import net.cloudopt.next.json.Jsoner.toJsonString
+import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.health.HealthChecksHook
 
-class HealthChecksController : Resource() {
-
-    /**
-     * For exporting health check reports
-     */
-    fun healthReport() {
-        renderJson(HealthChecksManager.report())
+/**
+ * Automatic log output of health check results.
+ * @property logger Logger
+ */
+class LoggerHook : HealthChecksHook {
+    private val logger = Logger.Companion.getLogger(this::class)
+    override suspend fun hook(healthChecksReport: MutableMap<String, Any>) {
+        logger.info(healthChecksReport.toJsonString())
     }
-
 }

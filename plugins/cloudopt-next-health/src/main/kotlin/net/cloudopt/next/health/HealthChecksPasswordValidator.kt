@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.health
+package net.cloudopt.next.health
 
 import net.cloudopt.next.json.Jsoner.json
 import net.cloudopt.next.web.Resource

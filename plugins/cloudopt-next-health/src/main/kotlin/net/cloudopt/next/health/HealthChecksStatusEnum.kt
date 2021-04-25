@@ -13,8 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.health
+package net.cloudopt.next.health
 
-interface HealthIndicator {
-    suspend fun checkHealth():HealthChecksResult
+enum class HealthChecksStatusEnum {
+    /**
+     * No mapping by default, so http status is 200
+     */
+    UP,
+
+    /**
+     * SERVICE_UNAVAILABLE (503)
+     */
+    DOWN
 }

@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.health.hooks
-
-import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.logging.test.Logger
-import net.cloudopt.next.web.health.HealthChecksHook
+package net.cloudopt.next.health
 
 /**
- * Automatic log output of health check results.
- * @property logger Logger
+ * For standardizing inspection results.
+ * @property status HealthChecksStatusEnum
+ * @see HealthChecksStatusEnum
+ * @property data MutableMap<String, Any> You can store any data here
+ * @constructor
  */
-class LoggerHook : HealthChecksHook {
-    val logger = Logger.Companion.getLogger(this::class)
-    override suspend fun hook(healthChecksReport: MutableMap<String, Any>) {
-        logger.info(healthChecksReport.toJsonString())
-    }
-}
+data class HealthChecksResult(
+    var status: HealthChecksStatusEnum = HealthChecksStatusEnum.UP,
+    val data: MutableMap<String, Any>
+)

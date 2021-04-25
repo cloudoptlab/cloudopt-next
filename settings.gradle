@@ -19,3 +19,5 @@ include "plugins:cloudopt-next-rocketmq"
 include "plugins:cloudopt-next-clickhouse"
 include "plugins:cloudopt-next-polyglot"
 include "plugins:cloudopt-next-grpc"
+include "plugins:cloudopt-next-health"
+

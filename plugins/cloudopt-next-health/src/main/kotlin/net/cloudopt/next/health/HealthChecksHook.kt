@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.health
+package net.cloudopt.next.health
 
 /**
- * For standardizing inspection results.
- * @property status HealthChecksStatusEnum
- * @see HealthChecksStatusEnum
- * @property data MutableMap<String, Any> You can store any data here
- * @constructor
+ * For notification after each completed health check
  */
-data class HealthChecksResult(
-    var status: HealthChecksStatusEnum = HealthChecksStatusEnum.UP,
-    val data: MutableMap<String, Any>
-)
+interface HealthChecksHook {
+    /**
+     * For specific execution codes, you can send reports to slack, email, etc.
+     * @param healthChecksReport MutableMap<String, Any>
+     */
+    suspend fun hook(healthChecksReport: MutableMap<String, Any>)
+}

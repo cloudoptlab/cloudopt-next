@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.health
+package net.cloudopt.next.health
 
 import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.web.NextServer

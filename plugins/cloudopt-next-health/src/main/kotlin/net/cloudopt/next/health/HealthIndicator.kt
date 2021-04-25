@@ -13,19 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.health
+package net.cloudopt.next.health
 
-/**
- * For configuring health checks.
- * @property applicationName String Name of the application
- * @property intervalTime Long Interval of each health check
- * @property password String If not blank, access to the Health Check Report api must be with a password
- * @property accessPath String You can customize the access path to health check reports
- * @constructor
- */
-data class HealthChecksConfig(
-    val applicationName: String = "",
-    val intervalTime: Long = 5000,
-    val password: String = "",
-    val accessPath: String = "/health"
-)
+interface HealthIndicator {
+    suspend fun checkHealth(): HealthChecksResult
+}

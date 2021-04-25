@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.health
+package net.cloudopt.next.health
 
-/**
- * For notification after each completed health check
- */
-interface HealthChecksHook {
+import net.cloudopt.next.web.Resource
+
+class HealthChecksController : Resource() {
+
     /**
-     * For specific execution codes, you can send reports to slack, email, etc.
-     * @param healthChecksReport MutableMap<String, Any>
+     * For exporting health check reports
      */
-    suspend fun hook(healthChecksReport: MutableMap<String, Any>)
+    fun healthReport() {
+        renderJson(HealthChecksManager.report())
+    }
+
 }
