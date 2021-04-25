@@ -23,11 +23,6 @@ import javax.validation.Constraint
 import javax.validation.Payload
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/6/14
- * @Description: Is used to verify whether a text is in an array
- */
 @Target(
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY_GETTER,

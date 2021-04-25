@@ -20,11 +20,6 @@ import javax.validation.Constraint
 import javax.validation.Payload
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/6/14
- * @Description: Used to verify whether it is this type
- */
 @Target(
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY_GETTER,

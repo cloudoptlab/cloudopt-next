@@ -23,11 +23,6 @@ import javax.validation.Constraint
 import javax.validation.Payload
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/6/14
- * @Description: It is used to verify whether it is Chinese
- */
 @Target(
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY_GETTER,
