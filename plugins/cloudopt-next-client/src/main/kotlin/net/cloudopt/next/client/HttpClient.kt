@@ -21,28 +21,23 @@ import io.vertx.ext.web.client.WebClient
 import io.vertx.ext.web.client.WebClientOptions
 import net.cloudopt.next.core.Worker
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/31
- * @Description: HTTP request client, a simple encapsulation of vertx client.
- */
 class HttpClient() {
 
-    private var client = WebClient.create(Worker.vertx)
+    private lateinit var client: WebClient
 
     private var host = ""
 
     private var port = 80
 
-    private var request: HttpRequest<Buffer>? = null
+    private lateinit var request: HttpRequest<Buffer>
 
     private var timeout: Long = 5000
 
-    private var followRedirects: Boolean = true
-
-
-    constructor(host: String, options: WebClientOptions = WebClientOptions()) : this() {
+    constructor(
+        host: String,
+        options: WebClientOptions = WebClientOptions(),
+        followRedirects: Boolean = true
+    ) : this() {
         if (host.startsWith("https://")) {
             options.isSsl = true
             this.port = 443
@@ -85,7 +80,7 @@ class HttpClient() {
      * @return HttpClient
      */
     fun addHeader(key: String, value: String): HttpClient {
-        this.request?.putHeader(key, value)
+        this.request.putHeader(key, value)
         return this
     }
 
@@ -96,7 +91,7 @@ class HttpClient() {
      * @return HttpClient
      */
     fun addParam(key: String, value: String): HttpClient {
-        this.request?.addQueryParam(key, value)
+        this.request.addQueryParam(key, value)
         return this
     }
 
@@ -108,8 +103,8 @@ class HttpClient() {
     @JvmOverloads
     fun get(url: String = ""): HttpRequest<Buffer> {
         this.request = client.get(port, host, url)
-        this.request?.timeout(this.timeout)
-        return this.request!!
+        this.request.timeout(this.timeout)
+        return this.request
     }
 
     /**
@@ -120,8 +115,8 @@ class HttpClient() {
     @JvmOverloads
     fun post(url: String = ""): HttpRequest<Buffer> {
         this.request = client.post(port, host, url)
-        this.request?.timeout(this.timeout)
-        return this.request!!
+        this.request.timeout(this.timeout)
+        return this.request
     }
 
     /**
@@ -132,8 +127,8 @@ class HttpClient() {
     @JvmOverloads
     fun put(url: String = ""): HttpRequest<Buffer> {
         this.request = client.put(port, host, url)
-        this.request?.timeout(this.timeout)
-        return this.request!!
+        this.request.timeout(this.timeout)
+        return this.request
     }
 
     /**
@@ -144,8 +139,8 @@ class HttpClient() {
     @JvmOverloads
     fun delete(url: String = ""): HttpRequest<Buffer> {
         this.request = client.delete(port, host, url)
-        this.request?.timeout(this.timeout)
-        return this.request!!
+        this.request.timeout(this.timeout)
+        return this.request
     }
 
     /**
@@ -154,10 +149,10 @@ class HttpClient() {
      * @return HttpRequest<Buffer>
      */
     @JvmOverloads
-    fun patch(url: String = ""): HttpClient {
+    fun patch(url: String = ""): HttpRequest<Buffer> {
         this.request = client.patch(port, host, url)
-        this.request?.timeout(this.timeout)
-        return this
+        this.request.timeout(this.timeout)
+        return this.request
     }
 
 

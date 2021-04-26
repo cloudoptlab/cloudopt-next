@@ -1,5 +1,5 @@
 dependencies {
-    api project(":cloudopt-next-web")
+    api project(":cloudopt-next-core")
     api "io.vertx:vertx-web-client:${rootProject.property('vertx_version')}"
 }
 
