@@ -16,6 +16,7 @@
 package net.cloudopt.next.eventbus
 
 import net.cloudopt.next.core.Classer
+import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.core.Worker.async
 import net.cloudopt.next.core.Worker.global
@@ -25,7 +26,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
 
-class EventBusPlugin : Plugin {
+class EventBusPlugin(private val provider: VertxEventBusProvider = VertxEventBusProvider()) : Plugin {
 
     override fun start(): Boolean {
         Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoEvent::class)
@@ -37,7 +38,7 @@ class EventBusPlugin : Plugin {
             }
 
         global{
-            EventBusManager.provider = VertxEventBusProvider()
+            EventBusManager.provider = provider
             EventBusManager.provider.init()
             EventBusManager.eventListenerList.keys.forEach { key ->
                 EventBusManager.eventListenerList[key]?.let {
