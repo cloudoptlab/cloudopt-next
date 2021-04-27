@@ -18,8 +18,17 @@ class TestCase :TestStart(){
         }
     }
 
+    @Test
     fun testPublish() = runBlocking{
         val httpCode = client.post("/eventbus/publish").send().await().statusCode()
+        assertTrue {
+            httpCode == 200
+        }
+    }
+
+    @Test
+    fun testAfterEvent() = runBlocking{
+        val httpCode = client.post("/eventbus/after").send().await().statusCode()
         assertTrue {
             httpCode == 200
         }

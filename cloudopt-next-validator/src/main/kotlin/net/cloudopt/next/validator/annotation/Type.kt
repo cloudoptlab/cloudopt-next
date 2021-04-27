@@ -29,12 +29,12 @@ import kotlin.reflect.KClass
     AnnotationTarget.VALUE_PARAMETER
 )
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-@Constraint(validatedBy = arrayOf(TypeValidator::class))
+@Constraint(validatedBy = [TypeValidator::class])
 @MustBeDocumented
 annotation class Type(
     val value: String,
     val message: String = "{constraints.type.message}",
-    val groups: Array<KClass<*>> = arrayOf(),
-    val payload: Array<KClass<out Payload>> = arrayOf()
+    val groups: Array<KClass<*>> = [],
+    val payload: Array<KClass<out Payload>> = []
 )
 

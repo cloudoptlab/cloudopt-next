@@ -15,7 +15,10 @@
  */
 package net.cloudopt.next.eventbus
 
+import net.cloudopt.next.web.After
+
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
+@After(invokeBy = [AfterEventInvoker::class])
 annotation class AfterEvent(val value: Array<String> = [])

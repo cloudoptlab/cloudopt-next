@@ -1,5 +1,6 @@
 package net.cloudopt.next.eventbus.test
 
+import net.cloudopt.next.eventbus.AfterEvent
 import net.cloudopt.next.eventbus.EventBusManager
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.web.Resource
@@ -15,7 +16,7 @@ class TestController : Resource() {
     private val message = Jsoner.json("key" to "value")
 
     @GET
-    fun index(){
+    fun index() {
         renderText("welcome")
     }
 
@@ -28,6 +29,13 @@ class TestController : Resource() {
     @POST("/publish")
     suspend fun publish() {
         EventBusManager.publish(address, message)
+        renderText("success")
+    }
+
+    @AfterEvent(["net.cloudopt.next.eventbus.test.a"])
+    @POST("/after")
+    fun after() {
+        context.data()["name"] = "next"
         renderText("success")
     }
 

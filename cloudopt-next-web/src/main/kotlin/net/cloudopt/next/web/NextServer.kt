@@ -34,42 +34,30 @@ import kotlin.reflect.full.functions
 
 object NextServer {
 
-    @JvmStatic
     open var webConfig: WebConfigBean = ConfigManager.configMap.toObject(WebConfigBean::class)
 
-    @JvmStatic
     open var verticleID = "net.cloudopt.next.web"
 
     val logger = Logger.getLogger(NextServer::class)
 
-    @JvmStatic
     open val resources: MutableList<KClass<Resource>> = arrayListOf()
 
-    @JvmStatic
     open val sockJSes: MutableList<KClass<SockJSResource>> = arrayListOf()
 
-    @JvmStatic
     open val webSockets: MutableList<KClass<WebSocketResource>> = arrayListOf()
 
-    @JvmStatic
     open val handlers = arrayListOf<Handler>()
 
-    @JvmStatic
     open val plugins = arrayListOf<Plugin>()
 
-    @JvmStatic
     open val interceptors = mutableMapOf<String, MutableList<KClass<out Interceptor>>>()
 
-    @JvmStatic
     open val validators = mutableMapOf<String, MutableMap<HttpMethod, Array<KClass<out Validator>>>>()
 
-    @JvmStatic
     open val resourceTables = arrayListOf<ResourceTable>()
 
-    @JvmStatic
     open var packageName = ""
 
-    @JvmStatic
     open var errorHandler: KClass<ErrorHandler> =
         Classer.loadClass(webConfig.errorHandler) as KClass<ErrorHandler>
 

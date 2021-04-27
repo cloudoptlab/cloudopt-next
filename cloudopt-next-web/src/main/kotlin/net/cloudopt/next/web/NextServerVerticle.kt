@@ -24,6 +24,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandler
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.coroutines.launch
 import net.cloudopt.next.core.Worker
+import net.cloudopt.next.core.Worker.global
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.test.Logger
@@ -366,16 +367,50 @@ class NextServerVerticle : CoroutineVerticle() {
             val controllerObj = resourceTable.clazz.createInstance()
             controllerObj.init(context)
 
-            if (NextServer.handlers.isNotEmpty()) {
-                context.response().endHandler {
-                    /**
-                     * Executes a global handler that is called at the end of the route
-                     */
-                    NextServer.handlers.forEach { handler ->
-                        handler.afterCompletion(Resource().init(context))
+            /**
+             * Automatically check whether the method annotation contains an @Before annotation, and if so,
+             * automatically execute the method specified in the annotation that needs to be executed.
+             */
+            resourceTable.clazzMethod.annotations.forEach { it ->
+                if (it.annotationClass.hasAnnotation<Before>()) {
+                    val before: Before? = it.annotationClass.findAnnotation()
+                    before?.invokeBy?.forEach { invoker ->
+                        val invokerInstance: Invoker = invoker.createInstance()
+                        if (!invokerInstance.handle(it, controllerObj)) {
+                            return
+                        }
                     }
                 }
             }
+
+
+            context.response().endHandler {
+                /**
+                 * Executes a global handler that is called at the end of the route
+                 */
+                NextServer.handlers.forEach { handler ->
+                    handler.afterCompletion(Resource().init(context))
+                }
+                /**
+                 * Automatically check whether the method annotation contains an @After annotation, and if so,
+                 * automatically execute the method specified in the annotation that needs to be executed.
+                 */
+                resourceTable.clazzMethod.annotations.forEach { it ->
+                    if (it.annotationClass.hasAnnotation<After>()) {
+                        val after: After = it.annotationClass.findAnnotation()!!
+                        global {
+                            for (invoker in after.invokeBy) {
+                                val invokerInstance: Invoker = invoker.createInstance()
+                                if (!invokerInstance.handle(it, controllerObj)) {
+                                    break
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
 
             /**
              * If the method supports parameter injection, it will automatically extract the corresponding parameter
