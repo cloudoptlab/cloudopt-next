@@ -5,8 +5,7 @@ dependencies {
     api project(":cloudopt-next-core")
     api project(":cloudopt-next-json")
     api project(":cloudopt-next-validator")
-    compileOnly project(":cloudopt-next-waf")
-    testImplementation project(":cloudopt-next-waf")
+    api project(":cloudopt-next-waf")
     testImplementation project(":plugins:cloudopt-next-client")
     implementation "io.vertx:vertx-codegen:${rootProject.property('vertx_version')}"
     testImplementation "io.vertx:vertx-unit:${rootProject.property('vertx_version')}"

@@ -19,11 +19,6 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.ServerWebSocket
 import io.vertx.core.http.WebSocketFrame
 
-/*
- * @author: Cloudopt
- * @Time: 2020/7/19
- * @Description: WebSocket Resource
- */
 open interface WebSocketResource {
 
     /**

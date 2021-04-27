@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.event.codec
+package net.cloudopt.next.eventbus.codec
 
 import io.netty.util.CharsetUtil
 import io.vertx.core.buffer.Buffer

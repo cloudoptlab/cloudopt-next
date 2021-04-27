@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.event
+package net.cloudopt.next.eventbus
 
-import io.vertx.core.eventbus.Message
-
-
-/*
- * @author: Cloudopt
- * @Time: 2018/2/5
- * @Description: Used to automatically register listeners to the event bus of vertx.
- */
-interface EventListener {
-    fun listener(message: Message<Any>)
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+@MustBeDocumented
+annotation class AfterEvent(val value: Array<String> = [])

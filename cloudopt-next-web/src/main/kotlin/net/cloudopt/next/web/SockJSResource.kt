@@ -17,11 +17,6 @@ package net.cloudopt.next.web
 
 import io.vertx.ext.web.handler.sockjs.SockJSSocket
 
-/*
- * @author: Cloudopt
- * @Time: 2020/4/1
- * @Description: Socket Resource
- */
 open interface SockJSResource {
 
     fun handler(userSocketConnection: SockJSSocket)

@@ -20,4 +20,5 @@ include "plugins:cloudopt-next-clickhouse"
 include "plugins:cloudopt-next-polyglot"
 include "plugins:cloudopt-next-grpc"
 include "plugins:cloudopt-next-health"
+include "plugins:cloudopt-next-eventbus"
 

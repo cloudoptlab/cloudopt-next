@@ -1,0 +1,6 @@
+dependencies {
+    api project(":cloudopt-next-web")
+    testImplementation project(":plugins:cloudopt-next-client")
+}
+
+description = "The event bus allows different parts of your application to communicate with each other."

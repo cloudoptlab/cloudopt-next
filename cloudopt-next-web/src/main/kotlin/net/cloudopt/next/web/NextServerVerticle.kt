@@ -28,10 +28,7 @@ import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.validator.ValidatorTool
-import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.waf.Wafer
-import net.cloudopt.next.web.event.AfterEvent
-import net.cloudopt.next.web.event.EventManager
 import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.route.Parameter
 import net.cloudopt.next.web.route.RequestBody
@@ -50,17 +47,12 @@ import kotlin.collections.isNotEmpty
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
 import kotlin.collections.set
+import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.jvmName
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/17
- * @Description: Cloudopt Next Server Verticle
- */
 class NextServerVerticle : CoroutineVerticle() {
 
     val logger = Logger.getLogger(NextServerVerticle::class)
@@ -363,39 +355,24 @@ class NextServerVerticle : CoroutineVerticle() {
     /**
      * is used to process normal http requests, automatically generating new objects from the resource class of the
      * route and calls its invoke method. It also injects parameters depending on whether the method corresponding
-     * to the route contains a parameter injection annotation or not. If there is an @afterEvent annotation on the
-     * method, it will automatically execute the afterEvent.
+     * to the route contains a parameter injection annotation or not.
      * @param resourceTable ResourceTable
      * @param context RoutingContext
      * @see ResourceTable
      * @see RoutingContext
-     * @see AfterEvent
      */
     private suspend fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
         try {
             val controllerObj = resourceTable.clazz.createInstance()
             controllerObj.init(context)
 
-            if (NextServer.handlers.isNotEmpty() || resourceTable.clazzMethod.hasAnnotation<AfterEvent>()) {
+            if (NextServer.handlers.isNotEmpty()) {
                 context.response().endHandler {
                     /**
                      * Executes a global handler that is called at the end of the route
                      */
                     NextServer.handlers.forEach { handler ->
                         handler.afterCompletion(Resource().init(context))
-                    }
-
-                    /**
-                     * If the afterEvent annotation is included, the event is automatically sent to EventBus after the
-                     * http request ends
-                     * @see AfterEvent
-                     */
-                    if (resourceTable.clazzMethod.hasAnnotation<AfterEvent>()) {
-                        val afterEvent =
-                            resourceTable.clazzMethod.findAnnotation<AfterEvent>() ?: AfterEvent::class.createInstance()
-                        for (topic in afterEvent.value) {
-                            EventManager.sendObject(topic, context.data(), "map")
-                        }
                     }
                 }
             }

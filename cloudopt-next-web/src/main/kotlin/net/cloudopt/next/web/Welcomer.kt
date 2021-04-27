@@ -19,12 +19,6 @@ import net.cloudopt.next.logging.test.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-
-/*
- * @author: Cloudopt
- * @Time: 2020/3/13
- * @Description: Welcome Tool
- */
 object Welcomer {
 
     private val logger = Logger.getLogger(NextServer::class)

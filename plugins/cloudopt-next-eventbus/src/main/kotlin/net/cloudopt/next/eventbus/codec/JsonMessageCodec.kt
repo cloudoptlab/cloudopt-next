@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.event.codec
+package net.cloudopt.next.eventbus.codec
 
 import io.netty.util.CharsetUtil
 import io.vertx.core.buffer.Buffer
@@ -22,7 +22,7 @@ import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
 
 
-class ObjectMessageCodec : MessageCodec<Any, Any> {
+class JsonMessageCodec : MessageCodec<Any, Any> {
     override fun encodeToWire(buffer: Buffer, any: Any) {
         var byteArray = any.toJsonString().toByteArray(CharsetUtil.UTF_8)
         buffer.appendInt(byteArray.size)
@@ -42,7 +42,7 @@ class ObjectMessageCodec : MessageCodec<Any, Any> {
     }
 
     override fun name(): String {
-        return "object"
+        return "json"
     }
 
     override fun systemCodecID(): Byte {

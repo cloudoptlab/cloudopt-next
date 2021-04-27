@@ -13,30 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.event
+package net.cloudopt.next.eventbus
 
-import net.cloudopt.next.core.Plugin
-import net.cloudopt.next.core.Worker
-
-
-/*
- * @author: Cloudopt
- * @Time: 2018/2/5
- * @Description: A plugin for event management.
- */
-class EventPlugin : Plugin {
-
-    override fun start(): Boolean {
-        EventManager.init(Worker.vertx)
-        return true
-    }
-
-    override fun stop(): Boolean {
-        EventManager.eventList.keys.forEach { key ->
-            EventManager.eventBus.unregisterCodec(key)
-
-        }
-        return true
-    }
-
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
+@MustBeDocumented
+annotation class AutoEvent(val value: String = "")

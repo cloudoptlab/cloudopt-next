@@ -32,11 +32,6 @@ import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/17
- * @Description: Cloudopt Next Server
- */
 object NextServer {
 
     @JvmStatic

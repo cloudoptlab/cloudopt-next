@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.event
+package net.cloudopt.next.eventbus
 
-import java.lang.annotation.Documented
+import io.vertx.core.json.JsonObject
 
-/*
- * @author: Cloudopt
- * @Time: 2020/05/22
- * @Description: Used to send events after accessing a route.
- */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION)
-@Documented
-annotation class AfterEvent(val value: Array<String> = [])
+interface EventListener {
+    suspend fun listener(message: JsonObject)
+}

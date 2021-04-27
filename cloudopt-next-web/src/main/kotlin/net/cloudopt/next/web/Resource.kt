@@ -35,11 +35,6 @@ import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.Template
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/15
- * @Description: Route resource
- */
 open class Resource {
 
     lateinit var context: RoutingContext
