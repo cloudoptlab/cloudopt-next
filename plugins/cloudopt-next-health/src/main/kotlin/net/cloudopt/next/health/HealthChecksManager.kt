@@ -20,7 +20,7 @@ import net.cloudopt.next.core.Worker.global
 
 object HealthChecksManager {
 
-    var config = HealthChecksConfig()
+    var config = net.cloudopt.next.health.HealthChecksConfig()
 
     var timerId: Long = -1
 
@@ -101,7 +101,10 @@ object HealthChecksManager {
                 healthChecksReport[name] = checksResult
             } catch (e: Exception) {
                 healthChecksReport[name] =
-                    HealthChecksResult(status = HealthChecksStatusEnum.DOWN, data = mutableMapOf())
+                    net.cloudopt.next.health.HealthChecksResult(
+                        status = HealthChecksStatusEnum.DOWN,
+                        data = mutableMapOf()
+                    )
             }
         }
         healthChecksHook.values.forEach { hook ->

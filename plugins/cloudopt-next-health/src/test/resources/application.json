@@ -1,0 +1,7 @@
+{
+  "packageName": "net.cloudopt.next.health.test",
+  "port": 8080,
+  "healthChecks": {
+    "password": "1234"
+  }
+}

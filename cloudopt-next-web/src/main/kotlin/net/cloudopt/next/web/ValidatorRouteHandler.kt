@@ -13,6 +13,6 @@ class ValidatorRouteHandler : RouteHandler {
                 return false
             }
         }
-        return false
+        return true
     }
 }

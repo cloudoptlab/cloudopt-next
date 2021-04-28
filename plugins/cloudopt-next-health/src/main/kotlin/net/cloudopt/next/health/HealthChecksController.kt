@@ -16,12 +16,16 @@
 package net.cloudopt.next.health
 
 import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.annotation.GET
+import net.cloudopt.next.web.annotation.Validator
 
 class HealthChecksController : Resource() {
 
     /**
      * For exporting health check reports
      */
+    @GET
+    @Validator([HealthChecksPasswordValidator::class])
     fun healthReport() {
         renderJson(HealthChecksManager.report())
     }
