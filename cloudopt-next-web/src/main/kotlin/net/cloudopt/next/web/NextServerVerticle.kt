@@ -392,9 +392,6 @@ class NextServerVerticle : CoroutineVerticle() {
                                 break
                             }
                         }
-                        if (!context.response().closed()){
-                            context.response().end()
-                        }
                     }
                 }
 
