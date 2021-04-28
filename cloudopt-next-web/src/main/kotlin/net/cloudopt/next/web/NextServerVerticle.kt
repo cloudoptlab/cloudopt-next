@@ -30,12 +30,15 @@ import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.waf.Wafer
+import net.cloudopt.next.web.annotation.After
+import net.cloudopt.next.web.annotation.Before
 import net.cloudopt.next.web.handler.ErrorHandler
-import net.cloudopt.next.web.route.Parameter
-import net.cloudopt.next.web.route.RequestBody
-import net.cloudopt.next.web.route.SocketJS
-import net.cloudopt.next.web.route.WebSocket
+import net.cloudopt.next.web.annotation.Parameter
+import net.cloudopt.next.web.annotation.RequestBody
+import net.cloudopt.next.web.annotation.SocketJS
+import net.cloudopt.next.web.annotation.WebSocket
 import java.lang.IllegalArgumentException
+import java.lang.RuntimeException
 import java.sql.Timestamp
 import java.text.DateFormat
 import java.time.LocalDate
@@ -44,11 +47,9 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.firstOrNull
 import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
 import kotlin.collections.map
 import kotlin.collections.mutableMapOf
 import kotlin.collections.set
-import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.jvmErasure
@@ -192,12 +193,9 @@ class NextServerVerticle : CoroutineVerticle() {
                     } else if (!context.response().ended()) {
                         context.response().end()
                     }
-                } catch (e: InstantiationException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
-                    context.response().end()
-                } catch (e: IllegalAccessException) {
-                    e.printStackTrace()
-                    context.response().end()
+                    Resource().init(context).fail(500)
                 }
             }
         }
@@ -212,51 +210,54 @@ class NextServerVerticle : CoroutineVerticle() {
          */
         NextServer.interceptors.forEach { (url, clazz) ->
             router.route(url).handler { context ->
+                val resource = Resource()
+                resource.init(context)
                 launch {
-                    val resource = Resource()
-                    resource.init(context)
-                    val interceptors = clazz.map { it.createInstance() }
+                    try {
+                        val interceptors = clazz.map { it.createInstance() }
 
-                    val interceptor = interceptors.firstOrNull {
-                        !it.intercept(resource)
-                    }
-
-                    if (interceptor != null) {
-                        if (!interceptor.response(resource).response.ended()) {
-                            resource.end()
+                        val interceptor = interceptors.firstOrNull {
+                            !it.intercept(resource)
                         }
 
-                    } else {
-                        context.next()
+                        if (interceptor != null) {
+                            if (!interceptor.response(resource).response.ended()) {
+                                resource.end()
+                            }
+
+                        } else {
+                            context.next()
+                        }
+                    } catch (e: Exception) {
+                        resource.fail(500)
                     }
                 }
             }
         }
 
         /**
-         * Register validators
+         * Automatically check whether the method annotation contains an @Before annotation, and if so,
+         * automatically execute the method specified in the annotation that needs to be executed.
          */
-        NextServer.validators.forEach { (url, map) ->
+        NextServer.beforeRouteHandlersTable.forEach { (url, map) ->
             map.keys.forEach { key ->
-                val validatorList = map[key]
-                validatorList?.forEach { validator ->
+                val beforeRouteHandlerList = map[key]
+                beforeRouteHandlerList?.forEach { beforeRouteHandler ->
                     router.route(key, url).handler { context ->
+                        val resource = Resource()
+                        resource.init(context)
                         launch {
                             try {
-                                val v = validator.createInstance()
-                                val resource = Resource()
-                                resource.init(context)
-                                if (v.validate(resource)) {
-                                    context.next()
-                                } else {
-                                    v.error(resource)
+                                val before: Before? = beforeRouteHandler.annotationClass.findAnnotation()
+                                for (invoker in before?.invokeBy!!) {
+                                    val routeHandlerInstance: RouteHandler = invoker.createInstance()
+                                    if (!routeHandlerInstance.handle(beforeRouteHandler, resource)) {
+                                        return@launch
+                                    }
                                 }
-                            } catch (e: InstantiationException) {
+                            } catch (e: Exception) {
                                 e.printStackTrace()
-                                context.response().end()
-                            } catch (e: IllegalAccessException) {
-                                e.printStackTrace()
-                                context.response().end()
+                                resource.fail(500)
                             }
                         }
                     }
@@ -265,7 +266,7 @@ class NextServerVerticle : CoroutineVerticle() {
             }
         }
 
-        if (NextServer.resourceTables.size < 1) {
+        if (NextServer.resourceTable.size < 1) {
             router.route("/").blockingHandler { context ->
                 context.response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
                 context.response().endHandler {
@@ -280,7 +281,7 @@ class NextServerVerticle : CoroutineVerticle() {
         /**
          * Register method
          */
-        NextServer.resourceTables.forEach { resourceTable ->
+        NextServer.resourceTable.forEach { resourceTable ->
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
                     launch {
@@ -363,27 +364,9 @@ class NextServerVerticle : CoroutineVerticle() {
      * @see RoutingContext
      */
     private suspend fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
+        val resource:Resource = resourceTable.clazz.createInstance()
+        resource.init(context)
         try {
-            val controllerObj = resourceTable.clazz.createInstance()
-            controllerObj.init(context)
-
-            /**
-             * Automatically check whether the method annotation contains an @Before annotation, and if so,
-             * automatically execute the method specified in the annotation that needs to be executed.
-             */
-            resourceTable.clazzMethod.annotations.forEach { it ->
-                if (it.annotationClass.hasAnnotation<Before>()) {
-                    val before: Before? = it.annotationClass.findAnnotation()
-                    before?.invokeBy?.forEach { invoker ->
-                        val invokerInstance: Invoker = invoker.createInstance()
-                        if (!invokerInstance.handle(it, controllerObj)) {
-                            return
-                        }
-                    }
-                }
-            }
-
-
             context.response().endHandler {
                 /**
                  * Executes a global handler that is called at the end of the route
@@ -395,15 +378,13 @@ class NextServerVerticle : CoroutineVerticle() {
                  * Automatically check whether the method annotation contains an @After annotation, and if so,
                  * automatically execute the method specified in the annotation that needs to be executed.
                  */
-                resourceTable.clazzMethod.annotations.forEach { it ->
-                    if (it.annotationClass.hasAnnotation<After>()) {
-                        val after: After = it.annotationClass.findAnnotation()!!
-                        global {
-                            for (invoker in after.invokeBy) {
-                                val invokerInstance: Invoker = invoker.createInstance()
-                                if (!invokerInstance.handle(it, controllerObj)) {
-                                    break
-                                }
+                NextServer.afterRouteHandlersTable[resourceTable.url]?.get(resourceTable.httpMethod)?.forEach { it ->
+                    val after: After = it.annotationClass.findAnnotation()!!
+                    launch {
+                        for (invoker in after.invokeBy) {
+                            val routeHandlerInstance: RouteHandler = invoker.createInstance()
+                            if (!routeHandlerInstance.handle(it, resource)) {
+                                break
                             }
                         }
                     }
@@ -425,18 +406,18 @@ class NextServerVerticle : CoroutineVerticle() {
                 /**
                  * If there are no arguments, just execute the method
                  */
-                resourceTable.clazzMethod.callSuspend(controllerObj)
+                resourceTable.clazzMethod.callSuspend(resource)
 
 
             } else {
                 val arr = mutableMapOf<KParameter, Any?>()
-                val jsonObject = controllerObj.getParams().toJsonString().toJsonObject()
+                val jsonObject = resource.getParams().toJsonString().toJsonObject()
                 for (para in resourceTable.clazzMethod.parameters) {
                     if (para.kind.name == "VALUE" && para.hasAnnotation<Parameter>()) {
                         try {
                             arr[para] = getParaByType(para.findAnnotation<Parameter>()?.value ?: "", para, jsonObject)
                         } catch (e: IllegalArgumentException) {
-                            controllerObj.fail(400)
+                            resource.fail(400)
                             e.printStackTrace()
                             return
                         }
@@ -444,13 +425,13 @@ class NextServerVerticle : CoroutineVerticle() {
                     }
                     if (para.hasAnnotation<RequestBody>()) {
                         try {
-                            arr[para] = controllerObj.getBodyJson(para.type.jvmErasure)
+                            arr[para] = resource.getBodyJson(para.type.jvmErasure)
                         } catch (e: NullPointerException) {
-                            controllerObj.fail(400)
+                            resource.fail(400)
                             e.printStackTrace()
                             return
                         } catch (e: IllegalArgumentException) {
-                            controllerObj.fail(400)
+                            resource.fail(400)
                             e.printStackTrace()
                             return
                         }
@@ -461,13 +442,13 @@ class NextServerVerticle : CoroutineVerticle() {
                  * @see ValidatorTool
                  */
                 val validatorResult =
-                    ValidatorTool.validateParameters(controllerObj, resourceTable.clazzMethod, arr)
+                    ValidatorTool.validateParameters(resource, resourceTable.clazzMethod, arr)
                 if (validatorResult.result) {
-                    arr[resourceTable.clazzMethod.parameters[0]] = controllerObj
+                    arr[resourceTable.clazzMethod.parameters[0]] = resource
                     resourceTable.clazzMethod.callSuspendBy(arr)
                 } else {
-                    controllerObj.context.put("errorMessage", validatorResult.message)
-                    controllerObj.fail(400)
+                    resource.context.put("errorMessage", validatorResult.message)
+                    resource.fail(400)
                     return
                 }
             }
@@ -476,7 +457,7 @@ class NextServerVerticle : CoroutineVerticle() {
             logger.error(
                 e.message ?: "${resourceTable.url} has error occurred, but the error message could not be obtained "
             )
-            context.fail(500)
+            resource.fail(500)
         }
     }
 

@@ -13,22 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.route
+package net.cloudopt.next.web.annotation
 
-import net.cloudopt.next.web.Validator
-import java.lang.annotation.Documented
-import kotlin.reflect.KClass
-
-/*
- * @author: Cloudopt
- * @Time: 2020/12/11
- * @Description: Other Http Method Annotation
- */
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-@Documented
-annotation class HttpMethod(
-    val value: String = "",
-    val valid: Array<KClass<out Validator>> = [],
-    val method: String = ""
-)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
+@MustBeDocumented
+annotation class SocketJS(val value: String = "")

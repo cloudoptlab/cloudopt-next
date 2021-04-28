@@ -2,8 +2,8 @@ package net.cloudopt.next.web.test.controller
 
 import net.cloudopt.next.json.Jsoner.json
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.route.API
-import net.cloudopt.next.web.route.GET
+import net.cloudopt.next.web.annotation.API
+import net.cloudopt.next.web.annotation.GET
 
 @API("/render")
 class RenderController:Resource() {

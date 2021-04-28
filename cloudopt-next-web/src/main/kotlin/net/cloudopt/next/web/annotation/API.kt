@@ -13,14 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.route
+package net.cloudopt.next.web.annotation
 
-/*
- * @author: Cloudopt
- * @Time: 2020/4/1
- * @Description: Parameters in the request can be obtained by annotation
- */
+import net.cloudopt.next.web.Interceptor
+import kotlin.reflect.KClass
+
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.VALUE_PARAMETER)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
 @MustBeDocumented
-annotation class Parameter(val value: String = "")
+annotation class API(val value: String, val interceptor: Array<KClass<out Interceptor>> = [])

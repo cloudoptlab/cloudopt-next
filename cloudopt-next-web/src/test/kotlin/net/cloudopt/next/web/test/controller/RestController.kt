@@ -2,7 +2,7 @@ package net.cloudopt.next.web.test.controller
 
 import net.cloudopt.next.json.Jsoner.json
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.route.*
+import net.cloudopt.next.web.annotation.*
 
 @API("/restful")
 class RestController:Resource() {

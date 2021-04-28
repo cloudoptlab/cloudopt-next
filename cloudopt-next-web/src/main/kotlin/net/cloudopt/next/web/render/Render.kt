@@ -18,11 +18,6 @@ package net.cloudopt.next.web.render
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Resource
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Render Interface
- */
 interface Render {
 
     /**

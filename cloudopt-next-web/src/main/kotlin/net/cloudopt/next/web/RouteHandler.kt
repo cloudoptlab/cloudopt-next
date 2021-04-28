@@ -3,7 +3,7 @@ package net.cloudopt.next.web
 /**
  * Define an execution process.
  */
-interface Invoker {
+interface RouteHandler {
 
     /**
      * Define the content to be intercepted, if false it will not be executed further.

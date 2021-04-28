@@ -26,11 +26,6 @@ import net.cloudopt.next.web.NextServer
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: Text Render
- */
 class HtmlRender : Render {
 
     companion object {

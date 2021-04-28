@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.route
+package net.cloudopt.next.web.annotation
 
+import net.cloudopt.next.web.Validator
 import java.lang.annotation.Documented
+import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2020/4/1
- * @Description: WebSocket Annotation
- */
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
-@Documented
-annotation class WebSocket(val value: String = "")
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@MustBeDocumented
+annotation class HttpMethod(
+    val value: String = "",
+    val method: String = ""
+)

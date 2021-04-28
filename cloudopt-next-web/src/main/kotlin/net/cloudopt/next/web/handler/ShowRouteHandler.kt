@@ -18,16 +18,11 @@ package net.cloudopt.next.web.handler
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.web.annotation.AutoHandler
 import java.text.SimpleDateFormat
 import java.util.*
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/15
- * @Description: Used to output route related information
- */
 @AutoHandler
 class ShowRouteHandler : Handler {
 

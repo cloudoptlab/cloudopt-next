@@ -17,6 +17,7 @@ package net.cloudopt.next.web.handler
 
 import net.cloudopt.next.waf.Wafer
 import net.cloudopt.next.web.Resource
+import net.cloudopt.next.web.annotation.AutoHandler
 
 @AutoHandler
 class WafHandler : Handler {

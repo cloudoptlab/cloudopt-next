@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.route
+package net.cloudopt.next.web.annotation
 
-import java.lang.annotation.Documented
+import net.cloudopt.next.web.Validator
+import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/3/27
- * @Description: Blocking Annotation
- */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-@Documented
-annotation class Blocking
+@MustBeDocumented
+annotation class GET(
+    val value: String = "",
+    val method: String = "GET"
+)

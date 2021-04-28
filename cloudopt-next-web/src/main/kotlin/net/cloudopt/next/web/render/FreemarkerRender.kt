@@ -26,11 +26,6 @@ import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.web.NextServer
 import java.io.StringWriter
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Freemarker Render
- */
 class FreemarkerRender : Render {
 
     companion object {

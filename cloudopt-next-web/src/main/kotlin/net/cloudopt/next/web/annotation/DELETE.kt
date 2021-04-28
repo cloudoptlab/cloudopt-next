@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.handler
+package net.cloudopt.next.web.annotation
 
-import java.lang.annotation.Documented
+import net.cloudopt.next.web.Validator
+import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Used to register the handler automatically
- */
 @Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
-@Documented
-annotation class AutoHandler
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@MustBeDocumented
+annotation class DELETE(
+    val value: String = "",
+    val method: String = "DELETE"
+)

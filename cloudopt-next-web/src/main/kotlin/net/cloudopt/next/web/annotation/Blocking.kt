@@ -13,22 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.route
+package net.cloudopt.next.web.annotation
 
-import net.cloudopt.next.web.Validator
-import java.lang.annotation.Documented
-import kotlin.reflect.KClass
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Patch Annotation
- */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
-@Documented
-annotation class PATCH(
-    val value: String = "",
-    val valid: Array<KClass<out Validator>> = [],
-    val method: String = "PATCH"
-)
+@MustBeDocumented
+annotation class Blocking

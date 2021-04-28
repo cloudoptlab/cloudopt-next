@@ -25,11 +25,6 @@ import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.web.NextServer
 import java.io.FileNotFoundException
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Hbs Render
- */
 class HbsRender : Render {
 
     companion object {

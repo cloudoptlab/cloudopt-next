@@ -13,16 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.route
+package net.cloudopt.next.web.annotation
 
-import java.lang.annotation.Documented
-
-/*
- * @author: Cloudopt
- * @Time: 2020/4/1
- * @Description: Socket Annotation
- */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
-@Documented
-annotation class SocketJS(val value: String = "")
+@MustBeDocumented
+annotation class AutoHandler

@@ -16,14 +16,9 @@
 package net.cloudopt.next.web.handler
 
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.web.annotation.AutoHandler
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/15
- * @Description: Used to support the use of cookies across domains
- */
 @AutoHandler
 class CookieCorsHandler : Handler {
     override fun preHandle(resource: Resource): Boolean {

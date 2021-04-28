@@ -20,27 +20,31 @@ import net.cloudopt.next.core.*
 import net.cloudopt.next.json.JsonProvider
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.web.annotation.Blocking
 import net.cloudopt.next.web.config.WebConfigBean
-import net.cloudopt.next.web.handler.AutoHandler
+import net.cloudopt.next.web.annotation.AutoHandler
 import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
-import net.cloudopt.next.web.route.*
+import net.cloudopt.next.web.annotation.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
+import kotlin.reflect.full.hasAnnotation
 
 object NextServer {
 
     open var webConfig: WebConfigBean = ConfigManager.configMap.toObject(WebConfigBean::class)
 
-    open var verticleID = "net.cloudopt.next.web"
+    private var verticleID = "net.cloudopt.next.web"
 
     val logger = Logger.getLogger(NextServer::class)
 
-    open val resources: MutableList<KClass<Resource>> = arrayListOf()
+    private val plugins = arrayListOf<Plugin>()
+
+    private val resources: MutableList<KClass<Resource>> = arrayListOf()
 
     open val sockJSes: MutableList<KClass<SockJSResource>> = arrayListOf()
 
@@ -48,13 +52,13 @@ object NextServer {
 
     open val handlers = arrayListOf<Handler>()
 
-    open val plugins = arrayListOf<Plugin>()
-
     open val interceptors = mutableMapOf<String, MutableList<KClass<out Interceptor>>>()
 
-    open val validators = mutableMapOf<String, MutableMap<HttpMethod, Array<KClass<out Validator>>>>()
+    open val beforeRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, Array<Annotation>>>()
 
-    open val resourceTables = arrayListOf<ResourceTable>()
+    open val afterRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, Array<Annotation>>>()
+
+    open val resourceTable = arrayListOf<ResourceTable>()
 
     open var packageName = ""
 
@@ -82,9 +86,7 @@ object NextServer {
                 handlers.add(clazz.createInstance() as Handler)
             }
 
-        packageName = if (webConfig.packageName.isNotBlank()) {
-            webConfig.packageName
-        } else {
+        packageName = webConfig.packageName.ifBlank {
             throw RuntimeException("Package name must not be null!")
         }
 
@@ -115,11 +117,11 @@ object NextServer {
         for (clazz in resources) {
 
             // Get api annotation
-            val annotation: API? = clazz.findAnnotation<API>()
+            val apiAnnotation: API? = clazz.findAnnotation<API>()
 
             //Register interceptor
-            annotation?.interceptor?.forEach { inClass ->
-                var url = annotation.value
+            apiAnnotation?.interceptor?.forEach { inClass ->
+                var url = apiAnnotation.value
                 if (url.endsWith("/")) {
                     url = "$url*"
                 } else {
@@ -144,61 +146,76 @@ object NextServer {
 
                 var httpMethod: HttpMethod = HttpMethod.GET
 
-                var valids: Array<KClass<out Validator>> = arrayOf()
-
                 var blocking = false
 
                 functionsAnnotations.forEach { functionAnnotation ->
                     when (functionAnnotation) {
                         is GET -> {
-                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
                             httpMethod = HttpMethod(functionAnnotation.method)
-                            valids = functionAnnotation.valid
                         }
                         is POST -> {
-                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
                             httpMethod = HttpMethod(functionAnnotation.method)
-                            valids = functionAnnotation.valid
                         }
                         is PUT -> {
-                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
                             httpMethod = HttpMethod(functionAnnotation.method)
-                            valids = functionAnnotation.valid
                         }
                         is DELETE -> {
-                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
                             httpMethod = HttpMethod(functionAnnotation.method)
-                            valids = functionAnnotation.valid
                         }
                         is PATCH -> {
-                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
                             httpMethod = HttpMethod(functionAnnotation.method)
-                            valids = functionAnnotation.valid
                         }
-                        is net.cloudopt.next.web.route.HttpMethod -> {
-                            resourceUrl = "${annotation?.value}${functionAnnotation.value}"
+                        is net.cloudopt.next.web.annotation.HttpMethod -> {
+                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
                             httpMethod = HttpMethod(functionAnnotation.method)
-                            valids = functionAnnotation.valid
                         }
                         is Blocking -> {
                             blocking = true
                         }
                     }
 
-                    if (resourceUrl.isNotBlank()) {
-                        val temp = mutableMapOf<HttpMethod, Array<KClass<out Validator>>>()
-                        temp[httpMethod] = valids
-                        if (validators.containsKey(resourceUrl)) {
-                            validators[resourceUrl]?.putAll(temp)
+                    /**
+                     * If it is an annotation with @Before annotation, it is automatically added to the list.
+                     */
+                    if (resourceUrl.isNotBlank() && functionAnnotation.annotationClass.hasAnnotation<Before>()) {
+
+                        if (beforeRouteHandlersTable.containsKey(resourceUrl)) {
+                            if (beforeRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true){
+                                beforeRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(functionAnnotation)
+                            }else{
+                                beforeRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(functionAnnotation))
+                            }
                         } else {
-                            validators[resourceUrl] = temp
+                            val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
+                            temp[httpMethod] = arrayOf(functionAnnotation)
+                            beforeRouteHandlersTable[resourceUrl] = temp
+                        }
+                    }
+
+                    if (resourceUrl.isNotBlank() && functionAnnotation.annotationClass.hasAnnotation<After>()) {
+
+                        if (afterRouteHandlersTable.containsKey(resourceUrl)) {
+                            if (afterRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true){
+                                afterRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(functionAnnotation)
+                            }else{
+                                afterRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(functionAnnotation))
+                            }
+                        } else {
+                            val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
+                            temp[httpMethod] = arrayOf(functionAnnotation)
+                            afterRouteHandlersTable[resourceUrl] = temp
                         }
                     }
 
                 }
 
                 if (resourceUrl.isNotBlank()) {
-                    val resourceTable = ResourceTable(
+                    val r = ResourceTable(
                         resourceUrl,
                         httpMethod,
                         clazz,
@@ -207,7 +224,7 @@ object NextServer {
                         function,
                         function.typeParameters
                     )
-                    resourceTables.add(resourceTable)
+                    resourceTable.add(r)
                 }
             }
 
@@ -256,7 +273,7 @@ object NextServer {
          */
         Banner.print()
         startPlugins()
-        Worker.deploy("net.cloudopt.next.web.NextServerVerticle",workerPoolName = "net.cloudopt.next.http")
+        Worker.deploy("net.cloudopt.next.web.NextServerVerticle", workerPoolName = "net.cloudopt.next.http")
         Runtime.getRuntime().addShutdownHook(object : Thread() {
             override fun run() {
                 NextServer.stop()

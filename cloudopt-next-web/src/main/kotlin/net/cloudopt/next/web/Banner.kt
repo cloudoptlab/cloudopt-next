@@ -24,11 +24,6 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/18
- * @Description: Banner Tool
- */
 object Banner {
 
     private val logger = Logger.getLogger(NextServer::class)

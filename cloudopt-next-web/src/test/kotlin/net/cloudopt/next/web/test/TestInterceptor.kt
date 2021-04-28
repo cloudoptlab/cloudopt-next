@@ -29,4 +29,13 @@ class TestInterceptor:TestStart() {
         }
     }
 
+    @Test
+    fun testThrow() = runBlocking{
+        val httpCode = client.get("/interceptor/throw").send().await().statusCode()
+        println(httpCode)
+        assertTrue {
+            httpCode == 500
+        }
+    }
+
 }

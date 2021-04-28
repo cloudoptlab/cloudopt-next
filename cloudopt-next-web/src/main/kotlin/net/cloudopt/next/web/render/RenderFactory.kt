@@ -17,19 +17,13 @@ package net.cloudopt.next.web.render
 
 import java.util.*
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Render Factory
- */
 object RenderFactory {
 
-    val JSON = "json"
-    val TEXT = "text"
-    val HBS = "hbs"
-    val BEETL = "beetl"
-    val FREE = "freemarker"
-    val HTML = "html"
+    const val JSON = "json"
+    const val TEXT = "text"
+    const val HBS = "hbs"
+    const val FREE = "freemarker"
+    const val HTML = "html"
 
     private var defaultRender = JSON
 
@@ -53,11 +47,11 @@ object RenderFactory {
     }
 
     fun add(extension: String, render: Render) {
-        renderMap.put(extension, render)
+        renderMap[extension] = render
     }
 
     fun addDefault(name: String, render: Render) {
-        renderMap.put(name, render)
+        renderMap[name] = render
         defaultRender = name
     }
 

@@ -21,11 +21,6 @@ import net.cloudopt.next.web.Resource
 import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.core.Worker.global
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: JsonProvider Render
- */
 class JsonRender : Render {
 
     override fun render(resource: Resource, obj: Any) {
