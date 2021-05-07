@@ -42,8 +42,6 @@ object NextServer {
 
     private val plugins = arrayListOf<Plugin>()
 
-    private val resources: MutableList<KClass<Resource>> = arrayListOf()
-
     open val sockJSes: MutableList<KClass<SockJSResource>> = arrayListOf()
 
     open val webSockets: MutableList<KClass<WebSocketResource>> = arrayListOf()
@@ -52,15 +50,15 @@ object NextServer {
 
     open val interceptors = mutableMapOf<String, MutableList<KClass<out Interceptor>>>()
 
-    open val beforeRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, Array<Annotation>>>()
+    val beforeRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, Array<Annotation>>>()
 
-    open val afterRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, Array<Annotation>>>()
+    val afterRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, Array<Annotation>>>()
 
-    open val resourceTable = arrayListOf<ResourceTable>()
+    val resourceTable = arrayListOf<ResourceTable>()
 
-    open var packageName = ""
+    private var packageName = ""
 
-    open var errorHandler: KClass<ErrorHandler> =
+    var errorHandler: KClass<ErrorHandler> =
         Classer.loadClass(webConfig.errorHandler) as KClass<ErrorHandler>
 
     init {
@@ -68,6 +66,134 @@ object NextServer {
          * Set json provider
          */
         Jsoner.jsonProvider = Classer.loadClass(webConfig.jsonProvider).createInstance() as JsonProvider
+    }
+
+    /**
+     * Manually register a class into the resource table.
+     *
+     * @param url String If the registered class does not have the @API annotation, the url parameter is prefixed with
+     * the path.
+     * @param kclass KClass<Resource>
+     */
+    fun registerResourceTable(url: String = "", kclass: KClass<out Resource>) {
+        /**
+         * Get @API annotation
+         */
+        val apiAnnotation: API? = kclass.findAnnotation<API>()
+
+        /**
+         * Register interceptor.
+         */
+        apiAnnotation?.interceptor?.forEach { inClass ->
+            var url = apiAnnotation.value
+            url = if (url.endsWith("/")) {
+                "$url*"
+            } else {
+                "$url/*"
+            }
+            if (interceptors.containsKey(url)) {
+                interceptors[url]?.add(inClass)
+            } else {
+                interceptors[url] = mutableListOf(inClass)
+            }
+
+        }
+
+        /**
+         * Get annotations for all functions in the class.
+         */
+        val functions = kclass.functions
+
+        functions.forEach { function ->
+
+            val functionsAnnotations = function.annotations
+
+            var resourceUrl = ""
+
+            var httpMethod: HttpMethod = HttpMethod.GET
+
+            var blocking = false
+
+            functionsAnnotations.forEach { functionAnnotation ->
+                when (functionAnnotation) {
+                    is GET -> {
+                        resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
+                        httpMethod = HttpMethod(functionAnnotation.method)
+                    }
+                    is POST -> {
+                        resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
+                        httpMethod = HttpMethod(functionAnnotation.method)
+                    }
+                    is PUT -> {
+                        resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
+                        httpMethod = HttpMethod(functionAnnotation.method)
+                    }
+                    is DELETE -> {
+                        resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
+                        httpMethod = HttpMethod(functionAnnotation.method)
+                    }
+                    is PATCH -> {
+                        resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
+                        httpMethod = HttpMethod(functionAnnotation.method)
+                    }
+                    is net.cloudopt.next.web.annotation.HttpMethod -> {
+                        resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
+                        httpMethod = HttpMethod(functionAnnotation.method)
+                    }
+                    is Blocking -> {
+                        blocking = true
+                    }
+                }
+
+            }
+
+            if (resourceUrl.isNotBlank()) {
+                val r = ResourceTable(
+                    resourceUrl,
+                    httpMethod,
+                    kclass,
+                    function.name,
+                    blocking,
+                    function,
+                    function.typeParameters
+                )
+                resourceTable.add(r)
+
+                /**
+                 * If it is an annotation with @Before or @After annotation, it is automatically added to the list.
+                 */
+                function.annotations.forEach { annotation ->
+                    if (annotation.annotationClass.hasAnnotation<Before>()) {
+                        if (beforeRouteHandlersTable.containsKey(resourceUrl)) {
+                            if (beforeRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true) {
+                                beforeRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(annotation)
+                            } else {
+                                beforeRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(annotation))
+                            }
+                        } else {
+                            val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
+                            temp[httpMethod] = arrayOf(annotation)
+                            beforeRouteHandlersTable[resourceUrl] = temp
+                        }
+                    }
+                    if (annotation.annotationClass.hasAnnotation<After>()) {
+
+                        if (afterRouteHandlersTable.containsKey(resourceUrl)) {
+                            if (afterRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true) {
+                                afterRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(annotation)
+                            } else {
+                                afterRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(annotation))
+                            }
+                        } else {
+                            val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
+                            temp[httpMethod] = arrayOf(annotation)
+                            afterRouteHandlersTable[resourceUrl] = temp
+                        }
+                    }
+                }
+
+            }
+        }
     }
 
     /**
@@ -80,8 +206,8 @@ object NextServer {
 
         //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class)
-            .forEach { clazz ->
-                handlers.add(clazz.createInstance() as Handler)
+            .forEach { kclass ->
+                handlers.add(kclass.createInstance() as Handler)
             }
 
         packageName = webConfig.packageName.ifBlank {
@@ -90,145 +216,27 @@ object NextServer {
 
         //Scan custom handler
         Classer.scanPackageByAnnotation(packageName, true, AutoHandler::class)
-            .forEach { clazz ->
-                handlers.add(clazz.createInstance() as Handler)
+            .forEach { kclass ->
+                handlers.add(kclass.createInstance() as Handler)
             }
 
         //Scan sockJS
         Classer.scanPackageByAnnotation(packageName, true, SocketJS::class)
-            .forEach { clazz ->
-                sockJSes.add(clazz as KClass<SockJSResource>)
+            .forEach { kclass ->
+                sockJSes.add(kclass as KClass<SockJSResource>)
             }
 
         //Scan webSocket
         Classer.scanPackageByAnnotation(packageName, true, WebSocket::class)
-            .forEach { clazz ->
-                webSockets.add(clazz as KClass<WebSocketResource>)
+            .forEach { kclass ->
+                webSockets.add(kclass as KClass<WebSocketResource>)
             }
 
         //Scan resources
         Classer.scanPackageByAnnotation(packageName, true, API::class)
-            .forEach { clazz ->
-                resources.add(clazz as KClass<Resource>)
+            .forEach { kclass ->
+                registerResourceTable(kclass = kclass as KClass<Resource>)
             }
-
-        for (clazz in resources) {
-
-            // Get api annotation
-            val apiAnnotation: API? = clazz.findAnnotation<API>()
-
-            //Register interceptor
-            apiAnnotation?.interceptor?.forEach { inClass ->
-                var url = apiAnnotation.value
-                if (url.endsWith("/")) {
-                    url = "$url*"
-                } else {
-                    url = "$url/*"
-                }
-                if (interceptors.containsKey(url)) {
-                    interceptors[url]!!.add(inClass)
-                } else {
-                    interceptors[url] = mutableListOf(inClass)
-                }
-
-            }
-
-            //Get methods annotation
-            val functions = clazz.functions
-
-            functions.forEach { function ->
-
-                val functionsAnnotations = function.annotations
-
-                var resourceUrl = ""
-
-                var httpMethod: HttpMethod = HttpMethod.GET
-
-                var blocking = false
-
-                functionsAnnotations.forEach { functionAnnotation ->
-                    when (functionAnnotation) {
-                        is GET -> {
-                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
-                            httpMethod = HttpMethod(functionAnnotation.method)
-                        }
-                        is POST -> {
-                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
-                            httpMethod = HttpMethod(functionAnnotation.method)
-                        }
-                        is PUT -> {
-                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
-                            httpMethod = HttpMethod(functionAnnotation.method)
-                        }
-                        is DELETE -> {
-                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
-                            httpMethod = HttpMethod(functionAnnotation.method)
-                        }
-                        is PATCH -> {
-                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
-                            httpMethod = HttpMethod(functionAnnotation.method)
-                        }
-                        is net.cloudopt.next.web.annotation.HttpMethod -> {
-                            resourceUrl = "${apiAnnotation?.value}${functionAnnotation.value}"
-                            httpMethod = HttpMethod(functionAnnotation.method)
-                        }
-                        is Blocking -> {
-                            blocking = true
-                        }
-                    }
-
-                }
-
-                if (resourceUrl.isNotBlank()) {
-                    val r = ResourceTable(
-                        resourceUrl,
-                        httpMethod,
-                        clazz,
-                        function.name,
-                        blocking,
-                        function,
-                        function.typeParameters
-                    )
-                    resourceTable.add(r)
-
-                    /**
-                     * If it is an annotation with @Before or @After annotation, it is automatically added to the list.
-                     */
-                    function.annotations.forEach { annotation ->
-                        if (annotation.annotationClass.hasAnnotation<Before>()) {
-                            if (beforeRouteHandlersTable.containsKey(resourceUrl)) {
-                                if (beforeRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true) {
-                                    beforeRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(annotation)
-                                } else {
-                                    beforeRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(annotation))
-                                }
-                            } else {
-                                val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
-                                temp[httpMethod] = arrayOf(annotation)
-                                beforeRouteHandlersTable[resourceUrl] = temp
-                            }
-                        }
-                        if (annotation.annotationClass.hasAnnotation<After>()) {
-
-                            if (afterRouteHandlersTable.containsKey(resourceUrl)) {
-                                if (afterRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true) {
-                                    afterRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(annotation)
-                                } else {
-                                    afterRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(annotation))
-                                }
-                            } else {
-                                val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
-                                temp[httpMethod] = arrayOf(annotation)
-                                afterRouteHandlersTable[resourceUrl] = temp
-                            }
-                        }
-                    }
-
-                }
-            }
-
-
-        }
     }
 
     /**

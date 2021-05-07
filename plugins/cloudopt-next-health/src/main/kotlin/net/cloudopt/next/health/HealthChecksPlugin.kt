@@ -15,17 +15,9 @@
  */
 package net.cloudopt.next.health
 
-import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.web.NextServer
-import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.ResourceTable
-import net.cloudopt.next.web.annotation.Validator
-import kotlin.reflect.KClass
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.functions
-import kotlin.reflect.full.hasAnnotation
 
 /**
  * This plugin provides a simple way to expose health checks. Health checks are used to express the current state of the
@@ -45,26 +37,7 @@ class HealthChecksPlugin : Plugin {
 
         HealthChecksManager.report()["applicationName"] = HealthChecksManager.config.applicationName
 
-        /**
-         * Register the health check validator dynamically into the routing validators table.
-         */
-        if (HealthChecksController::class.functions.first().hasAnnotation<Validator>()) {
-            val validator: Validator = HealthChecksController::class.functions.first().findAnnotation<Validator>()!!
-            NextServer.beforeRouteHandlersTable[HealthChecksManager.config.accessPath] =
-                mutableMapOf(Pair(HttpMethod.GET, arrayOf(validator)))
-        }
-        /**
-         * Register the health check api dynamically into the routing resource table.
-         */
-        NextServer.resourceTable.add(
-            ResourceTable(
-                url = HealthChecksManager.config.accessPath,
-                httpMethod = HttpMethod.GET,
-                clazz = HealthChecksController::class as KClass<Resource>,
-                clazzMethod = HealthChecksController::class.functions.first(),
-                parameterTypes = HealthChecksController::class.functions.first().typeParameters
-            )
-        )
+        NextServer.registerResourceTable(url = HealthChecksManager.config.accessPath, HealthChecksController::class)
 
         /**
          *
