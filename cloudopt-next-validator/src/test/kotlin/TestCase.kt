@@ -1,10 +1,4 @@
-import net.cloudopt.next.validator.ChineseValidator
 import net.cloudopt.next.validator.ValidatorTool
-import net.cloudopt.next.validator.annotation.Chinese
-import net.cloudopt.next.validator.annotation.Inside
-import org.junit.jupiter.api.assertThrows
-import java.lang.RuntimeException
-import kotlin.reflect.full.createInstance
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -54,12 +48,12 @@ class TestCase {
     @Test
     fun testType() {
         assertTrue {
-            val bean = CustomBean(name = "测试", sex = "男",age = "1")
+            val bean = CustomBean(name = "测试", sex = "男", age = "1")
             ValidatorTool.validate(bean).result
         }
 
         assertFalse {
-            val bean = CustomBean(name = "测试", sex = "未知",age = "0.111")
+            val bean = CustomBean(name = "测试", sex = "未知", age = "0.111")
             ValidatorTool.validate(bean).result
         }
     }

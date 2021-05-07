@@ -19,14 +19,13 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
-import net.cloudopt.next.waf.WafConfigBean
 
 /*
  * @author: Cloudopt
  * @Time: 2018/1/9
  * @Description: Cloudopt Next Web configuration file
  */
-@JsonAutoDetect(fieldVisibility  = JsonAutoDetect.Visibility.PUBLIC_ONLY)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.PUBLIC_ONLY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class WebConfigBean(
     var env: String = "",

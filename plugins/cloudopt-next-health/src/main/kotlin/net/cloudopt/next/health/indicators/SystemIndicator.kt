@@ -24,16 +24,18 @@ import java.lang.management.OperatingSystemMXBean
 /**
  * Get system related information。
  */
-class SystemIndicator :HealthIndicator{
+class SystemIndicator : HealthIndicator {
     override suspend fun checkHealth(): HealthChecksResult {
-        return await{
+        return await {
             val mxBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean()
-            return@await HealthChecksResult(data = mutableMapOf(
-                "name" to mxBean.name,
-                "arch" to mxBean.arch,
-                "availableProcessors" to mxBean.availableProcessors,
-                "version" to mxBean.version
-            ))
+            return@await HealthChecksResult(
+                data = mutableMapOf(
+                    "name" to mxBean.name,
+                    "arch" to mxBean.arch,
+                    "availableProcessors" to mxBean.availableProcessors,
+                    "version" to mxBean.version
+                )
+            )
         }
     }
 }

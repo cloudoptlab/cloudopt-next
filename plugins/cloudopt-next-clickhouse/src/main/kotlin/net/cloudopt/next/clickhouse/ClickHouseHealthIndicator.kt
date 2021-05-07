@@ -16,9 +16,9 @@
 package net.cloudopt.next.clickhouse
 
 import net.cloudopt.next.core.Worker.await
-import net.cloudopt.next.web.health.HealthChecksResult
-import net.cloudopt.next.web.health.HealthChecksStatusEnum
-import net.cloudopt.next.web.health.HealthIndicator
+import net.cloudopt.next.health.HealthChecksResult
+import net.cloudopt.next.health.HealthChecksStatusEnum
+import net.cloudopt.next.health.HealthIndicator
 
 /**
  * Used to automatically check the clickhouse status.
@@ -29,11 +29,11 @@ class ClickHouseHealthIndicator : HealthIndicator {
             val result = HealthChecksResult(data = mutableMapOf())
             try {
                 Class.forName("com.zaxxer.hikari.HikariConfig")
-                if (ClickHouseManager.hikariDataSource.connection.isClosed){
+                if (ClickHouseManager.hikariDataSource.connection.isClosed) {
                     result.status = HealthChecksStatusEnum.DOWN
                 }
-            }catch (e:ClassNotFoundException){
-                if (ClickHouseManager.clickHouseDataSource.connection.isClosed){
+            } catch (e: ClassNotFoundException) {
+                if (ClickHouseManager.clickHouseDataSource.connection.isClosed) {
                     result.status = HealthChecksStatusEnum.DOWN
                 }
             }

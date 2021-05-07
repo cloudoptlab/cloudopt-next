@@ -6,7 +6,7 @@ import net.cloudopt.next.client.HttpClient
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class TestRenders:TestStart() {
+class TestRenders : TestStart() {
 
     private var client = HttpClient("http://127.0.0.1").setPort(8080)
 

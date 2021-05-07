@@ -15,10 +15,6 @@
  */
 package net.cloudopt.next.web.annotation
 
-import net.cloudopt.next.web.Validator
-import java.lang.annotation.Documented
-import kotlin.reflect.KClass
-
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @MustBeDocumented

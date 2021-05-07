@@ -16,9 +16,9 @@
 package net.cloudopt.next.cache
 
 import io.lettuce.core.pubsub.RedisPubSubAdapter
+import net.cloudopt.next.core.Worker
 import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.logging.test.Logger
-import net.cloudopt.next.core.Worker
 
 class CacheEventListener : RedisPubSubAdapter<String, String>() {
 

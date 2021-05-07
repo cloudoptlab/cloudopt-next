@@ -29,24 +29,14 @@ import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.waf.Wafer
-import net.cloudopt.next.web.annotation.After
-import net.cloudopt.next.web.annotation.Before
+import net.cloudopt.next.web.annotation.*
 import net.cloudopt.next.web.handler.ErrorHandler
-import net.cloudopt.next.web.annotation.Parameter
-import net.cloudopt.next.web.annotation.RequestBody
-import net.cloudopt.next.web.annotation.SocketJS
-import net.cloudopt.next.web.annotation.WebSocket
-import java.lang.IllegalArgumentException
 import java.sql.Timestamp
 import java.text.DateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.map
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.*
@@ -255,9 +245,9 @@ class NextServerVerticle : CoroutineVerticle() {
                                         break
                                     }
                                 }
-                                if (invokeResult){
+                                if (invokeResult) {
                                     context.next()
-                                }else{
+                                } else {
                                     return@launch
                                 }
                             } catch (e: Exception) {
@@ -369,7 +359,7 @@ class NextServerVerticle : CoroutineVerticle() {
      * @see RoutingContext
      */
     private suspend fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
-        val resource:Resource = resourceTable.clazz.createInstance()
+        val resource: Resource = resourceTable.clazz.createInstance()
         resource.init(context)
         try {
             context.response().endHandler {

@@ -24,7 +24,7 @@ import net.cloudopt.next.web.route.*
 @API(value = "/")
 class IndexController : Resource() {
 
-    companion object{
+    companion object {
         @JvmStatic
         val conn = RedisManager.sync()
     }
@@ -42,7 +42,7 @@ class IndexController : Resource() {
     @GET("redis/:key")
     fun getRedisByKey(
         @Parameter("key")
-        key:String
+        key: String
     ) {
         renderJson(conn.get(key) ?: "")
     }

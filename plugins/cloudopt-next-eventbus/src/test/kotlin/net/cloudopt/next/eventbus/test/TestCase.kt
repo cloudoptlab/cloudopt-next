@@ -6,12 +6,12 @@ import net.cloudopt.next.client.HttpClient
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class TestCase :TestStart(){
+class TestCase : TestStart() {
 
     private var client = HttpClient("http://127.0.0.1").setPort(8080)
 
     @Test
-    fun testSend() = runBlocking{
+    fun testSend() = runBlocking {
         val httpCode = client.post("/eventbus/send").send().await().statusCode()
         assertTrue {
             httpCode == 200
@@ -19,7 +19,7 @@ class TestCase :TestStart(){
     }
 
     @Test
-    fun testPublish() = runBlocking{
+    fun testPublish() = runBlocking {
         val httpCode = client.post("/eventbus/publish").send().await().statusCode()
         assertTrue {
             httpCode == 200
@@ -27,7 +27,7 @@ class TestCase :TestStart(){
     }
 
     @Test
-    fun testAfterEvent() = runBlocking{
+    fun testAfterEvent() = runBlocking {
         val httpCode = client.post("/eventbus/after").send().await().statusCode()
         assertTrue {
             httpCode == 200

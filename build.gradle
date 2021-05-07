@@ -68,7 +68,7 @@ subprojects {
         kotlinOptions.useIR = true
     }
 
-    dokkaJavadoc{
+    dokkaJavadoc {
         outputDirectory.set(new File(buildDir, "javadoc"))
     }
 

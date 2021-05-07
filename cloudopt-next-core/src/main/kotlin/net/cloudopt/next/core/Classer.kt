@@ -99,7 +99,7 @@ object Classer {
             override fun accept(clazz: KClass<*>): Boolean {
                 return try {
                     superClass != clazz && superClass.isSuperclassOf(clazz)
-                }catch (e:UnsupportedOperationException){
+                } catch (e: UnsupportedOperationException) {
                     superClass.java.isAssignableFrom(clazz::class.java) && superClass != clazz
                 }
             }

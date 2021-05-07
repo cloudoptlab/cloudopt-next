@@ -15,8 +15,8 @@
  */
 package net.cloudopt.next.web.handler
 
-import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.annotation.AutoHandler
 
 @AutoHandler

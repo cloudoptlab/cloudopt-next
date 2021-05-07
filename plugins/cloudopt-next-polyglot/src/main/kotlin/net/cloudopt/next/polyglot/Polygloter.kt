@@ -163,7 +163,7 @@ private fun runOnGraal(
 
     val value = context.eval(source)
 
-    if (autoContextClose){
+    if (autoContextClose) {
         context.close()
     }
 

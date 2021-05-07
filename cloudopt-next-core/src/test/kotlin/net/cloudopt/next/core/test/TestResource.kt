@@ -3,7 +3,6 @@ package net.cloudopt.next.core.test
 import net.cloudopt.next.core.Resourcer
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.Test
-import kotlin.test.assertTrue
 
 class TestResource {
 

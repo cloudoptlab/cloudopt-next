@@ -1,6 +1,10 @@
 dependencies {
     api project(":cloudopt-next-web")
+    compileOnly project(":plugins:cloudopt-next-redis")
+    compileOnly "io.lettuce:lettuce-core:6.0.2.RELEASE"
     testImplementation project(":plugins:cloudopt-next-client")
+    testImplementation project(":plugins:cloudopt-next-redis")
+    testImplementation "io.lettuce:lettuce-core:6.0.2.RELEASE"
 }
 
 description = "The event bus allows different parts of your application to communicate with each other."

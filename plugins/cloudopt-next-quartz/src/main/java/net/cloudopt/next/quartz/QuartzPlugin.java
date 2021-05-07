@@ -53,13 +53,16 @@ public class QuartzPlugin implements Plugin {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-            JobDetail jobDetail = JobBuilder.newJob(j2).withIdentity(job.getJobDesc(), job.getJobGroup()).build();
+            JobDetail jobDetail = JobBuilder.newJob(j2).withIdentity(job.getJobDesc(),
+                    job.getJobGroup()).build();
             jobDetail.getJobDataMap().put("scheduleJob", job);
 
             // Expression scheduling builder
-            CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression());
+            CronScheduleBuilder scheduleBuilder =
+                    CronScheduleBuilder.cronSchedule(job.getCronExpression());
             if (job.getTimeZone() != null && !job.getTimeZone().equals("")) {
-                scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression()).inTimeZone(TimeZone.getTimeZone(job.getTimeZone()));
+                scheduleBuilder =
+                        CronScheduleBuilder.cronSchedule(job.getCronExpression()).inTimeZone(TimeZone.getTimeZone(job.getTimeZone()));
             }
 
 
@@ -73,7 +76,8 @@ public class QuartzPlugin implements Plugin {
                 e.printStackTrace();
             }
         } else {
-            CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression());
+            CronScheduleBuilder scheduleBuilder =
+                    CronScheduleBuilder.cronSchedule(job.getCronExpression());
             TriggerBuilder tb = trigger.getTriggerBuilder();
             Trigger newTrigger = tb.withSchedule(scheduleBuilder).build();
             // Press new trigger to reset job execution

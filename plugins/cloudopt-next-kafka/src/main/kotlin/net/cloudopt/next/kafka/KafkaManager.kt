@@ -20,8 +20,8 @@ import io.vertx.core.Handler
 import io.vertx.kafka.client.consumer.KafkaConsumer
 import io.vertx.kafka.client.producer.KafkaProducer
 import io.vertx.kafka.client.producer.KafkaProducerRecord
-import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.logging.test.Logger
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.Topology
 import kotlin.reflect.KClass

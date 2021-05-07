@@ -16,13 +16,12 @@
 package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
-import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.core.Resourcer
-import net.cloudopt.next.web.Resource
 import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.core.Worker.global
-import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.web.Resource
 import java.io.BufferedReader
 import java.io.InputStreamReader
 

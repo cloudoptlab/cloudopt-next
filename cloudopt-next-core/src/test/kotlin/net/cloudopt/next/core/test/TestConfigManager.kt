@@ -19,7 +19,7 @@ class TestConfigManager {
 
     @Test
     fun testInitWafConfigBean() {
-        val config:WafConfigBean = ConfigManager.initObject("waf",WafConfigBean::class)
+        val config: WafConfigBean = ConfigManager.initObject("waf", WafConfigBean::class)
         assertFalse {
             config.plus
         }

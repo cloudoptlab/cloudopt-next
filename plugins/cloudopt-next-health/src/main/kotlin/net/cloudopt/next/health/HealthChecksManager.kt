@@ -78,7 +78,7 @@ object HealthChecksManager {
     fun creatTimer() {
         Worker.setTimer(config.intervalTime, true) { id ->
             timerId = id
-            global{
+            global {
                 checkAllThings()
             }
         }

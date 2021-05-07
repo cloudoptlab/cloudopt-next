@@ -73,7 +73,7 @@ object Resourcer {
         val loader = ClassLoader.getSystemClassLoader()
         return rootPath.ifBlank {
             val path = loader.getResource("")?.path
-            rootPath = File(path?:"").absolutePath
+            rootPath = File(path ?: "").absolutePath
             rootPath
         }
     }

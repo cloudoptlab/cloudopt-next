@@ -27,7 +27,7 @@ class TestRestful : TestStart() {
     }
 
     @Test
-    fun testPut() =runBlocking {
+    fun testPut() = runBlocking {
         val httpCode = client.put("/restful").send().await().statusCode()
         assertTrue {
             httpCode == 200

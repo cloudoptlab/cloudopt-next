@@ -2,7 +2,10 @@ package net.cloudopt.next.core.test
 
 import net.cloudopt.next.core.Classer
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class TestClasser {
 
@@ -27,14 +30,14 @@ class TestClasser {
     }
 
     @Test
-    fun testScanPackage(){
-        assertTrue{
+    fun testScanPackage() {
+        assertTrue {
             Classer.getClassPaths("net.cloudopt.next.core.test").isNotEmpty()
         }
     }
 
     @Test
-    fun testLoadClass(){
+    fun testLoadClass() {
         assertNotNull(
             Classer.loadClass("net.cloudopt.next.core.test.TestSuperClass")
         )

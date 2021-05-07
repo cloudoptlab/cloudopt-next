@@ -22,13 +22,13 @@ class TestController : Resource() {
 
     @POST("/send")
     suspend fun send() {
-        EventBusManager.send(address, message)
+        EventBusManager.send(address = address, message = message)
         renderText("success")
     }
 
     @POST("/publish")
     suspend fun publish() {
-        EventBusManager.publish(address, message)
+        EventBusManager.publish(address = address, message = message)
         renderText("success")
     }
 

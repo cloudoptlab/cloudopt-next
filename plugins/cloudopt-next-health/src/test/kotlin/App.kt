@@ -7,8 +7,8 @@ import net.cloudopt.next.web.NextServer
 
 fun main() {
     NextServer.addPlugin(HealthChecksPlugin())
-    HealthChecksManager.register("disk",DiskSpaceHealthIndicator())
-    HealthChecksManager.register("jvm",JvmHealthIndicator())
-    HealthChecksManager.register("system",SystemIndicator())
+    HealthChecksManager.register("disk", DiskSpaceHealthIndicator())
+    HealthChecksManager.register("jvm", JvmHealthIndicator())
+    HealthChecksManager.register("system", SystemIndicator())
     NextServer.run()
 }

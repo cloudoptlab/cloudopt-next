@@ -17,12 +17,12 @@
 
 package net.cloudopt.next.rocketmq
 
-import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.core.Classer
-import net.cloudopt.next.web.NextServer
-import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.core.toObject
+import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.web.NextServer
 import org.apache.rocketmq.acl.common.AclClientRPCHook
 import org.apache.rocketmq.acl.common.SessionCredentials
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer
@@ -58,7 +58,8 @@ object RocketMQManager {
      * Store the scanned listeners.
      */
     @JvmStatic
-    internal val listenerList: MutableMap<String, MutableMap<String, MutableSet<KClass<RocketMQListener>>>> = hashMapOf()
+    internal val listenerList: MutableMap<String, MutableMap<String, MutableSet<KClass<RocketMQListener>>>> =
+        hashMapOf()
 
     init {
         if (ConfigManager.init("rocketmq.producer").isNotEmpty()) {
@@ -155,10 +156,10 @@ object RocketMQManager {
         /**
          * Second put the listeners of all the tags under this topic into the set collection.
          */
-        msg.tags.split("||").forEach { tag->
+        msg.tags.split("||").forEach { tag ->
             classSet.addAll(listenerList[msg.topic]?.get(tag) ?: mutableSetOf())
         }
-        classSet.forEach {clazz->
+        classSet.forEach { clazz ->
             clazz.createInstance().listener(msg)
         }
     }
@@ -215,9 +216,9 @@ class RocketMQPlugin : Plugin {
                     subExpression = "*"
                 } else {
                     RocketMQManager.listenerList[topicName]?.keys?.forEach { tag ->
-                        if (subExpression.isNotBlank()){
-                                subExpression = "$subExpression||$tag"
-                        }else{
+                        if (subExpression.isNotBlank()) {
+                            subExpression = "$subExpression||$tag"
+                        } else {
                             subExpression = tag
                         }
                     }

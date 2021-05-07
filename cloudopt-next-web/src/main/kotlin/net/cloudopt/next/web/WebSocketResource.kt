@@ -69,7 +69,7 @@ open interface WebSocketResource {
      * @param buffer Most data is shuffled around inside Vert.x using buffers
      * @param websocket Represents a server side WebSocket
      */
-    fun onBinaryMessage(buffer: Buffer,websocket: ServerWebSocket)
+    fun onBinaryMessage(buffer: Buffer, websocket: ServerWebSocket)
 
     /**
      * Set a pong frame handler on the connection.  This handler will be invoked every time a pong frame is received

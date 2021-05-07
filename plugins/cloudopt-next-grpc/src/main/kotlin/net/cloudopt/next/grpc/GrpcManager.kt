@@ -13,8 +13,10 @@ import kotlin.reflect.KClass
 object GrpcManager {
     @JvmStatic
     val config = ConfigManager.init("grpc")
+
     @JvmStatic
     lateinit var grpcServer: VertxServer
+
     @JvmStatic
     val grpcServiceList = mutableListOf<KClass<out BindableService>>()
     lateinit var optionsHandler: Handler<HttpServerOptions>

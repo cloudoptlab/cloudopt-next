@@ -2,9 +2,9 @@ package net.cloudopt.next.grpc
 
 import io.grpc.BindableService
 import net.cloudopt.next.core.Classer
-import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.core.Worker
+import net.cloudopt.next.web.NextServer
 import kotlin.reflect.KClass
 
 /**
@@ -19,7 +19,7 @@ class GrpcPlugin : Plugin {
             .forEach { clazz ->
                 GrpcManager.grpcServiceList.add(clazz as KClass<out BindableService>)
             }
-        Worker.deploy("net.cloudopt.next.grpc.GrpcVerticle",workerPoolName = "net.cloudopt.next.grpc")
+        Worker.deploy("net.cloudopt.next.grpc.GrpcVerticle", workerPoolName = "net.cloudopt.next.grpc")
         return true
     }
 

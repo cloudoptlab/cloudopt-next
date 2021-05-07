@@ -15,8 +15,6 @@
  */
 package net.cloudopt.next.web.render
 
-import java.util.*
-
 object RenderFactory {
 
     const val JSON = "json"

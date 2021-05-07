@@ -13,13 +13,13 @@ open class TestStart {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeTest
-    fun startServer() = runBlocking{
+    fun startServer() = runBlocking {
         Dispatchers.setMain(Worker.dispatcher())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @AfterTest
-    fun stopServer(){
+    fun stopServer() {
         Dispatchers.resetMain()
     }
 

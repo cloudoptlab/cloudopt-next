@@ -15,12 +15,12 @@
  */
 package net.cloudopt.next.jooq
 
+import net.cloudopt.next.core.Classer
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.jooq.JooqManager.pool
 import net.cloudopt.next.jooq.pool.ConnectionPool
 import net.cloudopt.next.jooq.pool.HikariCPPool
-import net.cloudopt.next.core.Classer
-import net.cloudopt.next.core.Plugin
-import net.cloudopt.next.core.ConfigManager
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 import org.jooq.impl.DataSourceConnectionProvider

@@ -18,11 +18,10 @@ package net.cloudopt.next.web.render
 import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import io.vertx.core.http.HttpHeaders
-import net.cloudopt.next.web.Resource
 import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.core.Worker.global
-import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.web.Resource
 import java.io.FileNotFoundException
 
 class HbsRender : Render {

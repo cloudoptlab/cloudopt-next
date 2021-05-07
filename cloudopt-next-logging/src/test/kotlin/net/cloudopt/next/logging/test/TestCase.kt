@@ -19,8 +19,6 @@ import net.cloudopt.next.logging.test.provider.JdkLoggerProvider
 import net.cloudopt.next.logging.test.provider.Slf4jLoggerProvider
 import org.junit.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.lang.RuntimeException
-import kotlin.math.log
 
 class TestCase {
 
@@ -52,10 +50,10 @@ class TestCase {
             logger.warn("", e)
             logger.error("", e)
 
-            logger.debug("", e,1)
-            logger.info("", e,1)
-            logger.warn("", e,1)
-            logger.error("", e,1)
+            logger.debug("", e, 1)
+            logger.info("", e, 1)
+            logger.warn("", e, 1)
+            logger.error("", e, 1)
         }
     }
 
@@ -90,10 +88,10 @@ class TestCase {
             logger.warn("", e)
             logger.error("", e)
 
-            logger.debug("", e,1)
-            logger.info("", e,1)
-            logger.warn("", e,1)
-            logger.error("", e,1)
+            logger.debug("", e, 1)
+            logger.info("", e, 1)
+            logger.warn("", e, 1)
+            logger.error("", e, 1)
         }
     }
 

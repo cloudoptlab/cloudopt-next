@@ -25,26 +25,28 @@ import java.lang.management.RuntimeMXBean
 /**
  * Get jvm related information。
  */
-class JvmHealthIndicator :HealthIndicator{
+class JvmHealthIndicator : HealthIndicator {
     override suspend fun checkHealth(): HealthChecksResult {
-        return await{
+        return await {
             val runtimeMXBean: RuntimeMXBean = ManagementFactory.getRuntimeMXBean()
             val memoryMxBean = ManagementFactory.getMemoryMXBean()
-            return@await HealthChecksResult(data = mutableMapOf(
-                "name" to runtimeMXBean.specName,
-                "version" to runtimeMXBean.specVersion,
-                "vendor" to runtimeMXBean.specVersion,
-                "vmVendor" to runtimeMXBean.vmVendor,
-                "vmVersion" to runtimeMXBean.vmVersion,
-                "heapMemoryUsageMax" to  memoryMxBean.heapMemoryUsage.max,
-                "heapMemoryUsageInit" to  memoryMxBean.heapMemoryUsage.init,
-                "heapMemoryUsageCommitted" to  memoryMxBean.heapMemoryUsage.committed,
-                "heapMemoryUsageUsed" to  memoryMxBean.heapMemoryUsage.used,
-                "nonHeapMemoryUsageMax" to  memoryMxBean.nonHeapMemoryUsage.max,
-                "nonHeapMemoryUsageInit" to  memoryMxBean.nonHeapMemoryUsage.init,
-                "nonHeapMemoryUsageCommitted" to  memoryMxBean.nonHeapMemoryUsage.committed,
-                "nonHeapMemoryUsageUsed" to  memoryMxBean.nonHeapMemoryUsage.used
-            ))
+            return@await HealthChecksResult(
+                data = mutableMapOf(
+                    "name" to runtimeMXBean.specName,
+                    "version" to runtimeMXBean.specVersion,
+                    "vendor" to runtimeMXBean.specVersion,
+                    "vmVendor" to runtimeMXBean.vmVendor,
+                    "vmVersion" to runtimeMXBean.vmVersion,
+                    "heapMemoryUsageMax" to memoryMxBean.heapMemoryUsage.max,
+                    "heapMemoryUsageInit" to memoryMxBean.heapMemoryUsage.init,
+                    "heapMemoryUsageCommitted" to memoryMxBean.heapMemoryUsage.committed,
+                    "heapMemoryUsageUsed" to memoryMxBean.heapMemoryUsage.used,
+                    "nonHeapMemoryUsageMax" to memoryMxBean.nonHeapMemoryUsage.max,
+                    "nonHeapMemoryUsageInit" to memoryMxBean.nonHeapMemoryUsage.init,
+                    "nonHeapMemoryUsageCommitted" to memoryMxBean.nonHeapMemoryUsage.committed,
+                    "nonHeapMemoryUsageUsed" to memoryMxBean.nonHeapMemoryUsage.used
+                )
+            )
         }
     }
 }

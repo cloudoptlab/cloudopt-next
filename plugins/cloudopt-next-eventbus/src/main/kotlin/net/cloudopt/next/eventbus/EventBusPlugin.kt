@@ -37,6 +37,9 @@ class EventBusPlugin : Plugin {
             }
 
         global {
+            if (!EventBusManager.providers.containsKey("default")) {
+                EventBusManager.providers["default"] = VertxEventBusProvider()
+            }
             EventBusManager.providers.values.forEach { provider: EventBusProvider ->
                 provider.init()
                 EventBusManager.eventListenerList.forEach { (address, kclass) ->

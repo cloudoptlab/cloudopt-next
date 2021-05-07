@@ -15,9 +15,9 @@
  */
 package net.cloudopt.next.health.hooks
 
+import net.cloudopt.next.health.HealthChecksHook
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.test.Logger
-import net.cloudopt.next.health.HealthChecksHook
 
 /**
  * Automatic log output of health check results.

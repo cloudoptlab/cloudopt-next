@@ -17,19 +17,16 @@ package net.cloudopt.next.eventbus
 
 import io.vertx.core.json.JsonObject
 import net.cloudopt.next.eventbus.provider.EventBusProvider
-import net.cloudopt.next.logging.test.Logger
 import kotlin.reflect.KClass
 
 
 object EventBusManager {
 
     @JvmStatic
-    var providers = mutableMapOf<String, EventBusProvider>()
+    val providers = mutableMapOf<String, EventBusProvider>()
 
     @JvmStatic
     val eventListenerList: MutableMap<String, KClass<EventListener>> = hashMapOf()
-
-    private val logger = Logger.getLogger(EventBusManager::class)
 
     /**
      * Sends a message.
@@ -75,6 +72,15 @@ object EventBusManager {
      */
     fun removeListener(address: String) {
         eventListenerList.remove(address)
+    }
+
+    /**
+     * Add a new eventbus implementation class.
+     * @param name String name of eventbus provider
+     * @param provider EventBusProvider the new eventbus implementation class
+     */
+    fun addProvider(name: String, provider: EventBusProvider) {
+        providers[name] = provider
     }
 
 

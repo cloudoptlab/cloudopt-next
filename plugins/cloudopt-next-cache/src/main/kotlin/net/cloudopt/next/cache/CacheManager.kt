@@ -23,16 +23,18 @@ import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
 import io.lettuce.core.codec.ByteArrayCodec
 import net.cloudopt.next.cache.serializer.DefaultSerializer
 import net.cloudopt.next.cache.serializer.Serializer
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.test.Logger
 import net.cloudopt.next.redis.RedisManager
-import net.cloudopt.next.core.Worker.await
-import net.cloudopt.next.core.ConfigManager
 import java.util.concurrent.TimeUnit
 
 object CacheManager {
 
     internal const val CHANNELS = "NEXT-CACHE-EVENT"
+
+    internal const val PROVIDER_NAME = "NEXT-REDIS-PROVIDER"
 
     internal const val PREFIX = "NEXT-CACHE-ROUTE-"
 

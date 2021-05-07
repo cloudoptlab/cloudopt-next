@@ -22,8 +22,8 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import net.cloudopt.next.cache.CacheManager
 import net.cloudopt.next.cache.CachePlugin
-import net.cloudopt.next.redis.RedisPlugin
 import net.cloudopt.next.core.Worker
+import net.cloudopt.next.redis.RedisPlugin
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -54,8 +54,8 @@ class TestCase {
 
     @Test
     fun setAndGet() = runBlocking {
-        CacheManager.set(regionName,"testCache","success")
-        val value:String = CacheManager.get(regionName, "testCache") as String
+        CacheManager.set(regionName, "testCache", "success")
+        val value: String = CacheManager.get(regionName, "testCache") as String
         assert(value == "success")
     }
 
@@ -67,13 +67,10 @@ class TestCase {
 
     @Test
     fun delete() = runBlocking {
-        CacheManager.set(regionName,"testDeleteCache","success")
+        CacheManager.set(regionName, "testDeleteCache", "success")
         CacheManager.delete(regionName, "testDeleteCache")
         assert(CacheManager.get(regionName, "testDeleteCache") == null)
     }
-
-
-
 
 
 }

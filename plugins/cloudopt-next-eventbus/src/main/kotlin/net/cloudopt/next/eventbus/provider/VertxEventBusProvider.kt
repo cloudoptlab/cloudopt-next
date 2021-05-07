@@ -46,7 +46,7 @@ class VertxEventBusProvider : EventBusProvider {
 
     override suspend fun consumer(address: String, listener: KClass<EventListener>) {
         eventBus.consumer<JsonObject>(address) { message ->
-            global{
+            global {
                 listener.createInstance().listener(message.body())
             }
         }.completionHandler { result ->

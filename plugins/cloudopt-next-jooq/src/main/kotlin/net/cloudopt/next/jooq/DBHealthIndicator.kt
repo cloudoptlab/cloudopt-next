@@ -15,11 +15,11 @@
  */
 package net.cloudopt.next.jooq
 
-import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.core.ConfigManager
-import net.cloudopt.next.web.health.HealthChecksResult
-import net.cloudopt.next.web.health.HealthChecksStatusEnum
-import net.cloudopt.next.web.health.HealthIndicator
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.health.HealthChecksResult
+import net.cloudopt.next.health.HealthChecksStatusEnum
+import net.cloudopt.next.health.HealthIndicator
 
 /**
  * Used to automatically check the database connection status.

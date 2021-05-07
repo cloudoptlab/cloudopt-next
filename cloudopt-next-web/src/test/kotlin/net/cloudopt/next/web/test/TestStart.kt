@@ -6,7 +6,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import net.cloudopt.next.core.Worker
-import net.cloudopt.next.web.NextServer
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
@@ -14,13 +13,13 @@ open class TestStart {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeTest
-    fun startServer() = runBlocking{
+    fun startServer() = runBlocking {
         Dispatchers.setMain(Worker.dispatcher())
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @AfterTest
-    fun stopServer(){
+    fun stopServer() {
         Dispatchers.resetMain()
     }
 

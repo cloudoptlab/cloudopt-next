@@ -20,14 +20,12 @@ import net.cloudopt.next.core.*
 import net.cloudopt.next.json.JsonProvider
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.test.Logger
-import net.cloudopt.next.web.annotation.Blocking
+import net.cloudopt.next.web.annotation.*
 import net.cloudopt.next.web.config.WebConfigBean
-import net.cloudopt.next.web.annotation.AutoHandler
 import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
-import net.cloudopt.next.web.annotation.*
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
@@ -179,39 +177,6 @@ object NextServer {
                         }
                     }
 
-                    /**
-                     * If it is an annotation with @Before annotation, it is automatically added to the list.
-                     */
-                    if (resourceUrl.isNotBlank() && functionAnnotation.annotationClass.hasAnnotation<Before>()) {
-
-                        if (beforeRouteHandlersTable.containsKey(resourceUrl)) {
-                            if (beforeRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true){
-                                beforeRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(functionAnnotation)
-                            }else{
-                                beforeRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(functionAnnotation))
-                            }
-                        } else {
-                            val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
-                            temp[httpMethod] = arrayOf(functionAnnotation)
-                            beforeRouteHandlersTable[resourceUrl] = temp
-                        }
-                    }
-
-                    if (resourceUrl.isNotBlank() && functionAnnotation.annotationClass.hasAnnotation<After>()) {
-
-                        if (afterRouteHandlersTable.containsKey(resourceUrl)) {
-                            if (afterRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true){
-                                afterRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(functionAnnotation)
-                            }else{
-                                afterRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(functionAnnotation))
-                            }
-                        } else {
-                            val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
-                            temp[httpMethod] = arrayOf(functionAnnotation)
-                            afterRouteHandlersTable[resourceUrl] = temp
-                        }
-                    }
-
                 }
 
                 if (resourceUrl.isNotBlank()) {
@@ -225,6 +190,40 @@ object NextServer {
                         function.typeParameters
                     )
                     resourceTable.add(r)
+
+                    /**
+                     * If it is an annotation with @Before or @After annotation, it is automatically added to the list.
+                     */
+                    function.annotations.forEach { annotation ->
+                        if (annotation.annotationClass.hasAnnotation<Before>()) {
+                            if (beforeRouteHandlersTable.containsKey(resourceUrl)) {
+                                if (beforeRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true) {
+                                    beforeRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(annotation)
+                                } else {
+                                    beforeRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(annotation))
+                                }
+                            } else {
+                                val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
+                                temp[httpMethod] = arrayOf(annotation)
+                                beforeRouteHandlersTable[resourceUrl] = temp
+                            }
+                        }
+                        if (annotation.annotationClass.hasAnnotation<After>()) {
+
+                            if (afterRouteHandlersTable.containsKey(resourceUrl)) {
+                                if (afterRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true) {
+                                    afterRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(annotation)
+                                } else {
+                                    afterRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(annotation))
+                                }
+                            } else {
+                                val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
+                                temp[httpMethod] = arrayOf(annotation)
+                                afterRouteHandlersTable[resourceUrl] = temp
+                            }
+                        }
+                    }
+
                 }
             }
 

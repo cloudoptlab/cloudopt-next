@@ -16,8 +16,8 @@
 package net.cloudopt.next.cache
 
 import net.cloudopt.next.core.Worker.await
-import net.cloudopt.next.web.health.HealthChecksResult
-import net.cloudopt.next.web.health.HealthIndicator
+import net.cloudopt.next.health.HealthChecksResult
+import net.cloudopt.next.health.HealthIndicator
 
 /**
  * Used to automatically check the caches status.
@@ -26,8 +26,8 @@ class CacheHealthIndicator : HealthIndicator {
     override suspend fun checkHealth(): HealthChecksResult {
         return await {
             val result = HealthChecksResult(data = mutableMapOf())
-            CacheManager.regions.forEach{(name,cache)->
-                result.data[name]= mutableMapOf(
+            CacheManager.regions.forEach { (name, cache) ->
+                result.data[name] = mutableMapOf(
                     "hitCount" to cache.stats().hitCount(),
                     "missCount" to cache.stats().missCount(),
                     "loadSuccessCount" to cache.stats().loadSuccessCount(),

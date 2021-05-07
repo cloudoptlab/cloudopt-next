@@ -2,7 +2,6 @@ package net.cloudopt.next.web.test.validator
 
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.Validator
-import java.lang.RuntimeException
 
 class TestThrowValidator : Validator {
     override suspend fun validate(resource: Resource): Boolean {

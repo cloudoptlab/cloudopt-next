@@ -8,7 +8,7 @@ class TestInterceptor : Interceptor {
 
     override suspend fun intercept(resource: Resource): Boolean {
 
-        resource.setCookie("before","interceptor")
+        resource.setCookie("before", "interceptor")
 
         return true
 
@@ -18,7 +18,6 @@ class TestInterceptor : Interceptor {
     override suspend fun response(resource: Resource): Resource {
         return resource
     }
-
 
 
 }

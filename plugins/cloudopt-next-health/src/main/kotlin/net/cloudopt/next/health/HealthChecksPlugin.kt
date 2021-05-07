@@ -48,9 +48,10 @@ class HealthChecksPlugin : Plugin {
         /**
          * Register the health check validator dynamically into the routing validators table.
          */
-        if (HealthChecksController::class.functions.first().hasAnnotation<Validator>()){
+        if (HealthChecksController::class.functions.first().hasAnnotation<Validator>()) {
             val validator: Validator = HealthChecksController::class.functions.first().findAnnotation<Validator>()!!
-            NextServer.beforeRouteHandlersTable[HealthChecksManager.config.accessPath] = mutableMapOf(Pair(HttpMethod.GET, arrayOf(validator)))
+            NextServer.beforeRouteHandlersTable[HealthChecksManager.config.accessPath] =
+                mutableMapOf(Pair(HttpMethod.GET, arrayOf(validator)))
         }
         /**
          * Register the health check api dynamically into the routing resource table.
