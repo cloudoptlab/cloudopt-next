@@ -4,9 +4,9 @@ import net.cloudopt.next.eventbus.AfterEvent
 import net.cloudopt.next.eventbus.EventBusManager
 import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.route.API
-import net.cloudopt.next.web.route.GET
-import net.cloudopt.next.web.route.POST
+import net.cloudopt.next.web.annotation.API
+import net.cloudopt.next.web.annotation.GET
+import net.cloudopt.next.web.annotation.POST
 
 @API("/eventbus")
 class TestController : Resource() {

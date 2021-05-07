@@ -16,17 +16,16 @@
 package net.cloudopt.next.eventbus
 
 import net.cloudopt.next.core.Classer
-import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Plugin
-import net.cloudopt.next.core.Worker.async
 import net.cloudopt.next.core.Worker.global
+import net.cloudopt.next.eventbus.provider.EventBusProvider
 import net.cloudopt.next.eventbus.provider.VertxEventBusProvider
 import net.cloudopt.next.web.NextServer
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
 
-class EventBusPlugin(private val provider: VertxEventBusProvider = VertxEventBusProvider()) : Plugin {
+class EventBusPlugin : Plugin {
 
     override fun start(): Boolean {
         Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoEvent::class)
@@ -37,12 +36,11 @@ class EventBusPlugin(private val provider: VertxEventBusProvider = VertxEventBus
                 }
             }
 
-        global{
-            EventBusManager.provider = provider
-            EventBusManager.provider.init()
-            EventBusManager.eventListenerList.keys.forEach { key ->
-                EventBusManager.eventListenerList[key]?.let {
-                    EventBusManager.provider.consumer(key, it)
+        global {
+            EventBusManager.providers.values.forEach { provider: EventBusProvider ->
+                provider.init()
+                EventBusManager.eventListenerList.forEach { (address, kclass) ->
+                    provider.consumer(address, kclass)
                 }
             }
         }

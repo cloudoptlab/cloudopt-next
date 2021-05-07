@@ -15,28 +15,16 @@
  */
 package net.cloudopt.next.eventbus
 
-import io.vertx.core.Vertx
-import io.vertx.core.eventbus.DeliveryOptions
-import io.vertx.core.eventbus.EventBus
 import io.vertx.core.json.JsonObject
-import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.logging.test.Logger
-import net.cloudopt.next.core.Classer
-import net.cloudopt.next.eventbus.codec.MapMessageCodec
-import net.cloudopt.next.eventbus.codec.JsonMessageCodec
 import net.cloudopt.next.eventbus.provider.EventBusProvider
-import net.cloudopt.next.eventbus.provider.VertxEventBusProvider
-import net.cloudopt.next.web.NextServer
+import net.cloudopt.next.logging.test.Logger
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.jvm.jvmName
 
 
 object EventBusManager {
 
     @JvmStatic
-    lateinit var provider: EventBusProvider
+    var providers = mutableMapOf<String, EventBusProvider>()
 
     @JvmStatic
     val eventListenerList: MutableMap<String, KClass<EventListener>> = hashMapOf()
@@ -48,11 +36,12 @@ object EventBusManager {
      * <p>
      * The message will be delivered to at most one of the handlers registered to the address.
      *
+     * @param providerName the name of the implementation class of the specified eventbus
      * @param address  the address to send it to
      * @param message  the json object of message, must not be {@code null}
      */
-    suspend fun send(address: String, message: JsonObject) {
-        provider.send(address, message)
+    suspend fun send(providerName: String = "default", address: String, message: JsonObject) {
+        providers[providerName]?.send(address, message)
     }
 
 
@@ -60,14 +49,33 @@ object EventBusManager {
      * Publish a message.<p>
      * The message will be delivered to all handlers registered to the address.
      *
+     * @param providerName the name of the implementation class of the specified eventbus
      * @param address  the address to publish it to
      * @param message  the json object of message, must not be {@code null}
      *
      */
-    suspend fun publish(address: String, message: JsonObject) {
-        provider.publish(address, message)
+    suspend fun publish(providerName: String = "default", address: String, message: JsonObject) {
+        providers[providerName]?.publish(address, message)
     }
 
+    /**
+     * Register the listener into the list of listeners.
+     *
+     * @param address address  the address to listen it to
+     * @param kclass KClass<EventListener>
+     */
+    fun registerListener(address: String, kclass: KClass<EventListener>) {
+        eventListenerList[address] = kclass
+    }
+
+    /**
+     * Remove the listener into the list of listeners.
+     *
+     * @param address address  the address to remove it to
+     */
+    fun removeListener(address: String) {
+        eventListenerList.remove(address)
+    }
 
 
 }
