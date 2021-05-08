@@ -26,7 +26,7 @@ import net.cloudopt.next.cache.serializer.Serializer
 import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.redis.RedisManager
 import java.util.concurrent.TimeUnit
 

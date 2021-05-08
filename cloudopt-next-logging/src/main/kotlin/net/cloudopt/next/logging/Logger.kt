@@ -9,7 +9,7 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.logging.test
+package net.cloudopt.next.logging
 
 import kotlin.reflect.KClass
 

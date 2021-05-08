@@ -16,6 +16,7 @@
 package net.cloudopt.next.cache.test.controller
 
 import net.cloudopt.next.cache.CacheManager
+import net.cloudopt.next.cache.DefaultKeyGenerator
 import net.cloudopt.next.cache.annotation.Cacheable
 import net.cloudopt.next.json.Jsoner.json
 import net.cloudopt.next.redis.RedisManager
@@ -60,8 +61,8 @@ class IndexController : Resource() {
     }
 
     @GET("cacheable/:id")
-    @Cacheable("testRegion",key = "@{url}-@{id}")
-    suspend fun cacheable(){
+    @Cacheable("testRegion", key = "@{url}-@{id}", keyGenerator = DefaultKeyGenerator::class, l2 = true)
+    fun cacheable() {
         renderJson(json("name" to "cacheable"))
     }
 

@@ -15,8 +15,9 @@
  */
 package net.cloudopt.next.logging.test
 
-import net.cloudopt.next.logging.test.provider.JdkLoggerProvider
-import net.cloudopt.next.logging.test.provider.Slf4jLoggerProvider
+import net.cloudopt.next.logging.Logger
+import net.cloudopt.next.logging.provider.JdkLoggerProvider
+import net.cloudopt.next.logging.provider.Slf4jLoggerProvider
 import org.junit.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 

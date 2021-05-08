@@ -9,10 +9,10 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.logging.test
+package net.cloudopt.next.logging
 
-import net.cloudopt.next.logging.test.provider.LoggerProvider
-import net.cloudopt.next.logging.test.provider.Slf4jLoggerProvider
+import net.cloudopt.next.logging.provider.LoggerProvider
+import net.cloudopt.next.logging.provider.Slf4jLoggerProvider
 
 
 /*

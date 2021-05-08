@@ -39,7 +39,7 @@ class DefaultKeyGenerator : KeyGenerator {
                 }
                 if (paramBegin && c != '}') {
                     if (c == '{') {
-                        println("模板格式错误！位置：$i")
+                        println("Template formatting error! Location: $i")
                     } else {
                         key?.append(c)
                     }

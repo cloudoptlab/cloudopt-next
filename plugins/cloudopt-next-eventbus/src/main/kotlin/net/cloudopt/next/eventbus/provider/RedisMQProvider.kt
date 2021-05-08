@@ -23,7 +23,7 @@ import net.cloudopt.next.eventbus.EventBusManager
 import net.cloudopt.next.eventbus.EventListener
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.redis.RedisManager
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance

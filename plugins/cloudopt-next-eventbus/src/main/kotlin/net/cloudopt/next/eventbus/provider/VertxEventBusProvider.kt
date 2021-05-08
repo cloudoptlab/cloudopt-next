@@ -24,7 +24,7 @@ import net.cloudopt.next.eventbus.EventBusManager
 import net.cloudopt.next.eventbus.EventListener
 import net.cloudopt.next.eventbus.codec.JsonMessageCodec
 import net.cloudopt.next.eventbus.codec.MapMessageCodec
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.jvm.jvmName

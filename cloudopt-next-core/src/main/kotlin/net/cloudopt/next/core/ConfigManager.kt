@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.core
 
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 import kotlin.reflect.KClass
 
 object ConfigManager {

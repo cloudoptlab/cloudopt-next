@@ -1,4 +1,4 @@
-package net.cloudopt.next.logging.test
+package net.cloudopt.next.logging
 
 /**
  * For formatting text

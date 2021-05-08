@@ -16,7 +16,7 @@
 package net.cloudopt.next.cache
 
 import net.cloudopt.next.cache.annotation.Cacheable
-import net.cloudopt.next.core.Worker
+import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.RouteHandler
 import kotlin.reflect.full.createInstance
@@ -25,7 +25,7 @@ class CacheableAfterHandler : RouteHandler {
 
     override suspend fun handle(annotation: Annotation, resource: Resource): Boolean {
         val cacheable: Cacheable = annotation as Cacheable
-        val key: String = Worker.await {
+        val key: String = await {
             return@await cacheable.keyGenerator.createInstance().generate(cacheable.key, resource)
         }
         val cacheableBean = CacheableBean(body = resource.responseBody)

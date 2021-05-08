@@ -21,7 +21,7 @@ import net.cloudopt.next.core.Classer
 import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.core.toObject
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.NextServer
 import org.apache.rocketmq.acl.common.AclClientRPCHook
 import org.apache.rocketmq.acl.common.SessionCredentials

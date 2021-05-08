@@ -16,7 +16,7 @@
 package net.cloudopt.next.web
 
 import net.cloudopt.next.core.Resourcer
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.time.ZonedDateTime

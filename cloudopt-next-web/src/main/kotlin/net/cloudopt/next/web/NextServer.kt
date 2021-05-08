@@ -19,7 +19,7 @@ import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.core.*
 import net.cloudopt.next.json.JsonProvider
 import net.cloudopt.next.json.Jsoner
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.annotation.*
 import net.cloudopt.next.web.config.WebConfigBean
 import net.cloudopt.next.web.handler.ErrorHandler

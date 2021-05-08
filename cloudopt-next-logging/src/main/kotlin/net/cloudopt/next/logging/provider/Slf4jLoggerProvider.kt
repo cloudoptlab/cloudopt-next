@@ -9,11 +9,11 @@
  *
  *  You may elect to redistribute this code under either of these licenses.
  */
-package net.cloudopt.next.logging.test.provider
+package net.cloudopt.next.logging.provider
 
-import net.cloudopt.next.logging.test.Colorer
-import net.cloudopt.next.logging.test.Format
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Colorer
+import net.cloudopt.next.logging.Format
+import net.cloudopt.next.logging.Logger
 import kotlin.reflect.KClass
 
 

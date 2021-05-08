@@ -16,7 +16,7 @@
 package net.cloudopt.next.redis
 
 import io.lettuce.core.pubsub.RedisPubSubAdapter
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 
 class TestEventListener : RedisPubSubAdapter<String, String>() {
 

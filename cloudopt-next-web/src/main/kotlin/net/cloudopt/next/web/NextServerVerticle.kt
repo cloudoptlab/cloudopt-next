@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import net.cloudopt.next.core.Worker
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.waf.Wafer
 import net.cloudopt.next.web.annotation.*

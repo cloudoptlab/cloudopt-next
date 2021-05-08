@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package net.cloudopt.next.logging.test.provider
+package net.cloudopt.next.logging.provider
 
-import net.cloudopt.next.logging.test.Colorer
-import net.cloudopt.next.logging.test.Format
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Colorer
+import net.cloudopt.next.logging.Format
+import net.cloudopt.next.logging.Logger
 import java.util.logging.Level
 import kotlin.reflect.KClass
 

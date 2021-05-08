@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.spring
 
-import net.cloudopt.next.logging.test.Logger
+import net.cloudopt.next.logging.Logger
 import org.springframework.beans.factory.support.BeanDefinitionBuilder
 import org.springframework.beans.factory.support.DefaultListableBeanFactory
 import org.springframework.context.ConfigurableApplicationContext
