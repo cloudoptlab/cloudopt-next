@@ -3,10 +3,15 @@ package net.cloudopt.next.cache.serializer
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
+import de.javakaffee.kryoserializers.*
+import de.javakaffee.kryoserializers.guava.*
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.lang.reflect.InvocationHandler
+import java.util.*
 
 object Kryoer {
+
     private const val DEFAULT_ENCODING = "UTF-8"
 
     /**
@@ -27,6 +32,21 @@ object Kryoer {
             * appearances of the class within the same object graph are serialized as an int id.
              */
             kryo.isRegistrationRequired = false
+
+            /**
+             *  register the custom serializers at the kryo instance.
+             */
+            kryo.register(Arrays.asList("")::class.java, ArraysAsListSerializer())
+            kryo.register(Collections.EMPTY_LIST.javaClass, CollectionsEmptyListSerializer())
+            kryo.register(Collections.EMPTY_MAP.javaClass, CollectionsEmptyMapSerializer())
+            kryo.register(Collections.EMPTY_SET.javaClass, CollectionsEmptySetSerializer())
+            kryo.register(listOf("").javaClass, CollectionsSingletonListSerializer())
+            kryo.register(setOf("").javaClass, CollectionsSingletonSetSerializer())
+            kryo.register(Collections.singletonMap("", "").javaClass, CollectionsSingletonMapSerializer())
+            kryo.register(GregorianCalendar::class.java, GregorianCalendarSerializer())
+            kryo.register(InvocationHandler::class.java, JdkProxySerializer())
+            UnmodifiableCollectionsSerializer.registerSerializers(kryo)
+            SynchronizedCollectionsSerializer.registerSerializers(kryo)
             return kryo
         }
     }

@@ -13,19 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.cache.serializer
+package net.cloudopt.next.cache
 
-
-/**
- * Using default serialize objects in JSON format
- */
-class DefaultSerializer : Serializer {
-
-    override fun serialize(any: Any): ByteArray {
-        return Kryoer.writeToByteArray(any)
-    }
-
-    override fun deserialize(bytes: ByteArray): Any {
-        return Kryoer.readFromByteArray(bytes)
-    }
-}
+data class CacheableBean(
+    val heads: MutableMap<String,String> = mutableMapOf(),
+    val body: String = ""
+)

@@ -38,7 +38,7 @@ class HbsRender : Render {
         val handlebars = Handlebars()
 
         global {
-            var html = await<String> { promise ->
+            val html = await<String> { promise ->
                 val template = if (templates.containsKey(nextTemplate.name)) {
                     templates[nextTemplate.name]
                 } else {

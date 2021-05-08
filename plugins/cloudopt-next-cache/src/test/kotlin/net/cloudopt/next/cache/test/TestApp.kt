@@ -17,10 +17,10 @@ package net.cloudopt.next.cache.test
 
 import net.cloudopt.next.cache.CacheHealthIndicator
 import net.cloudopt.next.cache.CachePlugin
+import net.cloudopt.next.health.HealthChecksManager
+import net.cloudopt.next.health.HealthChecksPlugin
 import net.cloudopt.next.redis.RedisPlugin
 import net.cloudopt.next.web.NextServer
-import net.cloudopt.next.web.health.HealthChecksManager
-import net.cloudopt.next.web.health.HealthChecksPlugin
 
 fun main() {
     NextServer.addPlugin(RedisPlugin())

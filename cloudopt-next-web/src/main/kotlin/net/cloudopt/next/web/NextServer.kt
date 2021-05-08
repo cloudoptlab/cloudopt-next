@@ -56,7 +56,7 @@ object NextServer {
 
     val resourceTable = arrayListOf<ResourceTable>()
 
-    private var packageName = ""
+    var packageName = ""
 
     var errorHandler: KClass<ErrorHandler> =
         Classer.loadClass(webConfig.errorHandler) as KClass<ErrorHandler>

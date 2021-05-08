@@ -39,6 +39,12 @@ open class Resource {
 
     lateinit var context: RoutingContext
 
+    /**
+     * Vertx does not store the body content in the response by default, so in order to get the body content in the
+     * response, Next will store the body into this variable when rendering.
+     */
+    lateinit var responseBody: String
+
     val request: HttpServerRequest
         get() {
             require(this::context.isInitialized) {

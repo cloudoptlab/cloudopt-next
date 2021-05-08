@@ -34,7 +34,7 @@ interface Render {
      * @param resource Resource object
      */
     fun end(resource: Resource) {
-        resource.response.end()
+        end(resource, "")
     }
 
     /**
@@ -53,6 +53,7 @@ interface Render {
                 return
             }
         }
+        resource.responseBody = text
         resource.response.end(text)
     }
 

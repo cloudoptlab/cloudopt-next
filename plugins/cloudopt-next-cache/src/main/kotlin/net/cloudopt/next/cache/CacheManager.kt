@@ -103,7 +103,7 @@ object CacheManager {
      * @param l2 if L2 is true, it will also get the cache in the L2 cache
      * @return the value of key, or null when key does not exist
      */
-    suspend fun get(regionName: String, key: String, l2: Boolean = true): Any? {
+    suspend fun <T> get(regionName: String, key: String, l2: Boolean = true): T? {
         return await { future ->
             if (!regions.containsKey(regionName)) {
                 future.complete(null)
@@ -119,7 +119,7 @@ object CacheManager {
                 if (value != null) {
                     regions[regionName]?.put(key, value)
                     logger.debug("From L2: $key")
-                    future.complete(serializer.deserialize(value))
+                    future.complete(serializer.deserialize(value) as T)
                 } else {
                     logger.debug("L2 not found: $key")
                     future.complete(null)
@@ -131,7 +131,7 @@ object CacheManager {
             if (value == null) {
                 future.complete(null)
             } else {
-                future.complete(serializer.deserialize(value as ByteArray))
+                future.complete(serializer.deserialize(value as ByteArray) as T)
             }
 
 

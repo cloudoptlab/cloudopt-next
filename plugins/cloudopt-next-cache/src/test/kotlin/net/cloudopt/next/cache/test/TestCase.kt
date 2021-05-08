@@ -55,13 +55,20 @@ class TestCase {
     @Test
     fun setAndGet() = runBlocking {
         CacheManager.set(regionName, "testCache", "success")
-        val value: String = CacheManager.get(regionName, "testCache") as String
+        val value: String? = CacheManager.get(regionName, "testCache")
+        assert(value == "success")
+    }
+
+    @Test
+    fun setAndGetOnlyL1() = runBlocking {
+        CacheManager.set(regionName, "testCache", "success", l2 = false)
+        val value: String? = CacheManager.get(regionName, "testCache", l2 = false)
         assert(value == "success")
     }
 
     @Test
     fun getNull() = runBlocking {
-        val value = CacheManager.get(regionName, "testNullCache")
+        val value: String? = CacheManager.get(regionName, "testNullCache")
         assert(value == null)
     }
 
@@ -69,7 +76,8 @@ class TestCase {
     fun delete() = runBlocking {
         CacheManager.set(regionName, "testDeleteCache", "success")
         CacheManager.delete(regionName, "testDeleteCache")
-        assert(CacheManager.get(regionName, "testDeleteCache") == null)
+        val value: String? = CacheManager.get(regionName, "testDeleteCache")
+        assert(value == null)
     }
 
 

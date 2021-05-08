@@ -13,13 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.web.annotation
+package net.cloudopt.next.cache.annotation
 
-import net.cloudopt.next.web.ValidatorRouteHandler
+import net.cloudopt.next.cache.CacheableAfterHandler
+import net.cloudopt.next.cache.CacheableBeforeHandler
+import net.cloudopt.next.cache.DefaultKeyGenerator
+import net.cloudopt.next.cache.KeyGenerator
+import net.cloudopt.next.web.annotation.After
+import net.cloudopt.next.web.annotation.Before
 import kotlin.reflect.KClass
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
 @MustBeDocumented
-@Before(invokeBy = [ValidatorRouteHandler::class])
-annotation class Validator(val value: Array<KClass<out net.cloudopt.next.web.Validator>> = [])
+@Before(invokeBy = [CacheableBeforeHandler::class])
+@After(invokeBy = [CacheableAfterHandler::class])
+annotation class Cacheable(
+    val region: String,
+    val key: String = "",
+    val keyGenerator: KClass<out KeyGenerator> = DefaultKeyGenerator::class,
+    val l2: Boolean = true
+)

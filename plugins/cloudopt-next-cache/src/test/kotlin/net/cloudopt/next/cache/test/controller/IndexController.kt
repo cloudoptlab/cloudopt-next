@@ -16,9 +16,11 @@
 package net.cloudopt.next.cache.test.controller
 
 import net.cloudopt.next.cache.CacheManager
+import net.cloudopt.next.cache.annotation.Cacheable
+import net.cloudopt.next.json.Jsoner.json
 import net.cloudopt.next.redis.RedisManager
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.route.*
+import net.cloudopt.next.web.annotation.*
 
 
 @API(value = "/")
@@ -55,6 +57,12 @@ class IndexController : Resource() {
     @DELETE
     suspend fun deleteCache() {
         renderText((CacheManager.delete("testRegion", "testGetAndSet") ?: -1).toString())
+    }
+
+    @GET("cacheable/:id")
+    @Cacheable("testRegion",key = "@{url}-@{id}")
+    suspend fun cacheable(){
+        renderJson(json("name" to "cacheable"))
     }
 
 }

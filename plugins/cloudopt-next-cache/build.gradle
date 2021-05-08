@@ -3,6 +3,7 @@ dependencies {
     api project(":plugins:cloudopt-next-redis")
     api project(":plugins:cloudopt-next-eventbus")
     api "com.esotericsoftware:kryo:5.0.3"
+    api "de.javakaffee:kryo-serializers:0.45"
     compileOnly "io.lettuce:lettuce-core:6.0.2.RELEASE"
     testImplementation "io.lettuce:lettuce-core:6.0.2.RELEASE"
     compileOnly "com.github.ben-manes.caffeine:caffeine:2.8.8"
