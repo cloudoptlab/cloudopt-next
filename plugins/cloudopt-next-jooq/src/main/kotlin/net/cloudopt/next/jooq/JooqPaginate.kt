@@ -16,20 +16,16 @@
 package net.cloudopt.next.jooq
 
 import org.jooq.OrderField
-import org.jooq.SelectConditionStep
+import org.jooq.SelectWindowStep
 
-/*
- * @author: Cloudopt
- * @Time: 2018/4/5
- * @Description: Pagination
- */
-class JooqPaginate(query: SelectConditionStep<*>, private var count: Int, private val page: Int) {
+
+class JooqPaginate(query: SelectWindowStep<*>, private var count: Int, private val page: Int) {
 
     private var totalPage: Int = 0
     private val totalRow: Long
     private var firstPage = false
     private var lastPage = false
-    private var query: SelectConditionStep<*>
+    private var query: SelectWindowStep<*>
     private lateinit var orderField: OrderField<*>
 
     init {
