@@ -388,13 +388,6 @@ public class RoutingContextImpl extends RoutingContextImplBase {
         restart();
     }
 
-    /**
-     * <h5>Notes about the dangerous cast and suppression:</h5><br>
-     * I know for sure that <code>List&lt;Locale></code> will contain only <code>List&lt;LanguageHeader></code>.<br>
-     * Currently, LanguageHeader is the only one that extends Locale.<br>
-     * Locale does not extend LanguageHeader because I want full backwards compatibility to the previous vertx version<br>
-     * Also, Locale is being deprecated and the type of objects that extend it inside vertx should not change.
-     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public List<Locale> acceptableLocales() {

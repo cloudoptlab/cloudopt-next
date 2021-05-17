@@ -45,7 +45,6 @@ public class QuartzPlugin implements Plugin {
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
-        // If it does not exist, create a new object
         if (trigger == null) {
             Class<Job> j2 = null;
             try {
@@ -56,14 +55,11 @@ public class QuartzPlugin implements Plugin {
             JobDetail jobDetail = JobBuilder.newJob(j2).withIdentity(job.getJobDesc(), job.getJobGroup()).build();
             jobDetail.getJobDataMap().put("scheduleJob", job);
 
-            // Expression scheduling builder
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression());
             if (job.getTimeZone() != null && !job.getTimeZone().equals("")) {
                 scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression()).inTimeZone(TimeZone.getTimeZone(job.getTimeZone()));
             }
 
-
-            // Build a new trigger by the new cronExpression expression
             trigger = TriggerBuilder.newTrigger().withIdentity(job.getJobDesc(), job.getJobGroup())
                     .withSchedule(scheduleBuilder).build();
 
@@ -76,7 +72,6 @@ public class QuartzPlugin implements Plugin {
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronExpression());
             TriggerBuilder tb = trigger.getTriggerBuilder();
             Trigger newTrigger = tb.withSchedule(scheduleBuilder).build();
-            // Press new trigger to reset job execution
             try {
                 scheduler.rescheduleJob(triggerKey, newTrigger);
             } catch (SchedulerException e) {
