@@ -27,26 +27,26 @@ open interface WebSocketResource {
      * @see Resource
      * @return If false is returned, the websocket connection will be automatically interrupted
      */
-    fun beforeConnection(resource: Resource): Boolean
+    suspend fun beforeConnection(resource: Resource): Boolean
 
     /**
      * Add a handler to be notified of the connection succeeded result.
      * @param websocket Represents a server side WebSocket
      */
-    fun onConnectionSuccess(websocket: ServerWebSocket)
+    suspend fun onConnectionSuccess(websocket: ServerWebSocket)
 
     /**
      * Add a handler to be notified of the failed result.
      * @param throwable The base class for all errors and exceptions.
      * Only instances of this class can be thrown or caught
      */
-    fun onConnectionFailure(throwable: Throwable)
+    suspend fun onConnectionFailure(throwable: Throwable)
 
     /**
      * Add a handler to be notified of the result.
      * @param websocket Represents a server side WebSocket
      */
-    fun onConnectionComplete(websocket: ServerWebSocket)
+    suspend fun onConnectionComplete(websocket: ServerWebSocket)
 
     /**
      * Set a frame handler on the connection. This handler will be called when frames are read on the connection.
@@ -55,21 +55,21 @@ open interface WebSocketResource {
      * A WebSocket message is composed of one or more WebSocket frames.
      * @param websocket Represents a server side WebSocket
      */
-    fun onFrameMessage(frame: WebSocketFrame, websocket: ServerWebSocket)
+    suspend fun onFrameMessage(frame: WebSocketFrame, websocket: ServerWebSocket)
 
     /**
      * Set a text message handler on the connection.
      * @param message Text message
      * @param websocket Represents a server side WebSocket
      */
-    fun onTextMessage(message: String, websocket: ServerWebSocket)
+    suspend fun onTextMessage(message: String, websocket: ServerWebSocket)
 
     /**
      * Set a binary message handler on the connection.
      * @param buffer Most data is shuffled around inside Vert.x using buffers
      * @param websocket Represents a server side WebSocket
      */
-    fun onBinaryMessage(buffer: Buffer, websocket: ServerWebSocket)
+    suspend fun onBinaryMessage(buffer: Buffer, websocket: ServerWebSocket)
 
     /**
      * Set a pong frame handler on the connection.  This handler will be invoked every time a pong frame is received
@@ -78,14 +78,14 @@ open interface WebSocketResource {
      * @param buffer Most data is shuffled around inside Vert.x using buffers
      * @param websocket Represents a server side WebSocket
      */
-    fun onPingPong(buffer: Buffer, websocket: ServerWebSocket)
+    suspend fun onPong(buffer: Buffer, websocket: ServerWebSocket)
 
     /**
      * Set a exception handler on the connection.
      * @param throwable The base class for all errors and exceptions. Only instances of this class can be thrown or caught
      * @param websocket Represents a server side WebSocket
      */
-    fun onException(throwable: Throwable, websocket: ServerWebSocket)
+    suspend fun onException(throwable: Throwable, websocket: ServerWebSocket)
 
     /**
      * Set a drain handler on the stream. If the write queue is full, then the handler will be called when the write
@@ -95,12 +95,12 @@ open interface WebSocketResource {
      * reduced to {@code maxSize / 2}.
      * @param websocket Represents a server side WebSocket
      */
-    fun onDrain(websocket: ServerWebSocket)
+    suspend fun onDrain(websocket: ServerWebSocket)
 
     /**
      * Set a handler called when the operation completes.
      * @param websocket Represents a server side WebSocket
      */
-    fun onEnd(websocket: ServerWebSocket)
+    suspend fun onEnd(websocket: ServerWebSocket)
 
 }

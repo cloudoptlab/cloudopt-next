@@ -80,54 +80,76 @@ class NextServerVerticle : CoroutineVerticle() {
             NextServer.webSockets.forEach { clazz ->
                 val websocketAnnotation: WebSocket? = clazz.findAnnotation()
                 router.route(websocketAnnotation?.value).handler { context ->
-                    try {
+                    launch{
+                        try {
 
-                        val controllerObj = clazz.createInstance()
-                        if (controllerObj.beforeConnection(Resource().init(context))) {
-                            val userWebSocketConnection = context.request().toWebSocket()
-                            userWebSocketConnection.onComplete {
-                                controllerObj.onConnectionComplete(userWebSocketConnection.result())
-                            }
-                            /**
-                             * Automatically register methods in websocket routing.
-                             */
-                            userWebSocketConnection.onSuccess {
-                                val userWebSocketConnectionResult = userWebSocketConnection.result()
-                                controllerObj.onConnectionSuccess(userWebSocketConnectionResult)
+                            val controllerObj = clazz.createInstance()
+                            if (controllerObj.beforeConnection(Resource().init(context))) {
+                                val userWebSocketConnection = context.request().toWebSocket()
+                                userWebSocketConnection.onComplete {
+                                    launch {
+                                        controllerObj.onConnectionComplete(userWebSocketConnection.result())
+                                    }
+                                }
+                                /**
+                                 * Automatically register methods in websocket routing.
+                                 */
+                                userWebSocketConnection.onSuccess {
+                                    val userWebSocketConnectionResult = userWebSocketConnection.result()
+                                    launch {
+                                        controllerObj.onConnectionSuccess(userWebSocketConnectionResult)
+                                    }
 
-                                userWebSocketConnectionResult.frameHandler { frame ->
-                                    controllerObj.onFrameMessage(frame, userWebSocketConnectionResult)
+                                    userWebSocketConnectionResult.frameHandler { frame ->
+                                        launch {
+                                            controllerObj.onFrameMessage(frame, userWebSocketConnectionResult)
+                                        }
+                                    }
+                                    userWebSocketConnectionResult.textMessageHandler { text ->
+                                        launch {
+                                            controllerObj.onTextMessage(text, userWebSocketConnectionResult)
+                                        }
+                                    }
+                                    userWebSocketConnectionResult.binaryMessageHandler { binary ->
+                                        launch {
+                                            controllerObj.onBinaryMessage(binary, userWebSocketConnectionResult)
+                                        }
+                                    }
+                                    userWebSocketConnectionResult.pongHandler { buffer ->
+                                        launch {
+                                            controllerObj.onPong(buffer, userWebSocketConnectionResult)
+                                        }
+                                    }
+                                    userWebSocketConnectionResult.exceptionHandler { throwable ->
+                                        launch {
+                                            controllerObj.onException(throwable, userWebSocketConnectionResult)
+                                        }
+                                    }
+                                    userWebSocketConnectionResult.drainHandler {
+                                        launch {
+                                            controllerObj.onDrain(userWebSocketConnectionResult)
+                                        }
+                                    }
+                                    userWebSocketConnectionResult.endHandler {
+                                        launch {
+                                            controllerObj.onEnd(userWebSocketConnectionResult)
+                                        }
+                                    }
                                 }
-                                userWebSocketConnectionResult.textMessageHandler { text ->
-                                    controllerObj.onTextMessage(text, userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.binaryMessageHandler { binary ->
-                                    controllerObj.onBinaryMessage(binary, userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.pongHandler { buffer ->
-                                    controllerObj.onPingPong(buffer, userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.exceptionHandler { throwable ->
-                                    controllerObj.onException(throwable, userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.drainHandler {
-                                    controllerObj.onDrain(userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.endHandler {
-                                    controllerObj.onEnd(userWebSocketConnectionResult)
+                                userWebSocketConnection.onFailure {
+                                    launch {
+                                        controllerObj.onConnectionFailure(userWebSocketConnection.cause())
+                                    }
                                 }
                             }
-                            userWebSocketConnection.onFailure {
-                                controllerObj.onConnectionFailure(userWebSocketConnection.cause())
-                            }
+
+                        } catch (e: InstantiationException) {
+                            e.printStackTrace()
+                            context.response().end()
+                        } catch (e: IllegalAccessException) {
+                            e.printStackTrace()
+                            context.response().end()
                         }
-
-                    } catch (e: InstantiationException) {
-                        e.printStackTrace()
-                        context.response().end()
-                    } catch (e: IllegalAccessException) {
-                        e.printStackTrace()
-                        context.response().end()
                     }
                 }
                 logger.info("[WEBSOCKET] Registered socket resource: ${websocketAnnotation?.value} -> ${clazz.jvmName}")
