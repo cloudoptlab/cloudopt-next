@@ -81,7 +81,7 @@ object Worker {
      * @return T
      */
     fun <T> async(block: suspend CoroutineScope.() -> T): T {
-        return runBlocking {
+        return runBlocking(dispatcher()) {
             return@runBlocking withContext(dispatcher()) {
                 return@withContext block.invoke(this)
             }
