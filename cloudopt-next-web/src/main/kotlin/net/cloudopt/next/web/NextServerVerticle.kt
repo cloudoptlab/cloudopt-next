@@ -23,7 +23,6 @@ import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.cloudopt.next.core.Worker
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
@@ -84,66 +83,63 @@ class NextServerVerticle : CoroutineVerticle() {
                     val webSocketResource = clazz.createInstance()
                     val resource = Resource().init(context)
                     try {
-                        if (runBlocking(context = Worker.dispatcher()) {
-                                return@runBlocking webSocketResource.beforeConnection(resource)
-                            }) {
-                            val userWebSocketConnection = resource.request.toWebSocket()
-                            userWebSocketConnection.onComplete {
-                                launch {
-                                    webSocketResource.onConnectionComplete(userWebSocketConnection.result())
-                                }
+                        val userWebSocketConnection = resource.request.toWebSocket()
+                        userWebSocketConnection.onComplete {
+                            launch {
+                                webSocketResource.onConnectionComplete(userWebSocketConnection.result())
                             }
-                            /**
-                             * Automatically register methods in websocket routing.
-                             */
-                            userWebSocketConnection.onSuccess {
-                                val userWebSocketConnectionResult = userWebSocketConnection.result()
-                                launch {
-                                    webSocketResource.onConnectionSuccess(userWebSocketConnectionResult)
-                                }
+                        }
+                        /**
+                         * Automatically register methods in websocket routing.
+                         */
+                        userWebSocketConnection.onSuccess {
+                            val userWebSocketConnectionResult = userWebSocketConnection.result()
+                            launch {
+                                webSocketResource.onConnectionSuccess(userWebSocketConnectionResult)
+                            }
 
-                                userWebSocketConnectionResult.frameHandler { frame ->
-                                    launch {
-                                        webSocketResource.onFrameMessage(frame, userWebSocketConnectionResult)
-                                    }
-                                }
-                                userWebSocketConnectionResult.textMessageHandler { text ->
-                                    launch {
-                                        webSocketResource.onTextMessage(text, userWebSocketConnectionResult)
-                                    }
-                                }
-                                userWebSocketConnectionResult.binaryMessageHandler { binary ->
-                                    launch {
-                                        webSocketResource.onBinaryMessage(binary, userWebSocketConnectionResult)
-                                    }
-                                }
-                                userWebSocketConnectionResult.pongHandler { buffer ->
-                                    launch {
-                                        webSocketResource.onPong(buffer, userWebSocketConnectionResult)
-                                    }
-                                }
-                                userWebSocketConnectionResult.exceptionHandler { throwable ->
-                                    launch {
-                                        webSocketResource.onException(throwable, userWebSocketConnectionResult)
-                                    }
-                                }
-                                userWebSocketConnectionResult.drainHandler {
-                                    launch {
-                                        webSocketResource.onDrain(userWebSocketConnectionResult)
-                                    }
-                                }
-                                userWebSocketConnectionResult.endHandler {
-                                    launch {
-                                        webSocketResource.onEnd(userWebSocketConnectionResult)
-                                    }
+                            userWebSocketConnectionResult.frameHandler { frame ->
+                                launch {
+                                    webSocketResource.onFrameMessage(frame, userWebSocketConnectionResult)
                                 }
                             }
-                            userWebSocketConnection.onFailure {
+                            userWebSocketConnectionResult.textMessageHandler { text ->
                                 launch {
-                                    webSocketResource.onConnectionFailure(userWebSocketConnection.cause())
+                                    webSocketResource.onTextMessage(text, userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.binaryMessageHandler { binary ->
+                                launch {
+                                    webSocketResource.onBinaryMessage(binary, userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.pongHandler { buffer ->
+                                launch {
+                                    webSocketResource.onPong(buffer, userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.exceptionHandler { throwable ->
+                                launch {
+                                    webSocketResource.onException(throwable, userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.drainHandler {
+                                launch {
+                                    webSocketResource.onDrain(userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.endHandler {
+                                launch {
+                                    webSocketResource.onEnd(userWebSocketConnectionResult)
                                 }
                             }
                         }
+                        userWebSocketConnection.onFailure {
+                            launch {
+                                webSocketResource.onConnectionFailure(userWebSocketConnection.cause())
+                            }
+                        }
+
 
                     } catch (e: InstantiationException) {
                         e.printStackTrace()

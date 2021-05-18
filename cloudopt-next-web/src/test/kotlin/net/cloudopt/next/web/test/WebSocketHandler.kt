@@ -3,29 +3,21 @@ package net.cloudopt.next.web.test
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.ServerWebSocket
 import io.vertx.core.http.WebSocketFrame
-import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.WebSocketResource
 import net.cloudopt.next.web.annotation.WebSocket
 
 @WebSocket("/websocket")
-class WebSocketHandler:WebSocketResource {
-    override suspend fun beforeConnection(resource: Resource): Boolean {
-        return true
-    }
+class WebSocketHandler : WebSocketResource {
 
     override suspend fun onConnectionSuccess(websocket: ServerWebSocket) {
         websocket.writeTextMessage("Connection successful!") {
-
             println("The event of after write.")
-
         }
 
         val buffer: Buffer = Buffer.buffer().appendInt(123).appendFloat(1.23f)
 
         websocket.writeBinaryMessage(buffer) {
-
             println("The event of after write binary.")
-
         }
     }
 
