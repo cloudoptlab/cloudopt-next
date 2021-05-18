@@ -314,7 +314,7 @@ object NextServer {
 
     /**
      * Add the plugins that need to be started and the plugins will start first after the server starts.
-     * @see net.cloudopt.next.web.Plugin
+     * @see net.cloudopt.next.core.Plugin
      * @param plugin Plugin object
      * @return CloudoptServer
      */

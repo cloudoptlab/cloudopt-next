@@ -16,6 +16,6 @@
 package net.cloudopt.next.cache
 
 data class CacheableBean(
-    val heads: MutableMap<String,String> = mutableMapOf(),
+    val heads: MutableMap<String, String> = mutableMapOf(),
     val body: String = ""
 )

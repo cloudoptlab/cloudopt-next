@@ -4,8 +4,7 @@ import net.cloudopt.next.health.HealthChecksManager
 import net.cloudopt.next.health.HealthChecksPlugin
 import net.cloudopt.next.web.NextServer
 
-class TestCase {
-}
+class TestCase
 
 fun main() {
     NextServer.addPlugin(RedisPlugin())

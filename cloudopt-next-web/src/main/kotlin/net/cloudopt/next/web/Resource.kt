@@ -138,7 +138,7 @@ open class Resource {
      * @return Parameters map
      */
     fun getParams(): MutableMap<String, Any?> {
-        var map = mutableMapOf<String, Any?>()
+        val map = mutableMapOf<String, Any?>()
         request.params().forEach { e ->
             map[e.key] = Wafer.contentFilter(e.value)
         }
@@ -150,7 +150,7 @@ open class Resource {
      * @return Parameters Object
      */
     fun getParams(clazz: KClass<*>): Any {
-        var map = mutableMapOf<String, Any?>()
+        val map = mutableMapOf<String, Any?>()
         request.params().forEach { e ->
             map[e.key] = Wafer.contentFilter(e.value)
         }

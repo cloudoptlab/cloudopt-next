@@ -62,9 +62,9 @@ class DefaultKeyGenerator : KeyGenerator {
         params.putAll(resource.getParams())
         params["url"] = resource.request.uri()
         params["absoluteURI"] = resource.request.absoluteURI()
-        return if (key.isNotBlank()){
+        return if (key.isNotBlank()) {
             render(template = key, params = params)
-        }else{
+        } else {
             resource.request.uri()
         }
 

@@ -43,7 +43,7 @@ object I18N {
      * The default language name. When the specified language file cannot be obtained,
      * the file with the default language name will be obtained.
      */
-    private var defaultLocale: String = Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry()
+    private var defaultLocale: String = Locale.getDefault().language + "_" + Locale.getDefault().country
         set(value) {
             if (value.isBlank()) {
                 throw IllegalArgumentException("DefaultLocale can not be blank.")

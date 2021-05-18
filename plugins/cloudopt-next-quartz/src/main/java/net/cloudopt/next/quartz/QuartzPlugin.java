@@ -26,7 +26,7 @@ import java.util.TimeZone;
 public class QuartzPlugin implements Plugin {
 
     private static Scheduler scheduler;
-    private List<JobBean> jobs = new ArrayList();
+    private final List<JobBean> jobs = new ArrayList();
 
     {
         try {

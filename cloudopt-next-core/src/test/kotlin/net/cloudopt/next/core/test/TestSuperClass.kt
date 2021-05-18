@@ -1,4 +1,3 @@
 package net.cloudopt.next.core.test
 
-open class TestSuperClass {
-}
+open class TestSuperClass

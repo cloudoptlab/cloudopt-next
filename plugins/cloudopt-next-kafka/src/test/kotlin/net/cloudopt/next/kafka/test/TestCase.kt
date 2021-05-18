@@ -30,7 +30,4 @@ fun main(args: Array<String>) {
     NextServer.run()
 }
 
-class TestCase {
-
-
-}
+class TestCase

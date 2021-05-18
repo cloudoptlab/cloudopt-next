@@ -304,7 +304,7 @@ object Classer {
             classPath += File.separator
         }
         var path: String? = file.absolutePath
-        if (packageName?.isNotBlank() ?: false) {
+        if (packageName?.isNotBlank() == true) {
             path = removePrefix(path, classPath)
         }
         val filePathWithDot = path!!.replace(File.separator, ".")
