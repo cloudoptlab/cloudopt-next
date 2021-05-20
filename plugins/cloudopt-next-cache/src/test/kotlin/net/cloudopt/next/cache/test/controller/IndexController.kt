@@ -16,15 +16,18 @@
 package net.cloudopt.next.cache.test.controller
 
 import net.cloudopt.next.cache.CacheManager
+import net.cloudopt.next.cache.DefaultKeyGenerator
+import net.cloudopt.next.cache.annotation.Cacheable
+import net.cloudopt.next.json.Jsoner.json
 import net.cloudopt.next.redis.RedisManager
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.route.*
+import net.cloudopt.next.web.annotation.*
 
 
 @API(value = "/")
 class IndexController : Resource() {
 
-    companion object{
+    companion object {
         @JvmStatic
         val conn = RedisManager.sync()
     }
@@ -42,7 +45,7 @@ class IndexController : Resource() {
     @GET("redis/:key")
     fun getRedisByKey(
         @Parameter("key")
-        key:String
+        key: String
     ) {
         renderJson(conn.get(key) ?: "")
     }
@@ -55,6 +58,12 @@ class IndexController : Resource() {
     @DELETE
     suspend fun deleteCache() {
         renderText((CacheManager.delete("testRegion", "testGetAndSet") ?: -1).toString())
+    }
+
+    @GET("cacheable/:id")
+    @Cacheable("testRegion", key = "@{url}-@{id}", keyGenerator = DefaultKeyGenerator::class, l2 = true)
+    fun cacheable() {
+        renderJson(json("name" to "cacheable"))
     }
 
 }

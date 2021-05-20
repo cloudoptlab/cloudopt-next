@@ -19,17 +19,10 @@ import net.cloudopt.next.logging.Logger
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-
-/*
- * @author: Cloudopt
- * @Time: 2020/3/13
- * @Description: Welcome Tool
- */
 object Welcomer {
 
     private val logger = Logger.getLogger(NextServer::class)
 
-    @JvmStatic
     fun html(fileName: String): String {
 
         var input = Welcomer.javaClass.classLoader.getResourceAsStream(fileName)
@@ -51,17 +44,14 @@ object Welcomer {
 
     }
 
-    @JvmStatic
     fun home(): String {
         return html("welcome.html")
     }
 
-    @JvmStatic
     fun notFound(): String {
         return html("404.html")
     }
 
-    @JvmStatic
     fun systemError(): String {
         return html("500.html")
     }

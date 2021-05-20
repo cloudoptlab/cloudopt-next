@@ -17,11 +17,6 @@ package net.cloudopt.next.web.handler
 
 import net.cloudopt.next.web.Resource
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/15
- * @Description: The abstract class of handler
- */
 interface Handler {
 
     /**

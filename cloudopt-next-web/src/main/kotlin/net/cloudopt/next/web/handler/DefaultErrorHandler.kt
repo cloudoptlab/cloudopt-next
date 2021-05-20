@@ -17,14 +17,8 @@ package net.cloudopt.next.web.handler
 
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.web.Welcomer
-import java.util.*
 import kotlin.math.abs
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/15
- * @Description: Intercepting error requests
- */
 class DefaultErrorHandler : ErrorHandler() {
 
 

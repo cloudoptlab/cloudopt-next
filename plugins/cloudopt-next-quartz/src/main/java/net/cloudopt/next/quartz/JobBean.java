@@ -47,7 +47,8 @@ public class JobBean {
      */
     private String timeZone;
 
-    public JobBean(String jobId, String jobDesc, String cronExpression, String jobGroup, String jobClass, String timeZone) {
+    public JobBean(String jobId, String jobDesc, String cronExpression, String jobGroup,
+                   String jobClass, String timeZone) {
         this.jobId = jobId;
         this.jobDesc = jobDesc;
         this.cronExpression = cronExpression;

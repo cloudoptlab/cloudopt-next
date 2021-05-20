@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "org.jetbrains.kotlin.jvm" version "1.4.0"
+    id "org.jetbrains.kotlin.jvm" version "1.5.0"
     id("org.jetbrains.dokka") version "1.4.30"
 }
 
@@ -61,14 +61,12 @@ subprojects {
     }
     compileKotlin {
         kotlinOptions.jvmTarget = rootProject.property("java_version")
-        kotlinOptions.useIR = true
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = rootProject.property("java_version")
-        kotlinOptions.useIR = true
     }
 
-    dokkaJavadoc{
+    dokkaJavadoc {
         outputDirectory.set(new File(buildDir, "javadoc"))
     }
 

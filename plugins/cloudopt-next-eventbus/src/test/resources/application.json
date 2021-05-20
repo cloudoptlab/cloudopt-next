@@ -1,0 +1,10 @@
+{
+  "packageName": "net.cloudopt.next.eventbus.test",
+  "port": 8080,
+  "redis": {
+    "cluster": false,
+    "publish": true,
+    "subscribe": true,
+    "uri": "redis://root@localhost:6379/0"
+  }
+}

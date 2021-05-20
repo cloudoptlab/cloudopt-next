@@ -2,10 +2,10 @@ package net.cloudopt.next.grpc.test
 
 import io.vertx.core.Future
 import io.vertx.grpc.VertxChannelBuilder
+import net.cloudopt.next.core.Worker
 import net.cloudopt.next.grpc.test.example.HelloReply
 import net.cloudopt.next.grpc.test.example.HelloRequest
 import net.cloudopt.next.grpc.test.example.VertxGreeterGrpc
-import net.cloudopt.next.web.Worker
 
 fun main() {
     val channel = VertxChannelBuilder

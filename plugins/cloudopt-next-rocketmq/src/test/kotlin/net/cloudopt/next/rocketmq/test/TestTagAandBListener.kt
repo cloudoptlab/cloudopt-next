@@ -25,7 +25,7 @@ import org.apache.rocketmq.common.message.MessageExt
  * @Time: 2021/01/13
  * @Description: Test Case
  */
-@AutoRocketMQ("test-topic",subExpression = "TagA||TagB")
+@AutoRocketMQ("test-topic", subExpression = "TagA||TagB")
 class TestTagAandBListener : RocketMQListener {
 
     override fun listener(msg: MessageExt) {

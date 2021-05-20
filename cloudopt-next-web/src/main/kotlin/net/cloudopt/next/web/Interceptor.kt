@@ -15,11 +15,6 @@
  */
 package net.cloudopt.next.web
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Interceptor Interface
- */
 interface Interceptor {
 
     suspend fun intercept(resource: Resource): Boolean

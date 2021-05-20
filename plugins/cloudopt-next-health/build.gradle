@@ -1,0 +1,6 @@
+dependencies {
+    api project(":cloudopt-next-web")
+    testImplementation project(':cloudopt-next-logging')
+}
+
+description = "A simple API to expose health checks over HTTP."

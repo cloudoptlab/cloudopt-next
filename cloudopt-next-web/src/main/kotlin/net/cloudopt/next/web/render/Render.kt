@@ -18,11 +18,6 @@ package net.cloudopt.next.web.render
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Resource
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Render Interface
- */
 interface Render {
 
     /**
@@ -39,7 +34,7 @@ interface Render {
      * @param resource Resource object
      */
     fun end(resource: Resource) {
-        resource.response.end()
+        end(resource, "")
     }
 
     /**
@@ -58,6 +53,7 @@ interface Render {
                 return
             }
         }
+        resource.responseBody = text
         resource.response.end(text)
     }
 

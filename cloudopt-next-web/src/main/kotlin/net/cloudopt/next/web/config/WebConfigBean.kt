@@ -17,8 +17,6 @@ package net.cloudopt.next.web.config
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import io.vertx.core.DeploymentOptions
-import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
 
@@ -27,7 +25,7 @@ import io.vertx.ext.web.handler.sockjs.SockJSHandlerOptions
  * @Time: 2018/1/9
  * @Description: Cloudopt Next Web configuration file
  */
-@JsonAutoDetect(fieldVisibility  = JsonAutoDetect.Visibility.PUBLIC_ONLY)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.PUBLIC_ONLY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class WebConfigBean(
     var env: String = "",
@@ -47,9 +45,6 @@ data class WebConfigBean(
     var bodyLimit: Long = 50L * 1024 * 1024,
     var logColor: Boolean = true,
     var timeout: Long = 2L * 60 * 1000,
-    var waf: WafConfigBean = WafConfigBean(),
-    var vertx: VertxOptions = VertxOptions(),
     var httpServerOptions: HttpServerOptions = HttpServerOptions(),
-    var deploymentOptions: DeploymentOptions = DeploymentOptions(),
     var socket: SockJSHandlerOptions = SockJSHandlerOptions()
 )

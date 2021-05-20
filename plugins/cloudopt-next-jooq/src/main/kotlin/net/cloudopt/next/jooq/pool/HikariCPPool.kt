@@ -17,7 +17,7 @@ package net.cloudopt.next.jooq.pool
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.ConfigManager
 import java.sql.Connection
 import java.sql.SQLException
 import javax.sql.DataSource

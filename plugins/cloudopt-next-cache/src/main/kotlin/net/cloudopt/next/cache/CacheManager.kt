@@ -23,16 +23,18 @@ import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
 import io.lettuce.core.codec.ByteArrayCodec
 import net.cloudopt.next.cache.serializer.DefaultSerializer
 import net.cloudopt.next.cache.serializer.Serializer
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.redis.RedisManager
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.config.ConfigManager
 import java.util.concurrent.TimeUnit
 
 object CacheManager {
 
     internal const val CHANNELS = "NEXT-CACHE-EVENT"
+
+    internal const val PROVIDER_NAME = "NEXT-REDIS-PROVIDER"
 
     internal const val PREFIX = "NEXT-CACHE-ROUTE-"
 
@@ -101,7 +103,7 @@ object CacheManager {
      * @param l2 if L2 is true, it will also get the cache in the L2 cache
      * @return the value of key, or null when key does not exist
      */
-    suspend fun get(regionName: String, key: String, l2: Boolean = true): Any? {
+    suspend fun <T> get(regionName: String, key: String, l2: Boolean = true): T? {
         return await { future ->
             if (!regions.containsKey(regionName)) {
                 future.complete(null)
@@ -117,7 +119,7 @@ object CacheManager {
                 if (value != null) {
                     regions[regionName]?.put(key, value)
                     logger.debug("From L2: $key")
-                    future.complete(serializer.deserialize(value))
+                    future.complete(serializer.deserialize(value) as T)
                 } else {
                     logger.debug("L2 not found: $key")
                     future.complete(null)
@@ -129,7 +131,7 @@ object CacheManager {
             if (value == null) {
                 future.complete(null)
             } else {
-                future.complete(serializer.deserialize(value as ByteArray))
+                future.complete(serializer.deserialize(value as ByteArray) as T)
             }
 
 

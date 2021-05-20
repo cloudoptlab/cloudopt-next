@@ -20,11 +20,6 @@ import net.cloudopt.next.validator.annotation.Chinese
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
 
-/*
- * @author: Cloudopt
- * @Time: 2018/6/14
- * @Description: It is used to verify whether it is Chinese
- */
 class ChineseValidator : ConstraintValidator<Chinese, String> {
 
     private var value = false

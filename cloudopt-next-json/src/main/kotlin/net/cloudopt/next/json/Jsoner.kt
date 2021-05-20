@@ -36,7 +36,7 @@ object Jsoner {
      * Output MutableMap
      * @return MutableMap
      */
-    fun String.jsontoMutableMap(): MutableMap<String, Any> {
+    fun String.jsonToMutableMap(): MutableMap<String, Any> {
         return jsonProvider.toJsonMap(this)
     }
 
@@ -45,7 +45,7 @@ object Jsoner {
      * @param clazz Java class
      * @return Json object
      */
-    fun String.jsonToObject(clazz: KClass<*>): Any {
+    fun <T> String.jsonToObject(clazz: KClass<*>): T {
         return jsonProvider.toObject(this, clazz)
     }
 
@@ -53,7 +53,7 @@ object Jsoner {
      * Output json map list.
      * @return MutableList<MutableMap<String,Any>>
      */
-    fun String.jsontoMutableMapList(): MutableList<MutableMap<String, Any>> {
+    fun String.jsonToMutableMapList(): MutableList<MutableMap<String, Any>> {
         return jsonProvider.toJsonMapList(this)
     }
 
@@ -62,15 +62,16 @@ object Jsoner {
      * @param clazz Java class
      * @return MutableList<Any>
      */
-    fun String.jsonToObjectList(clazz: KClass<*>): MutableList<Any> {
+    fun <T> String.jsonToObjectList(clazz: KClass<*>): MutableList<T> {
         return jsonProvider.toObjectList(this, clazz)
     }
 
     /**
-     * Output any list.
+     * Output any list. Returns the json object used by the default json package, such as the JsonObject that comes
+     * with vert.x.
      * @return MutableList<Any>
      */
-    fun String.jsontoObjectList(): MutableList<Any> {
+    fun String.jsonToObjectList(): MutableList<Any> {
         return jsonProvider.toList(this)
     }
 
@@ -90,6 +91,28 @@ object Jsoner {
      */
     fun String.toJsonArray(): JsonArray {
         return jsonProvider.toJsonArray(this)
+    }
+
+    /**
+     * Returns a new read-only map with the specified contents, given as a list of JsonObject
+     * where the first value is the key and the second is the value.
+     *
+     * If multiple pairs have the same key, the resulting map will contain the value from the last of those pairs.
+     * @param pairs Array<out Pair<String, Any>>
+     * @return JsonObject
+     * @see JsonObject
+     */
+    fun json(vararg pairs: Pair<String, Any>): JsonObject {
+        return JsonObject(pairs.toMap())
+    }
+
+    /**
+     * Returns an JsonArray containing the specified elements.
+     * @param elements Array<out Any>
+     * @return JsonArray
+     */
+    fun jsonArray(vararg elements: Any): JsonArray {
+        return JsonArray(elements.toList())
     }
 
 }

@@ -1,4 +1,5 @@
 {
   "debug": true,
-  "env": "alone"
+  "env": "alone",
+  "packageName": "net.cloudopt.next.redis.test"
 }
