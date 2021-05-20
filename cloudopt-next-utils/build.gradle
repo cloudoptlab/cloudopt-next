@@ -1,5 +1,0 @@
-dependencies {
-    api project(":cloudopt-next-json")
-}
-
-description = "Cloudopt Next Utils"

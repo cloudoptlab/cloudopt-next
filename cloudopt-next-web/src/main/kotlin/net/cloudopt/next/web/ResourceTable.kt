@@ -20,15 +20,11 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KTypeParameter
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/18
- * @Description: Resource Table
- */
-
 data class ResourceTable(
-    var url: String = "", var httpMethod: HttpMethod = HttpMethod.GET,
-    var clazz: KClass<Resource> = Resource::class, var methodName: String = "",
+    var url: String = "",
+    var httpMethod: HttpMethod = HttpMethod.GET,
+    var clazz: KClass<out Resource> = Resource::class,
+    var methodName: String = "",
     var blocking: Boolean = false,
     var clazzMethod: KFunction<*>,
     var parameterTypes: List<KTypeParameter> = listOf()

@@ -20,11 +20,6 @@ import javax.validation.Constraint
 import javax.validation.Payload
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/6/14
- * @Description: Used to verify whether it is this type
- */
 @Target(
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY_GETTER,
@@ -34,12 +29,12 @@ import kotlin.reflect.KClass
     AnnotationTarget.VALUE_PARAMETER
 )
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-@Constraint(validatedBy = arrayOf(TypeValidator::class))
+@Constraint(validatedBy = [TypeValidator::class])
 @MustBeDocumented
 annotation class Type(
     val value: String,
     val message: String = "{constraints.type.message}",
-    val groups: Array<KClass<*>> = arrayOf(),
-    val payload: Array<KClass<out Payload>> = arrayOf()
+    val groups: Array<KClass<*>> = [],
+    val payload: Array<KClass<out Payload>> = []
 )
 

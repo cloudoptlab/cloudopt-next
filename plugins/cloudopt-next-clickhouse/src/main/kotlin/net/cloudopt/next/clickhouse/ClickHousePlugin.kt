@@ -17,9 +17,9 @@ package net.cloudopt.next.clickhouse
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import net.cloudopt.next.utils.Maper.toProperties
-import net.cloudopt.next.web.Plugin
-import net.cloudopt.next.web.config.ConfigManager
+import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.core.Plugin
+import net.cloudopt.next.core.toProperties
 import ru.yandex.clickhouse.ClickHouseDataSource
 import ru.yandex.clickhouse.settings.ClickHouseProperties
 
@@ -44,7 +44,6 @@ class ClickHousePlugin : Plugin {
                 hikariConfig.dataSource = ClickHouseManager.clickHouseDataSource
                 ClickHouseManager.hikariDataSource = HikariDataSource(hikariConfig)
             } catch (e: ClassNotFoundException) {
-
             }
 
             true

@@ -41,7 +41,7 @@ interface JsonProvider {
      * @param clazz Java class
      * @return Json object
      */
-    fun toObject(jsonString: String, clazz: KClass<*>): Any
+    fun <T> toObject(jsonString: String, clazz: KClass<*>): T
 
     /**
      * Output json map list.
@@ -56,14 +56,14 @@ interface JsonProvider {
      * @param clazz Java class
      * @return MutableList<Any>
      */
-    fun<T> toObjectList(jsonString: String, clazz: KClass<*>): MutableList<T>
+    fun <T> toObjectList(jsonString: String, clazz: KClass<*>): MutableList<T>
 
     /**
      * Output any list.
      * @param jsonString Json string
      * @return MutableList<Any>
      */
-    fun toList(jsonString: String): MutableList<Any>
+    fun <T> toList(jsonString: String): MutableList<T>
 
     /**
      * Decode a given JSON string to JSON Object.
@@ -71,7 +71,7 @@ interface JsonProvider {
      * @param jsonString String
      * @return JsonObject
      */
-    fun toJsonObject(jsonString: String):JsonObject
+    fun toJsonObject(jsonString: String): JsonObject
 
     /**
      * Decode a given JSON string to JSON Array.
@@ -79,6 +79,6 @@ interface JsonProvider {
      * @param jsonString String
      * @return JsonArray
      */
-    fun toJsonArray(jsonString: String):JsonArray
+    fun toJsonArray(jsonString: String): JsonArray
 
 }

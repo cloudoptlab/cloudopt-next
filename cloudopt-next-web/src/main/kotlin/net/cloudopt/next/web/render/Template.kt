@@ -17,7 +17,7 @@ package net.cloudopt.next.web.render
 
 class Template {
 
-    var name :String = ""
+    var name: String = ""
 
     var parameters: MutableMap<String, Any> = mutableMapOf()
 

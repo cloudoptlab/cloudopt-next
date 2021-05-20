@@ -18,11 +18,6 @@ package net.cloudopt.next.web.render
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.web.Resource
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: Text Render
- */
 class TextRender : Render {
 
     override fun render(resource: Resource, result: Any) {

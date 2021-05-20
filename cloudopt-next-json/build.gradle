@@ -7,4 +7,5 @@ dependencies {
     api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${rootProject.property('jackson_version')}"
 }
 
-description = "Cloudopt Next Json"
+description = "Unlike some other languages, Java does not have first class support for JSON so we provide the " +
+        "plugin to make handling JSON in your Next applications a bit easier."

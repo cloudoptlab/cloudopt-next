@@ -96,7 +96,7 @@ object SpringBuilder {
 
     fun firstLowerCase(name: String): String {
         val items = name.toByteArray()
-        items[0] = (items[0].toChar().toInt() + ('a' - 'A')).toByte()
+        items[0] = (items[0].toInt().toChar().code + ('a' - 'A')).toByte()
         return String(items)
     }
 }

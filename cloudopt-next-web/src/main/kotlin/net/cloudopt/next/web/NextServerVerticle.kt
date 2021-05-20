@@ -23,48 +23,33 @@ import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.coroutines.launch
+import net.cloudopt.next.core.Worker
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.validator.ValidatorTool
-import net.cloudopt.next.web.config.ConfigManager
-import net.cloudopt.next.web.event.AfterEvent
-import net.cloudopt.next.web.event.EventManager
+import net.cloudopt.next.waf.Wafer
+import net.cloudopt.next.web.annotation.*
 import net.cloudopt.next.web.handler.ErrorHandler
-import net.cloudopt.next.web.route.Parameter
-import net.cloudopt.next.web.route.RequestBody
-import net.cloudopt.next.web.route.SocketJS
-import net.cloudopt.next.web.route.WebSocket
 import java.sql.Timestamp
 import java.text.DateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
-import kotlin.collections.map
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.jvmErasure
 import kotlin.reflect.jvm.jvmName
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/17
- * @Description: Cloudopt Next Server Verticle
- */
 class NextServerVerticle : CoroutineVerticle() {
 
     val logger = Logger.getLogger(NextServerVerticle::class)
 
     override suspend fun start() {
 
-        val server = Worker.vertx.createHttpServer(ConfigManager.config.httpServerOptions)
+        val server = Worker.vertx.createHttpServer(NextServer.webConfig.httpServerOptions)
 
         val router = Router.router(Worker.vertx)
 
@@ -73,7 +58,7 @@ class NextServerVerticle : CoroutineVerticle() {
          * Register sockJS
          */
         if (NextServer.sockJSes.size > 0) {
-            val sockJSHandler = SockJSHandler.create(Worker.vertx, ConfigManager.config.socket)
+            val sockJSHandler = SockJSHandler.create(Worker.vertx, NextServer.webConfig.socket)
             NextServer.sockJSes.forEach { clazz ->
                 val socketAnnotation: SocketJS? = clazz.findAnnotation()
                 sockJSHandler.socketHandler { sockJSHandler ->
@@ -95,47 +80,66 @@ class NextServerVerticle : CoroutineVerticle() {
             NextServer.webSockets.forEach { clazz ->
                 val websocketAnnotation: WebSocket? = clazz.findAnnotation()
                 router.route(websocketAnnotation?.value).handler { context ->
+                    val webSocketResource = clazz.createInstance()
+                    val resource = Resource().init(context)
                     try {
-
-                        val controllerObj = clazz.createInstance()
-                        if (controllerObj.beforeConnection(Resource().init(context))) {
-                            val userWebSocketConnection = context.request().toWebSocket()
-                            userWebSocketConnection.onComplete {
-                                controllerObj.onConnectionComplete(userWebSocketConnection.result())
-                            }
-                            /**
-                             * Automatically register methods in websocket routing.
-                             */
-                            userWebSocketConnection.onSuccess {
-                                val userWebSocketConnectionResult = userWebSocketConnection.result()
-                                controllerObj.onConnectionSuccess(userWebSocketConnectionResult)
-
-                                userWebSocketConnectionResult.frameHandler { frame ->
-                                    controllerObj.onFrameMessage(frame, userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.textMessageHandler { text ->
-                                    controllerObj.onTextMessage(text, userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.binaryMessageHandler { binary ->
-                                    controllerObj.onBinaryMessage(binary, userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.pongHandler { buffer ->
-                                    controllerObj.onPingPong(buffer, userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.exceptionHandler { throwable ->
-                                    controllerObj.onException(throwable, userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.drainHandler {
-                                    controllerObj.onDrain(userWebSocketConnectionResult)
-                                }
-                                userWebSocketConnectionResult.endHandler {
-                                    controllerObj.onEnd(userWebSocketConnectionResult)
-                                }
-                            }
-                            userWebSocketConnection.onFailure {
-                                controllerObj.onConnectionFailure(userWebSocketConnection.cause())
+                        val userWebSocketConnection = resource.request.toWebSocket()
+                        userWebSocketConnection.onComplete {
+                            launch {
+                                webSocketResource.onConnectionComplete(userWebSocketConnection.result())
                             }
                         }
+                        /**
+                         * Automatically register methods in websocket routing.
+                         */
+                        userWebSocketConnection.onSuccess {
+                            val userWebSocketConnectionResult = userWebSocketConnection.result()
+                            launch {
+                                webSocketResource.onConnectionSuccess(userWebSocketConnectionResult)
+                            }
+
+                            userWebSocketConnectionResult.frameHandler { frame ->
+                                launch {
+                                    webSocketResource.onFrameMessage(frame, userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.textMessageHandler { text ->
+                                launch {
+                                    webSocketResource.onTextMessage(text, userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.binaryMessageHandler { binary ->
+                                launch {
+                                    webSocketResource.onBinaryMessage(binary, userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.pongHandler { buffer ->
+                                launch {
+                                    webSocketResource.onPong(buffer, userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.exceptionHandler { throwable ->
+                                launch {
+                                    webSocketResource.onException(throwable, userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.drainHandler {
+                                launch {
+                                    webSocketResource.onDrain(userWebSocketConnectionResult)
+                                }
+                            }
+                            userWebSocketConnectionResult.endHandler {
+                                launch {
+                                    webSocketResource.onEnd(userWebSocketConnectionResult)
+                                }
+                            }
+                        }
+                        userWebSocketConnection.onFailure {
+                            launch {
+                                webSocketResource.onConnectionFailure(userWebSocketConnection.cause())
+                            }
+                        }
+
 
                     } catch (e: InstantiationException) {
                         e.printStackTrace()
@@ -144,6 +148,7 @@ class NextServerVerticle : CoroutineVerticle() {
                         e.printStackTrace()
                         context.response().end()
                     }
+
                 }
                 logger.info("[WEBSOCKET] Registered socket resource: ${websocketAnnotation?.value} -> ${clazz.jvmName}")
 
@@ -155,24 +160,24 @@ class NextServerVerticle : CoroutineVerticle() {
          */
         router.route("/*").handler(ResponseContentTypeHandler.create())
 
-        router.route("/*").handler(BodyHandler.create().setBodyLimit(ConfigManager.config.bodyLimit))
+        router.route("/*").handler(BodyHandler.create().setBodyLimit(NextServer.webConfig.bodyLimit))
 
         /**
          * Set timeout
          */
-        router.route("/*").handler(TimeoutHandler.create(ConfigManager.config.timeout))
+        router.route("/*").handler(TimeoutHandler.create(NextServer.webConfig.timeout))
 
         /**
          * Set csrf
          */
-        if (ConfigManager.config.waf.csrf) {
-            router.route("/*").handler(CSRFHandler.create(vertx, ConfigManager.config.waf.encryption))
+        if (Wafer.config.csrf) {
+            router.route("/*").handler(CSRFHandler.create(vertx, Wafer.config.encryption))
         }
 
         /**
          * Register failure handler
          */
-        NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${ConfigManager.config.errorHandler}")
+        NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${NextServer.webConfig.errorHandler}")
 
         router.route("/*").failureHandler { context ->
             errorProcessing(context)
@@ -196,19 +201,16 @@ class NextServerVerticle : CoroutineVerticle() {
                     } else if (!context.response().ended()) {
                         context.response().end()
                     }
-                } catch (e: InstantiationException) {
+                } catch (e: Exception) {
                     e.printStackTrace()
-                    context.response().end()
-                } catch (e: IllegalAccessException) {
-                    e.printStackTrace()
-                    context.response().end()
+                    Resource().init(context).fail(500)
                 }
             }
         }
 
-        router.route("/" + ConfigManager.config.staticPackage + "/*").handler(
-            StaticHandler.create().setIndexPage(ConfigManager.config.indexPage)
-                .setIncludeHidden(false).setWebRoot(ConfigManager.config.staticPackage)
+        router.route("/" + NextServer.webConfig.staticPackage + "/*").handler(
+            StaticHandler.create().setIndexPage(NextServer.webConfig.indexPage)
+                .setIncludeHidden(false).setWebRoot(NextServer.webConfig.staticPackage)
         )
 
         /**
@@ -216,51 +218,61 @@ class NextServerVerticle : CoroutineVerticle() {
          */
         NextServer.interceptors.forEach { (url, clazz) ->
             router.route(url).handler { context ->
+                val resource = Resource()
+                resource.init(context)
                 launch {
-                    val resource = Resource()
-                    resource.init(context)
-                    val interceptors = clazz.map { it.createInstance() }
+                    try {
+                        val interceptors = clazz.map { it.createInstance() }
 
-                    val interceptor = interceptors.firstOrNull {
-                        !it.intercept(resource)
-                    }
-
-                    if (interceptor != null) {
-                        if (!interceptor.response(resource).response.ended()) {
-                            resource.end()
+                        val interceptor = interceptors.firstOrNull {
+                            !it.intercept(resource)
                         }
 
-                    } else {
-                        context.next()
+                        if (interceptor != null) {
+                            if (!interceptor.response(resource).response.ended()) {
+                                resource.end()
+                            }
+
+                        } else {
+                            context.next()
+                        }
+                    } catch (e: Exception) {
+                        resource.fail(500)
                     }
                 }
             }
         }
 
         /**
-         * Register validators
+         * Automatically check whether the method annotation contains an @Before annotation, and if so,
+         * automatically execute the method specified in the annotation that needs to be executed.
          */
-        NextServer.validators.forEach { (url, map) ->
+        NextServer.beforeRouteHandlersTable.forEach { (url, map) ->
             map.keys.forEach { key ->
-                val validatorList = map[key]
-                validatorList?.forEach { validator ->
+                val beforeRouteHandlerList = map[key]
+                beforeRouteHandlerList?.forEach { beforeRouteHandler ->
                     router.route(key, url).handler { context ->
+                        val resource = Resource()
+                        resource.init(context)
                         launch {
                             try {
-                                val v = validator.createInstance()
-                                val resource = Resource()
-                                resource.init(context)
-                                if (v.validate(resource)) {
+                                val before: Before? = beforeRouteHandler.annotationClass.findAnnotation()
+                                var invokeResult = true
+                                for (invoker in before?.invokeBy!!) {
+                                    val routeHandlerInstance: RouteHandler = invoker.createInstance()
+                                    if (!routeHandlerInstance.handle(beforeRouteHandler, resource)) {
+                                        invokeResult = false
+                                        break
+                                    }
+                                }
+                                if (invokeResult) {
                                     context.next()
                                 } else {
-                                    v.error(resource)
+                                    return@launch
                                 }
-                            } catch (e: InstantiationException) {
+                            } catch (e: Exception) {
                                 e.printStackTrace()
-                                context.response().end()
-                            } catch (e: IllegalAccessException) {
-                                e.printStackTrace()
-                                context.response().end()
+                                resource.fail(500)
                             }
                         }
                     }
@@ -269,7 +281,7 @@ class NextServerVerticle : CoroutineVerticle() {
             }
         }
 
-        if (NextServer.resourceTables.size < 1) {
+        if (NextServer.resourceTable.size < 1) {
             router.route("/").blockingHandler { context ->
                 context.response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
                 context.response().endHandler {
@@ -284,7 +296,7 @@ class NextServerVerticle : CoroutineVerticle() {
         /**
          * Register method
          */
-        NextServer.resourceTables.forEach { resourceTable ->
+        NextServer.resourceTable.forEach { resourceTable ->
             if (resourceTable.blocking) {
                 router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
                     launch {
@@ -304,16 +316,16 @@ class NextServerVerticle : CoroutineVerticle() {
             )
         }
 
-        server.requestHandler(router).listen(ConfigManager.config.port) { result ->
+        server.requestHandler(router).listen(NextServer.webConfig.port) { result ->
             if (result.succeeded()) {
                 NextServer.logger.info(
                     "=========================================================================================================="
                 )
                 NextServer.logger.info("\uD83D\uDC0B Cloudopt Next started success!")
-                if (ConfigManager.config.httpServerOptions.isSsl){
-                    NextServer.logger.info("https://127.0.0.1:${ConfigManager.config.port}")
-                }else{
-                    NextServer.logger.info("http://127.0.0.1:${ConfigManager.config.port}")
+                if (NextServer.webConfig.httpServerOptions.isSsl) {
+                    NextServer.logger.info("https://127.0.0.1:${NextServer.webConfig.port}")
+                } else {
+                    NextServer.logger.info("http://127.0.0.1:${NextServer.webConfig.port}")
                 }
                 NextServer.logger.info(
                     "=========================================================================================================="
@@ -355,50 +367,46 @@ class NextServerVerticle : CoroutineVerticle() {
             context.failure().printStackTrace()
             logger.error(context.failure().toString())
         }
-        if (!errorHandler.response.ended()) {
-            errorHandler.end()
-        }
     }
 
     /**
      * is used to process normal http requests, automatically generating new objects from the resource class of the
      * route and calls its invoke method. It also injects parameters depending on whether the method corresponding
-     * to the route contains a parameter injection annotation or not. If there is an @afterEvent annotation on the
-     * method, it will automatically execute the afterEvent.
+     * to the route contains a parameter injection annotation or not.
      * @param resourceTable ResourceTable
      * @param context RoutingContext
      * @see ResourceTable
      * @see RoutingContext
-     * @see AfterEvent
      */
     private suspend fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
+        val resource: Resource = resourceTable.clazz.createInstance()
+        resource.init(context)
         try {
-            val controllerObj = resourceTable.clazz.createInstance()
-            controllerObj.init(context)
-
-            if (NextServer.handlers.isNotEmpty() || resourceTable.clazzMethod.hasAnnotation<AfterEvent>()) {
-                context.response().endHandler {
-                    /**
-                     * Executes a global handler that is called at the end of the route
-                     */
-                    NextServer.handlers.forEach { handler ->
-                        handler.afterCompletion(Resource().init(context))
-                    }
-
-                    /**
-                     * If the afterEvent annotation is included, the event is automatically sent to EventBus after the
-                     * http request ends
-                     * @see AfterEvent
-                     */
-                    if (resourceTable.clazzMethod.hasAnnotation<AfterEvent>()) {
-                        val afterEvent =
-                            resourceTable.clazzMethod.findAnnotation<AfterEvent>() ?: AfterEvent::class.createInstance()
-                        for (topic in afterEvent.value) {
-                            EventManager.sendObject(topic, context.data(), "map")
+            context.response().endHandler {
+                /**
+                 * Executes a block handler that is called at the end of the route
+                 */
+                NextServer.handlers.forEach { handler ->
+                    handler.afterCompletion(Resource().init(context))
+                }
+                /**
+                 * Automatically check whether the method annotation contains an @After annotation, and if so,
+                 * automatically execute the method specified in the annotation that needs to be executed.
+                 */
+                NextServer.afterRouteHandlersTable[resourceTable.url]?.get(resourceTable.httpMethod)?.forEach { it ->
+                    val after: After = it.annotationClass.findAnnotation()!!
+                    launch {
+                        for (invoker in after.invokeBy) {
+                            val routeHandlerInstance: RouteHandler = invoker.createInstance()
+                            if (!routeHandlerInstance.handle(it, resource)) {
+                                break
+                            }
                         }
                     }
                 }
+
             }
+
 
             /**
              * If the method supports parameter injection, it will automatically extract the corresponding parameter
@@ -413,18 +421,35 @@ class NextServerVerticle : CoroutineVerticle() {
                 /**
                  * If there are no arguments, just execute the method
                  */
-                resourceTable.clazzMethod.callSuspend(controllerObj)
+                resourceTable.clazzMethod.callSuspend(resource)
 
 
             } else {
                 val arr = mutableMapOf<KParameter, Any?>()
-                val jsonObject = controllerObj.getParams().toJsonString().toJsonObject()
+                val jsonObject = resource.getParams().toJsonString().toJsonObject()
                 for (para in resourceTable.clazzMethod.parameters) {
                     if (para.kind.name == "VALUE" && para.hasAnnotation<Parameter>()) {
-                        arr[para] = getParaByType(para.findAnnotation<Parameter>()?.value, para, jsonObject)
+                        try {
+                            arr[para] = getParaByType(para.findAnnotation<Parameter>()?.value ?: "", para, jsonObject)
+                        } catch (e: IllegalArgumentException) {
+                            resource.fail(400)
+                            e.printStackTrace()
+                            return
+                        }
+
                     }
                     if (para.hasAnnotation<RequestBody>()) {
-                        arr[para] = controllerObj.getBodyJson(para.type.jvmErasure)
+                        try {
+                            arr[para] = resource.getBodyJson(para.type.jvmErasure)
+                        } catch (e: NullPointerException) {
+                            resource.fail(400)
+                            e.printStackTrace()
+                            return
+                        } catch (e: IllegalArgumentException) {
+                            resource.fail(400)
+                            e.printStackTrace()
+                            return
+                        }
                     }
                 }
                 /**
@@ -432,13 +457,14 @@ class NextServerVerticle : CoroutineVerticle() {
                  * @see ValidatorTool
                  */
                 val validatorResult =
-                    ValidatorTool.validateParameters(controllerObj, resourceTable.clazzMethod, arr)
+                    ValidatorTool.validateParameters(resource, resourceTable.clazzMethod, arr)
                 if (validatorResult.result) {
-                    arr[resourceTable.clazzMethod.parameters[0]] = controllerObj
+                    arr[resourceTable.clazzMethod.parameters[0]] = resource
                     resourceTable.clazzMethod.callSuspendBy(arr)
                 } else {
-                    controllerObj.context.put("errorMessage", validatorResult.message)
-                    controllerObj.fail(400)
+                    resource.context.put("errorMessage", validatorResult.message)
+                    resource.fail(400)
+                    return
                 }
             }
         } catch (e: Exception) {
@@ -446,7 +472,7 @@ class NextServerVerticle : CoroutineVerticle() {
             logger.error(
                 e.message ?: "${resourceTable.url} has error occurred, but the error message could not be obtained "
             )
-            context.fail(500)
+            resource.fail(500)
         }
     }
 
@@ -458,33 +484,76 @@ class NextServerVerticle : CoroutineVerticle() {
      * @return Any?
      */
     private fun getParaByType(
-        paraName: String?,
+        paraName: String,
         para: KParameter,
         jsonObject: JsonObject
     ): Any? {
-        val finalParaName = if (paraName.isNullOrBlank()) {
+        val finalParaName = paraName.ifBlank {
             para.name
-        } else {
-            paraName
         }
-        if (!jsonObject.containsKey(finalParaName) && para.findAnnotation<Parameter>()?.defaultValue?.isNotBlank() == true
-        ) {
-            jsonObject.put(finalParaName, para.findAnnotation<Parameter>()?.defaultValue)
-        }
-        when (para.type.jvmErasure.jvmName) {
-            "java.lang.String" -> return jsonObject.getString(finalParaName)
-            "kotlin.String" -> return jsonObject.getString(finalParaName)
-            "int" -> return jsonObject.getInteger(finalParaName)
-            "double" -> return jsonObject.getDouble(finalParaName)
-            "float" -> return jsonObject.getFloat(finalParaName)
-            "long" -> return jsonObject.getLong(finalParaName)
-            "java.math.BigDecimal" -> return jsonObject.getString(finalParaName).toBigDecimal()
-            "java.math.BigInteger" -> return jsonObject.getString(finalParaName).toBigInteger()
-            "short" -> return jsonObject.getString(finalParaName).toShort()
-            "java.util.Date" -> return DateFormat.getDateInstance().parse(jsonObject.getString(finalParaName))
-            "java.sql.Timestamp" -> return Timestamp.valueOf(jsonObject.getString(finalParaName))
-            "java.time.LocalDateTime" -> return LocalDateTime.parse(jsonObject.getString(finalParaName))
-            "java.time.LocalDate" -> return LocalDate.parse(jsonObject.getString(finalParaName))
+        if (jsonObject.containsKey(finalParaName) && jsonObject.getString(finalParaName ?: "").isNotBlank()) {
+            when (para.type.jvmErasure) {
+                String::class ->
+                    return jsonObject.getString(finalParaName)
+                String::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName)
+
+                Int::class ->
+                    return jsonObject.getString(finalParaName).toInt()
+                Int::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toIntOrNull()
+
+                Double::class ->
+                    return jsonObject.getString(finalParaName).toDouble()
+                Double::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toDoubleOrNull()
+
+                Float::class ->
+                    return jsonObject.getString(finalParaName).toFloat()
+                Float::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toFloatOrNull()
+
+                Short::class ->
+                    return jsonObject.getString(finalParaName).toShortOrNull()
+                Short::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toShortOrNull()
+
+                Long::class ->
+                    return jsonObject.getString(finalParaName).toLong()
+                Long::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toLongOrNull()
+
+                java.math.BigDecimal::class ->
+                    return jsonObject.getString(finalParaName).toBigDecimal()
+                java.math.BigDecimal::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toBigDecimalOrNull()
+
+                java.math.BigInteger::class ->
+                    return jsonObject.getString(finalParaName).toBigInteger()
+                java.math.BigInteger::class.starProjectedType.withNullability(true) ->
+                    return jsonObject.getString(finalParaName).toBigIntegerOrNull()
+
+                java.util.Date::class ->
+                    return DateFormat.getDateInstance().parse(jsonObject.getString(finalParaName))
+                java.util.Date::class.starProjectedType.withNullability(true) ->
+                    return DateFormat.getDateInstance().parse(jsonObject.getString(finalParaName))
+
+                java.sql.Timestamp::class ->
+                    return Timestamp.valueOf(jsonObject.getString(finalParaName))
+                java.sql.Timestamp::class.starProjectedType.withNullability(true) ->
+                    return Timestamp.valueOf(jsonObject.getString(finalParaName))
+
+                java.time.LocalDateTime::class ->
+                    return LocalDateTime.parse(jsonObject.getString(finalParaName))
+                java.time.LocalDateTime::class.starProjectedType.withNullability(true) ->
+                    return LocalDateTime.parse(jsonObject.getString(finalParaName))
+
+                java.time.LocalDate::class ->
+                    return LocalDate.parse(jsonObject.getString(finalParaName))
+                java.time.LocalDate::class.starProjectedType.withNullability(true) ->
+                    return LocalDate.parse(jsonObject.getString(finalParaName))
+
+            }
         }
         return null
     }

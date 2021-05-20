@@ -15,11 +15,6 @@
  */
 package net.cloudopt.next.web
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Validator Interface
- */
 interface Validator {
 
     suspend fun validate(resource: Resource): Boolean

@@ -16,9 +16,9 @@
 package net.cloudopt.next.cache
 
 import io.lettuce.core.pubsub.RedisPubSubAdapter
+import net.cloudopt.next.core.Worker
 import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.web.Worker
 
 class CacheEventListener : RedisPubSubAdapter<String, String>() {
 
@@ -40,6 +40,9 @@ class CacheEventListener : RedisPubSubAdapter<String, String>() {
                 when (messageObject.event) {
                     "DELETE_CACHE" -> {
                         CacheManager.delete(messageObject.regionName, messageObject.key, false)
+                    }
+                    else -> {
+
                     }
                 }
             }

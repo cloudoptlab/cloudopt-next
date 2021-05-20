@@ -23,12 +23,6 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.javaMethod
 
-/*
- * @author: Cloudopt
- * @Time: 2018/6/14
- * @Description: Simplified check
- */
-
 data class ValidatorResult(var result: Boolean = true, var message: String = "")
 
 object ValidatorTool {

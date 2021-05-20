@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.jooq
 
+import net.cloudopt.next.jooq.pool.ConnectionPool
 import org.jooq.ConnectionProvider
 import org.jooq.DSLContext
 import org.jooq.TransactionProvider
@@ -24,13 +25,10 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DefaultConfiguration
 import java.sql.Connection
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/2/6
- * @Description: Connection pool manager
- */
 object JooqManager {
+
+    @JvmStatic
+    lateinit var pool: ConnectionPool
 
     @JvmStatic
     lateinit var connection: Connection
@@ -52,7 +50,8 @@ object JooqManager {
 
     @JvmStatic
     fun refresh() {
+        connection.close()
+        connection = pool.getConnection()
         this.dsl = DSL.using(connection)
     }
-
 }

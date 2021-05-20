@@ -1,6 +1,7 @@
 dependencies {
     implementation project(":cloudopt-next-web")
-    implementation project(":cloudopt-next-utils")
+    implementation project(":cloudopt-next-core")
+    implementation project(":plugins:cloudopt-next-health")
     compileOnly "org.jooq:jooq:3.14.4"
     compileOnly "com.zaxxer:HikariCP:3.4.5"
     testImplementation "org.jooq:jooq:3.14.4"

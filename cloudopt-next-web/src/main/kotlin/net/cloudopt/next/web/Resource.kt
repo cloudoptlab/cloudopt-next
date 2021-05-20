@@ -24,22 +24,26 @@ import io.vertx.core.http.HttpServerRequest
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.ext.web.FileUpload
 import io.vertx.ext.web.RoutingContext
+import net.cloudopt.next.core.Worker
+import net.cloudopt.next.core.toObject
+import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.json.Jsoner.jsonToObjectList
 import net.cloudopt.next.json.Jsoner.toJsonArray
-import net.cloudopt.next.utils.Maper.toObject
+import net.cloudopt.next.json.Jsoner.toJsonString
+import net.cloudopt.next.waf.Wafer
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.Template
-import java.util.*
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/15
- * @Description: Route resource
- */
 open class Resource {
 
     lateinit var context: RoutingContext
+
+    /**
+     * Vertx does not store the body content in the response by default, so in order to get the body content in the
+     * response, Next will store the body into this variable when rendering.
+     */
+    lateinit var responseBody: String
 
     val request: HttpServerRequest
         get() {
@@ -133,10 +137,10 @@ open class Resource {
      * Returns request parameters.
      * @return Parameters map
      */
-    fun getParams(): MutableMap<String, Any> {
-        var map = mutableMapOf<String, Any>()
+    fun getParams(): MutableMap<String, Any?> {
+        val map = mutableMapOf<String, Any?>()
         request.params().forEach { e ->
-            map[e.key] = Wafer.contentFilter(e.value) ?: ""
+            map[e.key] = Wafer.contentFilter(e.value)
         }
         return map
     }
@@ -146,11 +150,11 @@ open class Resource {
      * @return Parameters Object
      */
     fun getParams(clazz: KClass<*>): Any {
-        var map = mutableMapOf<String, Any>()
+        val map = mutableMapOf<String, Any?>()
         request.params().forEach { e ->
-            map[e.key] = Wafer.contentFilter(e.value) ?: ""
+            map[e.key] = Wafer.contentFilter(e.value)
         }
-        return map.toObject(clazz)
+        return map.toJsonString().jsonToObject(clazz)
     }
 
     /**
@@ -434,7 +438,7 @@ open class Resource {
     /**
      * @return  the entire HTTP request body as a json and convert object array, assuming UTF-8 encoding.
      */
-    fun getBodyJsonArray(clazz: KClass<*>): Any {
+    fun <T> getBodyJsonArray(clazz: KClass<*>): MutableList<T> {
         return context.bodyAsJson.toString().jsonToObjectList(clazz)
     }
 
@@ -471,3 +475,5 @@ open class Resource {
     }
 
 }
+
+

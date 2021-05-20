@@ -22,8 +22,8 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import net.cloudopt.next.cache.CacheManager
 import net.cloudopt.next.cache.CachePlugin
+import net.cloudopt.next.core.Worker
 import net.cloudopt.next.redis.RedisPlugin
-import net.cloudopt.next.web.Worker
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -54,26 +54,31 @@ class TestCase {
 
     @Test
     fun setAndGet() = runBlocking {
-        CacheManager.set(regionName,"testCache","success")
-        val value:String = CacheManager.get(regionName, "testCache") as String
+        CacheManager.set(regionName, "testCache", "success")
+        val value: String? = CacheManager.get(regionName, "testCache")
+        assert(value == "success")
+    }
+
+    @Test
+    fun setAndGetOnlyL1() = runBlocking {
+        CacheManager.set(regionName, "testCache", "success", l2 = false)
+        val value: String? = CacheManager.get(regionName, "testCache", l2 = false)
         assert(value == "success")
     }
 
     @Test
     fun getNull() = runBlocking {
-        val value = CacheManager.get(regionName, "testNullCache")
+        val value: String? = CacheManager.get(regionName, "testNullCache")
         assert(value == null)
     }
 
     @Test
     fun delete() = runBlocking {
-        CacheManager.set(regionName,"testDeleteCache","success")
+        CacheManager.set(regionName, "testDeleteCache", "success")
         CacheManager.delete(regionName, "testDeleteCache")
-        assert(CacheManager.get(regionName, "testDeleteCache") == null)
+        val value: String? = CacheManager.get(regionName, "testDeleteCache")
+        assert(value == null)
     }
-
-
-
 
 
 }

@@ -20,11 +20,6 @@ import java.util.regex.Pattern
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
 
-/*
- * @author: Cloudopt
- * @Time: 2018/6/14
- * @Description: Used to verify whether it is this type
- */
 class TypeValidator : ConstraintValidator<Type, String> {
 
     private var value = "string"

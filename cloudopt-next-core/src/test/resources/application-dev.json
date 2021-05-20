@@ -1,0 +1,9 @@
+{
+  "waf": {
+    "plus": false,
+    "csrf": false,
+    "xss": true,
+    "sql": true,
+    "mongodb": true
+  }
+}

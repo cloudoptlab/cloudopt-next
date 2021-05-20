@@ -1,6 +1,6 @@
 dependencies {
     api project(":cloudopt-next-web")
-    api project(":cloudopt-next-utils")
+    api project(":cloudopt-next-core")
     api project(":cloudopt-next-logging")
     api "io.vertx:vertx-kafka-client:${rootProject.property('vertx_version')}"
     compileOnly "org.apache.kafka:kafka-clients:2.4.1"

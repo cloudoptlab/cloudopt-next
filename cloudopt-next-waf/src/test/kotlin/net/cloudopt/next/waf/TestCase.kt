@@ -1,5 +1,8 @@
 package net.cloudopt.next.waf
 
+import net.cloudopt.next.waf.injection.MongoInjection
+import net.cloudopt.next.waf.injection.SQLInjection
+import net.cloudopt.next.waf.injection.XSSInjection
 import org.junit.Test
 
 /*

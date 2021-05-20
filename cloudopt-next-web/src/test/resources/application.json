@@ -11,6 +11,11 @@
     "mongodb": true
   },
   "vertx": {
-    "eventLoopPoolSize": 4
+    "eventLoopPoolSize": 4,
+    "preferNativeTransport": true
+  },
+  "healthChecks": {
+    "applicationName": "Next Tests",
+    "password": "1234"
   }
 }

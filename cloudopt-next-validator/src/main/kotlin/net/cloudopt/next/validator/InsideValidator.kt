@@ -20,11 +20,6 @@ import net.cloudopt.next.validator.annotation.Inside
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
 
-/*
- * @author: Cloudopt
- * @Time: 2018/6/14
- * @Description: Is used to verify whether a text is in an array
- */
 class InsideValidator : ConstraintValidator<Inside, String> {
 
     lateinit var value: Array<String>

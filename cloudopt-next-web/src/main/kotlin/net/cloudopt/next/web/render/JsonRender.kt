@@ -16,16 +16,11 @@
 package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.core.Worker.global
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.Worker.global
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: JsonProvider Render
- */
 class JsonRender : Render {
 
     override fun render(resource: Resource, obj: Any) {
@@ -35,11 +30,12 @@ class JsonRender : Render {
                     promise.complete(obj.toJsonString())
                 } catch (e: Exception) {
                     promise.fail(e)
-                    end(resource)
+                    e.printStackTrace()
+                    resource.fail(500)
+                    return@await
                 }
             }
             resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
-
             end(resource, json)
         }
     }

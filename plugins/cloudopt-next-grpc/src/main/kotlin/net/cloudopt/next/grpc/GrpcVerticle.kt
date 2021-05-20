@@ -4,8 +4,8 @@ import io.grpc.ServerInterceptor
 import io.grpc.ServerInterceptors
 import io.vertx.grpc.VertxServerBuilder
 import io.vertx.kotlin.coroutines.CoroutineVerticle
+import net.cloudopt.next.core.Worker
 import net.cloudopt.next.logging.Logger
-import net.cloudopt.next.web.Worker
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.jvmName
@@ -38,7 +38,7 @@ class GrpcVerticle : CoroutineVerticle() {
             logger.info("[GRPC] Registration Services: ${clazz.jvmName}")
         }
         if ((GrpcManager.config["ssl"] ?: true).toString().toBoolean()) {
-            builder.useSsl{options ->
+            builder.useSsl { options ->
                 GrpcManager.optionsHandler.handle(options)
             }
         }

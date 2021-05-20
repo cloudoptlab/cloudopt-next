@@ -16,18 +16,10 @@
 package net.cloudopt.next.validator.annotation
 
 import net.cloudopt.next.validator.ChineseValidator
-import java.lang.annotation.Documented
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy.RUNTIME
 import javax.validation.Constraint
 import javax.validation.Payload
 import kotlin.reflect.KClass
 
-/*
- * @author: Cloudopt
- * @Time: 2018/6/14
- * @Description: It is used to verify whether it is Chinese
- */
 @Target(
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY_GETTER,
@@ -36,13 +28,13 @@ import kotlin.reflect.KClass
     AnnotationTarget.ANNOTATION_CLASS,
     AnnotationTarget.VALUE_PARAMETER
 )
-@Retention(RUNTIME)
-@Constraint(validatedBy = arrayOf(ChineseValidator::class))
-@Documented
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+@Constraint(validatedBy = [ChineseValidator::class])
+@MustBeDocumented
 annotation class Chinese(
     val value: Boolean,
     val message: String = "{constraints.chinese.message}",
-    val groups: Array<KClass<*>> = arrayOf(),
-    val payload: Array<KClass<out Payload>> = arrayOf()
+    val groups: Array<KClass<*>> = [],
+    val payload: Array<KClass<out Payload>> = []
 )
 

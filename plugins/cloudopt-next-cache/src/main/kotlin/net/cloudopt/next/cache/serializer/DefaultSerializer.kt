@@ -15,10 +15,12 @@
  */
 package net.cloudopt.next.cache.serializer
 
+
 /**
  * Using default serialize objects in JSON format
  */
 class DefaultSerializer : Serializer {
+
     override fun serialize(any: Any): ByteArray {
         return Kryoer.writeToByteArray(any)
     }

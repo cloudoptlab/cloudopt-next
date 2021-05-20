@@ -18,17 +18,12 @@ package net.cloudopt.next.web.render
 import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import io.vertx.core.http.HttpHeaders
+import net.cloudopt.next.core.Worker.await
+import net.cloudopt.next.core.Worker.global
+import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.Worker.await
-import net.cloudopt.next.web.Worker.global
-import net.cloudopt.next.web.config.ConfigManager
 import java.io.FileNotFoundException
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/10
- * @Description: Hbs Render
- */
 class HbsRender : Render {
 
     companion object {
@@ -43,19 +38,19 @@ class HbsRender : Render {
         val handlebars = Handlebars()
 
         global {
-            var html = await<String> { promise ->
+            val html = await<String> { promise ->
                 val template = if (templates.containsKey(nextTemplate.name)) {
                     templates[nextTemplate.name]
                 } else {
                     try {
-                        handlebars.compile(ConfigManager.config.templates + "/" + nextTemplate.name)
+                        handlebars.compile(NextServer.webConfig.templates + "/" + nextTemplate.name)
                     } catch (e: FileNotFoundException) {
                         promise.fail("The specified page file could not be found: ${nextTemplate.name}!")
                         end(resource, "The specified page file could not be found: ${nextTemplate.name}!")
                         return@await
                     } catch (e: Exception) {
                         promise.fail(e)
-                        end(resource, "")
+                        resource.fail(500)
                         return@await
                     }
                 }

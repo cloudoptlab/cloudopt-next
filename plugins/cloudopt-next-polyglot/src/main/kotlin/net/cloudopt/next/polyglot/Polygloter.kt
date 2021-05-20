@@ -1,6 +1,6 @@
 package net.cloudopt.next.polyglot
 
-import net.cloudopt.next.utils.Resourcer
+import net.cloudopt.next.core.Resourcer
 import org.graalvm.polyglot.*
 
 /**
@@ -156,14 +156,14 @@ private fun runOnGraal(
                 || blockArray[0].contains(".ruby")
                 )
     ) {
-        Source.newBuilder(language, Resourcer.getFile(block)).cached(true).build()
+        Source.newBuilder(language, Resourcer.getUrl(block)).cached(true).build()
     } else {
         Source.create(language, block)
     }
 
     val value = context.eval(source)
 
-    if (autoContextClose){
+    if (autoContextClose) {
         context.close()
     }
 
