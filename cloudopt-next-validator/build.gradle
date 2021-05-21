@@ -1,5 +1,5 @@
 dependencies {
-    api "org.hibernate:hibernate-validator:6.1.2.Final"
+    api "org.hibernate:hibernate-validator:6.2.0.Final"
     api "org.glassfish:jakarta.el:3.0.3"
 }
 
