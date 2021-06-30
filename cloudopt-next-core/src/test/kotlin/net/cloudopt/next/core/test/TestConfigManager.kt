@@ -1,6 +1,7 @@
 package net.cloudopt.next.core.test
 
 import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.json.Jsoner.toJsonString
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -15,7 +16,14 @@ class TestConfigManager {
         assertTrue {
             ConfigManager.configMap["cookieCors"] as Boolean
         }
+    }
 
+    @Test
+    fun testInitExternalConfigMap(){
+        ConfigManager.initExternalConfigMap("D:/application.json")
+        assertTrue {
+            ConfigManager.configMap["external"] as Boolean
+        }
     }
 
     @Test
@@ -28,5 +36,7 @@ class TestConfigManager {
             config.xss
         }
     }
+
+
 
 }

@@ -43,6 +43,14 @@ object ConfigManager {
     }
 
     /**
+     * Initialize configmap through external JSON configuration file.
+     * @param filePath String
+     */
+    fun initExternalConfigMap(filePath: String) {
+        configMap = Resourcer.read(filePath, external = true)
+    }
+
+    /**
      * Get the data in the configuration file according to the specified prefix and convert it to a map object.
      * @param prefix prefix name
      * @return MutableMap<String, Any>
