@@ -15,6 +15,7 @@ class TestConfigManager {
         assertTrue {
             ConfigManager.configMap["cookieCors"] as Boolean
         }
+
     }
 
     @Test

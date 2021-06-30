@@ -2,6 +2,9 @@
   "packageName": "net.cloudopt.next.health.test",
   "port": 8080,
   "healthChecks": {
-    "password": "1234"
+    "applicationName": "demo",
+    "password": "1234",
+    "intervalTime": 5000,
+    "accessPath": "/health"
   }
 }
