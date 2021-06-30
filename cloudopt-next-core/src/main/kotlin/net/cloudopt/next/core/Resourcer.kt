@@ -24,6 +24,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.URL
 import java.net.URLDecoder
+import java.nio.file.Files
+import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
 object Resourcer {
@@ -61,6 +63,22 @@ object Resourcer {
         return Resourcer::class.java.classLoader.getResourceAsStream(fileName)
     }
 
+    /**
+     * Read external file and automatically remove carriage returns.
+     * @param fileName String
+     * @param isJson Boolean If true, the carriage return is automatically removed.
+     * @return String
+     */
+    fun getExternalFileString(fileName: String, isJson: Boolean = false): String {
+        return Files.readString(Path(fileName))
+    }
+
+    /**
+     * Read file in project resources and automatically remove carriage returns.
+     * @param fileName String
+     * @param isJson Boolean If true, the carriage return is automatically removed.
+     * @return String
+     */
     fun getFileString(fileName: String, isJson: Boolean = false): String {
         return inputStreamToString(getFileInputStream(fileName), isJson)
     }
@@ -114,20 +132,26 @@ object Resourcer {
      * @param fileName String specify the file name
      * @param prefix String specify the prefix
      * @param clazz KClass<*> specify the class
+     * @param external Boolean if it is true, it will be read the file outside the project
      * @return Any
      */
-    fun read(fileName: String, prefix: String, clazz: KClass<*>): Any {
-        val map = read(fileName, prefix)
+    fun read(fileName: String, prefix: String, clazz: KClass<*>, external: Boolean = false): Any {
+        val map = read(fileName, prefix, external)
         return map.toJsonString().jsonToObject(clazz)
     }
 
     /**
      * Get the configuration in the json file.
      * @param fileName String specify the file name
+     * @param external Boolean if it is true, it will be read the file outside the project
      * @return MutableMap<String, Any>
      */
-    fun read(fileName: String): MutableMap<String, Any> {
-        var jsonString = inputStreamToString(getFileInputStream(fileName))
+    fun read(fileName: String, external: Boolean = false): MutableMap<String, Any> {
+        var jsonString = if (external) {
+            getExternalFileString(fileName)
+        } else {
+            inputStreamToString(getFileInputStream(fileName))
+        }
         jsonString = cleanText(jsonString)
         return jsonString.jsonToMutableMap()
     }
@@ -136,10 +160,15 @@ object Resourcer {
      * Get the configuration in the json file by the specified filename and prefix, and deserialize it to map.
      * @param fileName String specify the file name
      * @param prefix String specify the prefix
+     * @param external Boolean if it is true, it will be read the file outside the project
      * @return MutableMap<String, Any>
      */
-    fun read(fileName: String, prefix: String): MutableMap<String, Any> {
-        var jsonString = inputStreamToString(getFileInputStream(fileName))
+    fun read(fileName: String, prefix: String, external: Boolean = false): MutableMap<String, Any> {
+        var jsonString = if (external) {
+            getExternalFileString(fileName)
+        } else {
+            inputStreamToString(getFileInputStream(fileName))
+        }
         jsonString = cleanText(jsonString)
         var jsonObj = jsonString.toJsonObject()
         var list = prefix.split(".")
