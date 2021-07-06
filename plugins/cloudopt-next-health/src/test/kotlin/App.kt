@@ -1,5 +1,6 @@
 import net.cloudopt.next.health.HealthChecksManager
 import net.cloudopt.next.health.HealthChecksPlugin
+import net.cloudopt.next.health.hooks.LoggerHook
 import net.cloudopt.next.health.indicators.DiskSpaceHealthIndicator
 import net.cloudopt.next.health.indicators.JvmHealthIndicator
 import net.cloudopt.next.health.indicators.SystemIndicator
@@ -10,5 +11,6 @@ fun main() {
     HealthChecksManager.register("disk", DiskSpaceHealthIndicator())
     HealthChecksManager.register("jvm", JvmHealthIndicator())
     HealthChecksManager.register("system", SystemIndicator())
+    HealthChecksManager.registerHook("logger",LoggerHook())
     NextServer.run()
 }
