@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Worker
+import net.cloudopt.next.web.NextServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -17,7 +18,7 @@ class TestAloneCase {
     @ExperimentalCoroutinesApi
     @Before
     fun init() {
-        ConfigManager.config.env = "alone"
+        NextServer.webConfig.env = "alone"
         RedisPlugin().start()
         Dispatchers.setMain(Worker.dispatcher())
     }

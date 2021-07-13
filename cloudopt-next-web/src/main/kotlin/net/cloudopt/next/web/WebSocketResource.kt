@@ -18,6 +18,51 @@ package net.cloudopt.next.web
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.ServerWebSocket
 import io.vertx.core.http.WebSocketFrame
+import java.lang.NullPointerException
+
+/**
+ * Register getIP() for ServerWebSocket to automatically retrieve the ip from the header of Http.
+ * If there is no ip, the empty string is returned。
+ * @receiver ServerWebSocket
+ * @return String
+ */
+fun ServerWebSocket.getIP(): String {
+    val headers = this.headers()
+    var ip: String = headers["x-forwarded-for"] ?: ""
+    ip = if (ip.isBlank()) {
+        headers["X-Real-IP"] ?: ""
+    } else {
+        ip.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+    }
+    if (ip.isBlank() || "unknown".equals(ip, ignoreCase = true)) {
+        ip = headers["Proxy-Client-IP"] ?: ""
+    }
+    if (ip.isBlank() || "unknown".equals(ip, ignoreCase = true)) {
+        ip = headers["WL-Proxy-Client-IP"] ?: ""
+    }
+    if (ip.isBlank()) {
+        ip = "127.0.0.1"
+    }
+    return ip
+}
+
+/**
+ * Register getCookie() for ServerWebSocket to automatically retrieve the cookie by specify key from the header of Http.
+ * If there is no cookie, return null。
+ * @receiver ServerWebSocket
+ * @return String?
+ */
+fun ServerWebSocket.getCookie(key: String): String? {
+    val headers = this.headers()
+    if (headers.contains("Cookie")) {
+        headers["Cookie"].split(";").forEach { s ->
+            if (s.contains(key)) {
+                return s.replace("$key=", "")
+            }
+        }
+    }
+    return null
+}
 
 open interface WebSocketResource {
 
@@ -94,5 +139,4 @@ open interface WebSocketResource {
      * @param websocket Represents a server side WebSocket
      */
     suspend fun onEnd(websocket: ServerWebSocket)
-
 }

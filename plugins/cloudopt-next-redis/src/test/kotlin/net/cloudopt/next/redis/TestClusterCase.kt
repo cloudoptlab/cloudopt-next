@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.setMain
 import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Resourcer
 import net.cloudopt.next.core.Worker
+import net.cloudopt.next.web.NextServer
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -18,8 +19,8 @@ class TestClusterCase {
     @ExperimentalCoroutinesApi
     @Before
     fun init() {
-        ConfigManager.config.env = "cluster"
-        val newConfigFileName = "application-${ConfigManager.config.env}.json"
+        NextServer.webConfig.env = "cluster"
+        val newConfigFileName = "application-${NextServer.webConfig.env}.json"
         ConfigManager.configMap.putAll(Resourcer.read(newConfigFileName))
         RedisPlugin().start()
         Dispatchers.setMain(Worker.dispatcher())
