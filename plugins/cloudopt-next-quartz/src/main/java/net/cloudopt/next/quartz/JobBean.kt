@@ -13,29 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.quartz.test
-
-import net.cloudopt.next.quartz.JobBean
-import net.cloudopt.next.quartz.QuartzPlugin
-import net.cloudopt.next.web.NextServer
+package net.cloudopt.next.quartz
 import java.util.*
 
+data class JobBean (
 
-/*
- * @author: Cloudopt
- * @Time: 2018/2/7
- * @Description: Test Case
- */
-fun main() {
-    val plugin = QuartzPlugin()
-    val job = JobBean(
-        jobClass = "net.cloudopt.next.quartz.test.Task1",
-        cronExpression = "* * * * * ? *",
-        jobGroup = "TaskJob",
-        jobDesc = "TaskJob",
-        timeZone = TimeZone.getDefault()
-    )
-    plugin.addJob(job)
-    NextServer.addPlugin(plugin)
-    NextServer.run()
-}
+    /**
+     * Job's description.
+     */
+    var jobDesc: String,
+
+    /**
+     * Job's runtime expression.
+     */
+    var cronExpression: String,
+
+    /**
+     * Job's group.
+     */
+    var jobGroup: String,
+
+    /**
+     * Job's class.
+     */
+    var jobClass: String,
+
+    /**
+     * The `TimeZone` in which to base the schedule.
+     */
+    var timeZone: TimeZone = TimeZone.getDefault(),
+)
