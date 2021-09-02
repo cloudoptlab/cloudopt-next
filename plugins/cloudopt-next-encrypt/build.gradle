@@ -1,5 +1,5 @@
 dependencies {
-    api "org.bouncycastle:bcprov-jdk15on:1.68"
+    api "org.bouncycastle:bcprov-jdk15on:1.69"
 }
 
 description = "Cloudopt Next Encrypt"
