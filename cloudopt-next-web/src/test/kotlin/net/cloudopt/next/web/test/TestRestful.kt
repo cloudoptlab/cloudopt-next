@@ -1,5 +1,6 @@
 package net.cloudopt.next.web.test
 
+import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.coroutines.await
 import kotlinx.coroutines.runBlocking
 import net.cloudopt.next.client.HttpClient
@@ -47,6 +48,22 @@ class TestRestful : TestStart() {
         val httpCode = client.patch("/restful").send().await().statusCode()
         assertTrue {
             httpCode == 200
+        }
+    }
+
+    @Test
+    fun testDefaultError() = runBlocking {
+        val httpCode = client.get("/restful/defaultError").send().await().statusCode()
+        assertTrue {
+            httpCode == 402
+        }
+    }
+
+    @Test
+    fun testCustomError() = runBlocking {
+        val result = client.get("/restful/customError").send().await().bodyAsJsonObject()
+        assertTrue {
+            result.get<String>("errorMessage") == "401"
         }
     }
 

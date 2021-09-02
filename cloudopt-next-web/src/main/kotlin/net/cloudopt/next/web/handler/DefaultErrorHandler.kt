@@ -22,7 +22,7 @@ import kotlin.math.abs
 class DefaultErrorHandler : ErrorHandler() {
 
 
-    override fun handle() {
+    override fun handle(statusCode: Int, throwable: Throwable?) {
         if (abs(errorStatusCode) == 404) {
             response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
             context.response().end(Welcomer.notFound())
@@ -34,15 +34,17 @@ class DefaultErrorHandler : ErrorHandler() {
             context.response().end(Welcomer.systemError())
             return
         }
-        val errorMessage = if (context.data().containsKey("errorMessage")) {
+        val errorMessage = if ((throwable?.message ?: "").isNotBlank()) {
+            throwable?.message ?: ""
+        } else if (context.data().containsKey("errorMessage")) {
             context.data()["errorMessage"].toString()
         } else {
             "This is a bad http request, please check if the parameters match the requirements."
         }
-        renderJson(restult(errorStatusCode.toString(), errorMessage))
+        renderJson(creatResult(errorStatusCode.toString(), errorMessage))
     }
 
-    private fun restult(error: String, errorMessage: String): HashMap<String, String> {
+    private fun creatResult(error: String, errorMessage: String): HashMap<String, String> {
         val map = hashMapOf<String, String>()
         map["error"] = error
         map["errorMessage"] = errorMessage

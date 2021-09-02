@@ -32,4 +32,15 @@ class RestController : Resource() {
         renderJson(json("result" to "patch"))
     }
 
+    @GET("/defaultError")
+    fun defaultError() {
+        fail(402)
+    }
+
+
+    @GET("/customError")
+    fun customError() {
+        fail(401, RuntimeException("401"))
+    }
+
 }

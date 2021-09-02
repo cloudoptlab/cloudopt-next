@@ -33,6 +33,7 @@ import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.waf.Wafer
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.Template
+import java.lang.RuntimeException
 import kotlin.reflect.KClass
 
 open class Resource {
@@ -118,7 +119,6 @@ open class Resource {
     fun <T> getAttrs(clazz: KClass<*>): Any {
         val map = context.request().formAttributes()
         map.forEach {
-            it
             map[it.key] = Wafer.contentFilter(it.value)
         }
         return (context.request().formAttributes() as MutableMap<String, Any>).toObject(clazz)
@@ -202,7 +202,7 @@ open class Resource {
             cookie.domain = domain
         }
         if (age > 0) {
-            cookie.setMaxAge(age)
+            cookie.maxAge = age
         }
         if (path.isNotBlank()) {
             cookie.path = path
@@ -236,10 +236,10 @@ open class Resource {
      */
     fun getIp(): String {
         var ip: String = request.getHeader("x-forwarded-for") ?: ""
-        if (ip.isBlank()) {
-            ip = request.getHeader("X-Real-IP") ?: ""
+        ip = if (ip.isBlank()) {
+            request.getHeader("X-Real-IP") ?: ""
         } else {
-            ip = ip.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+            ip.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
         }
         if (ip.isBlank() || "unknown".equals(ip, ignoreCase = true)) {
             ip = request.getHeader("Proxy-Client-IP") ?: ""
@@ -379,10 +379,11 @@ open class Resource {
      * {@link Router#errorHandler(int, Handler)}. If no error handler is not defined, It will send a default failure
      * response with provided status code.
      *
-     * @param code  the HTTP status code
+     * @param statusCode Int the HTTP status code of the response
+     * @param throwable Throwable the throwable used when signalling failure
      */
-    fun fail(code: Int) {
-        context.fail(code)
+    fun fail(statusCode: Int, throwable: Throwable? = null) {
+        context.fail(statusCode, throwable)
     }
 
     /**
