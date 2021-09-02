@@ -19,12 +19,6 @@ import net.cloudopt.next.kafka.KafkaPlugin
 import net.cloudopt.next.web.NextServer
 
 
-/*
- * @author: Cloudopt
- * @Time: 2018/2/6
- * @Description: Test Case
- */
-
 fun main(args: Array<String>) {
     NextServer.addPlugin(KafkaPlugin())
     NextServer.run()
