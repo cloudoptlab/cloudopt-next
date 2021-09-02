@@ -205,7 +205,7 @@ object NextServer {
         Logger.configuration.color = webConfig.logColor
 
         //Scan cloudopt handler
-        Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class)
+        Classer.scanPackageByAnnotation("net.cloudopt.next.web", true, AutoHandler::class)
             .forEach { kclass ->
                 handlers.add(kclass.createInstance() as Handler)
             }
