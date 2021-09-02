@@ -28,11 +28,11 @@ class JsonAuth(cache: Boolean = true) : Auth(cache) {
         var config: PermissionTree = ConfigManager.initObject("auth", PermissionTree::class) as PermissionTree
     }
 
-    override fun getRoles(): MutableList<Role> {
+    override suspend fun getRoles(): MutableList<Role> {
         return config.roles
     }
 
-    override fun getRole(roleId: Int): Role? {
+    override suspend fun getRole(roleId: Int): Role? {
         var roles = getRoles()
         for (role in roles) {
             if (role.id == roleId) return role
@@ -40,11 +40,11 @@ class JsonAuth(cache: Boolean = true) : Auth(cache) {
         return null
     }
 
-    override fun getGroups(): MutableList<Group> {
+    override suspend fun getGroups(): MutableList<Group> {
         return config.groups
     }
 
-    override fun getGroup(groupId: Int): Group? {
+    override suspend fun getGroup(groupId: Int): Group? {
         var groups = getGroups()
         for (group in groups) {
             if (group.id == groupId) return group
@@ -52,11 +52,11 @@ class JsonAuth(cache: Boolean = true) : Auth(cache) {
         return null
     }
 
-    override fun getUsers(): MutableList<User> {
+    override suspend fun getUsers(): MutableList<User> {
         return config.users
     }
 
-    override fun getUser(userId: Int): User? {
+    override suspend fun getUser(userId: Int): User? {
         var users = getUsers()
         for (user in users) {
             if (user.id == userId) return user
@@ -64,7 +64,7 @@ class JsonAuth(cache: Boolean = true) : Auth(cache) {
         return null
     }
 
-    override fun getUser(uniqueTag: String): User? {
+    override suspend fun getUser(uniqueTag: String): User? {
         var users = getUsers()
         for (user in users) {
             if (user.uniqueTag == uniqueTag) return user

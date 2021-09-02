@@ -20,6 +20,7 @@ import net.cloudopt.next.auth.bean.Role
 import net.cloudopt.next.auth.bean.Rule
 import net.cloudopt.next.auth.bean.User
 import net.cloudopt.next.auth.utils.RuleMatch
+import net.cloudopt.next.core.Worker.global
 
 abstract class Auth {
 
@@ -36,14 +37,16 @@ abstract class Auth {
     constructor(cache: Boolean = true) {
         this.cache = cache
         if (cache) {
-            refreshCache()
+            global{
+                refreshCache()
+            }
         }
     }
 
     /**
      * Used to refresh the cache.
      */
-    fun refreshCache() {
+    suspend fun refreshCache() {
         var users = getUsers()
         for (user in users) {
             if (cache) {
@@ -64,7 +67,7 @@ abstract class Auth {
      * @see Role
      * @return MutableList<Role>
      */
-    abstract fun getRoles(): MutableList<Role>
+    abstract suspend fun getRoles(): MutableList<Role>
 
     /**
      * Get the role by id.
@@ -72,14 +75,14 @@ abstract class Auth {
      * @see Role
      * @return Role
      */
-    abstract fun getRole(roleId: Int): Role?
+    abstract suspend fun getRole(roleId: Int): Role?
 
     /**
      * Get all the groups.
      * @see Group
      * @return MutableList<Group>
      */
-    abstract fun getGroups(): MutableList<Group>
+    abstract suspend fun getGroups(): MutableList<Group>
 
     /**
      * Get the group by id.
@@ -87,14 +90,14 @@ abstract class Auth {
      * @see Group
      * @return Group
      */
-    abstract fun getGroup(groupId: Int): Group?
+    abstract suspend fun getGroup(groupId: Int): Group?
 
     /**
      * Get all the users.
      * @see User
      * @return MutableList<User>
      */
-    abstract fun getUsers(): MutableList<User>
+    abstract suspend fun getUsers(): MutableList<User>
 
     /**
      * Get the user by id.
@@ -102,7 +105,7 @@ abstract class Auth {
      * @see User
      * @return User
      */
-    abstract fun getUser(userId: Int): User?
+    abstract suspend fun getUser(userId: Int): User?
 
     /**
      * Get the user by uniqueTag.
@@ -110,7 +113,7 @@ abstract class Auth {
      * @see User
      * @return User
      */
-    abstract fun getUser(uniqueTag: String): User?
+    abstract suspend fun getUser(uniqueTag: String): User?
 
     /**
      * Used to check if you have permission to pass
@@ -120,7 +123,7 @@ abstract class Auth {
      * @return As long as there is a rule that matches, it returns True.
      * If there is no rule that matches, it returns False.
      */
-    fun enforce(uniqueTag: String, url: String, method: String): Boolean {
+    suspend fun enforce(uniqueTag: String, url: String, method: String): Boolean {
         if (cacheMap.containsKey(uniqueTag)) {
             return RuleMatch.ruleMatch(url, method, cacheMap[uniqueTag] ?: mutableListOf())
         } else {
