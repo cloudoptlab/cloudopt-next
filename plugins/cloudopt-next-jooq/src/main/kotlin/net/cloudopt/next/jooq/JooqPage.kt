@@ -17,11 +17,6 @@ package net.cloudopt.next.jooq
 
 import java.io.Serializable
 
-/*
- * @author: Cloudopt
- * @Time: 2018/4/5
- * @Description: Pagination
- */
 data class JooqPage(
     val count: Int = 0,
     val page: Int = 0,

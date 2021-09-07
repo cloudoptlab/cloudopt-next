@@ -21,8 +21,8 @@ import org.jooq.SelectWindowStep
 
 class JooqPaginate(query: SelectWindowStep<*>, private var count: Int, private val page: Int) {
 
-    private var totalPage: Int = 0
-    private val totalRow: Long
+    private var totalPage: Int = -1
+    private var totalRow: Long = -1
     private var firstPage = false
     private var lastPage = false
     private var query: SelectWindowStep<*>
@@ -30,7 +30,14 @@ class JooqPaginate(query: SelectWindowStep<*>, private var count: Int, private v
 
     init {
         this.query = query
-        this.totalRow = count().toLong()
+    }
+
+    fun order(orderField: OrderField<*>) {
+        this.orderField = orderField
+    }
+
+    fun <T> find(clazz: Class<T>): JooqPage {
+        this.totalRow = this.query.count().toLong()
         this.totalPage = (totalRow / count.toLong()).toInt()
         if (totalRow % count.toLong() != 0L) {
             ++totalPage
@@ -47,13 +54,6 @@ class JooqPaginate(query: SelectWindowStep<*>, private var count: Int, private v
         this.firstPage = this.page == 1
         this.lastPage = this.page == this.totalPage
 
-    }
-
-    fun order(orderField: OrderField<*>) {
-        this.orderField = orderField
-    }
-
-    fun <T> find(clazz: Class<T>): JooqPage {
         var list = query.orderBy(orderField).limit(this.count).offset(skip()).fetchInto(clazz)
         list = if (list.isNotEmpty()) {
             list.toMutableList()
@@ -74,10 +74,6 @@ class JooqPaginate(query: SelectWindowStep<*>, private var count: Int, private v
 
     private fun skip(): Int {
         return (page - 1) * count
-    }
-
-    fun count(): Int {
-        return this.query.count()
     }
 
 
