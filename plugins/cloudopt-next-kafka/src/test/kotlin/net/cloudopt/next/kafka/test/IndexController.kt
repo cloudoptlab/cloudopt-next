@@ -17,15 +17,10 @@ package net.cloudopt.next.kafka.test
 
 import net.cloudopt.next.kafka.KafkaManager
 import net.cloudopt.next.web.Resource
-import net.cloudopt.next.web.route.API
-import net.cloudopt.next.web.route.GET
+import net.cloudopt.next.web.annotation.API
+import net.cloudopt.next.web.annotation.GET
 
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/26
- * @Description: Test Controller
- */
 @API("/")
 class IndexController : Resource() {
 

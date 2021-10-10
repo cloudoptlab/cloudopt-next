@@ -28,12 +28,6 @@ import org.jooq.impl.DefaultTransactionProvider
 import java.sql.SQLException
 import kotlin.reflect.full.createInstance
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/2/6
- * @Description: Jooq plugin of cloudopt next
- */
 class JooqPlugin : Plugin {
 
     override fun start(): Boolean {
@@ -41,7 +35,7 @@ class JooqPlugin : Plugin {
         System.getProperties().setProperty("org.jooq.no-logo", "true")
 
         try {
-            var map = ConfigManager.init("jooq")
+            val map = ConfigManager.init("jooq")
 
             pool = HikariCPPool()
 
@@ -49,7 +43,7 @@ class JooqPlugin : Plugin {
                 pool = Classer.loadClass(map["pool"] as String).createInstance() as ConnectionPool
             }
 
-            var sqlDialect = when (map["database"]) {
+            val sqlDialect = when (map["database"]) {
                 "mysql" -> SQLDialect.MYSQL
                 "derby" -> SQLDialect.DERBY
                 "firebird" -> SQLDialect.FIREBIRD

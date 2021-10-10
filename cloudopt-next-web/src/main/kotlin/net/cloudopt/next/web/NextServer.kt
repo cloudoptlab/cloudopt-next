@@ -50,9 +50,9 @@ object NextServer {
 
     open val interceptors = mutableMapOf<String, MutableList<KClass<out Interceptor>>>()
 
-    val beforeRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, Array<Annotation>>>()
+    val beforeRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, MutableList<Annotation>>>()
 
-    val afterRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, Array<Annotation>>>()
+    val afterRouteHandlersTable = mutableMapOf<String, MutableMap<HttpMethod, MutableList<Annotation>>>()
 
     val resourceTable = arrayListOf<ResourceTable>()
 
@@ -166,13 +166,13 @@ object NextServer {
                     if (annotation.annotationClass.hasAnnotation<Before>()) {
                         if (beforeRouteHandlersTable.containsKey(resourceUrl)) {
                             if (beforeRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true) {
-                                beforeRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(annotation)
+                                beforeRouteHandlersTable[resourceUrl]?.get(httpMethod)?.add(annotation)
                             } else {
-                                beforeRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(annotation))
+                                beforeRouteHandlersTable[resourceUrl]?.set(httpMethod, mutableListOf(annotation))
                             }
                         } else {
-                            val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
-                            temp[httpMethod] = arrayOf(annotation)
+                            val temp = mutableMapOf<HttpMethod, MutableList<Annotation>>()
+                            temp[httpMethod] = mutableListOf(annotation)
                             beforeRouteHandlersTable[resourceUrl] = temp
                         }
                     }
@@ -180,13 +180,13 @@ object NextServer {
 
                         if (afterRouteHandlersTable.containsKey(resourceUrl)) {
                             if (afterRouteHandlersTable[resourceUrl]?.containsKey(httpMethod) == true) {
-                                afterRouteHandlersTable[resourceUrl]?.get(httpMethod)?.plus(annotation)
+                                afterRouteHandlersTable[resourceUrl]?.get(httpMethod)?.add(annotation)
                             } else {
-                                afterRouteHandlersTable[resourceUrl]?.set(httpMethod, arrayOf(annotation))
+                                afterRouteHandlersTable[resourceUrl]?.set(httpMethod, mutableListOf(annotation))
                             }
                         } else {
-                            val temp = mutableMapOf<HttpMethod, Array<Annotation>>()
-                            temp[httpMethod] = arrayOf(annotation)
+                            val temp = mutableMapOf<HttpMethod, MutableList<Annotation>>()
+                            temp[httpMethod] = mutableListOf(annotation)
                             afterRouteHandlersTable[resourceUrl] = temp
                         }
                     }
@@ -205,7 +205,7 @@ object NextServer {
         Logger.configuration.color = webConfig.logColor
 
         //Scan cloudopt handler
-        Classer.scanPackageByAnnotation("net.cloudopt.next", true, AutoHandler::class)
+        Classer.scanPackageByAnnotation("net.cloudopt.next.web", true, AutoHandler::class)
             .forEach { kclass ->
                 handlers.add(kclass.createInstance() as Handler)
             }

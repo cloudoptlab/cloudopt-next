@@ -1,6 +1,7 @@
 dependencies {
     api project(":cloudopt-next-json")
     api project(":cloudopt-next-logging")
+    api "io.vertx:vertx-core:${rootProject.property('vertx_version')}"
     api "io.vertx:vertx-lang-kotlin:${rootProject.property('vertx_version')}"
     api "io.vertx:vertx-lang-kotlin-coroutines:${rootProject.property('vertx_version')}"
 }

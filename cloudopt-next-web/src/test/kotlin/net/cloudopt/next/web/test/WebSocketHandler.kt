@@ -5,6 +5,8 @@ import io.vertx.core.http.ServerWebSocket
 import io.vertx.core.http.WebSocketFrame
 import net.cloudopt.next.web.WebSocketResource
 import net.cloudopt.next.web.annotation.WebSocket
+import net.cloudopt.next.web.getCookie
+import net.cloudopt.next.web.getIP
 
 @WebSocket("/websocket")
 class WebSocketHandler : WebSocketResource {
@@ -19,6 +21,8 @@ class WebSocketHandler : WebSocketResource {
         websocket.writeBinaryMessage(buffer) {
             println("The event of after write binary.")
         }
+        websocket.getCookie("key")
+        websocket.getIP()
     }
 
     override suspend fun onConnectionFailure(throwable: Throwable) {

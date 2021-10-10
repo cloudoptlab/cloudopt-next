@@ -25,6 +25,6 @@ import io.vertx.kafka.client.consumer.KafkaConsumerRecord
  */
 interface KafkaListener {
 
-    fun listener(record: KafkaConsumerRecord<String, Any>)
+    suspend fun listener(record: KafkaConsumerRecord<String, Any>)
 
 }

@@ -18,11 +18,6 @@ package net.cloudopt.next.kafka.test
 import org.apache.kafka.streams.processor.AbstractProcessor
 
 
-/*
- * @author: Cloudopt
- * @Time: 2018/2/6
- * @Description: Test Case
- */
 class TestStreams : AbstractProcessor<String, String>() {
 
     override fun process(key: String?, value: String?) {

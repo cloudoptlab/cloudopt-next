@@ -20,15 +20,10 @@ import net.cloudopt.next.kafka.AutoKafka
 import net.cloudopt.next.kafka.KafkaListener
 
 
-/*
- * @author: Cloudopt
- * @Time: 2018/2/6
- * @Description: Test Case
- */
 @AutoKafka("test-topic")
 class TestKafka : KafkaListener {
 
-    override fun listener(record: KafkaConsumerRecord<String, Any>) {
+    override suspend fun listener(record: KafkaConsumerRecord<String, Any>) {
         println("this is kafka.")
     }
 

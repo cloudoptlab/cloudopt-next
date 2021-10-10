@@ -1,3 +1,4 @@
+import kotlinx.coroutines.runBlocking
 import net.cloudopt.next.auth.Auth
 import net.cloudopt.next.auth.bean.Group
 import net.cloudopt.next.auth.bean.Role
@@ -14,9 +15,9 @@ import kotlin.test.assertTrue
 class TestCase {
 
     @Test
-    fun creatModels() {
+    fun creatModels() = runBlocking {
         var rules: LinkedList<Rule> = LinkedList<Rule>()
-        rules.push(Rule(name = "about somethigs", url = "/api", method = "GET", allow = true))
+        rules.push(Rule(name = "about somethings", url = "/api", method = "GET", allow = true))
         Role(id = 1, name = "2", rules = rules)
         Group(id = 1, name = "2", rules = rules)
         var model =
@@ -31,38 +32,38 @@ class TestCase {
     }
 
     @Test
-    fun urlMatch() {
+    fun urlMatch() = runBlocking {
         println(BuiltinOperators.keyMatch2("/api/v1/account/*", "/api/v1/account"))
         println(BuiltinOperators.keyMatch2("/api/v1/account", "/api/v1/*"))
     }
 
     @Test
-    fun creatAuthority() {
+    fun creatAuthority() = runBlocking {
         var authority: Auth = JsonAuth(cache = true)
         println(authority)
     }
 
     @Test
-    fun findRole() {
+    fun findRole() = runBlocking {
         var authority: Auth = JsonAuth(cache = true)
         print(authority.getRole(1))
     }
 
     @Test
-    fun findGroup() {
+    fun findGroup() = runBlocking {
         var authority: Auth = JsonAuth(cache = true)
         print(authority.getGroup(1))
     }
 
     @Test
-    fun findUser() {
+    fun findUser() = runBlocking {
         var authority: Auth = JsonAuth(cache = true)
         print(authority.getUser(1))
         print(authority.getUser("SHUH-OSJI-UHIN-UUHG"))
     }
 
     @Test
-    fun actionMatch() {
+    fun actionMatch() = runBlocking {
         var authority: Auth = JsonAuth()
         assertTrue(RuleMatch.ruleMatch("/api/v1/account/creat", "GET", authority.getRoles()[0].rules[0]))
         assertFalse(RuleMatch.ruleMatch("/api/v1/account/creat", "POST", authority.getRoles()[0].rules[0]))
@@ -70,7 +71,7 @@ class TestCase {
     }
 
     @Test
-    fun defaultEnforce() {
+    fun defaultEnforce() = runBlocking {
         var authority: Auth = JsonAuth()
         assertTrue(authority.enforce("SHUH-OSJI-UHIN-UUHG", "/api/v1/account/creat", "GET"))
         assertFalse(authority.enforce("SHUH-OSJI-UHIN-UUHG", "/api/v1/account/creat", "POST"))

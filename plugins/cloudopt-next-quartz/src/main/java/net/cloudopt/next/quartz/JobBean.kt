@@ -13,15 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.kafka.test
+package net.cloudopt.next.quartz
+import java.util.*
 
-import net.cloudopt.next.kafka.KafkaPlugin
-import net.cloudopt.next.web.NextServer
+data class JobBean (
 
+    /**
+     * Job's description.
+     */
+    var jobDesc: String,
 
-fun main(args: Array<String>) {
-    NextServer.addPlugin(KafkaPlugin())
-    NextServer.run()
-}
+    /**
+     * Job's runtime expression.
+     */
+    var cronExpression: String,
 
-class TestCase
+    /**
+     * Job's group.
+     */
+    var jobGroup: String,
+
+    /**
+     * Job's class.
+     */
+    var jobClass: String,
+
+    /**
+     * The `TimeZone` in which to base the schedule.
+     */
+    var timeZone: TimeZone = TimeZone.getDefault(),
+)

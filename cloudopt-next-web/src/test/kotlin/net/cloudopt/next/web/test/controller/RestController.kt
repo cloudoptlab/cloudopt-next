@@ -3,10 +3,18 @@ package net.cloudopt.next.web.test.controller
 import net.cloudopt.next.json.Jsoner.json
 import net.cloudopt.next.web.Resource
 import net.cloudopt.next.web.annotation.*
+import net.cloudopt.next.web.test.handler.TestAfterPrint2Annotation
+import net.cloudopt.next.web.test.handler.TestAfterPrintAnnotation
+import net.cloudopt.next.web.test.handler.TestBeforePrint2Annotation
+import net.cloudopt.next.web.test.handler.TestBeforePrintAnnotation
 
 @API("/restful")
 class RestController : Resource() {
 
+    @TestBeforePrintAnnotation
+    @TestBeforePrint2Annotation
+    @TestAfterPrintAnnotation
+    @TestAfterPrint2Annotation
     @GET
     fun get() {
         renderJson(json("result" to "get"))
@@ -30,6 +38,17 @@ class RestController : Resource() {
     @PATCH
     fun patch() {
         renderJson(json("result" to "patch"))
+    }
+
+    @GET("/defaultError")
+    fun defaultError() {
+        fail(402)
+    }
+
+
+    @GET("/customError")
+    fun customError() {
+        fail(401, RuntimeException("401"))
     }
 
 }

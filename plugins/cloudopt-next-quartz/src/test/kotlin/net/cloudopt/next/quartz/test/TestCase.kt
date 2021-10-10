@@ -18,6 +18,7 @@ package net.cloudopt.next.quartz.test
 import net.cloudopt.next.quartz.JobBean
 import net.cloudopt.next.quartz.QuartzPlugin
 import net.cloudopt.next.web.NextServer
+import java.util.*
 
 
 /*
@@ -26,12 +27,14 @@ import net.cloudopt.next.web.NextServer
  * @Description: Test Case
  */
 fun main() {
-    var plugin = QuartzPlugin()
-    val job = JobBean()
-    job.jobClass = "net.cloudopt.next.quartz.test.Task1"
-    job.cronExpression = "* * * * * ? *"
-    job.jobGroup = "TaskJob"
-    job.jobDesc = "TaskJob"
+    val plugin = QuartzPlugin()
+    val job = JobBean(
+        jobClass = "net.cloudopt.next.quartz.test.Task1",
+        cronExpression = "* * * * * ? *",
+        jobGroup = "TaskJob",
+        jobDesc = "TaskJob",
+        timeZone = TimeZone.getDefault()
+    )
     plugin.addJob(job)
     NextServer.addPlugin(plugin)
     NextServer.run()

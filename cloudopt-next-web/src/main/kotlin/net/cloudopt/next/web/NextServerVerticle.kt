@@ -31,6 +31,7 @@ import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.waf.Wafer
 import net.cloudopt.next.web.annotation.*
 import net.cloudopt.next.web.handler.ErrorHandler
+import java.lang.RuntimeException
 import java.sql.Timestamp
 import java.text.DateFormat
 import java.time.LocalDate
@@ -171,7 +172,7 @@ class NextServerVerticle : CoroutineVerticle() {
          * Set csrf
          */
         if (Wafer.config.csrf) {
-            router.route("/*").handler(CSRFHandler.create(vertx, Wafer.config.encryption))
+            router.route("/*").handler(CSRFHandler.create(Worker.vertx, Wafer.config.encryption))
         }
 
         /**
@@ -180,12 +181,12 @@ class NextServerVerticle : CoroutineVerticle() {
         NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${NextServer.webConfig.errorHandler}")
 
         router.route("/*").failureHandler { context ->
-            errorProcessing(context)
+            errorProcessing(context, context.failure())
         }
 
         for (i in 400..500) {
             router.errorHandler(i) { context ->
-                errorProcessing(context)
+                errorProcessing(context, context.failure())
             }
         }
 
@@ -354,7 +355,7 @@ class NextServerVerticle : CoroutineVerticle() {
      * @see ErrorHandler
      * @see RoutingContext
      */
-    private fun errorProcessing(context: RoutingContext) {
+    private fun errorProcessing(context: RoutingContext, throwable: Throwable? = RuntimeException()) {
         context.response().endHandler {
             NextServer.handlers.forEach { handler ->
                 handler.afterCompletion(Resource().init(context))
@@ -362,7 +363,7 @@ class NextServerVerticle : CoroutineVerticle() {
         }
         val errorHandler = NextServer.errorHandler.createInstance()
         errorHandler.init(context)
-        errorHandler.handle()
+        errorHandler.handle(context.response().statusCode, throwable)
         if (context.failure() != null) {
             context.failure().printStackTrace()
             logger.error(context.failure().toString())

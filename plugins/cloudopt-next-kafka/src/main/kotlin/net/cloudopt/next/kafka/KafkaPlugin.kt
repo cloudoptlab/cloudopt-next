@@ -21,6 +21,7 @@ import io.vertx.kafka.client.producer.KafkaProducer
 import net.cloudopt.next.core.Classer
 import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.core.Worker
+import net.cloudopt.next.core.Worker.global
 import net.cloudopt.next.web.NextServer
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
@@ -52,7 +53,7 @@ class KafkaPlugin : Plugin {
         Classer.scanPackageByAnnotation(NextServer.packageName, true, AutoKafka::class)
             .forEach { clazz ->
                 clazz.findAnnotation<AutoKafka>()?.value?.split(",")?.forEach { topic ->
-                    var set = KafkaManager.kafkaList[topic] ?: mutableSetOf()
+                    val set = KafkaManager.kafkaList[topic] ?: mutableSetOf()
                     set.add(clazz)
                     KafkaManager.kafkaList[topic] = set
                 }
@@ -66,10 +67,12 @@ class KafkaPlugin : Plugin {
                     KafkaManager.logger.error("[KAFKA] Registered topic listener was error：${KafkaManager.kafkaList.keys}")
                 }
             }?.handler { record ->
-                if (record.topic().isNotBlank() && KafkaManager.kafkaList[record.topic()]?.size ?: 0 > 0) {
+                if (record.topic().isNotBlank() && (KafkaManager.kafkaList[record.topic()]?.size ?: 0) > 0) {
                     KafkaManager.kafkaList[record.topic()]?.forEach { clazz ->
-                        var obj = clazz.createInstance() as KafkaListener
-                        obj.listener(record as KafkaConsumerRecord<String, Any>)
+                        val obj = clazz.createInstance() as KafkaListener
+                        global{
+                            obj.listener(record as KafkaConsumerRecord<String, Any>)
+                        }
                     }
                 }
             }

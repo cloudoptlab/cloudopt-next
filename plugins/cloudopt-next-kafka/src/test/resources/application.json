@@ -2,7 +2,7 @@
   "packageName": "net.cloudopt.next.kafka.test",
   "port": 2333,
   "kafka": {
-    "streams": "true",
+    "streams": "false",
     "bootstrap.servers": "PLAINTEXT://127.0.0.1:9092",
     "key.deserializer": "org.apache.kafka.common.serialization.StringDeserializer",
     "value.deserializer": "org.apache.kafka.common.serialization.StringDeserializer",

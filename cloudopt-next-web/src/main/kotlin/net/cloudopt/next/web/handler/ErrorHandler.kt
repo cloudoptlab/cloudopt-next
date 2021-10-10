@@ -19,7 +19,12 @@ import net.cloudopt.next.web.Resource
 
 abstract class ErrorHandler : Resource() {
 
-    abstract fun handle()
+    /**
+     * Used to catch exceptions in context.
+     * @param statusCode Int the HTTP status code of the response
+     * @param throwable Throwable the throwable used when signalling failure
+     */
+    abstract fun handle(statusCode: Int, throwable: Throwable?)
 
 }
 
