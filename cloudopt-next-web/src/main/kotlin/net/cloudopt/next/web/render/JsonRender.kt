@@ -31,7 +31,7 @@ class JsonRender : Render {
                 } catch (e: Exception) {
                     promise.fail(e)
                     e.printStackTrace()
-                    resource.fail(500)
+                    resource.fail(500, e)
                     return@await
                 }
             }

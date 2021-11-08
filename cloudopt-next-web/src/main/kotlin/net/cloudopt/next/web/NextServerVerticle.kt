@@ -31,7 +31,6 @@ import net.cloudopt.next.validator.ValidatorTool
 import net.cloudopt.next.waf.Wafer
 import net.cloudopt.next.web.annotation.*
 import net.cloudopt.next.web.handler.ErrorHandler
-import java.lang.RuntimeException
 import java.sql.Timestamp
 import java.text.DateFormat
 import java.time.LocalDate
@@ -204,7 +203,7 @@ class NextServerVerticle : CoroutineVerticle() {
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Resource().init(context).fail(500)
+                    Resource().init(context).fail(500, e)
                 }
             }
         }
@@ -238,7 +237,7 @@ class NextServerVerticle : CoroutineVerticle() {
                             context.next()
                         }
                     } catch (e: Exception) {
-                        resource.fail(500)
+                        resource.fail(500, e)
                     }
                 }
             }
@@ -273,7 +272,7 @@ class NextServerVerticle : CoroutineVerticle() {
                                 }
                             } catch (e: Exception) {
                                 e.printStackTrace()
-                                resource.fail(500)
+                                resource.fail(500, e)
                             }
                         }
                     }
@@ -433,7 +432,7 @@ class NextServerVerticle : CoroutineVerticle() {
                         try {
                             arr[para] = getParaByType(para.findAnnotation<Parameter>()?.value ?: "", para, jsonObject)
                         } catch (e: IllegalArgumentException) {
-                            resource.fail(400)
+                            resource.fail(400, e)
                             e.printStackTrace()
                             return
                         }
@@ -443,11 +442,11 @@ class NextServerVerticle : CoroutineVerticle() {
                         try {
                             arr[para] = resource.getBodyJson(para.type.jvmErasure)
                         } catch (e: NullPointerException) {
-                            resource.fail(400)
+                            resource.fail(400, e)
                             e.printStackTrace()
                             return
                         } catch (e: IllegalArgumentException) {
-                            resource.fail(400)
+                            resource.fail(400, e)
                             e.printStackTrace()
                             return
                         }
@@ -473,7 +472,7 @@ class NextServerVerticle : CoroutineVerticle() {
             logger.error(
                 e.message ?: "${resourceTable.url} has error occurred, but the error message could not be obtained "
             )
-            resource.fail(500)
+            resource.fail(500, e)
         }
     }
 
