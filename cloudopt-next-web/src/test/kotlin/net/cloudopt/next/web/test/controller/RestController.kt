@@ -42,13 +42,13 @@ class RestController : Resource() {
 
     @GET("/defaultError")
     fun defaultError() {
-        fail(402)
+        fail(500)
     }
 
 
     @GET("/customError")
     fun customError() {
-        fail(401, RuntimeException("401"))
+        fail(500, RuntimeException("Test Error"))
     }
 
 }

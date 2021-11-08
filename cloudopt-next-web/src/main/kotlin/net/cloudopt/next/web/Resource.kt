@@ -33,7 +33,7 @@ import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.waf.Wafer
 import net.cloudopt.next.web.render.RenderFactory
 import net.cloudopt.next.web.render.Template
-import java.lang.RuntimeException
+import kotlin.RuntimeException
 import kotlin.reflect.KClass
 
 open class Resource {
@@ -366,7 +366,7 @@ open class Resource {
      * Ends the response. If no data has been written to the response body,
      * the actual response won't get written until this method gets called.
      * <p>
-     * Once the response has ended, it cannot be used any more.
+     * Once the response has ended, it cannot be used anymore.
      */
     fun end() {
         response.end()
@@ -382,7 +382,8 @@ open class Resource {
      * @param statusCode Int the HTTP status code of the response
      * @param throwable Throwable the throwable used when signalling failure
      */
-    fun fail(statusCode: Int, throwable: Throwable? = null) {
+    fun fail(statusCode: Int, throwable: Throwable = RuntimeException("Something is wrong, " +
+            "but no exception messages are caught.")) {
         context.fail(statusCode, throwable)
     }
 
