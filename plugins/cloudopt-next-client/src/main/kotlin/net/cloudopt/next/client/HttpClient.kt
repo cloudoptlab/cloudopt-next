@@ -74,28 +74,6 @@ class HttpClient() {
     }
 
     /**
-     * Configure the request to add multiple HTTP headers.
-     * @param key the HTTP header's name
-     * @param value the HTTP header's value
-     * @return HttpClient
-     */
-    fun addHeader(key: String, value: String): HttpClient {
-        this.request.putHeader(key, value)
-        return this
-    }
-
-    /**
-     * Add a query parameter to the request.
-     * @param key the param name
-     * @param value the param value
-     * @return HttpClient
-     */
-    fun addParam(key: String, value: String): HttpClient {
-        this.request.addQueryParam(key, value)
-        return this
-    }
-
-    /**
      * Create an HTTP GET request to send to the server at the specified host and port.
      * @param url the relative URI
      * @return HttpRequest<Buffer>
