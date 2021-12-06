@@ -37,10 +37,10 @@ class JooqPlugin : Plugin {
         try {
             val map = ConfigManager.init("jooq")
 
-            pool = HikariCPPool()
-
-            if (map["pool"] != null) {
-                pool = Classer.loadClass(map["pool"] as String).createInstance() as ConnectionPool
+            pool = if (map["pool"] != null) {
+                Classer.loadClass(map["pool"] as String).createInstance() as ConnectionPool
+            } else {
+                HikariCPPool()
             }
 
             val sqlDialect = when (map["database"]) {
