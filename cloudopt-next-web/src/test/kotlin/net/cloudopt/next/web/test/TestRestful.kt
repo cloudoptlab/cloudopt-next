@@ -61,9 +61,10 @@ class TestRestful : TestStart() {
 
     @Test
     fun testCustomError() = runBlocking {
-        val result = client.get("/restful/customError").send().await().bodyAsJsonObject()
+        val result = client.get("/restful/customError").putHeader("Content-Type", "application/json").send().await()
+            .bodyAsJsonObject()
         assertTrue {
-            result.get<String>("errorMessage") == "401"
+            result.get<String>("errorMessage") == "Test Error"
         }
     }
 

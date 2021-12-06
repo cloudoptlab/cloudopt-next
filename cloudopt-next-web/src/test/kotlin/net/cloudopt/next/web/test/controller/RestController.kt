@@ -42,7 +42,7 @@ class RestController : Resource() {
 
     @GET("/defaultError")
     fun defaultError() {
-        fail(500)
+        fail(402)
     }
 
 
