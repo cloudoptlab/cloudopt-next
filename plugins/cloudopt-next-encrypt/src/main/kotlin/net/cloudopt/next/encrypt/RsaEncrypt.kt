@@ -48,9 +48,8 @@ class RsaEncrypt(var publicKeyString: String = "", var privateKeyString: String 
      * @return This is an encrypted string
      */
     override fun encrypt(value: String): String {
-        val key = getPublicKey()
         val cipher = Cipher.getInstance(algorithm, "BC")
-        cipher.init(Cipher.ENCRYPT_MODE, key)
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
         val b = value.toByteArray()
         return base64Encrypt.encrypt(cipher.doFinal(b))
     }
@@ -61,9 +60,8 @@ class RsaEncrypt(var publicKeyString: String = "", var privateKeyString: String 
      * @return This is the decrypted string
      */
     override fun decrypt(value: String): String {
-        val key = getPrivateKey()
         val cipher = Cipher.getInstance(algorithm, "BC")
-        cipher.init(Cipher.DECRYPT_MODE, key)
+        cipher.init(Cipher.DECRYPT_MODE, privateKey)
         val b = cipher.doFinal(base64Encrypt.decryptToByteArray(value))
         return String(b)
     }
