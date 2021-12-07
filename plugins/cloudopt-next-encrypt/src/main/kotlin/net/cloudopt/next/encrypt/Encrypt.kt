@@ -15,6 +15,9 @@
  */
 package net.cloudopt.next.encrypt
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.Security
+
 /*
  * @author: Cloudopt
  * @Time: 2018/1/5
@@ -42,5 +45,13 @@ abstract class Encrypt {
             sb.append(hexString)
         }
         return sb.toString()
+    }
+
+    companion object {
+        fun checkBouncyCastleProvider() {
+            if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME).isNullOrEmpty()) {
+                Security.addProvider(BouncyCastleProvider())
+            }
+        }
     }
 }

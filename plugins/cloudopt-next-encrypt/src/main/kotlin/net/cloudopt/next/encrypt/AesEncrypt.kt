@@ -15,36 +15,19 @@
  */
 package net.cloudopt.next.encrypt
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider
-import java.security.Security
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/8
- * @Description: For AES encryption
- */
-class AesEncrypt : Encrypt() {
+class AesEncrypt(password: String) : Encrypt() {
 
-    private val ALGORITHM = "AES"
+    private val algorithm = "AES"
 
-    private val TRANSFORMATION = "AES/ECB/PKCS7Padding"
+    private val transformation = "AES/ECB/PKCS7Padding"
 
-    private var initialized = false
+    private var key: ByteArray = password.toByteArray()
 
-    private var key: ByteArray = ByteArray(10)
-
-    private var password = ""
-
-    /**
-     * Set password
-     * @param password password
-     * @return AesEncrypt object
-     */
-    fun setPassword(password: String): AesEncrypt {
-        this.password = password
-        return this
+    init {
+        checkBouncyCastleProvider()
     }
 
     /**
@@ -53,19 +36,10 @@ class AesEncrypt : Encrypt() {
      * @return Encrypted string
      */
     override fun encrypt(value: String): String {
-        key = password.toByteArray()
-        initialize()
-        var result: ByteArray = ByteArray(10)
-
-        try {
-            var encoder = Cipher.getInstance(TRANSFORMATION, "BC")
-            var result2 = SecretKeySpec(key, ALGORITHM)
-            encoder.init(1, result2)
-            result = encoder.doFinal(value.toByteArray())
-        } catch (var4: Exception) {
-            var4.printStackTrace()
-        }
-
+        val encoder = Cipher.getInstance(transformation, "BC")
+        val secretKeySpec = SecretKeySpec(key, algorithm)
+        encoder.init(1, secretKeySpec)
+        val result = encoder.doFinal(value.toByteArray())
         return Base64Encrypt().encrypt(result)
     }
 
@@ -75,31 +49,11 @@ class AesEncrypt : Encrypt() {
      * @return Decrypted string
      */
     override fun decrypt(value: String): String {
-        key = password.toByteArray()
-        var bytes = Base64Encrypt().decryptToByteArray(value)
-        initialize()
-        var result: String? = ""
-        try {
-            var e = Cipher.getInstance(TRANSFORMATION, "BC")
-            var keySpec = SecretKeySpec(key, ALGORITHM)
-            e.init(2, keySpec)
-            var decoded = e.doFinal(bytes)
-            result = String(decoded)
-        } catch (var7: Exception) {
-            var7.printStackTrace()
-        }
-
-        return result!!
-    }
-
-
-    /**
-     * Initialization
-     */
-    private fun initialize() {
-        if (!initialized) {
-            Security.addProvider(BouncyCastleProvider())
-            initialized = true
-        }
+        val bytes = Base64Encrypt().decryptToByteArray(value)
+        val encoder = Cipher.getInstance(transformation, "BC")
+        val secretKeySpec = SecretKeySpec(key, algorithm)
+        encoder.init(2, secretKeySpec)
+        val decoded = encoder.doFinal(bytes)
+        return String(decoded)
     }
 }

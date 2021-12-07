@@ -17,12 +17,11 @@ package net.cloudopt.next.encrypt
 
 import java.security.MessageDigest
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: For SHA encryption
- */
 class SHAEncrypt : Encrypt() {
+
+    init {
+        checkBouncyCastleProvider()
+    }
 
     /**
      * SHA encryption
@@ -30,7 +29,7 @@ class SHAEncrypt : Encrypt() {
      * @return This is an encrypted string
      */
     override fun encrypt(value: String): String {
-        var digest = MessageDigest.getInstance("SHA")
+        var digest = MessageDigest.getInstance("SHA", "BC")
         digest.update(value.toByteArray())
         return toHexString(digest.digest())
     }

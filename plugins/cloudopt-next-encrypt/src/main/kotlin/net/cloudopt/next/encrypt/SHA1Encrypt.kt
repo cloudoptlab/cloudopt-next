@@ -17,19 +17,18 @@ package net.cloudopt.next.encrypt
 
 import java.security.MessageDigest
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: For SHA1 encryption
- */
 class SHA1Encrypt : Encrypt() {
+
+    init {
+        checkBouncyCastleProvider()
+    }
     /**
      * SHA-1 encryption
      * @param value This is a string that needs to be encrypted
      * @return This is an encrypted string
      */
     override fun encrypt(value: String): String {
-        var digest = MessageDigest.getInstance("SHA-1")
+        var digest = MessageDigest.getInstance("SHA-1", "BC")
         digest.update(value.toByteArray())
         return toHexString(digest.digest())
     }

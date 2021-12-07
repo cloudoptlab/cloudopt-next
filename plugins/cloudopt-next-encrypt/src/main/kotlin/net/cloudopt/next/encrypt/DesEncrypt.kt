@@ -21,30 +21,18 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.DESKeySpec
 
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: For DES encryption (ECB mode)
- */
-class DesEncrypt : Encrypt() {
+class DesEncrypt(password: String) : Encrypt() {
 
     private val ALGORITHM = "DES"
 
     private val TRANSFORMATION = "DES/ECB/PKCS5Padding"
 
-    private var password = ""
+    private val key = password.toByteArray()
 
-    private val base64 = Base64Encrypt()
-
-    /**
-     * Set password
-     * @param password Password
-     * @return DesEncrypt object
-     */
-    fun setPassword(password: String): DesEncrypt {
-        this.password = password
-        return this
+    init {
+        checkBouncyCastleProvider()
     }
+
 
     /**
      * DES encryption
@@ -52,10 +40,10 @@ class DesEncrypt : Encrypt() {
      * @return Encoded Byte [] Base64 encoded
      */
     override fun encrypt(value: String): String {
-        var cipher = Cipher.getInstance(TRANSFORMATION)
-        var secretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM)
-        var keySpec = DESKeySpec(password.toByteArray())
-        var secretKey = secretKeyFactory.generateSecret(keySpec)
+        val cipher = Cipher.getInstance(TRANSFORMATION, "BC")
+        val secretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM, "BC")
+        val keySpec = DESKeySpec(key)
+        val secretKey = secretKeyFactory.generateSecret(keySpec)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, SecureRandom())
         return Base64Encrypt().encrypt(cipher.doFinal(value.toByteArray()))
     }
@@ -66,11 +54,11 @@ class DesEncrypt : Encrypt() {
      * @return The encrypted string first Base64 decoding and decryption
      */
     override fun decrypt(value: String): String {
-        var v = Base64Encrypt().decryptToByteArray(value)
-        var deCipher = Cipher.getInstance(TRANSFORMATION)
-        var deDecretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM)
-        var deKeySpec = DESKeySpec(password.toByteArray())
-        var deSecretKey = deDecretKeyFactory.generateSecret(deKeySpec)
+        val v = Base64Encrypt().decryptToByteArray(value)
+        val deCipher = Cipher.getInstance(TRANSFORMATION, "BC")
+        val keyFactory = SecretKeyFactory.getInstance(ALGORITHM, "BC")
+        val deKeySpec = DESKeySpec(key)
+        val deSecretKey = keyFactory.generateSecret(deKeySpec)
         deCipher.init(Cipher.DECRYPT_MODE, deSecretKey, SecureRandom())
         return String(deCipher.doFinal(v))
     }

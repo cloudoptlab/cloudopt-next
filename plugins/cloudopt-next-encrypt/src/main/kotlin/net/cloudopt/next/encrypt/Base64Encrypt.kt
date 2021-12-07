@@ -17,13 +17,11 @@ package net.cloudopt.next.encrypt
 
 import java.util.*
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/8
- * @Description: For Base64 encryption and decryption
- */
 class Base64Encrypt : Encrypt() {
+
+    init {
+        checkBouncyCastleProvider()
+    }
 
     /**
      * Base64 encryption
