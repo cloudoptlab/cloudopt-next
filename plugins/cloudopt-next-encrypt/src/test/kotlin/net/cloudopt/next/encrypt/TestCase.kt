@@ -30,6 +30,17 @@ class TestCase {
     }
 
     @Test
+    fun testSM4() {
+        var e = SM4Encrypt("lKY7YO6jqRnzNOJ3")
+        var s = e.encrypt("hello")
+        assert(e.decrypt(s) == "hello")
+
+        e = SM4Encrypt("lKY7YO6jqRnzNOJ3","cloudoptcloudopt")
+        s = e.encrypt("hello")
+        assert(e.decrypt(s) == "hello")
+    }
+
+    @Test
     fun testRSA() {
         var e = RsaEncrypt()
         e.generate()
