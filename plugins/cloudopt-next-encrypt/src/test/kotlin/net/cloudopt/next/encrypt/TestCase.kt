@@ -77,6 +77,21 @@ class TestCase {
     }
 
     @Test
+    fun testSM2() {
+        var e = SM2Encrypt()
+        e.generate()
+        var s = e.encrypt("hello")
+        assert(e.decrypt(s) == "hello")
+
+        e = SM2Encrypt(
+            "033e5250957110884657948ce04507833731e7f88a18569f57f16b7e2abe3a79ad",
+            "dbd874c60c8c7432052c7f881ae23f5939d841b12a105bb38ab97129ed02f92d"
+        )
+        s = e.encrypt("hello")
+        assert(e.decrypt(s) == "hello")
+    }
+
+    @Test
     fun testSM3() {
         val e: Encrypt = SM3Encrypt()
         assert(e.encrypt("hello") == e.encrypt("hello"))
