@@ -29,8 +29,12 @@ class SHAEncrypt : Encrypt() {
      * @return This is an encrypted string
      */
     override fun encrypt(value: String): String {
-        var digest = MessageDigest.getInstance("SHA", "BC")
-        digest.update(value.toByteArray())
+        return encrypt(value.toByteArray())
+    }
+
+    override fun encrypt(value: ByteArray): String {
+        val digest = MessageDigest.getInstance("SHA", "BC")
+        digest.update(value)
         return toHexString(digest.digest())
     }
 
@@ -39,6 +43,10 @@ class SHAEncrypt : Encrypt() {
      */
     override fun decrypt(value: String): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun decrypt(value: ByteArray): String {
+        TODO("Not yet implemented")
     }
 
 }

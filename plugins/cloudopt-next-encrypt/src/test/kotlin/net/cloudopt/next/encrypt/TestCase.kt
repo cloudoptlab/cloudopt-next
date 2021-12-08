@@ -24,21 +24,11 @@ class TestCase {
         var s = e.encrypt("hello")
         assert(e.decrypt(s) == "hello")
 
-        e = AesEncrypt("lKY7YO6jqRnzNOJ3","cloudoptcloudopt")
+        e = AesEncrypt("lKY7YO6jqRnzNOJ3", "cloudoptcloudopt")
         s = e.encrypt("hello")
         assert(e.decrypt(s) == "hello")
     }
 
-    @Test
-    fun testSM4() {
-        var e = SM4Encrypt("lKY7YO6jqRnzNOJ3")
-        var s = e.encrypt("hello")
-        assert(e.decrypt(s) == "hello")
-
-        e = SM4Encrypt("lKY7YO6jqRnzNOJ3","cloudoptcloudopt")
-        s = e.encrypt("hello")
-        assert(e.decrypt(s) == "hello")
-    }
 
     @Test
     fun testRSA() {
@@ -84,5 +74,23 @@ class TestCase {
         val e = SHA256Encrypt()
         val s = e.encrypt("hello")
         assert(s.length == 64)
+    }
+
+    @Test
+    fun testSM3() {
+        val e: Encrypt = SM3Encrypt()
+        assert(e.encrypt("hello") == e.encrypt("hello"))
+        assert(e.encrypt("hello") != e.encrypt("hi"))
+    }
+
+    @Test
+    fun testSM4() {
+        var e: Encrypt = SM4Encrypt("lKY7YO6jqRnzNOJ3")
+        var s = e.encrypt("hello")
+        assert(e.decrypt(s) == "hello")
+
+        e = SM4Encrypt("lKY7YO6jqRnzNOJ3", "cloudoptcloudopt")
+        s = e.encrypt("hello")
+        assert(e.decrypt(s) == "hello")
     }
 }

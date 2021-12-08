@@ -46,6 +46,10 @@ class SM4Encrypt(password: String, iv: String = "") : Encrypt() {
      * @return Encrypted string
      */
     override fun encrypt(value: String): String {
+        return encrypt(value.toByteArray())
+    }
+
+    override fun encrypt(value: ByteArray): String {
         val encoder = Cipher.getInstance(transformation, "BC")
         val secretKeySpec = SecretKeySpec(key, algorithm)
         if (transformation == "SM4/ECB/PKCS7Padding") {
@@ -53,7 +57,7 @@ class SM4Encrypt(password: String, iv: String = "") : Encrypt() {
         } else {
             encoder.init(1, secretKeySpec, ivParameterSpec)
         }
-        val result = encoder.doFinal(value.toByteArray())
+        val result = encoder.doFinal(value)
         return Base64Encrypt().encrypt(result)
     }
 
@@ -63,7 +67,10 @@ class SM4Encrypt(password: String, iv: String = "") : Encrypt() {
      * @return Decrypted string
      */
     override fun decrypt(value: String): String {
-        val bytes = Base64Encrypt().decryptToByteArray(value)
+        return decrypt(Base64Encrypt().decryptToByteArray(value))
+    }
+
+    override fun decrypt(value: ByteArray): String {
         val encoder = Cipher.getInstance(transformation, "BC")
         val secretKeySpec = SecretKeySpec(key, algorithm)
         if (transformation == "SM4/ECB/PKCS7Padding") {
@@ -71,7 +78,7 @@ class SM4Encrypt(password: String, iv: String = "") : Encrypt() {
         } else {
             encoder.init(2, secretKeySpec, ivParameterSpec)
         }
-        val decoded = encoder.doFinal(bytes)
+        val decoded = encoder.doFinal(value)
         return String(decoded)
     }
 }

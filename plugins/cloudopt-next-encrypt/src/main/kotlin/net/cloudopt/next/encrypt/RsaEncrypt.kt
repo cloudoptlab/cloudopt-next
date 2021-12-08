@@ -48,10 +48,13 @@ class RsaEncrypt(var publicKeyString: String = "", var privateKeyString: String 
      * @return This is an encrypted string
      */
     override fun encrypt(value: String): String {
+        return encrypt(value.toByteArray())
+    }
+
+    override fun encrypt(value: ByteArray): String {
         val cipher = Cipher.getInstance(algorithm, "BC")
         cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-        val b = value.toByteArray()
-        return base64Encrypt.encrypt(cipher.doFinal(b))
+        return base64Encrypt.encrypt(cipher.doFinal(value))
     }
 
     /**
@@ -60,9 +63,13 @@ class RsaEncrypt(var publicKeyString: String = "", var privateKeyString: String 
      * @return This is the decrypted string
      */
     override fun decrypt(value: String): String {
+       return decrypt(base64Encrypt.decryptToByteArray(value))
+    }
+
+    override fun decrypt(value: ByteArray): String {
         val cipher = Cipher.getInstance(algorithm, "BC")
         cipher.init(Cipher.DECRYPT_MODE, privateKey)
-        val b = cipher.doFinal(base64Encrypt.decryptToByteArray(value))
+        val b = cipher.doFinal(value)
         return String(b)
     }
 

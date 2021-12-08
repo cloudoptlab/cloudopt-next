@@ -40,12 +40,16 @@ class DesEncrypt(password: String) : Encrypt() {
      * @return Encoded Byte [] Base64 encoded
      */
     override fun encrypt(value: String): String {
+        return encrypt(value.toByteArray())
+    }
+
+    override fun encrypt(value: ByteArray): String {
         val cipher = Cipher.getInstance(TRANSFORMATION, "BC")
         val secretKeyFactory = SecretKeyFactory.getInstance(ALGORITHM, "BC")
         val keySpec = DESKeySpec(key)
         val secretKey = secretKeyFactory.generateSecret(keySpec)
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, SecureRandom())
-        return Base64Encrypt().encrypt(cipher.doFinal(value.toByteArray()))
+        return Base64Encrypt().encrypt(cipher.doFinal(value))
     }
 
     /**
@@ -54,13 +58,16 @@ class DesEncrypt(password: String) : Encrypt() {
      * @return The encrypted string first Base64 decoding and decryption
      */
     override fun decrypt(value: String): String {
-        val v = Base64Encrypt().decryptToByteArray(value)
+        return decrypt(Base64Encrypt().decryptToByteArray(value))
+    }
+
+    override fun decrypt(value: ByteArray): String {
         val deCipher = Cipher.getInstance(TRANSFORMATION, "BC")
         val keyFactory = SecretKeyFactory.getInstance(ALGORITHM, "BC")
         val deKeySpec = DESKeySpec(key)
         val deSecretKey = keyFactory.generateSecret(deKeySpec)
         deCipher.init(Cipher.DECRYPT_MODE, deSecretKey, SecureRandom())
-        return String(deCipher.doFinal(v))
+        return String(deCipher.doFinal(value))
     }
 
 

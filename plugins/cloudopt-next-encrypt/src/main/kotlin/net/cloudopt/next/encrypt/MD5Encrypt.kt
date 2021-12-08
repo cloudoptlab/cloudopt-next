@@ -31,8 +31,12 @@ class MD5Encrypt : Encrypt() {
      * @return Encrypted string
      */
     override fun encrypt(value: String): String {
+        return encrypt(value.toByteArray())
+    }
+
+    override fun encrypt(value: ByteArray): String {
         val instance: MessageDigest = MessageDigest.getInstance(ALGORITHM, "BC")
-        val digest: ByteArray = instance.digest(value.toByteArray())
+        val digest: ByteArray = instance.digest(value)
         return toHexString(digest)
     }
 
@@ -41,6 +45,10 @@ class MD5Encrypt : Encrypt() {
      */
     override fun decrypt(value: String): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun decrypt(value: ByteArray): String {
+        TODO("Not yet implemented")
     }
 
 
