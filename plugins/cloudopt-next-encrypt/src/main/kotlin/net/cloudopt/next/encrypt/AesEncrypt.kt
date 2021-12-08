@@ -16,18 +16,28 @@
 package net.cloudopt.next.encrypt
 
 import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-class AesEncrypt(password: String) : Encrypt() {
+class AesEncrypt(password: String, iv: String = "") : Encrypt() {
 
     private val algorithm = "AES"
 
-    private val transformation = "AES/ECB/PKCS7Padding"
+    private val transformation = if (iv.isBlank()) {
+        "AES/ECB/PKCS7Padding"
+    } else {
+        "AES/CBC/PKCS7Padding"
+    }
+
+    private lateinit var ivParameterSpec: IvParameterSpec
 
     private var key: ByteArray = password.toByteArray()
 
     init {
         checkBouncyCastleProvider()
+        if (iv.isNotBlank()) {
+            ivParameterSpec = IvParameterSpec(iv.toByteArray())
+        }
     }
 
     /**
@@ -38,7 +48,11 @@ class AesEncrypt(password: String) : Encrypt() {
     override fun encrypt(value: String): String {
         val encoder = Cipher.getInstance(transformation, "BC")
         val secretKeySpec = SecretKeySpec(key, algorithm)
-        encoder.init(1, secretKeySpec)
+        if (transformation == "AES/ECB/PKCS7Padding") {
+            encoder.init(1, secretKeySpec)
+        } else {
+            encoder.init(1, secretKeySpec, ivParameterSpec)
+        }
         val result = encoder.doFinal(value.toByteArray())
         return Base64Encrypt().encrypt(result)
     }
@@ -52,7 +66,11 @@ class AesEncrypt(password: String) : Encrypt() {
         val bytes = Base64Encrypt().decryptToByteArray(value)
         val encoder = Cipher.getInstance(transformation, "BC")
         val secretKeySpec = SecretKeySpec(key, algorithm)
-        encoder.init(2, secretKeySpec)
+        if (transformation == "AES/ECB/PKCS7Padding") {
+            encoder.init(2, secretKeySpec)
+        } else {
+            encoder.init(2, secretKeySpec, ivParameterSpec)
+        }
         val decoded = encoder.doFinal(bytes)
         return String(decoded)
     }

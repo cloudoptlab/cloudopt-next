@@ -20,8 +20,12 @@ class TestCase {
 
     @Test
     fun testAES() {
-        val e = AesEncrypt("lKY7YO6jqRnzNOJ3")
-        val s = e.encrypt("hello")
+        var e = AesEncrypt("lKY7YO6jqRnzNOJ3")
+        var s = e.encrypt("hello")
+        assert(e.decrypt(s) == "hello")
+
+        e = AesEncrypt("lKY7YO6jqRnzNOJ3","cloudoptcloudopt")
+        s = e.encrypt("hello")
         assert(e.decrypt(s) == "hello")
     }
 
