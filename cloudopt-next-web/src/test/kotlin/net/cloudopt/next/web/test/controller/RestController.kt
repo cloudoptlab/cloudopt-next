@@ -40,6 +40,18 @@ class RestController : Resource() {
         renderJson(json("result" to "patch"))
     }
 
+    @POST("/cookie")
+    suspend fun addCookie() {
+        setCookie("key", "value")
+        renderText("success")
+    }
+
+    @DELETE("/cookie")
+    suspend fun delCookie() {
+        delCookie("key")
+        renderText("success")
+    }
+
     @GET("/defaultError")
     suspend fun defaultError() {
         fail(402)

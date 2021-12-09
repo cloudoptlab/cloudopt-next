@@ -68,4 +68,23 @@ class TestRestful : TestStart() {
         }
     }
 
+    @Test
+    fun testAddCookie() = runBlocking {
+        val cookie = client.post("/restful/cookie").putHeader("Content-Type", "application/json").send().await()
+            .getHeader("set-cookie")
+        assert(cookie == "key=value")
+    }
+
+    @Test
+    fun testDelCookie() = runBlocking {
+        val cookie = client.delete("/restful/cookie")
+            .putHeader("Content-Type", "application/json")
+            .putHeader("Cookie","key=value")
+            .send()
+            .await()
+            .getHeader("set-cookie")
+        assert(cookie.indexOf("key=; Max-Age=0; Expires=") == 0)
+//        assert(cookie == "key=value")
+    }
+
 }

@@ -163,7 +163,7 @@ open class Resource {
      * @return The single value of the cookie
      */
     fun getCookieObj(key: String): Cookie? {
-        val cookie = context.getCookie(key)
+        val cookie = context.request().getCookie(key)
         cookie.value = Wafer.contentFilter(cookie.value)
         return cookie
     }
@@ -174,7 +174,7 @@ open class Resource {
      * @return The single value of the cookie
      */
     fun getCookie(key: String): String? {
-        return context.getCookie(key)?.value?.let { Wafer.contentFilter(it) }
+        return context.request().getCookie(key)?.value?.let { Wafer.contentFilter(it) }
     }
 
 
@@ -218,7 +218,7 @@ open class Resource {
      * @param cookie cookie object
      */
     fun setCookie(cookie: Cookie) {
-        context.addCookie(cookie)
+        context.response().addCookie(cookie)
     }
 
     /**
@@ -226,7 +226,7 @@ open class Resource {
      * @param key cookie name
      */
     fun delCookie(key: String) {
-        context.removeCookie(key)
+        context.response().removeCookie(key)
     }
 
     /**
