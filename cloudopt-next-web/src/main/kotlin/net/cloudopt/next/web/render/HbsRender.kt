@@ -44,7 +44,7 @@ class HbsRender : Render {
                     handlebars.compile(NextServer.webConfig.templates + "/" + nextTemplate.name)
                 } catch (e: FileNotFoundException) {
                     promise.fail("The specified page file could not be found: ${nextTemplate.name}!")
-                    end(resource, "The specified page file could not be found: ${nextTemplate.name}!")
+                    resource.fail(500, e)
                     return@await
                 } catch (e: Exception) {
                     promise.fail(e)

@@ -26,7 +26,7 @@ class HealthChecksController : Resource() {
      */
     @GET
     @Validator([HealthChecksPasswordValidator::class])
-    fun healthReport() {
+    suspend fun healthReport() {
         renderJson(HealthChecksManager.report())
     }
 

@@ -26,7 +26,7 @@ import java.util.*
 @AutoHandler
 class ShowRouteHandler : Handler {
 
-    override fun preHandle(resource: Resource): Boolean {
+    override suspend fun preHandle(resource: Resource): Boolean {
         if (NextServer.webConfig.showRoute) {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             logger.info(
@@ -52,15 +52,15 @@ class ShowRouteHandler : Handler {
         return true
     }
 
-    override fun postHandle(resource: Resource): Boolean {
+    override suspend fun postHandle(resource: Resource): Boolean {
         return true
     }
 
-    override fun afterRender(resource: Resource, bodyString: String): Boolean {
+    override suspend fun afterRender(resource: Resource, bodyString: String): Boolean {
         return true
     }
 
-    override fun afterCompletion(resource: Resource): Boolean {
+    override suspend fun afterCompletion(resource: Resource): Boolean {
         return true
     }
 

@@ -16,38 +16,38 @@ class RestController : Resource() {
     @TestAfterPrintAnnotation
     @TestAfterPrint2Annotation
     @GET
-    fun get() {
+    suspend fun get() {
         renderJson(json("result" to "get"))
     }
 
     @POST
-    fun post() {
+    suspend fun post() {
         renderJson(json("result" to "post"))
     }
 
     @PUT
-    fun put() {
+    suspend fun put() {
         renderJson(json("result" to "put"))
     }
 
     @DELETE
-    fun delete() {
+    suspend fun delete() {
         renderJson(json("result" to "delete"))
     }
 
     @PATCH
-    fun patch() {
+    suspend fun patch() {
         renderJson(json("result" to "patch"))
     }
 
     @GET("/defaultError")
-    fun defaultError() {
+    suspend fun defaultError() {
         fail(402)
     }
 
 
     @GET("/customError")
-    fun customError() {
+    suspend fun customError() {
         fail(500, RuntimeException("Test Error"))
     }
 

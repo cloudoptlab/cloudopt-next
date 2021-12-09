@@ -254,7 +254,7 @@ open class Resource {
      * Using the default render, render the data and write it to response.
      * @param result Any object,
      */
-    fun render(result: Any) {
+    suspend fun render(result: Any) {
         render("", result)
     }
 
@@ -263,7 +263,7 @@ open class Resource {
      * @param renderName render name,
      * @param result Any object,
      */
-    fun render(renderName: String, result: Any) {
+    suspend fun render(renderName: String, result: Any) {
         NextServer.handlers.forEach { handler ->
             if (!handler.postHandle(Resource().init(context))) {
                 if (!context.response().ended()) {
@@ -283,7 +283,7 @@ open class Resource {
      * Using the json render, render the Template.parameters and write it to response.
      * @param block
      */
-    fun renderJson(block: () -> Template) {
+    suspend fun renderJson(block: () -> Template) {
         render(RenderFactory.JSON, block.invoke().parameters)
     }
 
@@ -291,7 +291,7 @@ open class Resource {
      * Using the json render, render the data and write it to response.
      * @param result Any object,
      */
-    fun renderJson(result: Any) {
+    suspend fun renderJson(result: Any) {
         render(RenderFactory.JSON, result)
     }
 
@@ -299,7 +299,7 @@ open class Resource {
      * Using the text render, render the data and write it to response.
      * @param result Any object,
      */
-    fun renderText(result: String) {
+    suspend fun renderText(result: String) {
         render(RenderFactory.TEXT, result)
     }
 
@@ -308,7 +308,7 @@ open class Resource {
      * @see Template
      * @param block
      */
-    fun renderHtml(block: () -> Template) {
+    suspend fun renderHtml(block: () -> Template) {
         render(RenderFactory.HTML, block.invoke())
     }
 
@@ -317,7 +317,7 @@ open class Resource {
      * @see Template
      * @param block
      */
-    fun renderHbs(block: () -> Template) {
+    suspend fun renderHbs(block: () -> Template) {
 
         render(RenderFactory.HBS, block.invoke())
     }
@@ -327,7 +327,7 @@ open class Resource {
      * @see Template
      * @param block
      */
-    fun renderFree(block: () -> Template) {
+    suspend fun renderFree(block: () -> Template) {
         render(RenderFactory.FREE, block.invoke())
     }
 
@@ -336,7 +336,7 @@ open class Resource {
      *
      * @param fileName  path to the file to server
      */
-    fun sendFile(fileName: String) {
+    suspend fun sendFile(fileName: String) {
         response.sendFile(fileName)
     }
 
@@ -344,7 +344,7 @@ open class Resource {
      * Use the 302 status code to redirect to the page.
      * @param url the url of the page you want to redirect to it
      */
-    fun redirect(url: String) {
+    suspend fun redirect(url: String) {
         if (!context.response().ended()) {
             response.statusCode = 302
             response.putHeader("location", url)
