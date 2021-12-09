@@ -25,7 +25,7 @@ interface Render {
      * @param resource Resource object
      * @param obj May be the view object may also be just a simple text
      */
-    fun render(resource: Resource, obj: Any)
+    suspend fun render(resource: Resource, obj: Any)
 
     /**
      * Ends the response. If no data has been written to the response body,

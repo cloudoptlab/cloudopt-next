@@ -17,26 +17,23 @@ package net.cloudopt.next.web.render
 
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.core.Worker.await
-import net.cloudopt.next.core.Worker.global
 import net.cloudopt.next.json.Jsoner.toJsonString
 import net.cloudopt.next.web.Resource
 
 class JsonRender : Render {
 
-    override fun render(resource: Resource, obj: Any) {
-        global {
-            val json = await<String> { promise ->
-                try {
-                    promise.complete(obj.toJsonString())
-                } catch (e: Exception) {
-                    promise.fail(e)
-                    e.printStackTrace()
-                    resource.fail(500, e)
-                    return@await
-                }
+    override suspend fun render(resource: Resource, obj: Any) {
+        val json = await<String> { promise ->
+            try {
+                promise.complete(obj.toJsonString())
+            } catch (e: Exception) {
+                promise.fail(e)
+                e.printStackTrace()
+                resource.fail(500, e)
+                return@await
             }
-            resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
-            end(resource, json)
         }
+        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "application/json;charset=UTF-8")
+        end(resource, json)
     }
 }

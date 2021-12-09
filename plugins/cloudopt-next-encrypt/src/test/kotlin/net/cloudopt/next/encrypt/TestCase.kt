@@ -80,7 +80,9 @@ class TestCase {
     fun testSM2() {
         var e = SM2Encrypt()
         e.generate()
+        println(e.privateKeyString)
         var s = e.encrypt("hello")
+        println(s)
         assert(e.decrypt(s) == "hello")
 
         e = SM2Encrypt(

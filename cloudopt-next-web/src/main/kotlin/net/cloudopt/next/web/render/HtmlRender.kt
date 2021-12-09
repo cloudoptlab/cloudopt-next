@@ -18,7 +18,6 @@ package net.cloudopt.next.web.render
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.core.Resourcer
 import net.cloudopt.next.core.Worker.await
-import net.cloudopt.next.core.Worker.global
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Resource
@@ -33,42 +32,41 @@ class HtmlRender : Render {
         val logger = Logger.getLogger(HtmlRender::class)
     }
 
-    override fun render(resource: Resource, result: Any) {
-        global {
-            val nextTemplate = result as Template
+    override suspend fun render(resource: Resource, result: Any) {
 
-            if (nextTemplate.name.indexOf(".") < 0) {
-                nextTemplate.name = nextTemplate.name + ".html"
-            }
-            resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
-            if (templates.containsKey(nextTemplate.name)) {
-                end(resource, templates[nextTemplate.name] ?: "")
-            } else {
-                val html = await<String> { promise ->
-                    val inputStream = try {
-                        Resourcer.getFileInputStream(NextServer.webConfig.templates + "/" + nextTemplate.name)
-                    } catch (e: NullPointerException) {
-                        promise.fail("The specified page file could not be found: ${nextTemplate.name}!")
-                        end(resource, "The specified page file could not be found: ${nextTemplate.name}!")
-                        return@await
-                    } catch (e: Exception) {
-                        promise.fail(e)
-                        resource.fail(500, e)
-                        return@await
-                    }
-                    val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-                    val stringBuilder = StringBuilder()
-                    bufferedReader.forEachLine { content ->
-                        if (content.isNotBlank()) {
-                            stringBuilder.append(content)
-                        }
-                    }
-                    templates[nextTemplate.name] = stringBuilder.toString()
-                    promise.complete(stringBuilder.toString())
+        val nextTemplate = result as Template
+
+        if (nextTemplate.name.indexOf(".") < 0) {
+            nextTemplate.name = nextTemplate.name + ".html"
+        }
+        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+        if (templates.containsKey(nextTemplate.name)) {
+            end(resource, templates[nextTemplate.name] ?: "")
+        } else {
+            val html = await<String> { promise ->
+                val inputStream = try {
+                    Resourcer.getFileInputStream(NextServer.webConfig.templates + "/" + nextTemplate.name)
+                } catch (e: NullPointerException) {
+                    promise.fail("The specified page file could not be found: ${nextTemplate.name}!")
+                    end(resource, "The specified page file could not be found: ${nextTemplate.name}!")
+                    return@await
+                } catch (e: Exception) {
+                    promise.fail(e)
+                    resource.fail(500, e)
+                    return@await
                 }
-
-                end(resource, html)
+                val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+                val stringBuilder = StringBuilder()
+                bufferedReader.forEachLine { content ->
+                    if (content.isNotBlank()) {
+                        stringBuilder.append(content)
+                    }
+                }
+                templates[nextTemplate.name] = stringBuilder.toString()
+                promise.complete(stringBuilder.toString())
             }
+
+            end(resource, html)
         }
     }
 }

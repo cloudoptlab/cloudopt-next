@@ -19,7 +19,6 @@ import com.github.jknack.handlebars.Handlebars
 import com.github.jknack.handlebars.Template
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.core.Worker.await
-import net.cloudopt.next.core.Worker.global
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Resource
 import java.io.FileNotFoundException
@@ -31,34 +30,32 @@ class HbsRender : Render {
         private val templates = mutableMapOf<String, Template>()
     }
 
-    override fun render(resource: Resource, obj: Any) {
+    override suspend fun render(resource: Resource, obj: Any) {
 
         var nextTemplate: net.cloudopt.next.web.render.Template = obj as net.cloudopt.next.web.render.Template
 
         val handlebars = Handlebars()
 
-        global {
-            val html = await<String> { promise ->
-                val template = if (templates.containsKey(nextTemplate.name)) {
-                    templates[nextTemplate.name]
-                } else {
-                    try {
-                        handlebars.compile(NextServer.webConfig.templates + "/" + nextTemplate.name)
-                    } catch (e: FileNotFoundException) {
-                        promise.fail("The specified page file could not be found: ${nextTemplate.name}!")
-                        end(resource, "The specified page file could not be found: ${nextTemplate.name}!")
-                        return@await
-                    } catch (e: Exception) {
-                        promise.fail(e)
-                        resource.fail(500, e)
-                        return@await
-                    }
+        val html = await<String> { promise ->
+            val template = if (templates.containsKey(nextTemplate.name)) {
+                templates[nextTemplate.name]
+            } else {
+                try {
+                    handlebars.compile(NextServer.webConfig.templates + "/" + nextTemplate.name)
+                } catch (e: FileNotFoundException) {
+                    promise.fail("The specified page file could not be found: ${nextTemplate.name}!")
+                    end(resource, "The specified page file could not be found: ${nextTemplate.name}!")
+                    return@await
+                } catch (e: Exception) {
+                    promise.fail(e)
+                    resource.fail(500, e)
+                    return@await
                 }
-                promise.complete(template?.apply(nextTemplate.parameters))
             }
-            resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
-            end(resource, html)
+            promise.complete(template?.apply(nextTemplate.parameters))
         }
+        resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
+        end(resource, html)
 
 
     }

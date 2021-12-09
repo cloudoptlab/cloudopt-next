@@ -20,7 +20,6 @@ import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
 import io.vertx.core.http.HttpHeaders
 import net.cloudopt.next.core.Worker.await
-import net.cloudopt.next.core.Worker.global
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.web.Resource
 import java.io.StringWriter
@@ -70,35 +69,32 @@ class FreemarkerRender : Render {
 
     }
 
-    override fun render(resource: Resource, obj: Any) {
+    override suspend fun render(resource: Resource, obj: Any) {
 
         val nextTemplate: net.cloudopt.next.web.render.Template = obj as net.cloudopt.next.web.render.Template
 
         if (nextTemplate.name.indexOf(".") < 0) {
             nextTemplate.name = nextTemplate.name + ".ftl"
         }
-
-        global {
-            val html = await<String> { promise ->
-                try {
-                    var temp = if (templates.containsKey(nextTemplate.name)) {
-                        templates[nextTemplate.name]
-                    } else {
-                        templates[nextTemplate.name] = config?.getTemplate(nextTemplate.name)
-                        templates[nextTemplate.name]
-                    }
-                    var writer = StringWriter()
-                    temp?.process(nextTemplate.parameters, writer)
-                    resource.response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
-                    promise.complete(writer.toString())
-                } catch (e: Exception) {
-                    promise.fail(e)
-                    resource.fail(500, e)
-                    return@await
+        val html = await<String> { promise ->
+            try {
+                var temp = if (templates.containsKey(nextTemplate.name)) {
+                    templates[nextTemplate.name]
+                } else {
+                    templates[nextTemplate.name] = config?.getTemplate(nextTemplate.name)
+                    templates[nextTemplate.name]
                 }
+                var writer = StringWriter()
+                temp?.process(nextTemplate.parameters, writer)
+                resource.response.putHeader(HttpHeaders.CONTENT_TYPE, contentType)
+                promise.complete(writer.toString())
+            } catch (e: Exception) {
+                promise.fail(e)
+                resource.fail(500, e)
+                return@await
             }
-            end(resource, html)
         }
+        end(resource, html)
 
 
     }
