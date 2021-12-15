@@ -1,0 +1,18 @@
+{
+  "datasource": [
+    {
+      "name": "default",
+      "database": "mysql",
+      "jdbcUrl": "jdbc:mysql://172.17.0.2:3306/next?useUnicode=true&character_set_server=utf8mb4&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true",
+      "username": "root",
+      "password": "root"
+    },
+    {
+      "name": "next2",
+      "database": "mysql",
+      "jdbcUrl": "jdbc:mysql://172.17.0.2:3306/next2?useUnicode=true&character_set_server=utf8mb4&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true",
+      "username": "root",
+      "password": "root"
+    }
+  ]
+}

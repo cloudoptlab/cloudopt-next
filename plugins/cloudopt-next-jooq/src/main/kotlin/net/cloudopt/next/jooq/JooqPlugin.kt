@@ -18,9 +18,10 @@ package net.cloudopt.next.jooq
 import net.cloudopt.next.core.Classer
 import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Plugin
+import net.cloudopt.next.jdbc.JDBCConfig
 import net.cloudopt.next.jooq.JooqManager.pool
-import net.cloudopt.next.jooq.pool.ConnectionPool
-import net.cloudopt.next.jooq.pool.HikariCPPool
+import net.cloudopt.next.jdbc.JDBCConnectionPool
+import net.cloudopt.next.jdbc.provider.HikariConnectionPoolProvider
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 import org.jooq.impl.DataSourceConnectionProvider
@@ -38,9 +39,9 @@ class JooqPlugin : Plugin {
             val map = ConfigManager.init("jooq")
 
             pool = if (map["pool"] != null) {
-                Classer.loadClass(map["pool"] as String).createInstance() as ConnectionPool
+                Classer.loadClass(map["pool"] as String).createInstance() as JDBCConnectionPool
             } else {
-                HikariCPPool()
+                HikariConnectionPoolProvider(JDBCConfig())
             }
 
             val sqlDialect = when (map["database"]) {

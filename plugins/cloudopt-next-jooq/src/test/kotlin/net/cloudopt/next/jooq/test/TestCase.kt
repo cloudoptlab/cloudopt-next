@@ -16,7 +16,7 @@
 package net.cloudopt.next.jooq.test
 
 import net.cloudopt.next.health.HealthChecksManager
-import net.cloudopt.next.jooq.DBHealthIndicator
+import net.cloudopt.next.jdbc.JDBCHealthIndicator
 import net.cloudopt.next.jooq.JooqPlugin
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.health.HealthChecksPlugin
@@ -30,7 +30,7 @@ import net.cloudopt.next.health.HealthChecksPlugin
 
 fun main() {
     NextServer.addPlugin(JooqPlugin())
-    HealthChecksManager.register("db", DBHealthIndicator())
+    HealthChecksManager.register("db", JDBCHealthIndicator())
     NextServer.addPlugin(HealthChecksPlugin())
     NextServer.run()
 }

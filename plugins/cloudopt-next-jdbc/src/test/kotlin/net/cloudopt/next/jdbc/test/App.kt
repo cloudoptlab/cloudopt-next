@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.jooq.pool
+package net.cloudopt.next.jdbc.test
 
-import java.sql.Connection
-import javax.sql.DataSource
+import net.cloudopt.next.health.HealthChecksManager
+import net.cloudopt.next.health.HealthChecksPlugin
+import net.cloudopt.next.jdbc.JDBCHealthIndicator
+import net.cloudopt.next.web.NextServer
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/2/6
- * @Description: Connection pool interface
- */
-interface ConnectionPool {
-
-    fun getConnection(): Connection
-
-    fun getDatasource(): DataSource
-
+fun main() {
+    HealthChecksManager.register("db", JDBCHealthIndicator())
+    NextServer.addPlugin(HealthChecksPlugin())
+    NextServer.run()
 }

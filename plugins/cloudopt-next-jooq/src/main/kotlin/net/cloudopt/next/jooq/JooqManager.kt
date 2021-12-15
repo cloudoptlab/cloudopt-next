@@ -15,7 +15,7 @@
  */
 package net.cloudopt.next.jooq
 
-import net.cloudopt.next.jooq.pool.ConnectionPool
+import net.cloudopt.next.jdbc.JDBCConnectionPool
 import org.jooq.ConnectionProvider
 import org.jooq.DSLContext
 import org.jooq.TransactionProvider
@@ -28,7 +28,7 @@ import java.sql.Connection
 object JooqManager {
 
     @JvmStatic
-    lateinit var pool: ConnectionPool
+    lateinit var pool: JDBCConnectionPool
 
     @JvmStatic
     lateinit var connection: Connection
