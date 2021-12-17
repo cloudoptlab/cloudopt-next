@@ -34,14 +34,3 @@ fun main() {
     NextServer.addPlugin(HealthChecksPlugin())
     NextServer.run()
 }
-
-//class TestCase {
-//
-//    @Test
-//    fun testConnection() {
-//        var plugin = JooqPlugin()
-//        plugin.start()
-//
-//    }
-//
-//}

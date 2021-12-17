@@ -4,9 +4,9 @@ dependencies {
     implementation project(":plugins:cloudopt-next-jdbc")
     implementation project(":plugins:cloudopt-next-health")
     compileOnly "org.jooq:jooq:3.14.4"
-    compileOnly "com.zaxxer:HikariCP:3.4.5"
+    compileOnly "com.zaxxer:HikariCP:5.0.0"
     testImplementation "org.jooq:jooq:3.14.4"
-    testImplementation "com.zaxxer:HikariCP:3.4.5"
+    testImplementation "com.zaxxer:HikariCP:5.0.0"
     testImplementation "mysql:mysql-connector-java:8.0.23"
     compileOnly "org.jooq:jooq-meta:3.14.4"
     compileOnly "org.jooq:jooq-codegen:3.14.4"

@@ -1,12 +1,18 @@
 {
-  "datasource": {
-    "jdbcUrl": "jdbc:mysql://127.0.0.1:3306/cloudopt?useUnicode=true&character_set_server=utf8mb4&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true",
-    "username": "root",
-    "password": "root",
-    "driverClassName": "com.mysql.cj.jdbc.Driver"
-  },
-  "jooq": {
-    "pool": "net.cloudopt.next.jooq.pool.HikariCPPool",
-    "database": "mysql"
-  }
+  "datasource": [
+    {
+      "name": "default",
+      "database": "mysql",
+      "jdbcUrl": "jdbc:mysql://172.17.0.2:3306/next?useUnicode=true&character_set_server=utf8mb4&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true",
+      "username": "root",
+      "password": "root"
+    },
+    {
+      "name": "next2",
+      "database": "mysql",
+      "jdbcUrl": "jdbc:mysql://172.17.0.2:3306/next2?useUnicode=true&character_set_server=utf8mb4&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true",
+      "username": "root",
+      "password": "root"
+    }
+  ]
 }
