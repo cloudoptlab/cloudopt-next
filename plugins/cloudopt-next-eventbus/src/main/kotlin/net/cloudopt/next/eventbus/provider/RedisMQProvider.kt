@@ -28,9 +28,9 @@ import net.cloudopt.next.redis.RedisManager
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
-class RedisMQProvider : EventBusProvider {
+class RedisMQProvider(private val redisName: String = "default") : EventBusProvider {
     override suspend fun init() {
-        RedisManager.addListener(RedisEventBusListener())
+        RedisManager.addListener(redisName, RedisEventBusListener())
     }
 
     override suspend fun consumer(address: String, listener: KClass<EventListener>) {
@@ -43,7 +43,7 @@ class RedisMQProvider : EventBusProvider {
 
     override suspend fun publish(address: String, message: JsonObject) {
         await {
-            RedisManager.publishSync(address, message.toJsonString())
+            RedisManager.publishSync(redisName, address, message.toJsonString())
         }
     }
 }
