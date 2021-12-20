@@ -16,14 +16,12 @@
 package net.cloudopt.next.redis
 
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
-import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisFuture
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.api.async.RedisAsyncCommands
 import io.lettuce.core.api.coroutines
 import io.lettuce.core.api.coroutines.RedisCoroutinesCommands
 import io.lettuce.core.api.sync.RedisCommands
-import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
 import io.lettuce.core.cluster.api.async.RedisAdvancedClusterAsyncCommands
 import io.lettuce.core.cluster.api.coroutines
@@ -38,66 +36,79 @@ import io.lettuce.core.pubsub.StatefulRedisPubSubConnection
  */
 object RedisManager {
 
-    var cluster = false
+    var configMap: MutableMap<String, RedisConfig> = mutableMapOf()
 
-    open lateinit var client: RedisClient
+    var connectionMap: MutableMap<String, StatefulRedisConnection<String, String>> = mutableMapOf()
 
-    open lateinit var clusterClient: RedisClusterClient
+    var publishConnectionMap: MutableMap<String, StatefulRedisPubSubConnection<String, String>> = mutableMapOf()
 
-    lateinit var connection: StatefulRedisConnection<String, String>
+    var subscribeConnectionMap: MutableMap<String, StatefulRedisPubSubConnection<String, String>> = mutableMapOf()
 
-    lateinit var publishConnection: StatefulRedisPubSubConnection<String, String>
+    var clusterConnectionMap: MutableMap<String, StatefulRedisClusterConnection<String, String>> = mutableMapOf()
 
-    lateinit var subscribeConnection: StatefulRedisPubSubConnection<String, String>
+    var clusterPublishConnectionMap: MutableMap<String, StatefulRedisClusterPubSubConnection<String, String>> =
+        mutableMapOf()
 
-    lateinit var clusterConnection: StatefulRedisClusterConnection<String, String>
-
-    lateinit var clusterPublishConnection: StatefulRedisClusterPubSubConnection<String, String>
-
-    lateinit var clusterSubscribeConnection: StatefulRedisClusterPubSubConnection<String, String>
+    var clusterSubscribeConnectionMap: MutableMap<String, StatefulRedisClusterPubSubConnection<String, String>> =
+        mutableMapOf()
 
     /**
      * Extension for StatefulRedisConnection to create RedisCoroutinesCommands
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      */
     @ExperimentalLettuceCoroutinesApi
-    fun coroutines(): RedisCoroutinesCommands<String, String> {
-        return connection.coroutines()
+    fun coroutines(name: String = "default"): RedisCoroutinesCommands<String, String> {
+        return connectionMap[name]!!.coroutines()
     }
 
     /**
      * Extension for StatefulRedisClusterConnection to create RedisClusterCoroutinesCommands.
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      */
     @ExperimentalLettuceCoroutinesApi
-    fun clusterCoroutines(): RedisClusterCoroutinesCommands<String, String> {
-        return clusterConnection.coroutines()
+    fun clusterCoroutines(name: String = "default"): RedisClusterCoroutinesCommands<String, String> {
+        return clusterConnectionMap[name]!!.coroutines()
     }
 
     /**
      * Returns the RedisCommands API for the current connection. Does not create a new connection.
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      */
-    fun sync(): RedisCommands<String, String> {
-        return connection.sync()
+    fun sync(name: String = "default"): RedisCommands<String, String>? {
+        return connectionMap[name]!!.sync()
     }
 
     /**
-     * Returns the RedisAdvancedClusterCommands API for the current connection. Does not create a new connection.
+     * Returns the RedisAdvancedClusterCommands API for the current connection.
+     * Does not create a new connection.
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      */
-    fun clusterSync(): RedisAdvancedClusterCommands<String, String> {
-        return clusterConnection.sync()
+    fun clusterSync(name: String = "default"): RedisAdvancedClusterCommands<String, String> {
+        return clusterConnectionMap[name]!!.sync()
     }
 
     /**
-     * Returns the RedisAsyncCommands API for the current connection. Does not create a new connection.
+     * Returns the RedisAsyncCommands API for the current connection.
+     * Does not create a new connection.
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      */
-    fun asyn(): RedisAsyncCommands<String, String> {
-        return connection.async()
+    fun asyn(name: String = "default"): RedisAsyncCommands<String, String> {
+        return connectionMap[name]!!.async()
     }
 
     /**
-     * Returns the RedisAdvancedClusterAsyncCommands API for the current connection. Does not create a new connection.
+     * Returns the RedisAdvancedClusterAsyncCommands API for the current connection. \
+     * Does not create a new connection.
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      */
-    fun clusterAsync(): RedisAdvancedClusterAsyncCommands<String, String> {
-        return clusterConnection.async()
+    fun clusterAsync(name: String = "default"): RedisAdvancedClusterAsyncCommands<String, String> {
+        return clusterConnectionMap[name]!!.async()
     }
 
     /**
@@ -105,14 +116,16 @@ object RedisManager {
      *
      * @param channel the channel type: key.
      * @param message the message type: value.
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      * @return Long integer-reply the number of clients that received the message.
      */
     @ExperimentalLettuceCoroutinesApi
-    suspend fun publish(channel: String, message: String): Long? {
-        if (cluster) {
-            return clusterPublishConnection.coroutines().publish(channel, message)
+    suspend fun publish(name: String = "default", channel: String, message: String): Long? {
+        if (configMap[name]?.cluster == true) {
+            return clusterPublishConnectionMap[name]!!.coroutines().publish(channel, message)
         }
-        return publishConnection.coroutines().publish(channel, message)
+        return publishConnectionMap[name]!!.coroutines().publish(channel, message)
     }
 
     /**
@@ -120,13 +133,15 @@ object RedisManager {
      *
      * @param channel the channel type: key.
      * @param message the message type: value.
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      * @return Long integer-reply the number of clients that received the message.
      */
-    fun publishSync(channel: String, message: String): Long? {
-        if (cluster) {
-            return clusterPublishConnection.sync().publish(channel, message)
+    fun publishSync(name: String = "default", channel: String, message: String): Long? {
+        if (configMap[name]?.cluster == true) {
+            return clusterPublishConnectionMap[name]!!.sync().publish(channel, message)
         }
-        return publishConnection.sync().publish(channel, message)
+        return publishConnectionMap[name]!!.sync().publish(channel, message)
     }
 
     /**
@@ -134,35 +149,41 @@ object RedisManager {
      *
      * @param channel the channel type: key.
      * @param message the message type: value.
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      * @return Long integer-reply the number of clients that received the message.
      */
-    fun publishAsync(channel: String, message: String): RedisFuture<Long>? {
-        if (cluster) {
-            return clusterPublishConnection.async().publish(channel, message)
+    fun publishAsync(name: String = "default", channel: String, message: String): RedisFuture<Long>? {
+        if (configMap[name]?.cluster == true) {
+            return clusterPublishConnectionMap[name]!!.async().publish(channel, message)
         }
-        return publishConnection.async().publish(channel, message)
+        return publishConnectionMap[name]!!.async().publish(channel, message)
     }
 
     /**
      * Listen for messages published to the given channels.channels
      * @param channels the channels
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      */
-    fun subscribe(vararg channels: String) {
-        if (cluster) {
-            return clusterSubscribeConnection.sync().subscribe(*channels)
+    fun subscribe(name: String = "default", vararg channels: String) {
+        if (configMap[name]?.cluster == true) {
+            return clusterSubscribeConnectionMap[name]!!.sync().subscribe(*channels)
         }
-        return subscribeConnection.sync().subscribe(*channels)
+        return subscribeConnectionMap[name]!!.sync().subscribe(*channels)
     }
 
     /**
      * Add a new listener to consume push messages.
      * @param listener the listener, must not be null.
+     * @param name Multiple data sources are supported from version 3.1.0.0,
+     * please declare the data source used.
      */
-    fun addListener(listener: RedisPubSubListener<String, String>) {
-        if (cluster) {
-            return clusterSubscribeConnection.addListener(listener)
+    fun addListener(name: String = "default", listener: RedisPubSubListener<String, String>) {
+        if (configMap[name]?.cluster == true) {
+            return clusterSubscribeConnectionMap[name]!!.addListener(listener)
         }
-        subscribeConnection.addListener(listener)
+        subscribeConnectionMap[name]!!.addListener(listener)
     }
 
 }

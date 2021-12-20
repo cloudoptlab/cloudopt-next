@@ -6,7 +6,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Worker
 import net.cloudopt.next.web.NextServer
 import org.junit.After
@@ -42,9 +41,9 @@ class TestAloneCase {
     @ExperimentalLettuceCoroutinesApi
     @Test
     fun testPubSub(): Unit = runBlocking {
-        RedisManager.addListener(TestEventListener())
+        RedisManager.addListener(listener = TestEventListener())
         RedisManager.subscribe("testMQ")
-        val id = RedisManager.publish("testMQ", "New　Message") ?: -1
+        val id = RedisManager.publish(channel = "testMQ", message = "New　Message") ?: -1
         assert(id > -1)
     }
 

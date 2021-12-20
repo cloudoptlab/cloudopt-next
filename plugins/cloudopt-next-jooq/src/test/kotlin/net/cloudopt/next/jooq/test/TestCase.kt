@@ -21,13 +21,6 @@ import net.cloudopt.next.jooq.JooqPlugin
 import net.cloudopt.next.web.NextServer
 import net.cloudopt.next.health.HealthChecksPlugin
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/9
- * @Description: Test Case
- */
-
 fun main() {
     NextServer.addPlugin(JooqPlugin())
     HealthChecksManager.register("db", JDBCHealthIndicator())

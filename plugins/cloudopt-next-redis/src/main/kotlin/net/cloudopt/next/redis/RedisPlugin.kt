@@ -22,6 +22,8 @@ import io.lettuce.core.resource.DefaultClientResources
 import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Plugin
 import net.cloudopt.next.core.Worker
+import net.cloudopt.next.json.Jsoner.jsonToObjectList
+import net.cloudopt.next.json.Jsoner.toJsonString
 
 
 /*
@@ -33,57 +35,71 @@ import net.cloudopt.next.core.Worker
 class RedisPlugin : Plugin {
 
     override fun start(): Boolean {
-        val redisConfig = ConfigManager.init("redis")
-        val uri: String = if ((redisConfig["uri"] as String).isNotBlank()) {
-            redisConfig["uri"] as String
+
+        if (ConfigManager.configMap.contains("redis")) {
+            val redisConfigList: MutableList<RedisConfig> =
+                ConfigManager.configMap["redis"]!!.toJsonString().jsonToObjectList(RedisConfig::class)
+            redisConfigList.forEach { redisConfig ->
+                val res: ClientResources = DefaultClientResources.builder()
+                    .eventExecutorGroup(Worker.vertx.nettyEventLoopGroup())
+                    .build()
+                if (redisConfig.cluster) {
+                    startCluster(res, redisConfig)
+                } else {
+                    startAlone(res, redisConfig)
+                }
+                RedisManager.configMap[redisConfig.name] = redisConfig
+            }
         } else {
-            "redis://localhost"
+            throw RuntimeException("No redis related configuration was found in the configuration to initialize!")
         }
 
-        /**
-         * Modify the default EventLoop of the lettuce to be the EventLoop of the vertx.
-         */
-        val res: ClientResources = DefaultClientResources.builder()
-            .eventExecutorGroup(Worker.vertx.nettyEventLoopGroup())
-            .build()
-        if (redisConfig["cluster"] != null && redisConfig["cluster"] as Boolean) {
-            startCluster(res, uri, redisConfig)
-        } else {
-            startAlone(res, uri, redisConfig)
-        }
+
+
         return true
     }
 
     override fun stop(): Boolean {
-        if (RedisManager.cluster) {
-            RedisManager.clusterClient.shutdown()
-        } else {
-            RedisManager.client.shutdown()
+        RedisManager.connectionMap.forEach { map ->
+            map.value.close()
+        }
+        RedisManager.publishConnectionMap.forEach { map ->
+            map.value.close()
+        }
+        RedisManager.subscribeConnectionMap.forEach { map ->
+            map.value.close()
+        }
+        RedisManager.clusterConnectionMap.forEach { map ->
+            map.value.close()
+        }
+        RedisManager.clusterPublishConnectionMap.forEach { map ->
+            map.value.close()
+        }
+        RedisManager.clusterSubscribeConnectionMap.forEach { map ->
+            map.value.close()
         }
         return true
     }
 
-    private fun startAlone(res: ClientResources, uri: String, redisConfig: MutableMap<String, Any>) {
-        RedisManager.cluster = false
-        RedisManager.client = RedisClient.create(res, uri)
-        RedisManager.connection = RedisManager.client.connect()
-        if (redisConfig["publish"] != null && redisConfig["publish"] as Boolean) {
-            RedisManager.publishConnection = RedisManager.client.connectPubSub()
+    private fun startAlone(res: ClientResources, redisConfig: RedisConfig) {
+        val client = RedisClient.create(res, redisConfig.uri)
+        RedisManager.connectionMap[redisConfig.name] = client.connect()
+        if (redisConfig.publish) {
+            RedisManager.publishConnectionMap[redisConfig.name] = client.connectPubSub()
         }
-        if (redisConfig["subscribe"] != null && redisConfig["subscribe"] as Boolean) {
-            RedisManager.subscribeConnection = RedisManager.client.connectPubSub()
+        if (redisConfig.subscribe) {
+            RedisManager.subscribeConnectionMap[redisConfig.name] = client.connectPubSub()
         }
     }
 
-    private fun startCluster(res: ClientResources, uri: String, redisConfig: MutableMap<String, Any>) {
-        RedisManager.cluster = true
-        RedisManager.clusterClient = RedisClusterClient.create(res, uri)
-        RedisManager.clusterConnection = RedisManager.clusterClient.connect()
-        if (redisConfig["publish"] != null && redisConfig["publish"] as Boolean) {
-            RedisManager.clusterPublishConnection = RedisManager.clusterClient.connectPubSub()
+    private fun startCluster(res: ClientResources, redisConfig: RedisConfig) {
+        val client = RedisClusterClient.create(res, redisConfig.uri)
+        RedisManager.clusterConnectionMap[redisConfig.name] = client.connect()
+        if (redisConfig.publish) {
+            RedisManager.clusterPublishConnectionMap[redisConfig.name] = client.connectPubSub()
         }
-        if (redisConfig["subscribe"] != null && redisConfig["subscribe"] as Boolean) {
-            RedisManager.clusterSubscribeConnection = RedisManager.clusterClient.connectPubSub()
+        if (redisConfig.subscribe) {
+            RedisManager.clusterSubscribeConnectionMap[redisConfig.name] = client.connectPubSub()
         }
     }
 
