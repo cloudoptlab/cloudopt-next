@@ -8,7 +8,9 @@
     },
     {
       "name": "2",
-      "uri": "redis://:root@172.17.0.3:6379/1"
+      "uri": "redis://:root@172.17.0.3:6379/1",
+      "publish": true,
+      "subscribe": true
     }
   ]
 }

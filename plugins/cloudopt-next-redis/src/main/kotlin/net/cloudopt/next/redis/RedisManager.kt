@@ -16,12 +16,14 @@
 package net.cloudopt.next.redis
 
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
+import io.lettuce.core.RedisClient
 import io.lettuce.core.RedisFuture
 import io.lettuce.core.api.StatefulRedisConnection
 import io.lettuce.core.api.async.RedisAsyncCommands
 import io.lettuce.core.api.coroutines
 import io.lettuce.core.api.coroutines.RedisCoroutinesCommands
 import io.lettuce.core.api.sync.RedisCommands
+import io.lettuce.core.cluster.RedisClusterClient
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection
 import io.lettuce.core.cluster.api.async.RedisAdvancedClusterAsyncCommands
 import io.lettuce.core.cluster.api.coroutines
@@ -38,18 +40,22 @@ object RedisManager {
 
     var configMap: MutableMap<String, RedisConfig> = mutableMapOf()
 
-    var connectionMap: MutableMap<String, StatefulRedisConnection<String, String>> = mutableMapOf()
+    val clientMap: MutableMap<String, RedisClient> = mutableMapOf()
 
-    var publishConnectionMap: MutableMap<String, StatefulRedisPubSubConnection<String, String>> = mutableMapOf()
+    val clusterClientMap: MutableMap<String, RedisClusterClient> = mutableMapOf()
 
-    var subscribeConnectionMap: MutableMap<String, StatefulRedisPubSubConnection<String, String>> = mutableMapOf()
+    val connectionMap: MutableMap<String, StatefulRedisConnection<String, String>> = mutableMapOf()
 
-    var clusterConnectionMap: MutableMap<String, StatefulRedisClusterConnection<String, String>> = mutableMapOf()
+    val publishConnectionMap: MutableMap<String, StatefulRedisPubSubConnection<String, String>> = mutableMapOf()
 
-    var clusterPublishConnectionMap: MutableMap<String, StatefulRedisClusterPubSubConnection<String, String>> =
+    val subscribeConnectionMap: MutableMap<String, StatefulRedisPubSubConnection<String, String>> = mutableMapOf()
+
+    val clusterConnectionMap: MutableMap<String, StatefulRedisClusterConnection<String, String>> = mutableMapOf()
+
+    val clusterPublishConnectionMap: MutableMap<String, StatefulRedisClusterPubSubConnection<String, String>> =
         mutableMapOf()
 
-    var clusterSubscribeConnectionMap: MutableMap<String, StatefulRedisClusterPubSubConnection<String, String>> =
+    val clusterSubscribeConnectionMap: MutableMap<String, StatefulRedisClusterPubSubConnection<String, String>> =
         mutableMapOf()
 
     /**

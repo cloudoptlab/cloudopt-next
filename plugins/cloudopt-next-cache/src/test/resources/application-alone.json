@@ -1,11 +1,15 @@
 {
-  "redis": {
-    "publish": true,
-    "subscribe": true,
-    "uri": "redis://root@localhost:6379/0"
-  },
+  "redis": [
+    {
+      "name": "default",
+      "publish": true,
+      "subscribe": true,
+      "uri": "redis://:root@172.17.0.3:6379/0"
+    }
+  ],
   "cache": {
     "cluster": true,
+    "redisName": "default",
     "regions": [
       {
         "name": "testRegion",

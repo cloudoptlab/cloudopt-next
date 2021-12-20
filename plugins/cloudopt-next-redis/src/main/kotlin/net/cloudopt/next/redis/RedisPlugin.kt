@@ -83,6 +83,7 @@ class RedisPlugin : Plugin {
 
     private fun startAlone(res: ClientResources, redisConfig: RedisConfig) {
         val client = RedisClient.create(res, redisConfig.uri)
+        RedisManager.clientMap[redisConfig.name] = client
         RedisManager.connectionMap[redisConfig.name] = client.connect()
         if (redisConfig.publish) {
             RedisManager.publishConnectionMap[redisConfig.name] = client.connectPubSub()
@@ -94,6 +95,7 @@ class RedisPlugin : Plugin {
 
     private fun startCluster(res: ClientResources, redisConfig: RedisConfig) {
         val client = RedisClusterClient.create(res, redisConfig.uri)
+        RedisManager.clusterClientMap[redisConfig.name] = client
         RedisManager.clusterConnectionMap[redisConfig.name] = client.connect()
         if (redisConfig.publish) {
             RedisManager.clusterPublishConnectionMap[redisConfig.name] = client.connectPubSub()

@@ -42,15 +42,17 @@ class CachePlugin : Plugin {
             CacheManager.creatRegion(region.name, parseTime(region.expire), region.maxSize)
         }
 
-        if (RedisManager.cluster) {
-            CacheManager.redisClusterConnect = RedisManager.clusterClient.connect(ByteArrayCodec.INSTANCE)
+        if (RedisManager.configMap[CacheManager.config.redisName]?.cluster == true) {
+            CacheManager.redisClusterConnect =
+                RedisManager.clusterClientMap[CacheManager.config.redisName]!!.connect(ByteArrayCodec.INSTANCE)
         } else {
-            CacheManager.redisConnect = RedisManager.client.connect(ByteArrayCodec.INSTANCE)
+            CacheManager.redisConnect =
+                RedisManager.clientMap[CacheManager.config.redisName]!!.connect(ByteArrayCodec.INSTANCE)
         }
 
         if (CacheManager.config.cluster) {
-            RedisManager.addListener(CacheEventListener())
-            RedisManager.subscribe(CacheManager.CHANNELS)
+            RedisManager.addListener(CacheManager.config.redisName, CacheEventListener())
+            RedisManager.subscribe(CacheManager.config.redisName, CacheManager.CHANNELS)
         }
 
         return true

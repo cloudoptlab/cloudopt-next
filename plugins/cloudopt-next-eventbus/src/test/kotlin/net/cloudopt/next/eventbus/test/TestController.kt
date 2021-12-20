@@ -16,7 +16,7 @@ class TestController : Resource() {
     private val message = Jsoner.json("key" to "value")
 
     @GET
-    fun index() {
+    suspend fun index() {
         renderText("welcome")
     }
 
@@ -34,7 +34,7 @@ class TestController : Resource() {
 
     @AfterEvent(["net.cloudopt.next.eventbus.test.a"])
     @POST("/after")
-    fun after() {
+    suspend fun after() {
         context.data()["name"] = "next"
         renderText("success")
     }

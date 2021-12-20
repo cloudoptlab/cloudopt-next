@@ -31,21 +31,25 @@ class TestAloneCase {
     @ExperimentalLettuceCoroutinesApi
     @Test
     fun getAndSet() = runBlocking {
-        var value = RedisManager.coroutines().getset("testAloneGetSet", "success")
-        if (value.isNullOrBlank()) {
-            value = RedisManager.coroutines().getset("testAloneGetSet", "success")
+        RedisManager.configMap.forEach { map ->
+            var value = RedisManager.coroutines(map.key).getset("testAloneGetSet", "success")
+            if (value.isNullOrBlank()) {
+                value = RedisManager.coroutines(map.key).getset("testAloneGetSet", "success")
+            }
+            RedisManager.coroutines(map.key).del("testAloneGetSet")
+            assert(value == "success")
         }
-        RedisManager.coroutines().del("testAloneGetSet")
-        assert(value == "success")
     }
 
     @ExperimentalLettuceCoroutinesApi
     @Test
     fun testPubSub(): Unit = runBlocking {
-        RedisManager.addListener(listener = TestEventListener())
-        RedisManager.subscribe(name = "default", channels = arrayOf("testMQ"))
-        val id = RedisManager.publish(channel = "testMQ", message = "New　Message") ?: -1
-        assert(id > -1)
+        RedisManager.configMap.forEach { map ->
+            RedisManager.addListener(listener = TestEventListener())
+            RedisManager.subscribe(name = map.key, channels = arrayOf("testMQ"))
+            val id = RedisManager.publish(name = map.key, channel = "testMQ", message = "New　Message") ?: -1
+            assert(id > -1)
+        }
     }
 
 

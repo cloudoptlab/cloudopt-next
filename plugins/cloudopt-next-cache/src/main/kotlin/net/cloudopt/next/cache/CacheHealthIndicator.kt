@@ -20,7 +20,7 @@ import net.cloudopt.next.health.HealthChecksResult
 import net.cloudopt.next.health.HealthIndicator
 
 /**
- * Used to automatically check the caches status.
+ * Used to automatically check the cache status.
  */
 class CacheHealthIndicator : HealthIndicator {
     override suspend fun checkHealth(): HealthChecksResult {
