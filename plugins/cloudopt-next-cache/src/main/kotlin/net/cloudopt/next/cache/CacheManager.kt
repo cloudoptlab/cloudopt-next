@@ -74,6 +74,7 @@ object CacheManager {
         val region: Cache<String, Any> = Caffeine.newBuilder()
             .expireAfterWrite(expire, TimeUnit.SECONDS)
             .maximumSize(maxSize)
+            .recordStats()
             .build()
         regions[name] = region
         expireMap[name] = expire
