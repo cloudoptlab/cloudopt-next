@@ -1,0 +1,5 @@
+{
+  "debug": true,
+  "env": "dev",
+  "packageName": "net.cloudopt.next.jooq.test"
+}

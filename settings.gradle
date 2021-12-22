@@ -22,4 +22,5 @@ include "plugins:cloudopt-next-health"
 include "plugins:cloudopt-next-eventbus"
 include "plugins:cloudopt-next-jdbc"
 include "plugins:cloudopt-next-jooq"
+include "plugins:cloudopt-next-exposed"
 
