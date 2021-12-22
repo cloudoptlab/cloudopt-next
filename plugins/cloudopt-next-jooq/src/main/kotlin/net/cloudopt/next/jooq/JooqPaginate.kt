@@ -61,7 +61,7 @@ class JooqPaginate(query: SelectWindowStep<*>, private var count: Int, private v
             mutableListOf()
         }
         return JooqPage(
-            count,
+            list.size,
             page,
             totalPage,
             totalRow,
