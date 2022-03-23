@@ -17,6 +17,7 @@ package net.cloudopt.next.core
 
 import io.vertx.core.*
 import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.awaitBlocking
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.*
 
@@ -74,21 +75,6 @@ object Worker {
     }
 
     /**
-     * Runs a new coroutine and blocks the current thread interruptibly until its completion. This function should not
-     * be used from a coroutine. It is designed to bridge regular blocking code to libraries that are written in
-     * suspending style, to be used in main functions and in tests.
-     * @param block [@kotlin.ExtensionFunctionType] SuspendFunction1<CoroutineScope, T>
-     * @return T
-     */
-    fun <T> async(block: suspend CoroutineScope.() -> T): T {
-        return runBlocking(dispatcher()) {
-            return@runBlocking withContext(dispatcher()) {
-                return@withContext block.invoke(this)
-            }
-        }
-    }
-
-    /**
      * Puts the handler on the event queue for the current context so it will be run asynchronously ASAP after all
      * preceeding events have been handled.
      *
@@ -96,6 +82,22 @@ object Worker {
      */
     fun then(block: Handler<Void>) {
         vertx.runOnContext(block)
+    }
+
+    /**
+     * Awaits for completion of given deferred values without blocking a thread and resumes normally with the list of values
+     * when all deferred computations are complete or resumes with the first thrown exception if any of computations
+     * complete exceptionally including cancellation.
+     */
+    suspend fun <T> gather(vararg blocks: suspend CoroutineScope.() -> T): List<T> {
+        val list = mutableListOf<Deferred<T>>()
+        blocks.forEach { block ->
+            list.add(GlobalScope.async {
+                return@async block.invoke(this)
+            })
+        }
+
+        return list.awaitAll()
     }
 
     /**
