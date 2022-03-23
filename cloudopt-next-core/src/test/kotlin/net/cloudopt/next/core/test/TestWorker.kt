@@ -127,10 +127,11 @@ class TestWorker {
     @Test
     fun testTimer() {
         assertDoesNotThrow {
-            val i = 0
+            var i = 0
             var id: Long = -1
             setTimer(100, true) { timerId ->
                 id = timerId
+                i = i + 1
                 if (i > 3) {
                     cancelTimer(id)
                 }

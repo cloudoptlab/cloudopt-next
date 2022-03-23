@@ -2,7 +2,7 @@ dependencies {
     api project(":cloudopt-next-web")
     api project(":plugins:cloudopt-next-health")
     api "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:${property('kotlinx_version')}"
-    compileOnly "io.lettuce:lettuce-core:6.1.5.RELEASE"
+    api "io.lettuce:lettuce-core:6.1.5.RELEASE"
     testImplementation "io.lettuce:lettuce-core:6.1.5.RELEASE"
 }
 

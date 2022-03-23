@@ -2,7 +2,7 @@ dependencies {
     implementation project(":cloudopt-next-core")
     implementation project(":cloudopt-next-web")
     implementation project(":plugins:cloudopt-next-health")
-    compileOnly "com.zaxxer:HikariCP:5.0.0"
+    api "com.zaxxer:HikariCP:5.0.0"
     testImplementation "com.zaxxer:HikariCP:5.0.0"
     testImplementation "mysql:mysql-connector-java:8.0.27"
 }
