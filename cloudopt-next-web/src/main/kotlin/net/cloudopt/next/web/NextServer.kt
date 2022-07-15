@@ -22,6 +22,7 @@ import net.cloudopt.next.json.Jsoner
 import net.cloudopt.next.logging.Logger
 import net.cloudopt.next.web.annotation.*
 import net.cloudopt.next.web.config.WebConfigBean
+import net.cloudopt.next.web.constant.PriorityConstant
 import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
@@ -112,7 +113,7 @@ object NextServer {
 
             var httpMethod: HttpMethod = HttpMethod.GET
 
-            var order = 0
+            var priority = PriorityConstant.MIN_PRIORITY
 
             var blocking = false
 
@@ -121,27 +122,27 @@ object NextServer {
                     is GET -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
-                        order = functionAnnotation.order
+                        priority = functionAnnotation.priority
                     }
                     is POST -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
-                        order = functionAnnotation.order
+                        priority = functionAnnotation.priority
                     }
                     is PUT -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
-                        order = functionAnnotation.order
+                        priority = functionAnnotation.priority
                     }
                     is DELETE -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
-                        order = functionAnnotation.order
+                        priority = functionAnnotation.priority
                     }
                     is PATCH -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
-                        order = functionAnnotation.order
+                        priority = functionAnnotation.priority
                     }
                     is net.cloudopt.next.web.annotation.HttpMethod -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
@@ -157,7 +158,7 @@ object NextServer {
             if (resourceUrl.isNotBlank()) {
                 val r = ResourceTable(
                     resourceUrl,
-                    order,
+                    priority,
                     httpMethod,
                     kclass,
                     function.name,
@@ -201,7 +202,7 @@ object NextServer {
                 }
 
             }
-            resourceTable.sortBy { it.order }
+            resourceTable.sortByDescending { it.priority }
         }
     }
 

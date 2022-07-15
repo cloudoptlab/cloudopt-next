@@ -16,17 +16,30 @@
 package net.cloudopt.next.web
 
 import io.vertx.core.http.HttpMethod
+import net.cloudopt.next.web.constant.PriorityConstant
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KTypeParameter
 
 data class ResourceTable(
     var url: String = "",
-    var order: Int = 0,
+    var priority: Int = 0,
     var httpMethod: HttpMethod = HttpMethod.GET,
     var clazz: KClass<out Resource> = Resource::class,
     var methodName: String = "",
     var blocking: Boolean = false,
     var clazzMethod: KFunction<*>,
     var parameterTypes: List<KTypeParameter> = listOf()
-)
+){
+    /**
+     * if priority is not in [0, 9], invert priority in [0, 9]
+     */
+    init {
+        if(priority > PriorityConstant.MAX_PRIORITY){
+            priority = PriorityConstant.MAX_PRIORITY
+        }
+        if (priority < PriorityConstant.MIN_PRIORITY){
+            priority = PriorityConstant.MIN_PRIORITY
+        }
+    }
+}
