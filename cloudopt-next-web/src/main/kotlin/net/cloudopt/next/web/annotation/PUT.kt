@@ -20,5 +20,6 @@ package net.cloudopt.next.web.annotation
 @MustBeDocumented
 annotation class PUT(
     val value: String = "",
-    val method: String = "PUT"
+    val method: String = "PUT",
+    val order: Int = 0
 )

@@ -20,5 +20,6 @@ package net.cloudopt.next.web.annotation
 @MustBeDocumented
 annotation class GET(
     val value: String = "",
-    val method: String = "GET"
+    val method: String = "GET",
+    val order: Int = 0
 )

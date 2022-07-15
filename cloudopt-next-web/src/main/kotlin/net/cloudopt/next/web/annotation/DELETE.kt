@@ -20,5 +20,6 @@ package net.cloudopt.next.web.annotation
 @MustBeDocumented
 annotation class DELETE(
     val value: String = "",
-    val method: String = "DELETE"
+    val method: String = "DELETE",
+    val order: Int = 0
 )

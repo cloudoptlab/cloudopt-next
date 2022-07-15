@@ -112,6 +112,8 @@ object NextServer {
 
             var httpMethod: HttpMethod = HttpMethod.GET
 
+            var order = 0
+
             var blocking = false
 
             functionsAnnotations.forEach { functionAnnotation ->
@@ -119,22 +121,27 @@ object NextServer {
                     is GET -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
+                        order = functionAnnotation.order
                     }
                     is POST -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
+                        order = functionAnnotation.order
                     }
                     is PUT -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
+                        order = functionAnnotation.order
                     }
                     is DELETE -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
+                        order = functionAnnotation.order
                     }
                     is PATCH -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
+                        order = functionAnnotation.order
                     }
                     is net.cloudopt.next.web.annotation.HttpMethod -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
@@ -150,6 +157,7 @@ object NextServer {
             if (resourceUrl.isNotBlank()) {
                 val r = ResourceTable(
                     resourceUrl,
+                    order,
                     httpMethod,
                     kclass,
                     function.name,
@@ -193,6 +201,7 @@ object NextServer {
                 }
 
             }
+            resourceTable.sortBy { it.order }
         }
     }
 

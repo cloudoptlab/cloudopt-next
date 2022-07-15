@@ -20,5 +20,6 @@ package net.cloudopt.next.web.annotation
 @MustBeDocumented
 annotation class PATCH(
     val value: String = "",
-    val method: String = "PATCH"
+    val method: String = "PATCH",
+    val order: Int = 0
 )

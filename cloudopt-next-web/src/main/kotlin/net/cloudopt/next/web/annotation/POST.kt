@@ -20,5 +20,6 @@ package net.cloudopt.next.web.annotation
 @MustBeDocumented
 annotation class POST(
     val value: String = "",
-    val method: String = "POST"
+    val method: String = "POST",
+    val order: Int = 0
 )
