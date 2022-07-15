@@ -23,7 +23,7 @@ import kotlin.reflect.KTypeParameter
 
 data class ResourceTable(
     var url: String = "",
-    var priority: Int = 0,
+    var priority: Int = PriorityConstant.MIN_PRIORITY,
     var httpMethod: HttpMethod = HttpMethod.GET,
     var clazz: KClass<out Resource> = Resource::class,
     var methodName: String = "",
