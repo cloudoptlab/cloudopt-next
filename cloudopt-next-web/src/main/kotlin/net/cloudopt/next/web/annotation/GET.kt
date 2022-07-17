@@ -15,10 +15,13 @@
  */
 package net.cloudopt.next.web.annotation
 
+import net.cloudopt.next.web.constant.PriorityConstant
+
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @MustBeDocumented
 annotation class GET(
     val value: String = "",
-    val method: String = "GET"
+    val method: String = "GET",
+    val priority: Int = PriorityConstant.MIN_PRIORITY
 )

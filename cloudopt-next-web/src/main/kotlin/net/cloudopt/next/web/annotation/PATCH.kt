@@ -15,10 +15,13 @@
  */
 package net.cloudopt.next.web.annotation
 
+import net.cloudopt.next.web.constant.PriorityConstant
+
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @MustBeDocumented
 annotation class PATCH(
     val value: String = "",
-    val method: String = "PATCH"
+    val method: String = "PATCH",
+    val priority: Int = PriorityConstant.MIN_PRIORITY
 )
