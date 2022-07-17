@@ -26,18 +26,29 @@ class JooqPaginate(query: SelectWindowStep<*>, private var count: Int, private v
     private var firstPage = false
     private var lastPage = false
     private var query: SelectWindowStep<*>
-    private lateinit var orderField: OrderField<*>
+    private var countNum: Long = -1
+    private lateinit var orderField: MutableList<OrderField<*>>
 
     init {
         this.query = query
     }
 
-    fun order(orderField: OrderField<*>) {
+    fun order(vararg orderField: OrderField<*>) {
+        this.orderField = orderField.toMutableList()
+    }
+    fun order(orderField:  MutableList<OrderField<*>>) {
         this.orderField = orderField
     }
 
+    fun count(countQuery: SelectWindowStep<*>) {
+        countNum =  countQuery.fetchOneInto(Long::class.java) ?: -1L
+    }
     fun <T> find(clazz: Class<T>): JooqPage {
-        this.totalRow = this.query.count().toLong()
+        this.totalRow = if (countNum == -1L) {
+            this.query.count().toLong()
+        } else {
+            countNum
+        }
         this.totalPage = (totalRow / count.toLong()).toInt()
         if (totalRow % count.toLong() != 0L) {
             ++totalPage
