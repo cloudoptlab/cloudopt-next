@@ -32,14 +32,11 @@ data class ResourceTable(
     var parameterTypes: List<KTypeParameter> = listOf()
 ){
     /**
-     * if priority is not in [0, 9], invert priority in [0, 9]
+     * Verify that the priority value is between [0, 9].
      */
     init {
-        if(priority > PriorityConstant.MAX_PRIORITY){
-            priority = PriorityConstant.MAX_PRIORITY
-        }
-        if (priority < PriorityConstant.MIN_PRIORITY){
-            priority = PriorityConstant.MIN_PRIORITY
+        if(priority !in PriorityConstant.MIN_PRIORITY..PriorityConstant.MAX_PRIORITY){
+            throw IllegalArgumentException("The priority value cannot exceed the range [0, 9].")
         }
     }
 }
