@@ -35,6 +35,7 @@ class ShowRouteHandler : Handler {
             )
             logger.info("Method       : ${resource.request.method()}")
             logger.info("Path         : ${resource.context.normalizedPath()}")
+            logger.info("IP           : ${resource.getIp()}")
             logger.info("User-Agent   : ${resource.request.getHeader("User-Agent")}")
             val params = resource.request.params()
             params.entries().forEach { entry ->
