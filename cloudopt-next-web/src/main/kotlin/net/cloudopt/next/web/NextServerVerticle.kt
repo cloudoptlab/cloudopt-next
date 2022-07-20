@@ -374,7 +374,9 @@ class NextServerVerticle : CoroutineVerticle() {
         errorHandler.init(context)
         errorHandler.handle(context.response().statusCode, throwable)
         if (context.failure() != null) {
-            context.failure().printStackTrace()
+            if (NextServer.webConfig.debug){
+                context.failure().printStackTrace()
+            }
             logger.error(context.failure().toString())
         }
     }
@@ -476,7 +478,7 @@ class NextServerVerticle : CoroutineVerticle() {
                     resourceTable.clazzMethod.callSuspendBy(arr)
                 } else {
                     resource.context.put("errorMessage", validatorResult.message)
-                    resource.fail(400)
+                    resource.fail(400, VerifyError(validatorResult.message))
                     return
                 }
             }

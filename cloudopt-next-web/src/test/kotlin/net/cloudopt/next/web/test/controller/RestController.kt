@@ -7,6 +7,8 @@ import net.cloudopt.next.web.test.handler.TestAfterPrint2Annotation
 import net.cloudopt.next.web.test.handler.TestAfterPrintAnnotation
 import net.cloudopt.next.web.test.handler.TestBeforePrint2Annotation
 import net.cloudopt.next.web.test.handler.TestBeforePrintAnnotation
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotNull
 
 @API("/restful")
 class RestController : Resource() {
@@ -61,6 +63,16 @@ class RestController : Resource() {
     @GET("/customError")
     suspend fun customError() {
         fail(500, RuntimeException("Test Error"))
+    }
+
+    @GET("/validParam")
+    suspend fun vaildParam(
+        @Parameter
+        @NotNull
+        @Min(18)
+        age:Int
+    ){
+        renderText(age.toString())
     }
 
 }
