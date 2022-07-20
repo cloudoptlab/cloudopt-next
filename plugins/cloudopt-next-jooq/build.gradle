@@ -7,7 +7,7 @@ dependencies {
     api "com.zaxxer:HikariCP:5.0.0"
     testImplementation "org.jooq:jooq:3.14.4"
     testImplementation "com.zaxxer:HikariCP:5.0.0"
-    testImplementation "mysql:mysql-connector-java:8.0.23"
+    testImplementation 'mysql:mysql-connector-java:8.0.28'
     api "org.jooq:jooq-meta:3.14.4"
     api "org.jooq:jooq-codegen:3.14.4"
 }
