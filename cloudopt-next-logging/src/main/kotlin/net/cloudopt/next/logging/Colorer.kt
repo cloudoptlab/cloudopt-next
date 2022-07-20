@@ -100,7 +100,7 @@ object Colorer {
      * @return Handled text
      */
     private fun diy(color: String, value: String): String {
-        return if (Logger.configuration.color) {
+        return if (Logger.configuration.color && System.console() != null && System.getenv()["TERM"] != null) {
             Ansi.ansi().eraseScreen().render("@|$color $value|@").toString()
         } else {
             value
