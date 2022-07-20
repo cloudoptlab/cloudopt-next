@@ -21,25 +21,25 @@ import org.jooq.SelectWindowStep
 
 class JooqPaginate(query: SelectWindowStep<*>, private var count: Int, private val page: Int) {
 
-    private var totalPage: Int = -1
+    private var totalPage: Long = -1
     private var totalRow: Long = -1
     private var firstPage = false
     private var lastPage = false
     private var query: SelectWindowStep<*>
-    private lateinit var orderField: OrderField<*>
+    private lateinit var orderField: MutableList<OrderField<*>>
 
     init {
         this.query = query
     }
 
-    fun order(orderField: OrderField<*>) {
-        this.orderField = orderField
+    fun order(vararg orderFieldArgs: OrderField<*>) {
+        this.orderField = orderFieldArgs.toMutableList()
     }
 
     fun <T> find(clazz: Class<T>): JooqPage {
-        this.totalRow = this.query.count().toLong()
-        this.totalPage = (totalRow / count.toLong()).toInt()
-        if (totalRow % count.toLong() != 0L) {
+        this.totalRow = JooqManager.dsl.selectCount().from(this.query).fetchOneInto(Long::class.java) ?: 0L
+        this.totalPage = (totalRow / count)
+        if (totalRow % count != 0L) {
             ++totalPage
         }
 
@@ -52,7 +52,7 @@ class JooqPaginate(query: SelectWindowStep<*>, private var count: Int, private v
         }
 
         this.firstPage = this.page == 1
-        this.lastPage = this.page == this.totalPage
+        this.lastPage = this.page.toLong() == this.totalPage
 
         var list = query.orderBy(orderField).limit(this.count).offset(skip()).fetchInto(clazz)
         list = if (list.isNotEmpty()) {
