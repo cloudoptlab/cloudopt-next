@@ -20,7 +20,7 @@ import java.io.Serializable
 data class JooqPage(
     val count: Int = 0,
     val page: Int = 0,
-    val totalPage: Int = 0,
+    val totalPage: Long = 0,
     val totalRow: Long = 0,
     val firstPage: Boolean = true,
     val lastPage: Boolean = true,
