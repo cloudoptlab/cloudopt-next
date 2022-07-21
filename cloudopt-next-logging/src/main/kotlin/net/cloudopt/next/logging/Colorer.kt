@@ -12,6 +12,7 @@
 package net.cloudopt.next.logging
 
 import org.fusesource.jansi.Ansi
+import java.util.*
 
 /*
  * @author: Cloudopt
@@ -100,11 +101,21 @@ object Colorer {
      * @return Handled text
      */
     private fun diy(color: String, value: String): String {
-        return if (Logger.configuration.color && System.console() != null && System.getenv()["TERM"] != null) {
+        return if (Logger.configuration.color && ((System.console() != null && System.getenv()["TERM"] != null) || !isRunningInJar())) {
             Ansi.ansi().eraseScreen().render("@|$color $value|@").toString()
         } else {
             value
         }
+    }
+
+    private fun isRunningInJar(): Boolean {
+        val protocol: String = Colorer::class.java.getResource("").protocol
+        if (Objects.equals(protocol, "jar")) {
+            return true
+        } else if (Objects.equals(protocol, "file")) {
+            return false
+        }
+        return true
     }
 
 
