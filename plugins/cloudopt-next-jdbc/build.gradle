@@ -4,7 +4,7 @@ dependencies {
     implementation project(":plugins:cloudopt-next-health")
     api "com.zaxxer:HikariCP:5.0.0"
     testImplementation "com.zaxxer:HikariCP:5.0.0"
-    testImplementation "mysql:mysql-connector-java:8.0.27"
+    testImplementation 'mysql:mysql-connector-java:8.0.28'
 }
 
 description = "Cloudopt Next JDBC"
