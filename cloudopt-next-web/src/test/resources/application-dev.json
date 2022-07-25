@@ -1,7 +1,7 @@
 {
   "packageName": "net.cloudopt.next.web.test",
   "cookieCors": true,
-  "logColor": true,
+  "logColor": false,
   "port": 8080,
   "waf": {
     "plus": true,

@@ -22,10 +22,5 @@ import net.cloudopt.next.logging.provider.Slf4jLoggerProvider
  */
 
 data class LoggerConfiguration(
-    var color: Boolean = true,
-    var loggerProvider: LoggerProvider = Slf4jLoggerProvider(),
-    var debugPrefix: String = "\uD83E\uDD1F DEBUG:",
-    var infoPrefix: String = "ℹ️ INFO:",
-    var warnPrefix: String = "⚠️ WARN:",
-    var errorPrefix: String = "❌ ERRROR:"
+    var loggerProvider: LoggerProvider = Slf4jLoggerProvider()
 )

@@ -16,7 +16,6 @@
 
 package net.cloudopt.next.logging.provider
 
-import net.cloudopt.next.logging.Colorer
 import net.cloudopt.next.logging.Format
 import net.cloudopt.next.logging.Logger
 import java.util.logging.Level
@@ -49,7 +48,7 @@ class JdkLoggerProvider : LoggerProvider {
                 Level.FINE,
                 clazzName,
                 Thread.currentThread().stackTrace[1].methodName,
-                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                "${format.format(message, *args)}"
             )
         }
 
@@ -58,7 +57,7 @@ class JdkLoggerProvider : LoggerProvider {
                 Level.FINE,
                 clazzName,
                 t.stackTrace[1].methodName,
-                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                "${format.format(message, *args)}"
             )
         }
 
@@ -67,7 +66,7 @@ class JdkLoggerProvider : LoggerProvider {
                 Level.INFO,
                 clazzName,
                 Thread.currentThread().stackTrace[1].methodName,
-                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                "${format.format(message, *args)}"
             )
         }
 
@@ -76,7 +75,7 @@ class JdkLoggerProvider : LoggerProvider {
                 Level.INFO,
                 clazzName,
                 t.stackTrace[1].methodName,
-                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                "${format.format(message, *args)}"
             )
         }
 
@@ -85,7 +84,7 @@ class JdkLoggerProvider : LoggerProvider {
                 Level.WARNING,
                 clazzName,
                 Thread.currentThread().stackTrace[1].methodName,
-                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                "${format.format(message, *args)}"
             )
         }
 
@@ -94,7 +93,7 @@ class JdkLoggerProvider : LoggerProvider {
                 Level.WARNING,
                 clazzName,
                 t.stackTrace[1].methodName,
-                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                "${format.format(message, *args)}"
             )
         }
 
@@ -103,7 +102,7 @@ class JdkLoggerProvider : LoggerProvider {
                 Level.SEVERE,
                 clazzName,
                 Thread.currentThread().stackTrace[1].methodName,
-                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                "${format.format(message, *args)}"
             )
         }
 
@@ -112,7 +111,7 @@ class JdkLoggerProvider : LoggerProvider {
                 Level.SEVERE,
                 clazzName,
                 t.stackTrace[1].methodName,
-                "${Colorer.magenta(Logger.configuration.debugPrefix)} ${format.format(message, *args)}"
+                "${format.format(message, *args)}"
             )
         }
 

@@ -43,7 +43,6 @@ data class WebConfigBean(
     var indexPage: String = "index.html",
     var cookieCors: Boolean = false,
     var bodyLimit: Long = 50L * 1024 * 1024,
-    var logColor: Boolean = true,
     var timeout: Long = 2L * 60 * 1000,
     var httpServerOptions: HttpServerOptions = HttpServerOptions(),
     var socket: SockJSHandlerOptions = SockJSHandlerOptions()

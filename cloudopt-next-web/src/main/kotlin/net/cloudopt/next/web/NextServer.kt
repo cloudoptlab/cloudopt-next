@@ -211,9 +211,6 @@ object NextServer {
      */
     private fun scan() {
 
-        //Set log color
-        Logger.configuration.color = webConfig.logColor
-
         //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next.web", true, AutoHandler::class)
             .forEach { kclass ->
