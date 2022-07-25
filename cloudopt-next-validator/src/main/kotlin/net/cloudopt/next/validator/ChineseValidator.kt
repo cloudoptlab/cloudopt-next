@@ -15,10 +15,10 @@
  */
 package net.cloudopt.next.validator
 
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 import net.cloudopt.next.validator.annotation.Chinese
 
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 
 class ChineseValidator : ConstraintValidator<Chinese, String> {
 

@@ -15,9 +15,9 @@
  */
 package net.cloudopt.next.validator.annotation
 
+import jakarta.validation.Constraint
+import jakarta.validation.Payload
 import net.cloudopt.next.validator.InsideValidator
-import javax.validation.Constraint
-import javax.validation.Payload
 import kotlin.reflect.KClass
 
 @Target(
