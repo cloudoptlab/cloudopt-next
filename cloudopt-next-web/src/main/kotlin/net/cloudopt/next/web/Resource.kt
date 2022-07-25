@@ -382,10 +382,28 @@ open class Resource {
      * @param statusCode Int the HTTP status code of the response
      * @param throwable Throwable the throwable used when signalling failure
      */
-    fun fail(statusCode: Int, throwable: Throwable = RuntimeException("Something is wrong, " +
-            "but no exception messages are caught.")) {
+    fun fail(
+        statusCode: Int, throwable: Throwable = RuntimeException(
+            "Something is wrong, " +
+                    "but no exception messages are caught."
+        )
+    ) {
         context.fail(statusCode, throwable)
     }
+    /**
+     * Fail the context with the specified status code.
+     * This will cause the router to route the context to any matching failure handlers for the request. If no failure
+     * handlers match It will trigger the error handler matching the status code. You can define such error handler with
+     * {@link Router#errorHandler(int, Handler)}. If no error handler is not defined, It will send a default failure
+     * response with provided status code.
+     *
+     * @param statusCode Int the HTTP status code of the response
+     * @param message String the message used when signalling failure
+     */
+    fun fail(statusCode: Int, message: String = "Something is wrong, but no exception messages are caught.") {
+        context.fail(statusCode, RuntimeException(message))
+    }
+
 
     /**
      * Get the language used by the client, if the client does not specify the language, the default is en_US.

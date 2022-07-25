@@ -374,7 +374,7 @@ class NextServerVerticle : CoroutineVerticle() {
         errorHandler.init(context)
         errorHandler.handle(context.response().statusCode, throwable)
         if (context.failure() != null) {
-            if (NextServer.webConfig.debug){
+            if (NextServer.webConfig.debug) {
                 context.failure().printStackTrace()
             }
             logger.error(context.failure().toString())

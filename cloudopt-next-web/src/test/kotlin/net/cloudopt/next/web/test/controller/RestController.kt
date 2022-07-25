@@ -56,13 +56,13 @@ class RestController : Resource() {
 
     @GET("/defaultError")
     suspend fun defaultError() {
-        fail(402)
+        fail(402, "Default Error")
     }
 
 
     @GET("/customError")
     suspend fun customError() {
-        fail(500, RuntimeException("Test Error"))
+        fail(401, RuntimeException("Test Error"))
     }
 
     @GET("/validParam")
