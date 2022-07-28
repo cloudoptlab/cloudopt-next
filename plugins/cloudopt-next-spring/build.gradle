@@ -1,6 +1,6 @@
 dependencies {
     api project(":cloudopt-next-web")
-    api "org.springframework:spring-context:5.2.4.RELEASE"
+    compileOnly "org.springframework:spring-context:5.2.4.RELEASE"
     testImplementation "org.springframework:spring-context:5.2.4.RELEASE"
 }
 
