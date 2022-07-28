@@ -91,29 +91,30 @@ object Worker {
      */
     suspend fun <T> gather(vararg blocks: suspend CoroutineScope.() -> T): List<T> {
         val list = mutableListOf<Deferred<T>>()
-        blocks.forEach { block ->
-            list.add(GlobalScope.async {
-                return@async block.invoke(this)
-            })
+        coroutineScope {
+            blocks.forEach { block ->
+                list.add(async {
+                    return@async block.invoke(this)
+                })
+            }
         }
-
         return list.awaitAll()
     }
 
     /**
      * Automatic deployment in vertx.
      *
-     * @param verticle Package name
+     * @param name Package name
      * @param deploymentOptions   Options for configuring a verticle deployment
      */
     @JvmOverloads
     fun deploy(
-        verticle: String,
+        name: String,
         deploymentOptions: DeploymentOptions = ConfigManager.init("vertxDeployment")
             .toObject(DeploymentOptions::class), workerPoolName: String = "net.cloudopt.next"
     ) {
         deploymentOptions.workerPoolName = workerPoolName
-        vertx.deployVerticle(verticle, deploymentOptions)
+        vertx.deployVerticle(name, deploymentOptions)
     }
 
 
@@ -169,7 +170,7 @@ object Worker {
     }
 
     /**
-     * Stop the the Vertx instance and release any resources held by it. The instance cannot be used after it has been
+     * Stop the Vertx instance and release any resources held by it. The instance cannot be used after it has been
      * closed.
      */
     fun close() {
