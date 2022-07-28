@@ -83,7 +83,7 @@ object RedisManager {
      * @param name Multiple data sources are supported from version 3.1.0.0,
      * please declare the data source used.
      */
-    fun sync(name: String = "default"): RedisCommands<String, String>? {
+    fun sync(name: String = "default"): RedisCommands<String, String> {
         return connectionMap[name]!!.sync()
     }
 
