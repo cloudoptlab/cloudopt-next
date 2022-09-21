@@ -15,7 +15,6 @@
  */
 package net.cloudopt.next.redis
 
-import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Worker.await
 import net.cloudopt.next.health.HealthChecksResult
 import net.cloudopt.next.health.HealthChecksStatusEnum
@@ -26,51 +25,60 @@ import net.cloudopt.next.health.HealthIndicator
  */
 class RedisHealthIndicator : HealthIndicator {
     override suspend fun checkHealth(): HealthChecksResult {
+
+        val result = HealthChecksResult(data = mutableMapOf())
+
         return await {
-            val result = HealthChecksResult(data = mutableMapOf())
-            if (RedisManager.cluster) {
-                if (!RedisManager.clusterConnection.isOpen) {
-                    result.status = HealthChecksStatusEnum.DOWN
-                }
-            } else {
-                if (!RedisManager.connection.isOpen) {
-                    result.status = HealthChecksStatusEnum.DOWN
-                }
-            }
-            val redisConfig = ConfigManager.init("redis")
-            result.data["cluster"] = RedisManager.cluster
-            if (redisConfig["publish"] != null && redisConfig["publish"] as Boolean) {
-                if (RedisManager.cluster) {
-                    result.data["publish"] = if (RedisManager.clusterPublishConnection.isOpen) {
-                        HealthChecksStatusEnum.UP
-                    } else {
-                        HealthChecksStatusEnum.DOWN
+            RedisManager.configMap.forEach { map ->
+                val connectionResult = HealthChecksResult(data = mutableMapOf())
+                connectionResult.data["cluster"] = map.value.cluster
+                if (map.value.cluster) {
+                    if (RedisManager.clusterConnectionMap[map.key]?.isOpen?.not() == true) {
+                        connectionResult.status = HealthChecksStatusEnum.DOWN
                     }
                 } else {
-                    result.data["publish"] = if (RedisManager.publishConnection.isOpen) {
-                        HealthChecksStatusEnum.UP
-                    } else {
-                        HealthChecksStatusEnum.DOWN
+                    if (RedisManager.connectionMap[map.key]?.isOpen?.not() == true) {
+                        connectionResult.status = HealthChecksStatusEnum.DOWN
                     }
                 }
-            }
-            if (redisConfig["subscribe"] != null && redisConfig["subscribe"] as Boolean) {
-                if (RedisManager.cluster) {
-                    result.data["subscribe"] = if (RedisManager.clusterSubscribeConnection.isOpen) {
-                        HealthChecksStatusEnum.UP
+                if (map.value.publish) {
+                    if (map.value.cluster) {
+                        connectionResult.data["publish"] =
+                            if (RedisManager.clusterPublishConnectionMap[map.key]?.isOpen == true) {
+                                HealthChecksStatusEnum.UP
+                            } else {
+                                HealthChecksStatusEnum.DOWN
+                            }
                     } else {
-                        HealthChecksStatusEnum.DOWN
-                    }
-                } else {
-                    result.data["subscribe"] = if (RedisManager.subscribeConnection.isOpen) {
-                        HealthChecksStatusEnum.UP
-                    } else {
-                        HealthChecksStatusEnum.DOWN
+                        connectionResult.data["publish"] =
+                            if (RedisManager.publishConnectionMap[map.key]?.isOpen == true) {
+                                HealthChecksStatusEnum.UP
+                            } else {
+                                HealthChecksStatusEnum.DOWN
+                            }
                     }
                 }
+                if (map.value.publish) {
+                    if (map.value.cluster) {
+                        connectionResult.data["subscribe"] =
+                            if (RedisManager.clusterSubscribeConnectionMap[map.key]?.isOpen == true) {
+                                HealthChecksStatusEnum.UP
+                            } else {
+                                HealthChecksStatusEnum.DOWN
+                            }
+                    } else {
+                        connectionResult.data["subscribe"] =
+                            if (RedisManager.subscribeConnectionMap[map.key]?.isOpen == true) {
+                                HealthChecksStatusEnum.UP
+                            } else {
+                                HealthChecksStatusEnum.DOWN
+                            }
+                    }
+                }
+
+                result.data[map.key] = connectionResult
+
             }
-
-
             return@await result
         }
 

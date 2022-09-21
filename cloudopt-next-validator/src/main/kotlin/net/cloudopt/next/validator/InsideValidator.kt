@@ -15,10 +15,9 @@
  */
 package net.cloudopt.next.validator
 
+import jakarta.validation.ConstraintValidator
+import jakarta.validation.ConstraintValidatorContext
 import net.cloudopt.next.validator.annotation.Inside
-
-import javax.validation.ConstraintValidator
-import javax.validation.ConstraintValidatorContext
 
 class InsideValidator : ConstraintValidator<Inside, String> {
 

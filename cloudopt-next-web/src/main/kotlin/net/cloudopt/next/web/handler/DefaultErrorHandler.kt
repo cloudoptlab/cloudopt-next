@@ -22,7 +22,7 @@ import kotlin.math.abs
 class DefaultErrorHandler : ErrorHandler() {
 
 
-    override fun handle(statusCode: Int, throwable: Throwable?) {
+    override suspend fun handle(statusCode: Int, throwable: Throwable?) {
         if (abs(errorStatusCode) == 404) {
             response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
             context.response().end(Welcomer.notFound())

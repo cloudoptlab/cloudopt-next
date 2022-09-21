@@ -20,7 +20,7 @@ import net.cloudopt.next.web.Resource
 
 class TextRender : Render {
 
-    override fun render(resource: Resource, result: Any) {
+    override suspend fun render(resource: Resource, result: Any) {
         resource.response.putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
         end(resource, result.toString())
     }

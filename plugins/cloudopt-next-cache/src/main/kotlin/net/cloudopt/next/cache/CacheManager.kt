@@ -34,8 +34,6 @@ object CacheManager {
 
     internal const val CHANNELS = "NEXT-CACHE-EVENT"
 
-    internal const val PROVIDER_NAME = "NEXT-REDIS-PROVIDER"
-
     internal const val PREFIX = "NEXT-CACHE-ROUTE-"
 
     @JvmStatic
@@ -74,6 +72,7 @@ object CacheManager {
         val region: Cache<String, Any> = Caffeine.newBuilder()
             .expireAfterWrite(expire, TimeUnit.SECONDS)
             .maximumSize(maxSize)
+            .recordStats()
             .build()
         regions[name] = region
         expireMap[name] = expire
@@ -110,10 +109,10 @@ object CacheManager {
             }
             var value = regions[regionName]?.getIfPresent(key)
             if (value == null && l2) {
-                value = if (RedisManager.cluster) {
-                    RedisManager.clusterClient.connect(ByteArrayCodec.INSTANCE).sync().get(key.toByteArray())
+                value = if (RedisManager.configMap[config.redisName]?.cluster == true) {
+                    redisClusterConnect.sync().get(key.toByteArray())
                 } else {
-                    RedisManager.client.connect(ByteArrayCodec.INSTANCE).sync().get(key.toByteArray())
+                    redisConnect.sync().get(key.toByteArray())
                 }
 
                 if (value != null) {
@@ -154,7 +153,7 @@ object CacheManager {
             }
             regions[regionName]?.put(key, serializer.serialize(value))
             val replyString = if (l2) {
-                if (RedisManager.cluster) {
+                if (RedisManager.configMap[config.redisName]?.cluster == true) {
                     redisClusterConnect.sync()
                         .setex(key.toByteArray(), expireMap[regionName] ?: 500, serializer.serialize(value))
                 } else {
@@ -186,7 +185,7 @@ object CacheManager {
             }
             regions[regionName]?.invalidate(key)
             val row = if (l2) {
-                if (RedisManager.cluster) {
+                if (RedisManager.configMap[config.redisName]?.cluster == true) {
                     redisClusterConnect.sync().del(key.toByteArray())
                 } else {
                     redisConnect.sync().del(key.toByteArray())
@@ -196,6 +195,7 @@ object CacheManager {
             }
             if (config.cluster && publish) {
                 RedisManager.publishSync(
+                    config.redisName,
                     CHANNELS,
                     CacheEventMessage(regionName = regionName, key = key).toJsonString()
                 )

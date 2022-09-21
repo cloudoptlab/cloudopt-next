@@ -7,6 +7,8 @@ import net.cloudopt.next.web.test.handler.TestAfterPrint2Annotation
 import net.cloudopt.next.web.test.handler.TestAfterPrintAnnotation
 import net.cloudopt.next.web.test.handler.TestBeforePrint2Annotation
 import net.cloudopt.next.web.test.handler.TestBeforePrintAnnotation
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotNull
 
 @API("/restful")
 class RestController : Resource() {
@@ -16,39 +18,61 @@ class RestController : Resource() {
     @TestAfterPrintAnnotation
     @TestAfterPrint2Annotation
     @GET
-    fun get() {
+    suspend fun get() {
         renderJson(json("result" to "get"))
     }
 
     @POST
-    fun post() {
+    suspend fun post() {
         renderJson(json("result" to "post"))
     }
 
     @PUT
-    fun put() {
+    suspend fun put() {
         renderJson(json("result" to "put"))
     }
 
     @DELETE
-    fun delete() {
+    suspend fun delete() {
         renderJson(json("result" to "delete"))
     }
 
     @PATCH
-    fun patch() {
+    suspend fun patch() {
         renderJson(json("result" to "patch"))
     }
 
+    @POST("/cookie")
+    suspend fun addCookie() {
+        setCookie("key", "value")
+        renderText("success")
+    }
+
+    @DELETE("/cookie")
+    suspend fun delCookie() {
+        delCookie("key")
+        renderText("success")
+    }
+
     @GET("/defaultError")
-    fun defaultError() {
-        fail(500)
+    suspend fun defaultError() {
+        fail(402, "Default Error")
     }
 
 
     @GET("/customError")
-    fun customError() {
-        fail(500, RuntimeException("Test Error"))
+    suspend fun customError() {
+        fail(401, RuntimeException("Test Error"))
+    }
+
+    @GET("/validParam")
+    suspend fun vaildParam(
+        @Parameter
+        @NotNull
+        @Min(18)
+        age:Int
+    ){
+        renderText(age.toString())
     }
 
 }

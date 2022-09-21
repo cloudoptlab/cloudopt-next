@@ -15,35 +15,23 @@
  */
 package net.cloudopt.next.jooq
 
-import net.cloudopt.next.core.Classer
-import net.cloudopt.next.core.ConfigManager
 import net.cloudopt.next.core.Plugin
-import net.cloudopt.next.jooq.JooqManager.pool
-import net.cloudopt.next.jooq.pool.ConnectionPool
-import net.cloudopt.next.jooq.pool.HikariCPPool
+import net.cloudopt.next.jdbc.JDBCConnectionManager
 import org.jooq.SQLDialect
+import org.jooq.conf.SettingsTools
 import org.jooq.impl.DSL
 import org.jooq.impl.DataSourceConnectionProvider
+import org.jooq.impl.DefaultConfiguration
 import org.jooq.impl.DefaultTransactionProvider
 import java.sql.SQLException
-import kotlin.reflect.full.createInstance
+
 
 class JooqPlugin : Plugin {
 
     override fun start(): Boolean {
 
-        System.getProperties().setProperty("org.jooq.no-logo", "true")
-
-        try {
-            val map = ConfigManager.init("jooq")
-
-            pool = HikariCPPool()
-
-            if (map["pool"] != null) {
-                pool = Classer.loadClass(map["pool"] as String).createInstance() as ConnectionPool
-            }
-
-            val sqlDialect = when (map["database"]) {
+        JDBCConnectionManager.jdbcConfigMap.forEach { map ->
+            val sqlDialect = when (map.value.database) {
                 "mysql" -> SQLDialect.MYSQL
                 "derby" -> SQLDialect.DERBY
                 "firebird" -> SQLDialect.FIREBIRD
@@ -54,25 +42,26 @@ class JooqPlugin : Plugin {
                     SQLDialect.MYSQL
                 }
             }
-            JooqManager.connection = pool.getConnection()
-            JooqManager.connectionProvider = DataSourceConnectionProvider(pool.getDatasource())
-            JooqManager.transactionProvider = DefaultTransactionProvider(JooqManager.connectionProvider)
-            JooqManager.configuration.set(JooqManager.connectionProvider)
-                .set(JooqManager.transactionProvider)
+            val connectionProvider = DataSourceConnectionProvider(JDBCConnectionManager.dataSourceMap[map.key])
+            val transactionProvider = DefaultTransactionProvider(connectionProvider)
+            val configuration = DefaultConfiguration()
+            val settings = SettingsTools.defaultSettings()
+            configuration.set(connectionProvider)
+                .set(transactionProvider)
                 .set(sqlDialect)
-                .set(JooqManager.settings)
-            JooqManager.dsl = DSL.using(JooqManager.configuration)
-            return true
-        } catch (e: SQLException) {
-            e.printStackTrace()
-            return false
+                .set(settings)
+            JooqManager.dslMap[map.key] = DSL.using(configuration)
+
         }
+        return true
 
     }
 
     override fun stop(): Boolean {
         return try {
-            JooqManager.connection.close()
+            JDBCConnectionManager.dataSourceMap.forEach { map ->
+                map.value.connection.close()
+            }
             true
         } catch (e: SQLException) {
             e.printStackTrace()

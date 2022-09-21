@@ -61,10 +61,30 @@ class TestRestful : TestStart() {
 
     @Test
     fun testCustomError() = runBlocking {
-        val result = client.get("/restful/customError").send().await().bodyAsJsonObject()
+        val result = client.get("/restful/customError").putHeader("Content-Type", "application/json").send().await()
+            .bodyAsJsonObject()
         assertTrue {
-            result.get<String>("errorMessage") == "401"
+            result.get<String>("errorMessage") == "Test Error"
         }
+    }
+
+    @Test
+    fun testAddCookie() = runBlocking {
+        val cookie = client.post("/restful/cookie").putHeader("Content-Type", "application/json").send().await()
+            .getHeader("set-cookie")
+        assert(cookie == "key=value")
+    }
+
+    @Test
+    fun testDelCookie() = runBlocking {
+        val cookie = client.delete("/restful/cookie")
+            .putHeader("Content-Type", "application/json")
+            .putHeader("Cookie","key=value")
+            .send()
+            .await()
+            .getHeader("set-cookie")
+        assert(cookie.indexOf("key=; Max-Age=0; Expires=") == 0)
+//        assert(cookie == "key=value")
     }
 
 }

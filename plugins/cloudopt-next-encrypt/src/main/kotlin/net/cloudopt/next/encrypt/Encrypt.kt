@@ -15,16 +15,18 @@
  */
 package net.cloudopt.next.encrypt
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/5
- * @Description: Encryption module common interface
- */
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.security.Security
+
 abstract class Encrypt {
 
     abstract fun encrypt(value: String): String
 
     abstract fun decrypt(value: String): String
+
+    abstract fun encrypt(value: ByteArray): String
+
+    abstract fun decrypt(value: ByteArray): String
 
     /**
      * Convert Byte [] to a string
@@ -42,5 +44,13 @@ abstract class Encrypt {
             sb.append(hexString)
         }
         return sb.toString()
+    }
+
+    companion object {
+        fun checkBouncyCastleProvider() {
+            if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME).isNullOrEmpty()) {
+                Security.addProvider(BouncyCastleProvider())
+            }
+        }
     }
 }

@@ -13,19 +13,19 @@ import net.cloudopt.next.web.test.validator.TestValidator2
 class InterceptorController : Resource() {
 
     @GET
-    fun testGet() {
+    suspend fun testGet() {
         renderText("success")
     }
 
     @GET("/validator")
     @Validator([TestValidator::class, TestValidator2::class])
-    fun testValidator() {
+    suspend fun testValidator() {
         renderText("success")
     }
 
     @GET("/throw")
     @Validator([TestThrowValidator::class])
-    fun testThrow() {
+    suspend fun testThrow() {
         renderText("success")
     }
 

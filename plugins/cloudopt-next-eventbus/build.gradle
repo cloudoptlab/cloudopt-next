@@ -1,7 +1,8 @@
 dependencies {
     api project(":cloudopt-next-web")
-    compileOnly project(":plugins:cloudopt-next-redis")
-    compileOnly "io.lettuce:lettuce-core:6.0.2.RELEASE"
+    api project(":plugins:cloudopt-next-redis")
+    api "io.lettuce:lettuce-core:6.0.2.RELEASE"
+    implementation "io.vertx:vertx-web:${rootProject.property('vertx_version')}"
     testImplementation project(":plugins:cloudopt-next-client")
     testImplementation project(":plugins:cloudopt-next-redis")
     testImplementation "io.lettuce:lettuce-core:6.0.2.RELEASE"

@@ -180,12 +180,16 @@ class NextServerVerticle : CoroutineVerticle() {
         NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${NextServer.webConfig.errorHandler}")
 
         router.route("/*").failureHandler { context ->
-            errorProcessing(context, context.failure())
+            launch {
+                errorProcessing(context, context.failure())
+            }
         }
 
         for (i in 400..500) {
             router.errorHandler(i) { context ->
-                errorProcessing(context, context.failure())
+                launch {
+                    errorProcessing(context, context.failure())
+                }
             }
         }
 
@@ -195,15 +199,17 @@ class NextServerVerticle : CoroutineVerticle() {
         NextServer.handlers.forEach { handler ->
             NextServer.logger.info("[HANDLER] Registered handler：${handler::class.java.name}")
             router.route("/*").handler { context ->
-                try {
-                    if (handler.preHandle(Resource().init(context))) {
-                        context.next()
-                    } else if (!context.response().ended()) {
-                        context.response().end()
+                launch {
+                    try {
+                        if (handler.preHandle(Resource().init(context))) {
+                            context.next()
+                        } else if (!context.response().ended()) {
+                            context.response().end()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Resource().init(context).fail(500, e)
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Resource().init(context).fail(500, e)
                 }
             }
         }
@@ -285,8 +291,10 @@ class NextServerVerticle : CoroutineVerticle() {
             router.route("/").blockingHandler { context ->
                 context.response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
                 context.response().endHandler {
-                    NextServer.handlers.forEach { handler ->
-                        handler.afterCompletion(Resource().init(context))
+                    launch {
+                        NextServer.handlers.forEach { handler ->
+                            handler.afterCompletion(Resource().init(context))
+                        }
                     }
                 }
                 context.response().end(Welcomer.home())
@@ -354,17 +362,21 @@ class NextServerVerticle : CoroutineVerticle() {
      * @see ErrorHandler
      * @see RoutingContext
      */
-    private fun errorProcessing(context: RoutingContext, throwable: Throwable? = RuntimeException()) {
+    private suspend fun errorProcessing(context: RoutingContext, throwable: Throwable? = RuntimeException()) {
         context.response().endHandler {
-            NextServer.handlers.forEach { handler ->
-                handler.afterCompletion(Resource().init(context))
+            launch {
+                NextServer.handlers.forEach { handler ->
+                    handler.afterCompletion(Resource().init(context))
+                }
             }
         }
         val errorHandler = NextServer.errorHandler.createInstance()
         errorHandler.init(context)
         errorHandler.handle(context.response().statusCode, throwable)
         if (context.failure() != null) {
-            context.failure().printStackTrace()
+            if (NextServer.webConfig.debug) {
+                context.failure().printStackTrace()
+            }
             logger.error(context.failure().toString())
         }
     }
@@ -383,26 +395,29 @@ class NextServerVerticle : CoroutineVerticle() {
         resource.init(context)
         try {
             context.response().endHandler {
-                /**
-                 * Executes a block handler that is called at the end of the route
-                 */
-                NextServer.handlers.forEach { handler ->
-                    handler.afterCompletion(Resource().init(context))
-                }
-                /**
-                 * Automatically check whether the method annotation contains an @After annotation, and if so,
-                 * automatically execute the method specified in the annotation that needs to be executed.
-                 */
-                NextServer.afterRouteHandlersTable[resourceTable.url]?.get(resourceTable.httpMethod)?.forEach { it ->
-                    val after: After = it.annotationClass.findAnnotation()!!
-                    launch {
-                        for (invoker in after.invokeBy) {
-                            val routeHandlerInstance: RouteHandler = invoker.createInstance()
-                            if (!routeHandlerInstance.handle(it, resource)) {
-                                break
+                launch {
+                    /**
+                     * Executes a block handler that is called at the end of the route
+                     */
+                    NextServer.handlers.forEach { handler ->
+                        handler.afterCompletion(Resource().init(context))
+                    }
+                    /**
+                     * Automatically check whether the method annotation contains an @After annotation, and if so,
+                     * automatically execute the method specified in the annotation that needs to be executed.
+                     */
+                    NextServer.afterRouteHandlersTable[resourceTable.url]?.get(resourceTable.httpMethod)
+                        ?.forEach { it ->
+                            val after: After = it.annotationClass.findAnnotation()!!
+                            launch {
+                                for (invoker in after.invokeBy) {
+                                    val routeHandlerInstance: RouteHandler = invoker.createInstance()
+                                    if (!routeHandlerInstance.handle(it, resource)) {
+                                        break
+                                    }
+                                }
                             }
                         }
-                    }
                 }
 
             }
@@ -463,7 +478,7 @@ class NextServerVerticle : CoroutineVerticle() {
                     resourceTable.clazzMethod.callSuspendBy(arr)
                 } else {
                     resource.context.put("errorMessage", validatorResult.message)
-                    resource.fail(400)
+                    resource.fail(400, VerifyError(validatorResult.message))
                     return
                 }
             }

@@ -15,43 +15,22 @@
  */
 package net.cloudopt.next.jooq
 
-import net.cloudopt.next.jooq.pool.ConnectionPool
-import org.jooq.ConnectionProvider
 import org.jooq.DSLContext
-import org.jooq.TransactionProvider
-import org.jooq.conf.Settings
-import org.jooq.conf.SettingsTools
-import org.jooq.impl.DSL
-import org.jooq.impl.DefaultConfiguration
-import java.sql.Connection
 
 object JooqManager {
 
-    @JvmStatic
-    lateinit var pool: ConnectionPool
-
-    @JvmStatic
-    lateinit var connection: Connection
-
-    @JvmStatic
-    lateinit var dsl: DSLContext
-
-    @JvmStatic
-    lateinit var transactionProvider: TransactionProvider
-
-    @JvmStatic
-    lateinit var connectionProvider: ConnectionProvider
-
-    @JvmStatic
-    var settings: Settings = SettingsTools.defaultSettings()
-
-    @JvmStatic
-    var configuration = DefaultConfiguration()
-
-    @JvmStatic
-    fun refresh() {
-        connection.close()
-        connection = pool.getConnection()
-        this.dsl = DSL.using(connection)
+    init {
+        System.getProperties().setProperty("org.jooq.no-logo", "true")
     }
+
+    @JvmStatic
+    var dslMap: MutableMap<String, DSLContext> = mutableMapOf()
+
+    val dsl:DSLContext
+        get() = if (dslMap.contains("default")) {
+            dslMap["default"]!!
+        } else {
+            throw RuntimeException("There is no default data source, or there is no data source named 'default'!")
+        }
+
 }

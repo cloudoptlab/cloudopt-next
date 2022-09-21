@@ -17,13 +17,11 @@ package net.cloudopt.next.encrypt
 
 import java.util.*
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/1/8
- * @Description: For Base64 encryption and decryption
- */
 class Base64Encrypt : Encrypt() {
+
+    init {
+        checkBouncyCastleProvider()
+    }
 
     /**
      * Base64 encryption
@@ -31,7 +29,7 @@ class Base64Encrypt : Encrypt() {
      * @return Encrypted string
      */
     override fun encrypt(value: String): String {
-        return Base64.getEncoder().encodeToString(value.toByteArray(Charsets.UTF_8))
+        return encrypt(value.toByteArray(Charsets.UTF_8))
     }
 
     /**
@@ -39,8 +37,8 @@ class Base64Encrypt : Encrypt() {
      * @param value This is an array of bytes that need to be encrypted
      * @return Encrypted string
      */
-    fun encrypt(value: ByteArray): String {
-        return String(Base64.getEncoder().encode(value))
+    override fun encrypt(value: ByteArray): String {
+        return Base64.getEncoder().encodeToString(value)
     }
 
     /**
@@ -49,6 +47,10 @@ class Base64Encrypt : Encrypt() {
      * @return Decrypted string
      */
     override fun decrypt(value: String): String {
+        return String(Base64.getDecoder().decode(value))
+    }
+
+    override fun decrypt(value: ByteArray): String {
         return String(Base64.getDecoder().decode(value))
     }
 

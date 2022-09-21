@@ -16,43 +16,30 @@
 package net.cloudopt.next.encrypt
 
 import java.security.KeyFactory
+import java.security.KeyPairGenerator
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/8
- * @Description: For MD5 encryption
- */
-class RsaEncrypt : Encrypt() {
 
-    private val ALGORITHM = "RSA"
+class RsaEncrypt(var publicKeyString: String = "", var privateKeyString: String = "") : Encrypt() {
 
-    private var publicKey = ""
+    private val algorithm = "RSA"
 
-    private var privateKey = ""
+    private lateinit var publicKey: PublicKey
 
-    /**
-     * Set the public key
-     * @param PublicKey Public key
-     * @return RsaEncrypt object
-     */
-    fun setPublicKey(publicKey: String): RsaEncrypt {
-        this.publicKey = publicKey
-        return this
-    }
+    private lateinit var privateKey: PrivateKey
 
-    /**
-     * Set the private key
-     * @param PrivateKey private key
-     * @return RsaEncrypt object
-     */
-    fun setPrivateKey(privateKey: String): RsaEncrypt {
-        this.privateKey = privateKey
-        return this
+    private val base64Encrypt: Base64Encrypt = Base64Encrypt()
+
+    init {
+        checkBouncyCastleProvider()
+        if (publicKeyString.isNotBlank() && privateKeyString.isNotBlank()) {
+            publicKey = getPublicKey()
+            privateKey = getPrivateKey()
+        }
     }
 
     /**
@@ -61,12 +48,13 @@ class RsaEncrypt : Encrypt() {
      * @return This is an encrypted string
      */
     override fun encrypt(value: String): String {
-        val key = getPublicKey()
-        val cipher = Cipher.getInstance(ALGORITHM)
-        cipher.init(Cipher.ENCRYPT_MODE, key)
-        var b = value.toByteArray()
-        var b1 = cipher.doFinal(b)
-        return Base64Encrypt().encrypt(b1)
+        return encrypt(value.toByteArray())
+    }
+
+    override fun encrypt(value: ByteArray): String {
+        val cipher = Cipher.getInstance(algorithm, "BC")
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+        return base64Encrypt.encrypt(cipher.doFinal(value))
     }
 
     /**
@@ -75,39 +63,49 @@ class RsaEncrypt : Encrypt() {
      * @return This is the decrypted string
      */
     override fun decrypt(value: String): String {
-        val key = getPrivateKey()
-        val cipher = Cipher.getInstance(ALGORITHM)
-        cipher.init(Cipher.DECRYPT_MODE, key)
-        var b1 = Base64Encrypt().decryptToByteArray(value)
-        var b = cipher.doFinal(b1)
+       return decrypt(base64Encrypt.decryptToByteArray(value))
+    }
+
+    override fun decrypt(value: ByteArray): String {
+        val cipher = Cipher.getInstance(algorithm, "BC")
+        cipher.init(Cipher.DECRYPT_MODE, privateKey)
+        val b = cipher.doFinal(value)
         return String(b)
     }
 
     /**
      * Get the public key
-     * @param key Key string (base64 encoded)
-     * @throws Exception
      */
-    @Throws(Exception::class)
-    fun getPublicKey(): PublicKey {
-        var keyBytes: ByteArray
-        keyBytes = Base64Encrypt().decryptToByteArray(publicKey)
-        var keySpec = X509EncodedKeySpec(keyBytes)
-        var keyFactory = KeyFactory.getInstance("RSA")
+    private fun getPublicKey(): PublicKey {
+        val keyBytes: ByteArray = base64Encrypt.decryptToByteArray(publicKeyString)
+        val keySpec = X509EncodedKeySpec(keyBytes)
+        val keyFactory = KeyFactory.getInstance(algorithm, "BC")
         return keyFactory.generatePublic(keySpec)
     }
 
     /**
      * Get the private key
-     * @param key Key string (base64 encoded)
-     * @throws Exception
      */
-    @Throws(Exception::class)
-    fun getPrivateKey(): PrivateKey {
-        var keyBytes: ByteArray
-        keyBytes = Base64Encrypt().decryptToByteArray(privateKey)
-        var keySpec = PKCS8EncodedKeySpec(keyBytes)
-        var keyFactory = KeyFactory.getInstance("RSA")
+    private fun getPrivateKey(): PrivateKey {
+        val keyBytes: ByteArray = base64Encrypt.decryptToByteArray(privateKeyString)
+        val keySpec = PKCS8EncodedKeySpec(keyBytes)
+        val keyFactory = KeyFactory.getInstance(algorithm, "BC")
         return keyFactory.generatePrivate(keySpec)
     }
+
+    /**
+     * Generate RSA public key and key
+     * @param keySize the keySize.
+     * This is an algorithm-specific metric, such as modulus length, specified in number of bits.
+     */
+    fun generate(keySize: Int = 1024) {
+        val keyPairGen = KeyPairGenerator.getInstance(algorithm, "BC")
+        keyPairGen.initialize(keySize)
+        val keyPair = keyPairGen.generateKeyPair()
+        publicKey = keyPair.public
+        publicKeyString = base64Encrypt.encrypt(keyPair.public.encoded)
+        privateKey = keyPair.private
+        privateKeyString = base64Encrypt.encrypt(keyPair.private.encoded)
+    }
+
 }

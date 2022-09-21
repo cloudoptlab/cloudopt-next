@@ -13,44 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.cloudopt.next.jooq.pool
+package net.cloudopt.next.jdbc.provider
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import net.cloudopt.next.core.ConfigManager
+import net.cloudopt.next.jdbc.JDBCConfig
+import net.cloudopt.next.jdbc.JDBCConnectionPool
 import java.sql.Connection
 import java.sql.SQLException
 import javax.sql.DataSource
 
-
-/*
- * @author: Cloudopt
- * @Time: 2018/2/6
- * @Description: Hikaricp helper
- */
-class HikariCPPool : ConnectionPool {
-
-    private val datasourceConfig: MutableMap<String, Any> = ConfigManager.init("datasource")
+class HikariConnectionPoolProvider : JDBCConnectionPool {
 
     private val config = HikariConfig()
 
-    init {
-        config.jdbcUrl = datasourceConfig.get("jdbcUrl") as String
-        config.username = datasourceConfig.get("username") as String
-        config.password = datasourceConfig.get("password") as String
-        config.driverClassName = datasourceConfig.get("driverClassName") as String
-        datasourceConfig.keys.forEach { key ->
-            config.addDataSourceProperty(key, datasourceConfig.get(key))
-        }
+    private lateinit var dataSource: DataSource
+
+    override fun init(jdbcConfig: JDBCConfig) {
+        config.jdbcUrl = jdbcConfig.jdbcUrl
+        config.username = jdbcConfig.username
+        config.password = jdbcConfig.password
+        config.driverClassName = jdbcConfig.driverClassName
+        dataSource = HikariDataSource(config)
     }
 
     @Throws(SQLException::class)
     override fun getConnection(): Connection {
-        return getDatasource().connection
+        return dataSource.connection
     }
 
     override fun getDatasource(): DataSource {
-        return HikariDataSource(config)
+        return dataSource
     }
 
 

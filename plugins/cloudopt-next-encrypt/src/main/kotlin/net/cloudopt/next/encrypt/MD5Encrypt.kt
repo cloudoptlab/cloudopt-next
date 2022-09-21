@@ -17,14 +17,13 @@ package net.cloudopt.next.encrypt
 
 import java.security.MessageDigest
 
-/*
- * @author: Cloudopt
- * @Time: 2018/1/8
- * @Description: For MD5 encryption
- */
 class MD5Encrypt : Encrypt() {
 
     private val ALGORITHM = "MD5"
+
+    init {
+        checkBouncyCastleProvider()
+    }
 
     /**
      * MD5 encryption
@@ -32,8 +31,12 @@ class MD5Encrypt : Encrypt() {
      * @return Encrypted string
      */
     override fun encrypt(value: String): String {
-        var instance: MessageDigest = MessageDigest.getInstance(ALGORITHM)
-        var digest: ByteArray = instance.digest(value.toByteArray())
+        return encrypt(value.toByteArray())
+    }
+
+    override fun encrypt(value: ByteArray): String {
+        val instance: MessageDigest = MessageDigest.getInstance(ALGORITHM, "BC")
+        val digest: ByteArray = instance.digest(value)
         return toHexString(digest)
     }
 
@@ -42,6 +45,10 @@ class MD5Encrypt : Encrypt() {
      */
     override fun decrypt(value: String): String {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun decrypt(value: ByteArray): String {
+        TODO("Not yet implemented")
     }
 
 

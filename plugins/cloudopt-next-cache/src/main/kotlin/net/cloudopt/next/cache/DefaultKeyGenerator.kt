@@ -53,7 +53,7 @@ class DefaultKeyGenerator : KeyGenerator {
                 }
                 builder.append(c)
             }
-            return builder.toString()
+            return "${CacheManager.PREFIX}${builder.toString()}"
         }
     }
 

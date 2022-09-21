@@ -17,6 +17,7 @@ package net.cloudopt.next.cache
 
 data class CacheConfig(
     val cluster: Boolean = false,
+    val redisName: String = "default",
     val serializer: String = "net.cloudopt.next.cache.serializer.DefaultSerializer",
     val regions: MutableList<RegionConfig> = mutableListOf()
 )

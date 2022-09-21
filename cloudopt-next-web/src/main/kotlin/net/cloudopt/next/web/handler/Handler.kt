@@ -26,7 +26,7 @@ interface Handler {
      * @return Boolean, if it is true, it will continue to proceed. If it is false,
      * it will close the request directly
      */
-    fun preHandle(resource: Resource): Boolean
+    suspend fun preHandle(resource: Resource): Boolean
 
     /**
      * After entering the routing method, it is called before rendering
@@ -35,7 +35,7 @@ interface Handler {
      * @return Boolean, if it is true, it will continue to proceed. If it is false,
      * it will close the request directly
      */
-    fun postHandle(resource: Resource): Boolean
+    suspend fun postHandle(resource: Resource): Boolean
 
     /**
      * After rendering
@@ -44,7 +44,7 @@ interface Handler {
      * @return Boolean, if it is true, it will continue to proceed. If it is false,
      * it will close the request directly
      */
-    fun afterRender(resource: Resource, bodyString: String): Boolean
+    suspend fun afterRender(resource: Resource, bodyString: String): Boolean
 
     /**
      * After the request is called, because Next is an asyn web framework,
@@ -53,7 +53,7 @@ interface Handler {
      * @see Resource
      * @return Boolean, Whether it returns true or false, the execution is complete
      */
-    fun afterCompletion(resource: Resource): Boolean
+    suspend fun afterCompletion(resource: Resource): Boolean
 
 }
 

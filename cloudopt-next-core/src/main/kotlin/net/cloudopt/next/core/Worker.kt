@@ -17,6 +17,7 @@ package net.cloudopt.next.core
 
 import io.vertx.core.*
 import io.vertx.kotlin.coroutines.await
+import io.vertx.kotlin.coroutines.awaitBlocking
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.*
 
@@ -74,21 +75,6 @@ object Worker {
     }
 
     /**
-     * Runs a new coroutine and blocks the current thread interruptibly until its completion. This function should not
-     * be used from a coroutine. It is designed to bridge regular blocking code to libraries that are written in
-     * suspending style, to be used in main functions and in tests.
-     * @param block [@kotlin.ExtensionFunctionType] SuspendFunction1<CoroutineScope, T>
-     * @return T
-     */
-    fun <T> async(block: suspend CoroutineScope.() -> T): T {
-        return runBlocking(dispatcher()) {
-            return@runBlocking withContext(dispatcher()) {
-                return@withContext block.invoke(this)
-            }
-        }
-    }
-
-    /**
      * Puts the handler on the event queue for the current context so it will be run asynchronously ASAP after all
      * preceeding events have been handled.
      *
@@ -99,19 +85,36 @@ object Worker {
     }
 
     /**
+     * Awaits for completion of given deferred values without blocking a thread and resumes normally with the list of values
+     * when all deferred computations are complete or resumes with the first thrown exception if any of computations
+     * complete exceptionally including cancellation.
+     */
+    suspend fun <T> gather(vararg blocks: suspend CoroutineScope.() -> T): List<T> {
+        val list = mutableListOf<Deferred<T>>()
+        coroutineScope {
+            blocks.forEach { block ->
+                list.add(async {
+                    return@async block.invoke(this)
+                })
+            }
+        }
+        return list.awaitAll()
+    }
+
+    /**
      * Automatic deployment in vertx.
      *
-     * @param verticle Package name
+     * @param name Package name
      * @param deploymentOptions   Options for configuring a verticle deployment
      */
     @JvmOverloads
     fun deploy(
-        verticle: String,
+        name: String,
         deploymentOptions: DeploymentOptions = ConfigManager.init("vertxDeployment")
             .toObject(DeploymentOptions::class), workerPoolName: String = "net.cloudopt.next"
     ) {
         deploymentOptions.workerPoolName = workerPoolName
-        vertx.deployVerticle(verticle, deploymentOptions)
+        vertx.deployVerticle(name, deploymentOptions)
     }
 
 
@@ -167,7 +170,7 @@ object Worker {
     }
 
     /**
-     * Stop the the Vertx instance and release any resources held by it. The instance cannot be used after it has been
+     * Stop the Vertx instance and release any resources held by it. The instance cannot be used after it has been
      * closed.
      */
     fun close() {

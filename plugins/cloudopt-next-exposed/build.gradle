@@ -1,0 +1,18 @@
+dependencies {
+    api project(":cloudopt-next-web")
+    api project(":plugins:cloudopt-next-jdbc")
+    api project(":plugins:cloudopt-next-health")
+    api "org.jetbrains.exposed:exposed-core:0.36.2"
+    api "org.jetbrains.exposed:exposed-dao:0.36.2"
+    api "org.jetbrains.exposed:exposed-jdbc:0.36.2"
+    api "org.jetbrains.exposed:exposed-java-time:0.36.2"
+    testImplementation "com.zaxxer:HikariCP:5.0.0"
+    testImplementation "mysql:mysql-connector-java:8.0.27"
+    testImplementation "org.jetbrains.exposed:exposed-core:0.36.2"
+    testImplementation "org.jetbrains.exposed:exposed-dao:0.36.2"
+    testImplementation "org.jetbrains.exposed:exposed-jdbc:0.36.2"
+    testImplementation "org.jetbrains.exposed:exposed-java-time:0.36.2"
+
+}
+
+description = "Exposed, an ORM framework for Kotlin. "

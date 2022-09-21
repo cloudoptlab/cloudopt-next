@@ -22,7 +22,7 @@ import net.cloudopt.next.web.annotation.AutoHandler
 @AutoHandler
 class WafHandler : Handler {
 
-    override fun preHandle(resource: Resource): Boolean {
+    override suspend fun preHandle(resource: Resource): Boolean {
         if (Wafer.config.plus) {
             resource.setHeader("X-Content-Type-Options", "nosniff")
             resource.setHeader("X-Download-Options", "noopen")
@@ -32,15 +32,15 @@ class WafHandler : Handler {
         return true
     }
 
-    override fun postHandle(resource: Resource): Boolean {
+    override suspend fun postHandle(resource: Resource): Boolean {
         return true
     }
 
-    override fun afterRender(resource: Resource, text: String): Boolean {
+    override suspend fun afterRender(resource: Resource, text: String): Boolean {
         return true
     }
 
-    override fun afterCompletion(resource: Resource): Boolean {
+    override suspend fun afterCompletion(resource: Resource): Boolean {
         return true
     }
 

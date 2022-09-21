@@ -21,7 +21,7 @@ import net.cloudopt.next.web.annotation.AutoHandler
 
 @AutoHandler
 class CorsHandler : Handler {
-    override fun preHandle(resource: Resource): Boolean {
+    override suspend fun preHandle(resource: Resource): Boolean {
         if (NextServer.webConfig.cors) {
             if (resource.request.getHeader("Origin").isNullOrBlank()) {
                 resource.setHeader("Access-Control-Allow-Origin", "*")
@@ -37,15 +37,15 @@ class CorsHandler : Handler {
         return true
     }
 
-    override fun postHandle(resource: Resource): Boolean {
+    override suspend fun postHandle(resource: Resource): Boolean {
         return true
     }
 
-    override fun afterRender(resource: Resource, bodyString: String): Boolean {
+    override suspend fun afterRender(resource: Resource, bodyString: String): Boolean {
         return true
     }
 
-    override fun afterCompletion(resource: Resource): Boolean {
+    override suspend fun afterCompletion(resource: Resource): Boolean {
         return true
     }
 }

@@ -15,10 +15,10 @@
  */
 package net.cloudopt.next.validator
 
+import jakarta.validation.ConstraintViolation
+import jakarta.validation.Validation
 import org.hibernate.validator.HibernateValidator
 import java.util.*
-import javax.validation.ConstraintViolation
-import javax.validation.Validation
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.javaMethod

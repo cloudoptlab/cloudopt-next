@@ -1,6 +1,6 @@
 dependencies {
     api project(":cloudopt-next-web")
-    compileOnly "org.quartz-scheduler:quartz:2.3.2"
+    api "org.quartz-scheduler:quartz:2.3.2"
     testImplementation "org.quartz-scheduler:quartz:2.3.2"
 }
 

@@ -9,17 +9,17 @@ import net.cloudopt.next.web.annotation.GET
 class RenderController : Resource() {
 
     @GET("/text")
-    fun textRender() {
+    suspend fun textRender() {
         renderText("text")
     }
 
     @GET("/json")
-    fun jsonRender() {
+    suspend fun jsonRender() {
         renderJson(json("result" to "json"))
     }
 
     @GET("/html")
-    fun htmlRender() {
+    suspend fun htmlRender() {
         renderHtml {
             template {
                 name = "index"
@@ -28,7 +28,7 @@ class RenderController : Resource() {
     }
 
     @GET("/free")
-    fun freemarkerRender() {
+    suspend fun freemarkerRender() {
         renderFree {
             template {
                 name = "index"
@@ -38,7 +38,7 @@ class RenderController : Resource() {
     }
 
     @GET("/hbs")
-    fun hbsRender() {
+    suspend fun hbsRender() {
         renderHbs {
             template {
                 name = "index"

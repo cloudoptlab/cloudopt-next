@@ -25,7 +25,7 @@ interface Render {
      * @param resource Resource object
      * @param obj May be the view object may also be just a simple text
      */
-    fun render(resource: Resource, obj: Any)
+    suspend fun render(resource: Resource, obj: Any)
 
     /**
      * Ends the response. If no data has been written to the response body,
@@ -33,7 +33,7 @@ interface Render {
      * @see net.cloudopt.next.web.Resource
      * @param resource Resource object
      */
-    fun end(resource: Resource) {
+    suspend fun end(resource: Resource) {
         end(resource, "")
     }
 
@@ -44,7 +44,7 @@ interface Render {
      * @param resource Resource object
      * @param text the string to write before ending the response
      */
-    fun end(resource: Resource, text: String) {
+    suspend fun end(resource: Resource, text: String) {
         NextServer.handlers.forEach { handler ->
             if (!handler.afterRender(resource, text)) {
                 if (!resource.context.response().ended()) {

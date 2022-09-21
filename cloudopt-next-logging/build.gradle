@@ -1,6 +1,6 @@
 dependencies {
-    implementation "org.fusesource.jansi:jansi:1.18"
-    implementation "ch.qos.logback:logback-classic:1.2.3"
+    implementation 'org.fusesource.jansi:jansi:2.4.0'
+    implementation 'ch.qos.logback:logback-classic:1.2.11'
 }
 
 description = "Cloudopt Next Log"

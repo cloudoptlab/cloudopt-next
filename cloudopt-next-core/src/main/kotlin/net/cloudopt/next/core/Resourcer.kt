@@ -15,7 +15,8 @@
  */
 package net.cloudopt.next.core
 
-import net.cloudopt.next.json.Jsoner.jsonToMutableMap
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.vertx.core.json.JsonObject
 import net.cloudopt.next.json.Jsoner.jsonToObject
 import net.cloudopt.next.json.Jsoner.toJsonObject
 import net.cloudopt.next.json.Jsoner.toJsonString
@@ -27,6 +28,7 @@ import java.net.URLDecoder
 import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
+
 
 object Resourcer {
 
@@ -147,13 +149,7 @@ object Resourcer {
      * @return MutableMap<String, Any>
      */
     fun read(fileName: String, external: Boolean = false): MutableMap<String, Any> {
-        var jsonString = if (external) {
-            getExternalFileString(fileName)
-        } else {
-            inputStreamToString(getFileInputStream(fileName))
-        }
-        jsonString = cleanText(jsonString)
-        return jsonString.jsonToMutableMap()
+        return read(fileName, "", external)
     }
 
     /**
@@ -164,13 +160,13 @@ object Resourcer {
      * @return MutableMap<String, Any>
      */
     fun read(fileName: String, prefix: String, external: Boolean = false): MutableMap<String, Any> {
-        var jsonString = if (external) {
-            getExternalFileString(fileName)
+        val objMap = ObjectMapper()
+        var file = if (external) {
+            File(fileName)
         } else {
-            inputStreamToString(getFileInputStream(fileName))
+            getFile(fileName)
         }
-        jsonString = cleanText(jsonString)
-        var jsonObj = jsonString.toJsonObject()
+        var jsonObj = objMap.readTree(file).toJsonString().toJsonObject()
         var list = prefix.split(".")
         for (key in list) {
             if (jsonObj.getJsonObject(key) != null) {
@@ -178,15 +174,6 @@ object Resourcer {
             }
         }
         return jsonObj.map.toMutableMap()
-    }
-
-    /**
-     * Clear out the extra carriage return characters.
-     * @param jsonString String
-     * @return String
-     */
-    private fun cleanText(jsonString: String): String {
-        return jsonString.replace("/n", "")
     }
 
 }

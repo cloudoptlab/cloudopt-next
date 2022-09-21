@@ -21,22 +21,22 @@ import net.cloudopt.next.web.annotation.AutoHandler
 
 @AutoHandler
 class CookieCorsHandler : Handler {
-    override fun preHandle(resource: Resource): Boolean {
+    override suspend fun preHandle(resource: Resource): Boolean {
         if (NextServer.webConfig.cookieCors) {
             resource.setHeader("Access-Control-Allow-Credentials", "true")
         }
         return true
     }
 
-    override fun postHandle(resource: Resource): Boolean {
+    override suspend fun postHandle(resource: Resource): Boolean {
         return true
     }
 
-    override fun afterRender(resource: Resource, bodyString: String): Boolean {
+    override suspend fun afterRender(resource: Resource, bodyString: String): Boolean {
         return true
     }
 
-    override fun afterCompletion(resource: Resource): Boolean {
+    override suspend fun afterCompletion(resource: Resource): Boolean {
         return true
     }
 

@@ -37,19 +37,6 @@ class IndexController : Resource() {
         renderJson(CacheManager.get("testRegion", "testGetAndSet") ?: "")
     }
 
-    @GET("redis")
-    fun getRedis() {
-        renderJson(conn.get("testGetAndSet") ?: "")
-    }
-
-    @GET("redis/:key")
-    fun getRedisByKey(
-        @Parameter("key")
-        key: String
-    ) {
-        renderJson(conn.get(key) ?: "")
-    }
-
     @POST
     suspend fun setCache() {
         renderText(CacheManager.set("testRegion", "testGetAndSet", "success") ?: "null")
@@ -62,7 +49,7 @@ class IndexController : Resource() {
 
     @GET("cacheable/:id")
     @Cacheable("testRegion", key = "@{url}-@{id}", keyGenerator = DefaultKeyGenerator::class, l2 = true)
-    fun cacheable() {
+    suspend fun cacheable() {
         renderJson(json("name" to "cacheable"))
     }
 
