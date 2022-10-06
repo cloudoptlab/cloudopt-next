@@ -26,16 +26,9 @@ import java.util.*
 @AutoHandler
 class ShowRouteHandler : Handler {
 
-    override suspend fun preHandle(resource: Resource): Boolean {
+    override fun preHandle(resource: Resource): Boolean {
         if (NextServer.webConfig.showRoute) {
             val df = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            logger.info(
-                "Match route ----------------- " + df.format(Date())
-                        + " ------------------------------"
-            )
-            logger.info("Method       : ${resource.request.method()}")
-            logger.info("Path         : ${resource.context.normalizedPath()}")
-            logger.info("User-Agent   : ${resource.request.getHeader("User-Agent")}")
             val params = resource.request.params()
             params.entries().forEach { entry ->
                 if (params.contains(entry.key)) {
@@ -43,24 +36,29 @@ class ShowRouteHandler : Handler {
                     params.add(entry.key, entry.value)
                 }
             }
-            logger.info("Params       : ${(params?.entries() ?: "[]").toJsonString()}")
-            logger.info("Cookie       : ${(resource.request.getHeader("Cookie") ?: "").toJsonString()}")
             logger.info(
-                "--------------------------------------------------------------------------------"
+                """
+Match route ----------------- ${resource.request.method()} ${resource.context.normalizedPath()} ------------------------------
+IP          : ${resource.getIp()}
+User-Agent  : ${resource.request.getHeader("User-Agent")}
+Params      : ${(params?.entries() ?: "[]").toJsonString()}
+Cookie      : ${(resource.request.getHeader("Cookie") ?: "").toJsonString()}
+DateTime    : ${df.format(Date())}
+            """.trimIndent()
             )
         }
         return true
     }
 
-    override suspend fun postHandle(resource: Resource): Boolean {
+    override fun postHandle(resource: Resource): Boolean {
         return true
     }
 
-    override suspend fun afterRender(resource: Resource, bodyString: String): Boolean {
+    override fun afterRender(resource: Resource, bodyString: String): Boolean {
         return true
     }
 
-    override suspend fun afterCompletion(resource: Resource): Boolean {
+    override fun afterCompletion(resource: Resource): Boolean {
         return true
     }
 
