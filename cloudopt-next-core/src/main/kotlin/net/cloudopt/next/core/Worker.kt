@@ -20,6 +20,7 @@ import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.awaitBlocking
 import io.vertx.kotlin.coroutines.dispatcher
 import kotlinx.coroutines.*
+import net.cloudopt.next.logging.Logger
 
 object Worker {
 
@@ -27,6 +28,8 @@ object Worker {
 
     @JvmStatic
     open var vertx: Vertx = Vertx.vertx(vertxOptions)
+
+    private val logger = Logger.getLogger(this::class)
 
 
     /**
@@ -114,7 +117,15 @@ object Worker {
             .toObject(DeploymentOptions::class), workerPoolName: String = "net.cloudopt.next"
     ) {
         deploymentOptions.workerPoolName = workerPoolName
-        vertx.deployVerticle(name, deploymentOptions)
+        vertx.deployVerticle(name, deploymentOptions).onComplete {res ->
+            if (res.succeeded()){
+                logger.info("[WORKER] The $name verticle is successfully deployed.")
+                return@onComplete
+            }else if(res.cause() != null){
+                throw res.cause()
+            }
+            logger.error("[WORKER] Failed to deploy $name verticle.")
+        }
     }
 
 
