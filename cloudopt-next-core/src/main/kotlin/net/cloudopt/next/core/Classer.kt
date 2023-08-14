@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.core
 
+import net.cloudopt.next.logging.Logger
 import java.io.File
 import java.io.FileFilter
 import java.io.IOException
@@ -34,6 +35,8 @@ object Classer {
     private val JAR_PATH_EXT = ".jar!"
 
     private val PATH_FILE_PRE = "file:"
+
+    private val logger = Logger.getLogger(this::class)
 
     /**
      * @return Get the Java ClassPath path, excluding jre
@@ -80,6 +83,10 @@ object Classer {
         inJar: Boolean,
         annotationClass: KClass<out Annotation>
     ): Set<KClass<*>> {
+        if (packageName.isBlank()) {
+            logger.error("The package name is not specified, which may cause some exception to " +
+                    "automatically scan the registered class.")
+        }
         return scanPackage(packageName, inJar, object : ClassFilter {
             override fun accept(clazz: KClass<*>): Boolean {
                 return clazz.java.isAnnotationPresent(annotationClass.java)
