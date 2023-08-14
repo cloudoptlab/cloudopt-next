@@ -142,9 +142,6 @@ object Classer {
      * @return A collection of strings for the ClassPath path
      */
     fun getClassPaths(packageName: String): Set<String> {
-        if (packageName.startsWith("META-INF")){
-            return HashSet<String>()
-        }
         val packagePath = packageName.replace(".", "/")
         val resources: Enumeration<URL>
         try {
@@ -363,7 +360,7 @@ object Classer {
         classes: MutableSet<KClass<*>>,
         classFilter: ClassFilter?
     ) {
-        if (className.startsWith(packageName) && className.startsWith("META-INF")) {
+        if (className.startsWith(packageName)) {
             try {
                 val clazz = loadClass(className)
                 if (classFilter == null || classFilter.accept(clazz)) {
