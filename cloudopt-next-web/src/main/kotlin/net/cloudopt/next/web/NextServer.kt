@@ -282,12 +282,7 @@ object NextServer {
      */
     @JvmStatic
     fun run() {
-        scan()
-        /**
-         * Print banner
-         */
-        Banner.print()
-        startPlugins()
+        this.prepare()
         Worker.deploy("net.cloudopt.next.web.NextServerVerticle", workerPoolName = "net.cloudopt.next")
         Runtime.getRuntime().addShutdownHook(object : Thread() {
             override fun run() {
@@ -296,14 +291,13 @@ object NextServer {
         })
     }
 
-    fun runJunit(vertx: Vertx){
+    fun prepare(){
         scan()
         /**
          * Print banner
          */
         Banner.print()
         startPlugins()
-        Worker.deploy("net.cloudopt.next.web.NextServerVerticle", workerPoolName = "net.cloudopt.next", vertx = vertx)
     }
 
     /**
