@@ -107,6 +107,7 @@ object Worker {
     /**
      * Automatic deployment in vertx.
      *
+     * @param vertx The vertx instance
      * @param name Package name
      * @param deploymentOptions   Options for configuring a verticle deployment
      */
@@ -114,14 +115,15 @@ object Worker {
     fun deploy(
         name: String,
         deploymentOptions: DeploymentOptions = ConfigManager.init("vertxDeployment")
-            .toObject(DeploymentOptions::class), workerPoolName: String = "net.cloudopt.next"
+            .toObject(DeploymentOptions::class), workerPoolName: String = "net.cloudopt.next",
+        vertx: Vertx = this.vertx
     ) {
         deploymentOptions.workerPoolName = workerPoolName
-        vertx.deployVerticle(name, deploymentOptions).onComplete {res ->
-            if (res.succeeded()){
+        vertx.deployVerticle(name, deploymentOptions).onComplete { res ->
+            if (res.succeeded()) {
                 logger.info("[WORKER] The $name verticle is successfully deployed.")
                 return@onComplete
-            }else if(res.cause() != null){
+            } else if (res.cause() != null) {
                 throw res.cause()
             }
             logger.error("[WORKER] Failed to deploy $name verticle.")

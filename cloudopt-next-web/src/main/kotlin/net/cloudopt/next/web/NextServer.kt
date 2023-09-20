@@ -15,6 +15,7 @@
  */
 package net.cloudopt.next.web
 
+import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
 import net.cloudopt.next.core.*
 import net.cloudopt.next.json.JsonProvider
@@ -209,7 +210,7 @@ object NextServer {
     /**
      * Scan by annotation and register as a route.
      */
-    private fun scan() {
+    public fun scan() {
 
         //Scan cloudopt handler
         Classer.scanPackageByAnnotation("net.cloudopt.next.web", true, AutoHandler::class)
@@ -287,12 +288,22 @@ object NextServer {
          */
         Banner.print()
         startPlugins()
-        Worker.deploy("net.cloudopt.next.web.NextServerVerticle", workerPoolName = "net.cloudopt.next.http")
+        Worker.deploy("net.cloudopt.next.web.NextServerVerticle", workerPoolName = "net.cloudopt.next")
         Runtime.getRuntime().addShutdownHook(object : Thread() {
             override fun run() {
                 NextServer.stop()
             }
         })
+    }
+
+    fun runJunit(vertx: Vertx){
+        scan()
+        /**
+         * Print banner
+         */
+        Banner.print()
+        startPlugins()
+        Worker.deploy("net.cloudopt.next.web.NextServerVerticle", workerPoolName = "net.cloudopt.next", vertx = vertx)
     }
 
     /**
