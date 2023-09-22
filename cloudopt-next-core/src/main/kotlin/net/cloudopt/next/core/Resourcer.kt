@@ -160,13 +160,17 @@ object Resourcer {
      * @return MutableMap<String, Any>
      */
     fun read(fileName: String, prefix: String, external: Boolean = false): MutableMap<String, Any> {
-        val objMap = ObjectMapper()
-        var file = if (external) {
-            File(fileName)
+        lateinit var jsonObj: JsonObject
+        val mapper = ObjectMapper()
+        if (external) {
+            val file = File(fileName)
+            jsonObj = mapper.readTree(file).toJsonString().toJsonObject()
         } else {
-            getFile(fileName)
+            val inputStream: InputStream? = Resourcer.javaClass.getClassLoader().getResourceAsStream(fileName)
+            val data = mapper.readValue(inputStream, MutableMap::class.java)
+            inputStream?.close()
+            jsonObj = data.toJsonString().toJsonObject()
         }
-        var jsonObj = objMap.readTree(file).toJsonString().toJsonObject()
         var list = prefix.split(".")
         for (key in list) {
             if (jsonObj.getJsonObject(key) != null) {
