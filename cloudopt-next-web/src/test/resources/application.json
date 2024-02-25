@@ -1,8 +1,10 @@
 {
+  "showRoute": false,
   "env": "dev",
   "packageName": "net.cloudopt.next.web.test",
   "cookieCors": true,
   "port": 9001,
+  "timeoutPerShutdownPhase": 30000,
   "waf": {
     "plus": true,
     "csrf": false,

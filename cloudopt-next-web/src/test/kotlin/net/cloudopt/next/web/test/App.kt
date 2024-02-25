@@ -7,5 +7,6 @@ import net.cloudopt.next.web.NextServer
 fun main() {
     Worker.vertxOptions.preferNativeTransport = true
     Worker.vertx = Vertx.vertx(Worker.vertxOptions)
+    NextServer.addPlugin(TestPlugin())
     NextServer.run()
 }

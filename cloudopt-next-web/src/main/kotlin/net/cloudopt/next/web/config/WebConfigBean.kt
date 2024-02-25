@@ -44,6 +44,7 @@ data class WebConfigBean(
     var cookieCors: Boolean = false,
     var bodyLimit: Long = 50L * 1024 * 1024,
     var timeout: Long = 2L * 60 * 1000,
+    var timeoutPerShutdownPhase: Long = 200,
     var httpServerOptions: HttpServerOptions = HttpServerOptions(),
     var socket: SockJSHandlerOptions = SockJSHandlerOptions()
 )

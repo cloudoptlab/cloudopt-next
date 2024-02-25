@@ -17,7 +17,6 @@ package net.cloudopt.next.web
 
 import io.vertx.core.http.HttpHeaders
 import io.vertx.core.json.JsonObject
-import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.*
 import io.vertx.ext.web.handler.sockjs.SockJSHandler
@@ -51,9 +50,6 @@ class NextServerVerticle : CoroutineVerticle() {
 
         val server = Worker.vertx.createHttpServer(NextServer.webConfig.httpServerOptions)
 
-        val router = Router.router(Worker.vertx)
-
-
         /**
          * Register sockJS
          */
@@ -69,7 +65,7 @@ class NextServerVerticle : CoroutineVerticle() {
                     logger.error("[SOCKET] Url must be end with /* !")
                 }
                 logger.info("[SOCKET] Registered socket resource: ${socketAnnotation.value} -> ${clazz.jvmName}")
-                router.route(socketAnnotation.value).handler(sockJSHandler)
+                NextServer.router.route(socketAnnotation.value).handler(sockJSHandler)
             }
         }
 
@@ -79,7 +75,7 @@ class NextServerVerticle : CoroutineVerticle() {
         if (NextServer.webSockets.size > 0) {
             NextServer.webSockets.forEach { clazz ->
                 val websocketAnnotation: WebSocket? = clazz.findAnnotation()
-                router.route(websocketAnnotation?.value).handler { context ->
+                NextServer.router.route(websocketAnnotation?.value).handler { context ->
                     val webSocketResource = clazz.createInstance()
                     val resource = Resource().init(context)
                     try {
@@ -158,20 +154,20 @@ class NextServerVerticle : CoroutineVerticle() {
         /**
          * The ResponseContentTypeHandler can set the Content-Type header automatically
          */
-        router.route("/*").handler(ResponseContentTypeHandler.create())
+        NextServer.router.route("/*").handler(ResponseContentTypeHandler.create())
 
-        router.route("/*").handler(BodyHandler.create().setBodyLimit(NextServer.webConfig.bodyLimit))
+        NextServer.router.route("/*").handler(BodyHandler.create().setBodyLimit(NextServer.webConfig.bodyLimit))
 
         /**
          * Set timeout
          */
-        router.route("/*").handler(TimeoutHandler.create(NextServer.webConfig.timeout))
+        NextServer.router.route("/*").handler(TimeoutHandler.create(NextServer.webConfig.timeout))
 
         /**
          * Set csrf
          */
         if (Wafer.config.csrf) {
-            router.route("/*").handler(CSRFHandler.create(Worker.vertx, Wafer.config.encryption))
+            NextServer.router.route("/*").handler(CSRFHandler.create(Worker.vertx, Wafer.config.encryption))
         }
 
         /**
@@ -179,14 +175,14 @@ class NextServerVerticle : CoroutineVerticle() {
          */
         NextServer.logger.info("[FAILURE HANDLER] Registered failure handler：${NextServer.webConfig.errorHandler}")
 
-        router.route("/*").failureHandler { context ->
+        NextServer.router.route("/*").failureHandler { context ->
             launch {
                 errorProcessing(context, context.failure())
             }
         }
 
         for (i in 400..500) {
-            router.errorHandler(i) { context ->
+            NextServer.router.errorHandler(i) { context ->
                 launch {
                     errorProcessing(context, context.failure())
                 }
@@ -198,7 +194,7 @@ class NextServerVerticle : CoroutineVerticle() {
          */
         NextServer.handlers.forEach { handler ->
             NextServer.logger.info("[HANDLER] Registered handler：${handler::class.java.name}")
-            router.route("/*").handler { context ->
+            NextServer.router.route("/*").handler { context ->
                 launch {
                     try {
                         if (handler.preHandle(Resource().init(context))) {
@@ -214,7 +210,7 @@ class NextServerVerticle : CoroutineVerticle() {
             }
         }
 
-        router.route("/" + NextServer.webConfig.staticPackage + "/*").handler(
+        NextServer.router.route("/" + NextServer.webConfig.staticPackage + "/*").handler(
             StaticHandler.create().setIndexPage(NextServer.webConfig.indexPage)
                 .setIncludeHidden(false).setWebRoot(NextServer.webConfig.staticPackage)
         )
@@ -223,7 +219,7 @@ class NextServerVerticle : CoroutineVerticle() {
          * Register interceptors
          */
         NextServer.interceptors.forEach { (url, clazz) ->
-            router.route(url).handler { context ->
+            NextServer.router.route(url).handler { context ->
                 val resource = Resource()
                 resource.init(context)
                 launch {
@@ -257,7 +253,7 @@ class NextServerVerticle : CoroutineVerticle() {
             map.keys.forEach { key ->
                 val beforeRouteHandlerList = map[key]
                 beforeRouteHandlerList?.forEach { beforeRouteHandler ->
-                    router.route(key, url).handler { context ->
+                    NextServer.router.route(key, url).handler { context ->
                         val resource = Resource()
                         resource.init(context)
                         launch {
@@ -288,7 +284,7 @@ class NextServerVerticle : CoroutineVerticle() {
         }
 
         if (NextServer.resourceTable.size < 1) {
-            router.route("/").blockingHandler { context ->
+            NextServer.router.route("/").blockingHandler { context ->
                 context.response().putHeader(HttpHeaders.CONTENT_TYPE, "text/html;charset=utf-8")
                 context.response().endHandler {
                     launch {
@@ -306,13 +302,13 @@ class NextServerVerticle : CoroutineVerticle() {
          */
         NextServer.resourceTable.forEach { resourceTable ->
             if (resourceTable.blocking) {
-                router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
+                NextServer.router.route(resourceTable.httpMethod, resourceTable.url).blockingHandler { context ->
                     launch {
                         requestProcessing(resourceTable, context)
                     }
                 }
             } else {
-                router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
+                NextServer.router.route(resourceTable.httpMethod, resourceTable.url).handler { context ->
                     launch {
                         requestProcessing(resourceTable, context)
                     }
@@ -324,7 +320,7 @@ class NextServerVerticle : CoroutineVerticle() {
             )
         }
 
-        server.requestHandler(router).listen(NextServer.webConfig.port) { result ->
+        server.requestHandler(NextServer.router).listen(NextServer.webConfig.port) { result ->
             if (result.succeeded()) {
                 NextServer.logger.info(
                     "=========================================================================================================="
@@ -393,6 +389,10 @@ class NextServerVerticle : CoroutineVerticle() {
     private suspend fun requestProcessing(resourceTable: ResourceTable, context: RoutingContext) {
         val resource: Resource = resourceTable.clazz.createInstance()
         resource.init(context)
+        if (NextServer.isGracefulShutdown) {
+            resource.fail(503, RuntimeException("The server is shutting down, please try again later"))
+            return
+        }
         try {
             context.response().endHandler {
                 launch {
@@ -501,7 +501,7 @@ class NextServerVerticle : CoroutineVerticle() {
     private fun getParaByType(
         paraName: String,
         para: KParameter,
-        jsonObject: JsonObject
+        jsonObject: JsonObject,
     ): Any? {
         val finalParaName = paraName.ifBlank {
             para.name
@@ -510,61 +510,73 @@ class NextServerVerticle : CoroutineVerticle() {
             when (para.type.jvmErasure) {
                 String::class ->
                     return jsonObject.getString(finalParaName)
+
                 String::class.starProjectedType.withNullability(true) ->
                     return jsonObject.getString(finalParaName)
 
                 Int::class ->
                     return jsonObject.getString(finalParaName).toInt()
+
                 Int::class.starProjectedType.withNullability(true) ->
                     return jsonObject.getString(finalParaName).toIntOrNull()
 
                 Double::class ->
                     return jsonObject.getString(finalParaName).toDouble()
+
                 Double::class.starProjectedType.withNullability(true) ->
                     return jsonObject.getString(finalParaName).toDoubleOrNull()
 
                 Float::class ->
                     return jsonObject.getString(finalParaName).toFloat()
+
                 Float::class.starProjectedType.withNullability(true) ->
                     return jsonObject.getString(finalParaName).toFloatOrNull()
 
                 Short::class ->
                     return jsonObject.getString(finalParaName).toShortOrNull()
+
                 Short::class.starProjectedType.withNullability(true) ->
                     return jsonObject.getString(finalParaName).toShortOrNull()
 
                 Long::class ->
                     return jsonObject.getString(finalParaName).toLong()
+
                 Long::class.starProjectedType.withNullability(true) ->
                     return jsonObject.getString(finalParaName).toLongOrNull()
 
                 java.math.BigDecimal::class ->
                     return jsonObject.getString(finalParaName).toBigDecimal()
+
                 java.math.BigDecimal::class.starProjectedType.withNullability(true) ->
                     return jsonObject.getString(finalParaName).toBigDecimalOrNull()
 
                 java.math.BigInteger::class ->
                     return jsonObject.getString(finalParaName).toBigInteger()
+
                 java.math.BigInteger::class.starProjectedType.withNullability(true) ->
                     return jsonObject.getString(finalParaName).toBigIntegerOrNull()
 
                 java.util.Date::class ->
                     return DateFormat.getDateInstance().parse(jsonObject.getString(finalParaName))
+
                 java.util.Date::class.starProjectedType.withNullability(true) ->
                     return DateFormat.getDateInstance().parse(jsonObject.getString(finalParaName))
 
                 java.sql.Timestamp::class ->
                     return Timestamp.valueOf(jsonObject.getString(finalParaName))
+
                 java.sql.Timestamp::class.starProjectedType.withNullability(true) ->
                     return Timestamp.valueOf(jsonObject.getString(finalParaName))
 
                 java.time.LocalDateTime::class ->
                     return LocalDateTime.parse(jsonObject.getString(finalParaName))
+
                 java.time.LocalDateTime::class.starProjectedType.withNullability(true) ->
                     return LocalDateTime.parse(jsonObject.getString(finalParaName))
 
                 java.time.LocalDate::class ->
                     return LocalDate.parse(jsonObject.getString(finalParaName))
+
                 java.time.LocalDate::class.starProjectedType.withNullability(true) ->
                     return LocalDate.parse(jsonObject.getString(finalParaName))
 

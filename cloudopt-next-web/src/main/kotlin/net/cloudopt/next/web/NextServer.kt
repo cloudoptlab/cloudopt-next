@@ -15,8 +15,8 @@
  */
 package net.cloudopt.next.web
 
-import io.vertx.core.Vertx
 import io.vertx.core.http.HttpMethod
+import io.vertx.ext.web.Router
 import net.cloudopt.next.core.*
 import net.cloudopt.next.json.JsonProvider
 import net.cloudopt.next.json.Jsoner
@@ -28,17 +28,20 @@ import net.cloudopt.next.web.handler.ErrorHandler
 import net.cloudopt.next.web.handler.Handler
 import net.cloudopt.next.web.render.Render
 import net.cloudopt.next.web.render.RenderFactory
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.hasAnnotation
 
+
 object NextServer {
 
     open var webConfig: WebConfigBean = ConfigManager.configMap.toObject(WebConfigBean::class)
 
-    private var verticleID = "net.cloudopt.next.web"
+    open val router: Router = Router.router(Worker.vertx)
 
     val logger = Logger.getLogger(NextServer::class)
 
@@ -62,6 +65,8 @@ object NextServer {
 
     var errorHandler: KClass<ErrorHandler> =
         Classer.loadClass(webConfig.errorHandler) as KClass<ErrorHandler>
+
+    open var isGracefulShutdown = false
 
     init {
         /**
@@ -125,30 +130,36 @@ object NextServer {
                         httpMethod = HttpMethod(functionAnnotation.method)
                         priority = functionAnnotation.priority
                     }
+
                     is POST -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
                         priority = functionAnnotation.priority
                     }
+
                     is PUT -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
                         priority = functionAnnotation.priority
                     }
+
                     is DELETE -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
                         priority = functionAnnotation.priority
                     }
+
                     is PATCH -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
                         priority = functionAnnotation.priority
                     }
+
                     is net.cloudopt.next.web.annotation.HttpMethod -> {
                         resourceUrl = "${apiAnnotation?.value ?: url}${functionAnnotation.value}"
                         httpMethod = HttpMethod(functionAnnotation.method)
                     }
+
                     is Blocking -> {
                         blocking = true
                     }
@@ -284,14 +295,12 @@ object NextServer {
     fun run() {
         this.prepare()
         Worker.deploy("net.cloudopt.next.web.NextServerVerticle", workerPoolName = "net.cloudopt.next")
-        Runtime.getRuntime().addShutdownHook(object : Thread() {
-            override fun run() {
-                NextServer.stop()
-            }
+        Runtime.getRuntime().addShutdownHook(Thread {
+            stop()
         })
     }
 
-    fun prepare(){
+    fun prepare() {
         scan()
         /**
          * Print banner
@@ -369,13 +378,13 @@ object NextServer {
     fun stopPlugins() {
         plugins.forEach { plugin ->
             if (!plugin.stop()) {
-                logger.info("[PLUGIN] Stoped plugin was error：${plugin.javaClass.name}")
+                logger.error("[PLUGIN] Stopped plugin was error：${plugin.javaClass.name}")
             }
         }
     }
 
     /**
-     * Stop the the Vertx instance and release any resources held by it.
+     * Stop the Vertx instance and release any resources held by it.
      * <p>
      * The instance cannot be used after it has been closed.
      * <p>
@@ -383,10 +392,20 @@ object NextServer {
      */
     @JvmStatic
     fun stop() {
-        stopPlugins()
-        Worker.undeploy("net.cloudopt.next.web.CloudoptServerVerticle")
-        Worker.close()
-        logger.info("Next has exited.")
+        isGracefulShutdown = true
+        val latch = CountDownLatch(1)
+        try {
+            Worker.vertx.undeploy("net.cloudopt.next.web.NextServerVerticle") {
+                stopPlugins()
+            }
+            latch.await(webConfig.timeoutPerShutdownPhase, TimeUnit.MILLISECONDS)
+        } finally {
+            Worker.vertx.close()
+                .toCompletionStage()
+                .toCompletableFuture()
+                .get(webConfig.timeoutPerShutdownPhase, TimeUnit.MILLISECONDS)
+            logger.info("NextSever has exited.")
+        }
     }
 
 
